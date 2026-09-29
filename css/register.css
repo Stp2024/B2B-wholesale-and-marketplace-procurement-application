@@ -1,0 +1,1232 @@
+/* =========================================================
+   TradeNest - Register Page
+   Static Information Panel + Scrollable Form
+   No Animations
+========================================================= */
+
+:root {
+  --navy: #1e2a3a;
+  --navy-dark: #172231;
+  --navy-soft: #344255;
+
+  --orange: #d97745;
+  --orange-dark: #bf6335;
+  --orange-light: #f3d8c8;
+
+  --paper: #f7f5f2;
+  --white: #ffffff;
+
+  --text: #26313d;
+  --text-soft: #596574;
+  --muted: #7c858f;
+
+  --border: #dedbd6;
+  --border-light: #ebe8e3;
+
+  --success: #52735f;
+  --danger: #b94a48;
+
+  --shadow-sm: 0 5px 18px rgba(30, 42, 58, 0.05);
+  --shadow-md: 0 12px 35px rgba(30, 42, 58, 0.08);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+
+  color: var(--text);
+  background: var(--paper);
+
+  line-height: 1.6;
+
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  color: var(--white);
+  background: var(--orange);
+}
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+.register-page {
+  width: 100%;
+  height: 100vh;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(350px, 0.72fr)
+    minmax(620px, 1.28fr);
+
+  overflow: hidden;
+
+  background: var(--paper);
+}
+
+/* =========================================================
+   LEFT INFORMATION PANEL
+   STATIC
+========================================================= */
+
+.register-intro {
+  position: relative;
+
+  width: 100%;
+  height: 100vh;
+
+  padding: 60px clamp(35px, 5vw, 80px);
+
+  display: flex;
+  align-items: center;
+
+  color: var(--white);
+
+  background: var(--navy);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   DECORATIVE CIRCLES
+   STATIC - NO ANIMATION
+========================================================= */
+
+.register-intro::before {
+  content: "";
+
+  position: absolute;
+
+  width: 430px;
+  height: 430px;
+
+  top: -220px;
+  right: -200px;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.register-intro::after {
+  content: "";
+
+  position: absolute;
+
+  width: 310px;
+  height: 310px;
+
+  bottom: -170px;
+  left: -165px;
+
+  border: 1px solid rgba(217, 119, 69, 0.18);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   INTRO CONTENT
+========================================================= */
+
+.intro-content {
+  position: relative;
+
+  z-index: 1;
+
+  width: 100%;
+  max-width: 560px;
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 65px;
+
+  color: var(--white);
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 9px;
+
+  color: var(--white);
+  background: var(--orange);
+
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* =========================================================
+   INTRO HEADING
+========================================================= */
+
+.intro-heading {
+  max-width: 520px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-bottom: 18px;
+
+  color: #e3a17e;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+
+  letter-spacing: 0.15em;
+}
+
+.eyebrow::before {
+  content: "";
+
+  width: 25px;
+  height: 1px;
+
+  background: var(--orange);
+}
+
+.intro-heading h1 {
+  margin-bottom: 22px;
+
+  color: var(--white);
+
+  font-size: clamp(2.3rem, 4vw, 3.8rem);
+
+  line-height: 1.08;
+
+  letter-spacing: -0.045em;
+
+  font-weight: 750;
+}
+
+.intro-heading p {
+  max-width: 470px;
+
+  color: #b9c1cb;
+
+  font-size: 0.95rem;
+
+  line-height: 1.8;
+}
+
+/* =========================================================
+   INTRO POINTS
+========================================================= */
+
+.intro-points {
+  display: grid;
+
+  gap: 18px;
+
+  margin-top: 45px;
+}
+
+.intro-point {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+}
+
+.point-icon {
+  flex: 0 0 auto;
+
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  margin-top: 1px;
+
+  border: 1px solid rgba(217, 119, 69, 0.35);
+
+  border-radius: 50%;
+
+  color: var(--orange);
+
+  background: rgba(217, 119, 69, 0.08);
+
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.intro-point strong {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: var(--white);
+
+  font-size: 0.88rem;
+
+  font-weight: 700;
+}
+
+.intro-point p {
+  color: #929ba7;
+
+  font-size: 0.78rem;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   INTRO FOOTER
+========================================================= */
+
+.intro-footer {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 50px;
+
+  color: #89939f;
+
+  font-size: 0.7rem;
+}
+
+.footer-line {
+  width: 40px;
+  height: 1px;
+
+  background: var(--orange);
+}
+
+/* =========================================================
+   RIGHT FORM CONTAINER
+   ONLY THIS SIDE SCROLLS
+========================================================= */
+
+.register-container {
+  width: 100%;
+  height: 100vh;
+
+  min-width: 0;
+
+  padding: 55px clamp(25px, 5vw, 80px) 65px;
+
+  background: var(--paper);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b7b3ad transparent;
+}
+
+/* =========================================================
+   RIGHT SCROLLBAR
+========================================================= */
+
+.register-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.register-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.register-container::-webkit-scrollbar-thumb {
+  background: #b7b3ad;
+
+  border-radius: 20px;
+}
+
+.register-container::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-soft);
+}
+
+/* =========================================================
+   REGISTER BOX
+========================================================= */
+
+.register-box {
+  width: 100%;
+  max-width: 880px;
+
+  margin: 0 auto;
+
+  padding: clamp(30px, 4vw, 55px);
+
+  background: var(--white);
+
+  border: 1px solid var(--border-light);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-md);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.register-header {
+  padding-bottom: 32px;
+
+  border-bottom: 1px solid var(--border-light);
+}
+
+.form-label {
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: var(--orange);
+
+  font-size: 0.67rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.14em;
+}
+
+.register-header h2 {
+  margin-bottom: 8px;
+
+  color: var(--navy);
+
+  font-size: clamp(1.7rem, 3vw, 2.25rem);
+
+  line-height: 1.15;
+
+  letter-spacing: -0.035em;
+}
+
+.register-header p {
+  color: var(--text-soft);
+
+  font-size: 0.87rem;
+}
+
+/* =========================================================
+   FORM SECTIONS
+========================================================= */
+
+.form-section {
+  padding: 38px 0;
+
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.section-title {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+
+  margin-bottom: 24px;
+}
+
+.section-number {
+  flex: 0 0 auto;
+
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--orange-light);
+
+  border-radius: 9px;
+
+  color: var(--orange);
+
+  background: #fff8f4;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+}
+
+.section-title h3 {
+  margin-bottom: 3px;
+
+  color: var(--navy);
+
+  font-size: 1rem;
+
+  font-weight: 750;
+}
+
+.section-title p {
+  color: var(--muted);
+
+  font-size: 0.76rem;
+}
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 21px 20px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+  min-width: 0;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--navy-soft);
+
+  font-size: 0.76rem;
+
+  font-weight: 700;
+}
+
+.form-group label span {
+  color: var(--orange);
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  outline: none;
+
+  color: var(--text);
+
+  background: #fcfbfa;
+
+  font-size: 0.84rem;
+}
+
+.form-group input,
+.form-group select {
+  height: 47px;
+
+  padding: 0 14px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+
+  padding: 12px 14px;
+
+  resize: vertical;
+
+  line-height: 1.55;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a2a7ad;
+}
+
+/* =========================================================
+   INPUT FOCUS
+========================================================= */
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--orange);
+
+  background: var(--white);
+
+  box-shadow: 0 0 0 3px rgba(217, 119, 69, 0.09);
+}
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  padding-right: 40px;
+
+  background-color: #fcfbfa;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #7d858e 50%),
+    linear-gradient(135deg, #7d858e 50%, transparent 50%);
+
+  background-position:
+    calc(100% - 17px) 20px,
+    calc(100% - 12px) 20px;
+
+  background-size:
+    5px 5px,
+    5px 5px;
+
+  background-repeat: no-repeat;
+}
+
+.form-group select:focus {
+  background-color: var(--white);
+}
+
+/* =========================================================
+   FIELD HINT
+========================================================= */
+
+.field-hint {
+  display: block;
+
+  margin-top: 6px;
+
+  color: var(--muted);
+
+  font-size: 0.68rem;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   ACCOUNT TYPES
+========================================================= */
+
+.account-types {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.account-option {
+  position: relative;
+
+  display: block;
+
+  cursor: pointer;
+}
+
+.account-option input {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  opacity: 0;
+}
+
+.account-option-content {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 13px;
+
+  min-height: 100px;
+
+  padding: 17px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  background: #fcfbfa;
+}
+
+.account-option:hover .account-option-content {
+  border-color: #cfc8c0;
+}
+
+.account-option input:focus-visible + .account-option-content {
+  outline: 3px solid rgba(217, 119, 69, 0.18);
+
+  outline-offset: 2px;
+}
+
+.account-option input:checked + .account-option-content {
+  border-color: var(--orange);
+
+  background: #fff9f6;
+
+  box-shadow: 0 0 0 3px rgba(217, 119, 69, 0.07);
+}
+
+.account-option-icon {
+  flex: 0 0 auto;
+
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 9px;
+
+  color: var(--navy);
+
+  background: #eeeae5;
+
+  font-size: 0.78rem;
+
+  font-weight: 800;
+}
+
+.account-option input:checked + .account-option-content .account-option-icon {
+  color: var(--white);
+
+  background: var(--orange);
+}
+
+.account-option strong {
+  display: block;
+
+  margin: 1px 0 4px;
+
+  color: var(--navy);
+
+  font-size: 0.82rem;
+}
+
+.account-option p {
+  color: var(--muted);
+
+  font-size: 0.71rem;
+
+  line-height: 1.55;
+}
+
+/* =========================================================
+   OTP
+========================================================= */
+
+.otp-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  gap: 9px;
+}
+
+.otp-button {
+  min-width: 105px;
+
+  min-height: 47px;
+
+  padding: 0 16px;
+
+  border: 1px solid var(--navy);
+
+  border-radius: 9px;
+
+  color: var(--white);
+
+  background: var(--navy);
+
+  font-size: 0.75rem;
+
+  font-weight: 700;
+}
+
+.otp-button:hover {
+  background: var(--navy-dark);
+}
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  top: 50%;
+  right: 6px;
+
+  width: 35px;
+  height: 35px;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  color: var(--muted);
+
+  background: transparent;
+
+  transform: translateY(-50%);
+}
+
+.password-toggle:hover {
+  color: var(--orange);
+
+  background: #fff1ea;
+}
+
+.eye-icon {
+  font-size: 0.8rem;
+}
+
+/* =========================================================
+   TERMS
+========================================================= */
+
+.terms {
+  padding: 27px 0 5px;
+}
+
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  cursor: pointer;
+
+  color: var(--text-soft);
+
+  font-size: 0.74rem;
+
+  line-height: 1.65;
+}
+
+.terms-label input {
+  flex: 0 0 auto;
+
+  width: 17px;
+  height: 17px;
+
+  margin-top: 2px;
+
+  accent-color: var(--orange);
+
+  cursor: pointer;
+}
+
+.terms-label a {
+  color: var(--orange);
+
+  font-weight: 700;
+}
+
+.terms-label a:hover {
+  color: var(--orange-dark);
+
+  text-decoration: underline;
+}
+
+/* =========================================================
+   SUBMIT
+========================================================= */
+
+.submit-area {
+  padding-top: 25px;
+
+  text-align: center;
+}
+
+.create-button {
+  width: 100%;
+
+  min-height: 52px;
+
+  border: 1px solid var(--orange);
+
+  border-radius: 10px;
+
+  color: var(--white);
+
+  background: var(--orange);
+
+  font-size: 0.84rem;
+
+  font-weight: 750;
+
+  box-shadow: 0 7px 18px rgba(217, 119, 69, 0.16);
+}
+
+.create-button:hover {
+  border-color: var(--orange-dark);
+
+  background: var(--orange-dark);
+}
+
+.submit-area p {
+  margin-top: 15px;
+
+  color: var(--muted);
+
+  font-size: 0.75rem;
+}
+
+.submit-area p a {
+  color: var(--orange);
+
+  font-weight: 750;
+}
+
+.submit-area p a:hover {
+  color: var(--orange-dark);
+
+  text-decoration: underline;
+}
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+  border-color: var(--danger);
+
+  box-shadow: 0 0 0 3px rgba(185, 74, 72, 0.07);
+}
+
+.form-group.success input,
+.form-group.success select,
+.form-group.success textarea {
+  border-color: var(--success);
+
+  box-shadow: 0 0 0 3px rgba(82, 115, 95, 0.07);
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(217, 119, 69, 0.25);
+
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .register-page {
+    grid-template-columns:
+      minmax(300px, 0.65fr)
+      minmax(550px, 1.35fr);
+  }
+
+  .register-intro {
+    padding: 50px 35px;
+  }
+
+  .brand {
+    margin-bottom: 50px;
+  }
+
+  .intro-heading h1 {
+    font-size: 2.65rem;
+  }
+
+  .register-container {
+    padding: 45px 25px 60px;
+  }
+}
+
+/* =========================================================
+   SMALL LAPTOP / TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+  body {
+    overflow: auto;
+  }
+
+  .register-page {
+    display: block;
+
+    height: auto;
+
+    overflow: visible;
+  }
+
+  .register-intro {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+
+    padding: 50px 35px;
+  }
+
+  .intro-content {
+    max-width: 760px;
+  }
+
+  .intro-heading h1 {
+    max-width: 650px;
+
+    font-size: 3rem;
+  }
+
+  .intro-heading p {
+    max-width: 650px;
+  }
+
+  .intro-points {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+  }
+
+  .register-container {
+    width: 100%;
+    height: auto;
+
+    padding: 35px 25px 60px;
+
+    overflow: visible;
+  }
+
+  .register-box {
+    max-width: 800px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+  .register-intro {
+    padding: 38px 22px 42px;
+  }
+
+  .brand {
+    margin-bottom: 38px;
+  }
+
+  .intro-heading h1 {
+    font-size: 2.3rem;
+  }
+
+  .intro-heading p {
+    font-size: 0.88rem;
+  }
+
+  .intro-points {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+
+    margin-top: 34px;
+  }
+
+  .intro-footer {
+    margin-top: 35px;
+  }
+
+  .register-container {
+    padding: 20px 12px 40px;
+  }
+
+  .register-box {
+    padding: 25px 18px;
+
+    border-radius: 15px;
+  }
+
+  .register-header {
+    padding-bottom: 27px;
+  }
+
+  .register-header h2 {
+    font-size: 1.7rem;
+  }
+
+  .form-section {
+    padding: 30px 0;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+
+    gap: 19px;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .account-types {
+    grid-template-columns: 1fr;
+  }
+
+  .account-option-content {
+    min-height: auto;
+  }
+
+  .otp-row {
+    grid-template-columns: 1fr;
+  }
+
+  .otp-button {
+    width: 100%;
+
+    min-height: 45px;
+  }
+
+  .terms-label {
+    font-size: 0.71rem;
+  }
+
+  .create-button {
+    min-height: 50px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .register-intro {
+    padding: 32px 18px 36px;
+  }
+
+  .intro-heading h1 {
+    font-size: 2rem;
+  }
+
+  .register-container {
+    padding: 15px 8px 30px;
+  }
+
+  .register-box {
+    padding: 22px 15px;
+
+    border-radius: 13px;
+  }
+
+  .section-title {
+    gap: 11px;
+  }
+
+  .section-number {
+    width: 34px;
+    height: 34px;
+  }
+
+  .section-title h3 {
+    font-size: 0.92rem;
+  }
+
+  .section-title p {
+    font-size: 0.72rem;
+  }
+
+  .account-option-content {
+    padding: 14px;
+  }
+}

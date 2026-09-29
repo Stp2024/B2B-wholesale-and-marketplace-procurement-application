@@ -1,0 +1,1528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Products | TradeNest B2B Wholesale & Procurement Marketplace</title>
+
+    <meta
+      name="description"
+      content="Discover high-quality wholesale products across multiple industrial and commercial categories on TradeNest. Connect directly with verified B2B suppliers, inspect trust scores, compare MOQs, and submit RFQs."
+    />
+
+    <link rel="stylesheet" href="../css/products.css" />
+    <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/shared-nav.js" defer></script>
+  </head>
+
+  <body>
+    <!-- ================================================== -->
+    <!-- HEADER & NAVBAR                                    -->
+    <!-- ================================================== -->
+
+    <header class="site-header">
+      <div class="header-container">
+        <div class="brand-container">
+          <a href="../index.html" class="brand-logo-link">
+            <span class="brand-name">TradeNest</span>
+          </a>
+
+          <span class="brand-tagline">
+            B2B Wholesale & Procurement Marketplace
+          </span>
+        </div>
+
+        <nav class="main-navigation" aria-label="Main Navigation">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a href="about.html" class="nav-link">About</a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                href="products.html"
+                class="nav-link active"
+                aria-current="page"
+              >
+                Products
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="suppliers.html" class="nav-link">Suppliers</a>
+            </li>
+
+            <li class="nav-item">
+              <a href="contact.html" class="nav-link">Contact</a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                href="discover-suppliers.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Discover
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                href="join-supplier-network.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Supplier Network
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-auth-actions">
+          <a
+            href="../auth/login.html"
+            class="btn btn-outline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Login
+          </a>
+
+          <a
+            href="../auth/register.html"
+            class="btn btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Register
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- ================================================== -->
+      <!-- PRODUCT HERO SECTION                               -->
+      <!-- ================================================== -->
+
+      <section class="product-hero-section">
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1 class="hero-title">Explore Wholesale Products</h1>
+
+            <p class="hero-description">
+              Discover products from businesses across multiple categories and
+              connect directly with suppliers for your procurement requirements.
+            </p>
+
+            <div class="hero-actions">
+              <a href="discover-suppliers.html" class="btn btn-primary">
+                Discover Suppliers
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-media">
+            <img
+              src="../images/product-hero.webp"
+              alt="TradeNest B2B wholesale product warehouse and procurement showcase"
+              class="hero-image"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- PRODUCT SEARCH & FILTER AREA                       -->
+      <!-- ================================================== -->
+
+      <section
+        class="product-search-filter-section"
+        aria-label="Product Search and Filter Controls"
+      >
+        <div class="filter-container">
+          <form class="search-filter-form" action="#" method="GET">
+            <!-- Search Bar -->
+
+            <div class="filter-group search-bar-group">
+              <label for="product-search-input" class="filter-label">
+                Search Keywords
+              </label>
+
+              <div class="search-input-wrapper">
+                <input
+                  type="search"
+                  id="product-search-input"
+                  name="query"
+                  class="form-input"
+                  placeholder="Search products..."
+                  aria-label="Search products"
+                />
+
+                <button type="submit" class="btn btn-search">Search</button>
+              </div>
+            </div>
+
+            <!-- Category & Location Filters -->
+
+            <div class="filter-row">
+              <div class="filter-group">
+                <label for="filter-category" class="filter-label">
+                  Category
+                </label>
+
+                <select
+                  id="filter-category"
+                  name="category"
+                  class="form-select"
+                >
+                  <option value="">All Categories</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="textiles-garments">Textiles & Garments</option>
+                  <option value="food-beverages">Food & Beverages</option>
+                  <option value="industrial-equipment">
+                    Industrial Equipment
+                  </option>
+                  <option value="packaging">Packaging</option>
+                  <option value="raw-materials">Raw Materials</option>
+                  <option value="office-supplies">Office Supplies</option>
+                  <option value="machinery">Machinery</option>
+                  <option value="chemicals">Chemicals</option>
+                  <option value="home-commercial">
+                    Home & Commercial Products
+                  </option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-location" class="filter-label">
+                  Supplier Location
+                </label>
+
+                <select
+                  id="filter-location"
+                  name="location"
+                  class="form-select"
+                >
+                  <option value="">All Locations</option>
+                  <option value="mumbai">Mumbai, Maharashtra</option>
+                  <option value="bengaluru">Bengaluru, Karnataka</option>
+                  <option value="delhi">Delhi NCR</option>
+                  <option value="ahmedabad">Ahmedabad, Gujarat</option>
+                  <option value="chennai">Chennai, Tamil Nadu</option>
+                  <option value="hyderabad">Hyderabad, Telangana</option>
+                  <option value="pune">Pune, Maharashtra</option>
+                </select>
+              </div>
+
+              <div class="filter-group price-range-group">
+                <label class="filter-label"> Price Range (INR) </label>
+
+                <div class="price-input-wrapper">
+                  <input
+                    type="number"
+                    id="filter-price-min"
+                    name="min_price"
+                    class="form-input"
+                    placeholder="Min Price"
+                    min="0"
+                    step="1"
+                  />
+
+                  <span class="price-separator">-</span>
+
+                  <input
+                    type="number"
+                    id="filter-price-max"
+                    name="max_price"
+                    class="form-input"
+                    placeholder="Max Price"
+                    min="0"
+                    step="1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Filters -->
+
+            <div class="filter-row secondary-filters">
+              <div class="filter-group">
+                <label for="filter-verification" class="filter-label">
+                  Supplier Verification
+                </label>
+
+                <select
+                  id="filter-verification"
+                  name="verification"
+                  class="form-select"
+                >
+                  <option value="">All Suppliers</option>
+                  <option value="verified-only">Verified Only</option>
+                  <option value="premium-certified">Premium Certified</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-trust-score" class="filter-label">
+                  Minimum Trust Score
+                </label>
+
+                <select
+                  id="filter-trust-score"
+                  name="trust_score"
+                  class="form-select"
+                >
+                  <option value="">Any Trust Score</option>
+                  <option value="90">90+ Excellent</option>
+                  <option value="80">80+ Very Good</option>
+                  <option value="70">70+ Good</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-availability" class="filter-label">
+                  Product Availability
+                </label>
+
+                <select
+                  id="filter-availability"
+                  name="availability"
+                  class="form-select"
+                >
+                  <option value="">All Availability</option>
+                  <option value="in-stock">In Stock</option>
+                  <option value="made-to-order">Made to Order</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-delivery-time" class="filter-label">
+                  Max Delivery Time
+                </label>
+
+                <select
+                  id="filter-delivery-time"
+                  name="delivery_time"
+                  class="form-select"
+                >
+                  <option value="">Any Lead Time</option>
+                  <option value="7">Within 7 Days</option>
+                  <option value="15">Within 15 Days</option>
+                  <option value="30">Within 30 Days</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-moq" class="filter-label">
+                  Max Minimum Order Quantity (MOQ)
+                </label>
+
+                <input
+                  type="number"
+                  id="filter-moq"
+                  name="max_moq"
+                  class="form-input"
+                  placeholder="e.g. 100"
+                  min="1"
+                />
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-rating" class="filter-label">
+                  Minimum Rating
+                </label>
+
+                <select
+                  id="filter-rating"
+                  name="min_rating"
+                  class="form-select"
+                >
+                  <option value="">Any Rating</option>
+                  <option value="4.5">4.5+ rating</option>
+                  <option value="4.0">4.0+ rating</option>
+                  <option value="3.5">3.5+ rating</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Filter Actions -->
+
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-primary">
+                Apply Filters
+              </button>
+
+              <button type="reset" class="btn btn-secondary">
+                Clear Filters
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- BROWSE PRODUCT CATEGORIES                          -->
+      <!-- ================================================== -->
+
+      <section class="categories-section" aria-labelledby="categories-heading">
+        <div class="section-container">
+          <div class="section-header">
+            <h2 id="categories-heading" class="section-title">
+              Browse Product Categories
+            </h2>
+
+            <p class="section-subtitle">
+              Select a category to filter wholesale inventory tailored for your
+              industry.
+            </p>
+          </div>
+
+          <div class="categories-grid">
+            <article class="category-card">
+              <h3 class="category-title">Electronics</h3>
+              <p class="category-description">
+                Industrial electronics, LED components, semiconductors, and
+                circuit boards.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Textiles & Garments</h3>
+              <p class="category-description">
+                Bulk cotton fabrics, synthetic yarns, commercial textiles, and
+                apparel.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Food & Beverages</h3>
+              <p class="category-description">
+                Bulk agricultural produce, processed ingredients, beverages, and
+                spices.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Industrial Equipment</h3>
+              <p class="category-description">
+                Heavy machinery parts, safety gears, valves, fittings, and
+                workshop tools.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Packaging</h3>
+              <p class="category-description">
+                Corrugated boxes, food-grade packaging containers, tapes, and
+                shipping bags.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Raw Materials</h3>
+              <p class="category-description">
+                Metal sheets, plastic granules, rubber compounds, and mineral
+                ores.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Office Supplies</h3>
+              <p class="category-description">
+                Commercial stationery, ergonomic furniture, paper goods, and IT
+                hardware.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Machinery</h3>
+              <p class="category-description">
+                Manufacturing equipment, CNC machines, conveyors, and processing
+                plants.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Chemicals</h3>
+              <p class="category-description">
+                Industrial solvents, specialty polymers, organic compounds, and
+                reagents.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+
+            <article class="category-card">
+              <h3 class="category-title">Home & Commercial Products</h3>
+              <p class="category-description">
+                Hospitality goods, commercial appliances, sanitation equipment,
+                and fixtures.
+              </p>
+              <a href="#" class="category-link"> View Products </a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- MAIN PRODUCT LISTING                               -->
+      <!-- ================================================== -->
+
+      <section
+        class="products-listing-section"
+        aria-labelledby="products-listing-heading"
+      >
+        <div class="section-container">
+          <div class="listing-header-bar">
+            <div class="listing-title-group">
+              <h2 id="products-listing-heading" class="section-title">
+                Wholesale Products
+              </h2>
+
+              <span class="sample-notice-badge">
+                (Sample catalogue representation for dynamic backend API
+                integration)
+              </span>
+            </div>
+
+            <div class="sort-control-group">
+              <label for="sort-products" class="sort-label"> Sort By: </label>
+
+              <select id="sort-products" name="sort" class="form-select-sm">
+                <option value="relevance">Relevance</option>
+                <option value="newest">Newest</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Rating</option>
+                <option value="trust-score">Trust Score</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="products-grid">
+            <!-- ================================================== -->
+            <!-- Product Card 1                                     -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-001">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/industrial-safety-gloves.webp"
+                  alt="Industrial Heavy Duty Safety Gloves"
+                  class="product-image"
+                />
+
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Industrial Supplies </span>
+
+                <h3 class="product-title">Industrial Safety Gloves</h3>
+
+                <p class="product-description">
+                  Heavy-duty heat and cut resistant protective gloves suitable
+                  for manufacturing assembly lines.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 180 <small>/ unit</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 500 units </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name">
+                    Apex Safety Solutions Pvt Ltd
+                  </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>92/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 5 out of 5 stars"
+                  >
+                    <small>5.0 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-001"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="suppliers.html" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- ================================================== -->
+            <!-- Product Card 2                                     -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-002">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/cotton-fabric-rolls.webp"
+                  alt="100 Percent Pure Organic Cotton Fabric Rolls"
+                  class="product-image"
+                />
+
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Textiles </span>
+
+                <h3 class="product-title">Cotton Fabric Rolls</h3>
+
+                <p class="product-description">
+                  Premium quality 100% combed organic cotton fabric rolls, ideal
+                  for garment manufacturing.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 145 <small>/ meter</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 1,000 meters </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> Vardhman Weaves & Tex </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>89/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 4 out of 5 stars"
+                  >
+                    <small>4.2 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-002"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="suppliers.html" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- ================================================== -->
+            <!-- Product Card 3                                     -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-003">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/corrugated-packaging-boxes.webp"
+                  alt="3 Ply Heavy Duty Corrugated Packaging Boxes"
+                  class="product-image"
+                />
+
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Packaging </span>
+
+                <h3 class="product-title">Corrugated Packaging Boxes</h3>
+
+                <p class="product-description">
+                  Heavy-duty 3-ply and 5-ply cardboard shipping boxes designed
+                  for high-impact cargo protection.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 28 <small>/ box</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 2,500 boxes </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> PacCraft Eco Containers </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>94/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 5 out of 5 stars"
+                  >
+                    <small>4.9 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-003"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="suppliers.html" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- ================================================== -->
+            <!-- Product Card 4                                     -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-004">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/led-industrial-lights.webp"
+                  alt="High-Bay LED Industrial Overhead Lighting Fixture"
+                  class="product-image"
+                />
+
+                <span class="badge badge-order"> Made to Order </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Electronics </span>
+
+                <h3 class="product-title">LED Industrial Lights</h3>
+
+                <p class="product-description">
+                  150W High-bay energy-efficient LED warehouse lighting fixture
+                  with IP65 weather rating.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 2,450 <small>/ unit</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 50 units </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name">
+                    Lumina Tech Electro Controls
+                  </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>91/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 4 out of 5 stars"
+                  >
+                    <small>4.4 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-004"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="suppliers.html" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- ================================================== -->
+            <!-- Product Card 5                                     -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-005">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/stainless-steel-components.webp"
+                  alt="Precision Machined Stainless Steel Fasteners and Components"
+                  class="product-image"
+                />
+
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Industrial Equipment </span>
+
+                <h3 class="product-title">Stainless Steel Components</h3>
+
+                <p class="product-description">
+                  Precision-machined Grade 316 stainless steel fittings, valves,
+                  and industrial fasteners.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 320 <small>/ unit</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 200 units </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> Metalex Engineering Ltd </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>93/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 5 out of 5 stars"
+                  >
+                    <small>4.8 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-005"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="suppliers.html" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- ================================================== -->
+            <!-- Product Card 6                                     -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-006">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/food-packaging-materials.webp"
+                  alt="Biodegradable Food Packaging Trays and Pouches"
+                  class="product-image"
+                />
+
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Packaging </span>
+
+                <h3 class="product-title">Food Packaging Materials</h3>
+
+                <p class="product-description">
+                  Food-grade compostable vacuum seal pouches and heat-sealable
+                  trays for commercial catering.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 450 <small>/ pack</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 100 packs </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> BioPack Green Solutions </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>88/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 4 out of 5 stars"
+                  >
+                    <small>4.1 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-006"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="suppliers.html" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- ================================================== -->
+          <!-- PAGINATION                                         -->
+          <!-- ================================================== -->
+
+          <nav class="pagination-container" aria-label="Products Pagination">
+            <ul class="pagination-list">
+              <li class="pagination-item disabled">
+                <a href="#" class="pagination-link" aria-disabled="true">
+                  Previous
+                </a>
+              </li>
+
+              <li class="pagination-item active">
+                <a href="#" class="pagination-link" aria-current="page"> 1 </a>
+              </li>
+
+              <li class="pagination-item">
+                <a href="#" class="pagination-link">2</a>
+              </li>
+
+              <li class="pagination-item">
+                <a href="#" class="pagination-link">3</a>
+              </li>
+
+              <li class="pagination-item">
+                <a href="#" class="pagination-link">4</a>
+              </li>
+
+              <li class="pagination-item">
+                <a href="#" class="pagination-link">5</a>
+              </li>
+
+              <li class="pagination-item">
+                <a href="#" class="pagination-link">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- FEATURED PRODUCTS                                  -->
+      <!-- ================================================== -->
+
+      <section
+        class="featured-products-section"
+        aria-labelledby="featured-heading"
+      >
+        <div class="section-container">
+          <div class="section-header">
+            <h2 id="featured-heading" class="section-title">
+              Featured Products
+            </h2>
+
+            <p class="section-subtitle">
+              Top-rated procurement items curated based on high demand and
+              supplier reliability.
+            </p>
+          </div>
+
+          <div class="products-grid featured-grid">
+            <!-- Featured Product Card 1 -->
+
+            <article
+              class="product-card featured-card"
+              data-product-id="product-007"
+            >
+              <div class="product-image-container">
+                <img
+                  src="../images/products/featured-cnc-milling-cutters.webp"
+                  alt="High Precision Carbide CNC Milling Cutters"
+                  class="product-image"
+                />
+
+                <span class="badge badge-featured"> Featured </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Machinery </span>
+
+                <h3 class="product-title">Carbide CNC Milling Cutters</h3>
+
+                <p class="product-description">
+                  High-precision tungsten carbide end mills designed for heavy
+                  alloy machining operations.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 1,150 <small>/ unit</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 25 units </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> Precision Tooling Works </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>96/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 5 out of 5 stars"
+                  >
+                    <small>5.0 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-007"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Featured Product Card 2 -->
+
+            <article
+              class="product-card featured-card"
+              data-product-id="product-008"
+            >
+              <div class="product-image-container">
+                <img
+                  src="../images/products/featured-biodegradable-polymers.webp"
+                  alt="Bio-Plastic Resin Granules Raw Material"
+                  class="product-image"
+                />
+
+                <span class="badge badge-featured"> Featured </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Chemicals </span>
+
+                <h3 class="product-title">Bio-Plastic Resin Granules</h3>
+
+                <p class="product-description">
+                  Eco-friendly biodegradable polymer raw material suitable for
+                  injection molding applications.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 210 <small>/ kg</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 500 kg </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> GreenChem Polymers Corp </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>95/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 5 out of 5 stars"
+                  >
+                    <small>4.9 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-008"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Featured Product Card 3 -->
+
+            <article
+              class="product-card featured-card"
+              data-product-id="product-009"
+            >
+              <div class="product-image-container">
+                <img
+                  src="../images/products/featured-office-ergonomic-chairs.webp"
+                  alt="Commercial Grade Ergonomic Mesh Office Chairs"
+                  class="product-image"
+                />
+
+                <span class="badge badge-featured"> Featured </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Office Supplies </span>
+
+                <h3 class="product-title">Commercial Ergonomic Chairs</h3>
+
+                <p class="product-description">
+                  High-back breathable mesh office chairs with lumbar support
+                  for corporate workspaces.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    INR 4,850 <small>/ unit</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 20 units </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> UrbanWork Office Systems </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>90/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 4 out of 5 stars"
+                  >
+                    <small>4.6 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-009"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- WHY SOURCE THROUGH TRADENEST                      -->
+      <!-- ================================================== -->
+
+      <section class="benefits-section" aria-labelledby="benefits-heading">
+        <div class="section-container">
+          <div class="section-header">
+            <h2 id="benefits-heading" class="section-title">
+              Why Source Through TradeNest
+            </h2>
+
+            <p class="section-subtitle">
+              Our wholesale platform provides structured data and transparent
+              metrics to streamline corporate procurement.
+            </p>
+          </div>
+
+          <div class="benefits-grid">
+            <article class="benefit-card">
+              <h3 class="benefit-title">Verified Business Information</h3>
+
+              <p class="benefit-description">
+                Every listed enterprise undergoes strict GSTIN, corporate
+                registration, and business document authentication.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">Supplier Trust Score</h3>
+
+              <p class="benefit-description">
+                Evaluate vendors confidently using data-backed scores compiled
+                from operational history and buyer feedback.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">Product Discovery</h3>
+
+              <p class="benefit-description">
+                Search through structured categories with granular filtering
+                options for price, location, and minimum quantities.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">Supplier Comparison</h3>
+
+              <p class="benefit-description">
+                Compare technical specifications, MOQs, lead times, and unit
+                pricing side-by-side prior to contracting.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">RFQ Support</h3>
+
+              <p class="benefit-description">
+                Submit customized Requests for Quotations to receive targeted
+                bids directly from capable manufacturers.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">Direct Business Communication</h3>
+
+              <p class="benefit-description">
+                Connect directly with wholesale sales representatives and
+                account managers without intermediary friction.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">Order Management</h3>
+
+              <p class="benefit-description">
+                Track procurement workflows from quote approval to invoice
+                clearance in a unified enterprise workspace.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <h3 class="benefit-title">Delivery Tracking</h3>
+
+              <p class="benefit-description">
+                Monitor bulk consignment dispatches, shipping milestones, and
+                delivery timelines with automated updates.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- REQUEST A QUOTE CTA                                -->
+      <!-- ================================================== -->
+
+      <section class="rfq-cta-section" aria-labelledby="rfq-cta-heading">
+        <div class="cta-container">
+          <div class="cta-content">
+            <h2 id="rfq-cta-heading" class="cta-title">
+              Can't Find the Product You Need?
+            </h2>
+
+            <p class="cta-text">
+              Submit your requirement and connect with suppliers who may be able
+              to fulfil it.
+            </p>
+
+            <a href="#" class="btn btn-light"> Request a Quote </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================== -->
+      <!-- SUPPLIER CTA                                       -->
+      <!-- ================================================== -->
+
+      <section
+        class="supplier-cta-section"
+        aria-labelledby="supplier-cta-heading"
+      >
+        <div class="cta-container">
+          <div class="cta-content">
+            <h2 id="supplier-cta-heading" class="cta-title">
+              Have Products to Supply?
+            </h2>
+
+            <p class="cta-text">
+              Showcase your products and connect with businesses looking for
+              wholesale suppliers.
+            </p>
+
+            <a href="join-supplier-network.html" class="btn btn-primary">
+              Join Our Supplier Network
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================================================== -->
+    <!-- FOOTER                                             -->
+    <!-- ================================================== -->
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-top-grid">
+          <!-- Brand Info Column -->
+
+          <div class="footer-column brand-column">
+            <span class="footer-brand-name"> TradeNest </span>
+
+            <p class="footer-brand-tagline">
+              B2B Wholesale & Procurement Marketplace
+            </p>
+
+            <p class="footer-company-info">
+              Connecting verified enterprise buyers with dependable
+              manufacturers and wholesale distributors across India.
+            </p>
+          </div>
+
+          <!-- Quick Links Column -->
+
+          <div class="footer-column">
+            <h3 class="footer-heading">Quick Links</h3>
+
+            <ul class="footer-links-list">
+              <li>
+                <a href="../index.html">Home</a>
+              </li>
+
+              <li>
+                <a href="about.html">About</a>
+              </li>
+
+              <li>
+                <a href="products.html">Products</a>
+              </li>
+
+              <li>
+                <a href="suppliers.html">Suppliers</a>
+              </li>
+
+              <li>
+                <a href="contact.html">Contact</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- For Buyers Column -->
+
+          <div class="footer-column">
+            <h3 class="footer-heading">For Buyers</h3>
+
+            <ul class="footer-links-list">
+              <li>
+                <a href="discover-suppliers.html"> Discover Suppliers </a>
+              </li>
+
+              <li>
+                <a href="#">Request a Quote</a>
+              </li>
+
+              <li>
+                <a href="#">Compare Suppliers</a>
+              </li>
+
+              <li>
+                <a href="#">Request a Sample</a>
+              </li>
+
+              <li>
+                <a href="#">Track Orders</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- For Suppliers Column -->
+
+          <div class="footer-column">
+            <h3 class="footer-heading">For Suppliers</h3>
+
+            <ul class="footer-links-list">
+              <li>
+                <a href="join-supplier-network.html">
+                  Join Our Supplier Network
+                </a>
+              </li>
+
+              <li>
+                <a href="#">List Products</a>
+              </li>
+
+              <li>
+                <a href="#">Manage Quotes</a>
+              </li>
+
+              <li>
+                <a href="#">Supplier Collaboration</a>
+              </li>
+
+              <li>
+                <a href="#">Manage Orders</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Account Column -->
+
+          <div class="footer-column">
+            <h3 class="footer-heading">Account</h3>
+
+            <ul class="footer-links-list">
+              <li>
+                <a
+                  href="../auth/login.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Login
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="../auth/register.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Register
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-middle-bar">
+          <div class="contact-info-placeholder">
+            <span> Email: support@tradenest.com </span>
+
+            <span>|</span>
+
+            <span> Phone: +91 (022) 5550-0199 </span>
+
+            <span>|</span>
+
+            <span> Headquarters: Mumbai, Maharashtra, India </span>
+          </div>
+
+          <div class="social-links-placeholder">
+            <a href="#" aria-label="TradeNest LinkedIn Profile"> LinkedIn </a>
+
+            <a href="#" aria-label="TradeNest Twitter/X Profile"> Twitter </a>
+
+            <a href="#" aria-label="TradeNest Facebook Profile"> Facebook </a>
+          </div>
+        </div>
+
+        <div class="footer-bottom-bar">
+          <p class="copyright-text">
+            &copy; 2026 TradeNest. All rights reserved.
+          </p>
+
+          <div class="legal-links">
+            <a href="#"> Privacy Policy </a>
+
+            <span class="legal-separator"> | </span>
+
+            <a href="#"> Terms &amp; Conditions </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- External JavaScript File Link -->
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>

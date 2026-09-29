@@ -1,0 +1,741 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="View supplier information, business details, products, trust score, ratings and procurement information on TradeNest."
+    />
+
+    <title>Supplier Details | TradeNest</title>
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Supplier Details CSS -->
+    <link rel="stylesheet" href="../css/supplier-details.css" />
+    <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/shared-nav.js" defer></script>
+  </head>
+
+  <body>
+    <!-- ==========================================
+         HEADER / NAVIGATION
+         ========================================== -->
+
+    <header class="site-header">
+      <div class="header-container">
+        <div class="brand-container">
+          <a href="../index.html" class="brand-logo-link">
+            <span class="brand-name">TradeNest</span>
+          </a>
+
+          <span class="brand-tagline">
+            B2B Wholesale &amp; Procurement Marketplace
+          </span>
+        </div>
+
+        <nav class="main-navigation" aria-label="Main Navigation">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a href="about.html" class="nav-link">About</a>
+            </li>
+
+            <li class="nav-item">
+              <a href="products.html" class="nav-link">Products</a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                href="suppliers.html"
+                class="nav-link active"
+                aria-current="page"
+              >
+                Suppliers
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="contact.html" class="nav-link">Contact</a>
+            </li>
+
+            <li class="nav-item">
+              <a href="discover-suppliers.html" class="nav-link"> Discover </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="join-supplier-network.html" class="nav-link">
+                Supplier Network
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="auth-navigation">
+          <a
+            href="../auth/login.html"
+            class="btn btn-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Login
+          </a>
+
+          <a
+            href="../auth/register.html"
+            class="btn btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Register
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- ==========================================
+           BREADCRUMB
+           ========================================== -->
+
+      <section class="breadcrumb-section">
+        <div class="container">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>/</span>
+            <a href="suppliers.html">Suppliers</a>
+            <span>/</span>
+            <span aria-current="page">Example Manufacturing Co.</span>
+          </nav>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SUPPLIER HERO / PROFILE HEADER
+           ========================================== -->
+
+      <section class="supplier-details-hero">
+        <div class="container">
+          <div class="supplier-profile-header">
+            <div class="supplier-logo-section">
+              <div class="supplier-logo-wrapper">
+                <img
+                  src="../images/suppliers/supplier-placeholder.webp"
+                  alt="Example Manufacturing Co. Logo"
+                  class="supplier-logo"
+                />
+              </div>
+            </div>
+
+            <div class="supplier-header-content">
+              <div class="supplier-title-row">
+                <div>
+                  <span class="supplier-category"> Industrial Equipment </span>
+
+                  <h1>Example Manufacturing Co.</h1>
+
+                  <p class="supplier-location">Bengaluru, Karnataka</p>
+                </div>
+
+                <span class="badge badge-verified"> Business Verified </span>
+              </div>
+
+              <p class="supplier-introduction">
+                Manufacturer and exporter of high-precision industrial
+                components, specialized machinery parts, and custom mechanical
+                assemblies.
+              </p>
+
+              <div class="supplier-actions">
+                <a
+                  href="../auth/register.html"
+                  class="btn btn-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Contact Supplier
+                </a>
+
+                <a
+                  href="../auth/register.html"
+                  class="btn btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Request a Quote
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SUPPLIER OVERVIEW
+           ========================================== -->
+
+      <section class="supplier-overview-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Supplier Overview</h2>
+
+            <p>
+              Review the key business and performance information available for
+              this supplier.
+            </p>
+          </div>
+
+          <div class="supplier-overview-grid">
+            <article class="overview-card">
+              <span class="overview-label">Trust Score</span>
+
+              <strong class="overview-value">92/100</strong>
+
+              <p>Based on available business and performance information.</p>
+            </article>
+
+            <article class="overview-card">
+              <span class="overview-label">Rating</span>
+
+              <strong class="overview-value">4.7 / 5</strong>
+
+              <p>Based on available buyer ratings and feedback.</p>
+            </article>
+
+            <article class="overview-card">
+              <span class="overview-label">Products Listed</span>
+
+              <strong class="overview-value">120+</strong>
+
+              <p>
+                Products and industrial components available in the catalog.
+              </p>
+            </article>
+
+            <article class="overview-card">
+              <span class="overview-label">Response Time</span>
+
+              <strong class="overview-value">24 Hours</strong>
+
+              <p>Typical supplier response timeframe.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           BUSINESS INFORMATION
+           ========================================== -->
+
+      <section class="business-information-section">
+        <div class="container">
+          <div class="two-column-layout">
+            <div class="information-content">
+              <span class="section-eyebrow">Business Profile</span>
+
+              <h2>About the Supplier</h2>
+
+              <p>
+                Example Manufacturing Co. is presented on TradeNest as an
+                industrial equipment supplier serving business buyers looking
+                for specialized components and manufacturing solutions.
+              </p>
+
+              <p>
+                The supplier profile provides buyers with information about its
+                industry, location, product categories, business verification
+                status and performance indicators.
+              </p>
+            </div>
+
+            <div class="information-card">
+              <h3>Business Information</h3>
+
+              <dl class="information-list">
+                <div class="information-item">
+                  <dt>Business Name</dt>
+                  <dd>Example Manufacturing Co.</dd>
+                </div>
+
+                <div class="information-item">
+                  <dt>Industry</dt>
+                  <dd>Industrial Equipment</dd>
+                </div>
+
+                <div class="information-item">
+                  <dt>Location</dt>
+                  <dd>Bengaluru, Karnataka</dd>
+                </div>
+
+                <div class="information-item">
+                  <dt>Verification</dt>
+                  <dd>Business Verified</dd>
+                </div>
+
+                <div class="information-item">
+                  <dt>Products Listed</dt>
+                  <dd>120+</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           PERFORMANCE INFORMATION
+           ========================================== -->
+
+      <section class="performance-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Supplier Performance</h2>
+
+            <p>
+              Key indicators available to help buyers understand supplier
+              performance.
+            </p>
+          </div>
+
+          <div class="performance-grid">
+            <article class="performance-card">
+              <div class="performance-icon">01</div>
+
+              <h3>Trust Score</h3>
+
+              <strong>92/100</strong>
+
+              <p>
+                An informational indicator calculated using available historical
+                business and performance data.
+              </p>
+            </article>
+
+            <article class="performance-card">
+              <div class="performance-icon">02</div>
+
+              <h3>Buyer Rating</h3>
+
+              <strong>4.7 / 5</strong>
+
+              <p>
+                Represents the available supplier rating based on buyer
+                feedback.
+              </p>
+            </article>
+
+            <article class="performance-card">
+              <div class="performance-icon">03</div>
+
+              <h3>Response Time</h3>
+
+              <strong>Within 24 Hours</strong>
+
+              <p>
+                Indicates the typical timeframe for responding to business
+                inquiries.
+              </p>
+            </article>
+
+            <article class="performance-card">
+              <div class="performance-icon">04</div>
+
+              <h3>Business Verification</h3>
+
+              <strong>Verified</strong>
+
+              <p>
+                Indicates that the supplier has completed the applicable
+                business verification process.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           PRODUCT CATALOG
+           ========================================== -->
+
+      <section class="supplier-products-section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-eyebrow">Supplier Catalog</span>
+
+            <h2>Products from This Supplier</h2>
+
+            <p>
+              Explore the types of products and components offered by this
+              supplier.
+            </p>
+          </div>
+
+          <div class="supplier-product-grid">
+            <!-- PRODUCT 1 -->
+            <article class="supplier-product-card">
+              <div class="product-image-wrapper">
+                <img
+                  src="../images/products/stainless-steel-components.webp"
+                  alt="Stainless Steel Components"
+                />
+              </div>
+
+              <div class="product-card-content">
+                <span class="product-category"> Industrial Equipment </span>
+
+                <h3>Stainless Steel Components</h3>
+
+                <p>
+                  Precision industrial components suitable for commercial and
+                  manufacturing requirements.
+                </p>
+
+                <a
+                  href="product-details.html?id=product-005"
+                  class="btn btn-secondary"
+                >
+                  View Product
+                </a>
+              </div>
+            </article>
+
+            <!-- PRODUCT 2 -->
+            <article class="supplier-product-card">
+              <div class="product-image-wrapper">
+                <img
+                  src="../images/products/industrial-safety-gloves.webp"
+                  alt="Industrial Safety Gloves"
+                />
+              </div>
+
+              <div class="product-card-content">
+                <span class="product-category"> Industrial Supplies </span>
+
+                <h3>Industrial Safety Gloves</h3>
+
+                <p>
+                  Heavy-duty protective gloves designed for industrial working
+                  environments.
+                </p>
+
+                <a
+                  href="product-details.html?id=product-001"
+                  class="btn btn-secondary"
+                >
+                  View Product
+                </a>
+              </div>
+            </article>
+
+            <!-- PRODUCT 3 -->
+            <article class="supplier-product-card">
+              <div class="product-image-wrapper">
+                <img
+                  src="../images/products/led-industrial-lights.webp"
+                  alt="LED Industrial Lights"
+                />
+              </div>
+
+              <div class="product-card-content">
+                <span class="product-category"> Electronics </span>
+
+                <h3>LED Industrial Lights</h3>
+
+                <p>
+                  Industrial lighting solutions designed for commercial and
+                  workplace applications.
+                </p>
+
+                <a
+                  href="product-details.html?id=product-004"
+                  class="btn btn-secondary"
+                >
+                  View Product
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <div class="section-action">
+            <a href="products.html" class="btn btn-primary">
+              View All Products
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TRUST SCORE INFORMATION
+           ========================================== -->
+
+      <section class="trust-score-details-section">
+        <div class="container">
+          <div class="trust-score-content">
+            <div>
+              <span class="section-eyebrow"> TradeNest Indicator </span>
+
+              <h2>Understanding the Trust Score</h2>
+
+              <p>
+                The TradeNest Trust Score is an informational indicator designed
+                to help buyers review supplier reliability using available
+                business and performance information.
+              </p>
+
+              <p class="trust-score-note">
+                <em>
+                  The Trust Score does not guarantee supplier performance or a
+                  particular business outcome.
+                </em>
+              </p>
+            </div>
+
+            <div class="trust-factors-grid">
+              <div class="trust-factor">
+                <h3>On-Time Delivery</h3>
+
+                <p>Historical fulfillment and shipment performance.</p>
+              </div>
+
+              <div class="trust-factor">
+                <h3>Completed Orders</h3>
+
+                <p>Information about successfully completed transactions.</p>
+              </div>
+
+              <div class="trust-factor">
+                <h3>Customer Feedback</h3>
+
+                <p>Available ratings and verified buyer evaluations.</p>
+              </div>
+
+              <div class="trust-factor">
+                <h3>Response Time</h3>
+
+                <p>Historical responsiveness to inquiries and requests.</p>
+              </div>
+
+              <div class="trust-factor">
+                <h3>Business Verification</h3>
+
+                <p>
+                  Verification of applicable business information and
+                  documentation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           PROCUREMENT CTA
+           ========================================== -->
+
+      <section class="supplier-cta-section">
+        <div class="container">
+          <div class="cta-banner-box">
+            <span class="section-eyebrow"> Interested in This Supplier? </span>
+
+            <h2>Connect Through TradeNest</h2>
+
+            <p>
+              Register as a business buyer to access supplier communication and
+              procurement features.
+            </p>
+
+            <div class="cta-actions">
+              <a
+                href="../auth/register.html"
+                class="btn btn-primary btn-large"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Register as a Buyer
+              </a>
+
+              <a href="suppliers.html" class="btn btn-secondary btn-large">
+                Back to Suppliers
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==========================================
+         FOOTER
+         ========================================== -->
+
+    <footer class="site-footer">
+      <div class="container footer-container">
+        <div class="footer-column footer-about">
+          <span class="footer-brand">TradeNest</span>
+
+          <p class="footer-tagline">
+            B2B Wholesale &amp; Procurement Marketplace
+          </p>
+
+          <p class="footer-description">
+            Connecting business buyers with verified wholesale suppliers across
+            India.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-heading">Quick Links</h3>
+
+          <ul class="footer-links">
+            <li>
+              <a href="../index.html">Home</a>
+            </li>
+
+            <li>
+              <a href="about.html">About</a>
+            </li>
+
+            <li>
+              <a href="products.html">Products</a>
+            </li>
+
+            <li>
+              <a href="suppliers.html">Suppliers</a>
+            </li>
+
+            <li>
+              <a href="contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-heading">For Buyers</h3>
+
+          <ul class="footer-links">
+            <li>
+              <a href="discover-suppliers.html"> Discover Suppliers </a>
+            </li>
+
+            <li>
+              <a
+                href="../auth/register.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Request a Quote
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="../auth/register.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Compare Suppliers
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-heading">For Suppliers</h3>
+
+          <ul class="footer-links">
+            <li>
+              <a href="join-supplier-network.html">
+                Join Our Supplier Network
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="../auth/register.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                List Products
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="../auth/register.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Manage Quotes
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-heading">Account</h3>
+
+          <ul class="footer-links">
+            <li>
+              <a
+                href="../auth/login.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Login
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="../auth/register.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Register
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container footer-bottom-container">
+          <p class="copyright-text">
+            &copy; 2026 TradeNest. All rights reserved.
+          </p>
+
+          <ul class="legal-links">
+            <li>
+              <a href="#">Privacy Policy</a>
+            </li>
+
+            <li>
+              <a href="#">Terms &amp; Conditions</a>
+            </li>
+
+            <li>
+              <a href="contact.html">Contact Support</a>
+            </li>
+          </ul>
+
+          <div class="social-links">
+            <a href="#" aria-label="LinkedIn">LinkedIn</a>
+            <a href="#" aria-label="Twitter">Twitter</a>
+            <a href="#" aria-label="Facebook">Facebook</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/script.js"></script>
+  </body>
+</html>

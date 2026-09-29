@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supplier Dashboard - TradeNest B2B Marketplace</title>
+    <link rel="stylesheet" href="../../css/supplier/dashboard.css" />
+    <link rel="stylesheet" href="../../css/shared.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- SIDEBAR NAVIGATION -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <a href="../../index.html" class="brand-logo">
+            <div class="brand-text">
+              <img src="../../images/TradeNest.webp" alt="TradeNest" class="dashboard-brand-image" />
+              <span class="brand-subtitle">Supplier Workspace</span>
+            </div>
+          </a>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main Navigation">
+          <div class="nav-section">
+            <span class="nav-section-title">Main Menu</span>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a
+                  href="dashboard.html"
+                  class="nav-link active"
+                  aria-current="page"
+                >
+                  <span class="nav-icon" aria-hidden="true">📊</span>
+                  <span class="nav-label">Dashboard</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="products.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">📦</span>
+                  <span class="nav-label">My Products</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="orders.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">🛒</span>
+                  <span class="nav-label">Orders</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="quote-requests.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">📝</span>
+                  <span class="nav-label">Quote Requests</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="supplier-offers.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">🏷️</span>
+                  <span class="nav-label">Supplier Offers</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="customers.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">👥</span>
+                  <span class="nav-label">Customers</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="nav-section">
+            <span class="nav-section-title">Business Management</span>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="sales-analytics.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">📈</span>
+                  <span class="nav-label">Sales &amp; Analytics</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="delivery-tracking.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">🚚</span>
+                  <span class="nav-label">Delivery Tracking</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="messages.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">💬</span>
+                  <span class="nav-label">Messages</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="reviews.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">⭐</span>
+                  <span class="nav-label">Reviews</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="nav-section">
+            <span class="nav-section-title">Account</span>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="profile.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">👤</span>
+                  <span class="nav-label">Profile</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="settings.html" class="nav-link">
+                  <span class="nav-icon" aria-hidden="true">⚙️</span>
+                  <span class="nav-label">Settings</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="../../index.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">🌐</span>
+            <span class="nav-label">Back to Website</span>
+          </a>
+          <button
+            type="button"
+            class="logout-link-btn"
+            id="sidebarLogoutButton"
+          >
+            <span class="nav-icon" aria-hidden="true">🚪</span>
+            <span class="nav-label">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN WRAPPER -->
+      <div class="main-wrapper">
+        <!-- TOP NAVBAR -->
+        <header class="top-navbar">
+          <div class="navbar-left">
+            <button
+              type="button"
+              class="mobile-menu-toggle"
+              id="menuToggle"
+              aria-label="Toggle navigation menu"
+            >
+              ☰
+            </button>
+            <div class="page-title-group">
+              <h1 class="page-title">Dashboard</h1>
+              <span class="workspace-badge">SUPPLIER WORKSPACE</span>
+            </div>
+          </div>
+
+          <div class="navbar-right">
+            <div class="navbar-search">
+              <input
+                type="search"
+                id="navbarSearch"
+                placeholder="Search products, orders, buyers..."
+                aria-label="Search dashboard"
+              />
+            </div>
+
+            <button
+              type="button"
+              class="notification-button"
+              id="notificationButton"
+              aria-label="View notifications"
+            >
+              🛒
+              <span class="notification-badge">4</span>
+            </button>
+
+            <div class="profile-menu" id="profileMenu">
+              <button
+                type="button"
+                class="profile-button"
+                id="profileButton"
+                aria-label="Open profile menu"
+                aria-expanded="false"
+                aria-controls="profileDropdown"
+              >
+                <span class="profile-avatar" id="profileAvatar">S</span>
+                <span class="profile-name" id="profileName">Supplier Name</span>
+                <span class="profile-arrow" aria-hidden="true">▼</span>
+              </button>
+
+              <div class="profile-dropdown" id="profileDropdown" hidden>
+                <div class="dropdown-header">
+                  <span class="profile-avatar" id="dropdownAvatar">S</span>
+                  <div class="dropdown-user-info">
+                    <span class="dropdown-name" id="dropdownName"
+                      >Supplier Name</span
+                    >
+                    <span class="dropdown-email" id="dropdownEmail"
+                      >supplier@example.com</span
+                    >
+                    <span class="dropdown-role">Supplier Account</span>
+                  </div>
+                </div>
+
+                <div class="dropdown-body">
+                  <div class="profile-detail-item">
+                    <span class="detail-label">Full Name</span>
+                    <span class="detail-value" id="profileFullName"
+                      >Supplier Name</span
+                    >
+                  </div>
+                  <div class="profile-detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value" id="profileEmail"
+                      >supplier@example.com</span
+                    >
+                  </div>
+                  <div class="profile-detail-item">
+                    <span class="detail-label">Phone</span>
+                    <span class="detail-value" id="profilePhone"
+                      >+91 98765 43210</span
+                    >
+                  </div>
+                  <div class="profile-detail-item">
+                    <span class="detail-label">Company</span>
+                    <span class="detail-value" id="profileCompany"
+                      >TradeNest Supplies Pvt. Ltd.</span
+                    >
+                  </div>
+                  <div class="profile-detail-item">
+                    <span class="detail-label">Business Type</span>
+                    <span class="detail-value" id="profileBusinessType"
+                      >Manufacturer &amp; Wholesale Supplier</span
+                    >
+                  </div>
+                  <div class="profile-detail-item">
+                    <span class="detail-label">Location</span>
+                    <span class="detail-value" id="profileLocation"
+                      >Bengaluru, Karnataka, India</span
+                    >
+                  </div>
+                </div>
+
+                <div class="dropdown-actions">
+                  <button
+                    type="button"
+                    class="edit-profile-button"
+                    id="editProfileButton"
+                  >
+                    ✏️ Edit Profile
+                  </button>
+                  <a
+                    href="profile.html"
+                    class="dropdown-link"
+                    id="dropdownEditProfile"
+                    >Profile Details</a
+                  >
+                  <a href="settings.html" class="dropdown-link">Settings</a>
+                  <button
+                    type="button"
+                    class="dropdown-logout-btn"
+                    id="dropdownLogout"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+          <!-- WELCOME SECTION -->
+          <section class="welcome-section" aria-labelledby="welcomeTitle">
+            <div class="welcome-text">
+              <span class="welcome-subtitle">WELCOME BACK</span>
+              <h2 class="welcome-title" id="welcomeTitle">
+                Hello, <span id="welcomeUserName">Supplier</span>!
+              </h2>
+              <p class="welcome-description">
+                Manage your products, respond to buyer requests, process orders
+                and grow your business through your TradeNest supplier
+                workspace.
+              </p>
+            </div>
+            <div class="welcome-actions">
+              <a href="products.html" class="btn btn-primary"
+                >➕ Add New Product</a
+              >
+              <a href="quote-requests.html" class="btn btn-secondary"
+                >📝 View Quote Requests</a
+              >
+            </div>
+          </section>
+
+          <!-- STATISTICS GRID -->
+          <section
+            class="stats-grid"
+            aria-label="Supplier Dashboard Key Statistics"
+          >
+            <article class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Total Products</span>
+                <span class="stat-icon" aria-hidden="true">📦</span>
+              </div>
+              <div class="stat-value" id="totalProducts">48</div>
+              <div class="stat-trend trend-up">
+                <span>↑ +8% from last month</span>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Pending Orders</span>
+                <span class="stat-icon" aria-hidden="true">🛒</span>
+              </div>
+              <div class="stat-value" id="pendingOrders">12</div>
+              <div class="stat-trend trend-neutral">
+                <span>• 5 require action</span>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Quote Requests</span>
+                <span class="stat-icon" aria-hidden="true">📝</span>
+              </div>
+              <div class="stat-value" id="quoteRequests">18</div>
+              <div class="stat-trend trend-neutral">
+                <span>• 7 new requests</span>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Total Sales</span>
+                <span class="stat-icon" aria-hidden="true">💰</span>
+              </div>
+              <div class="stat-value" id="totalSales">$24,850</div>
+              <div class="stat-trend trend-up">
+                <span>↑ +14% this month</span>
+              </div>
+            </article>
+          </section>
+
+          <!-- QUICK ACTIONS -->
+          <section
+            class="quick-actions-section"
+            aria-labelledby="quickActionsHeading"
+          >
+            <h2 class="section-title" id="quickActionsHeading">
+              Quick Actions
+            </h2>
+            <div class="quick-actions-grid">
+              <a href="products.html" class="quick-action-card">
+                <span class="action-icon" aria-hidden="true">➕</span>
+                <h3 class="action-title">Add New Product</h3>
+                <p class="action-description">
+                  List a new product in the marketplace
+                </p>
+              </a>
+
+              <a href="orders.html" class="quick-action-card">
+                <span class="action-icon" aria-hidden="true">📦</span>
+                <h3 class="action-title">Manage Orders</h3>
+                <p class="action-description">
+                  Review and process buyer orders
+                </p>
+              </a>
+
+              <a href="quote-requests.html" class="quick-action-card">
+                <span class="action-icon" aria-hidden="true">📝</span>
+                <h3 class="action-title">Quote Requests</h3>
+                <p class="action-description">
+                  Respond to buyer procurement requests
+                </p>
+              </a>
+
+              <a href="messages.html" class="quick-action-card">
+                <span class="action-icon" aria-hidden="true">💬</span>
+                <h3 class="action-title">Messages</h3>
+                <p class="action-description">Communicate with buyers</p>
+              </a>
+            </div>
+          </section>
+
+          <!-- DASHBOARD DUAL GRID: RECENT ORDERS & RECENT QUOTE REQUESTS -->
+          <div class="dashboard-dual-grid">
+            <!-- RECENT ORDERS -->
+            <section
+              class="dashboard-card"
+              aria-labelledby="recentOrdersHeading"
+            >
+              <div class="card-header">
+                <h2 class="card-title" id="recentOrdersHeading">
+                  Recent Orders
+                </h2>
+                <a href="orders.html" class="card-action-link"
+                  >View All Orders →</a
+                >
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Order ID</th>
+                      <th scope="col">Buyer</th>
+                      <th scope="col">Product</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <a href="orders.html" class="table-link">#ORD-98231</a>
+                      </td>
+                      <td>Metro Retail Solutions</td>
+                      <td>Industrial Safety Gloves</td>
+                      <td>$2,450.00</td>
+                      <td>
+                        <span class="status-badge processing">Processing</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a href="orders.html" class="table-link">#ORD-98190</a>
+                      </td>
+                      <td>OfficeHub Enterprises</td>
+                      <td>A4 Copy Paper Premium</td>
+                      <td>$890.00</td>
+                      <td><span class="status-badge shipped">Shipped</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a href="orders.html" class="table-link">#ORD-97845</a>
+                      </td>
+                      <td>BrightBuild Industries</td>
+                      <td>Commercial LED Panel Lights</td>
+                      <td>$1,600.00</td>
+                      <td>
+                        <span class="status-badge delivered">Delivered</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a href="orders.html" class="table-link">#ORD-97612</a>
+                      </td>
+                      <td>PackLine Distributors</td>
+                      <td>Heavy Corrugated Boxes</td>
+                      <td>$3,100.00</td>
+                      <td><span class="status-badge pending">Pending</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- RECENT QUOTE REQUESTS -->
+            <section
+              class="dashboard-card"
+              aria-labelledby="recentQuotesHeading"
+            >
+              <div class="card-header">
+                <h2 class="card-title" id="recentQuotesHeading">
+                  Recent Quote Requests
+                </h2>
+                <a href="quote-requests.html" class="card-action-link"
+                  >View All Requests →</a
+                >
+              </div>
+              <div class="quotes-list">
+                <article class="quote-item">
+                  <div class="quote-info">
+                    <h3 class="quote-product-name">Industrial Safety Gloves</h3>
+                    <p class="quote-meta">
+                      <span class="quote-buyer"
+                        >Buyer: Metro Retail Solutions</span
+                      >
+                      |
+                      <span class="quote-qty">Quantity: 500 Pairs</span>
+                    </p>
+                    <p class="quote-budget">
+                      Requested Budget: <strong>$2,500</strong>
+                    </p>
+                  </div>
+                  <div class="quote-status-wrapper">
+                    <span class="status-badge new-request">New Request</span>
+                    <a href="quote-requests.html" class="btn btn-sm btn-outline"
+                      >Respond</a
+                    >
+                  </div>
+                </article>
+
+                <article class="quote-item">
+                  <div class="quote-info">
+                    <h3 class="quote-product-name">
+                      Commercial LED Panel Lights
+                    </h3>
+                    <p class="quote-meta">
+                      <span class="quote-buyer"
+                        >Buyer: BrightBuild Industries</span
+                      >
+                      |
+                      <span class="quote-qty">Quantity: 100 Units</span>
+                    </p>
+                    <p class="quote-budget">
+                      Requested Budget: <strong>$1,700</strong>
+                    </p>
+                  </div>
+                  <div class="quote-status-wrapper">
+                    <span class="status-badge under-review">Under Review</span>
+                    <a href="quote-requests.html" class="btn btn-sm btn-outline"
+                      >View Details</a
+                    >
+                  </div>
+                </article>
+
+                <article class="quote-item">
+                  <div class="quote-info">
+                    <h3 class="quote-product-name">Heavy Corrugated Boxes</h3>
+                    <p class="quote-meta">
+                      <span class="quote-buyer"
+                        >Buyer: PackLine Distributors</span
+                      >
+                      |
+                      <span class="quote-qty">Quantity: 1,000 Boxes</span>
+                    </p>
+                    <p class="quote-budget">
+                      Requested Budget: <strong>$3,000</strong>
+                    </p>
+                  </div>
+                  <div class="quote-status-wrapper">
+                    <span class="status-badge response-sent"
+                      >Response Sent</span
+                    >
+                    <a href="quote-requests.html" class="btn btn-sm btn-outline"
+                      >View Offer</a
+                    >
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <!-- MY PRODUCTS SECTION -->
+          <section
+            class="dashboard-section"
+            aria-labelledby="myProductsHeading"
+          >
+            <div class="section-header">
+              <h2 class="section-title" id="myProductsHeading">
+                Your Products
+              </h2>
+              <a href="products.html" class="section-action-link"
+                >View All Products →</a
+              >
+            </div>
+
+            <div class="products-grid">
+              <article class="product-card" id="productCard1">
+                <div class="product-image-container">
+                  <img
+                    src="../../images/products/safety-gloves.webp"
+                    alt="Industrial Safety Gloves"
+                    class="product-image"
+                  />
+                  <span class="product-status-badge active">Active</span>
+                </div>
+                <div class="product-details">
+                  <span class="product-category">Safety Equipment</span>
+                  <h3 class="product-title">Industrial Safety Gloves</h3>
+                  <div class="product-pricing">
+                    <span class="product-price">$4.90 / pair</span>
+                    <span class="product-moq">MOQ: 100 pairs</span>
+                  </div>
+                  <div class="product-card-actions">
+                    <a href="products.html" class="btn btn-sm btn-secondary"
+                      >View Product</a
+                    >
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline edit-product-btn"
+                      data-product-id="1"
+                    >
+                      Edit Product
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product-card" id="productCard2">
+                <div class="product-image-container">
+                  <img
+                    src="../../images/products/office-paper.webp"
+                    alt="A4 Copy Paper Premium"
+                    class="product-image"
+                  />
+                  <span class="product-status-badge active">Active</span>
+                </div>
+                <div class="product-details">
+                  <span class="product-category">Office Supplies</span>
+                  <h3 class="product-title">A4 Copy Paper Premium</h3>
+                  <div class="product-pricing">
+                    <span class="product-price">$4.45 / ream</span>
+                    <span class="product-moq">MOQ: 50 reams</span>
+                  </div>
+                  <div class="product-card-actions">
+                    <a href="products.html" class="btn btn-sm btn-secondary"
+                      >View Product</a
+                    >
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline edit-product-btn"
+                      data-product-id="2"
+                    >
+                      Edit Product
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product-card" id="productCard3">
+                <div class="product-image-container">
+                  <img
+                    src="../../images/products/led-bulbs.webp"
+                    alt="Commercial LED Panel Lights"
+                    class="product-image"
+                  />
+                  <span class="product-status-badge active">Active</span>
+                </div>
+                <div class="product-details">
+                  <span class="product-category">Electrical</span>
+                  <h3 class="product-title">Commercial LED Panel Lights</h3>
+                  <div class="product-pricing">
+                    <span class="product-price">$16.00 / piece</span>
+                    <span class="product-moq">MOQ: 20 pieces</span>
+                  </div>
+                  <div class="product-card-actions">
+                    <a href="products.html" class="btn btn-sm btn-secondary"
+                      >View Product</a
+                    >
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline edit-product-btn"
+                      data-product-id="3"
+                    >
+                      Edit Product
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product-card" id="productCard4">
+                <div class="product-image-container">
+                  <img
+                    src="../../images/products/packaging-boxes.webp"
+                    alt="Heavy Corrugated Boxes"
+                    class="product-image"
+                  />
+                  <span class="product-status-badge active">Active</span>
+                </div>
+                <div class="product-details">
+                  <span class="product-category">Packaging</span>
+                  <h3 class="product-title">Heavy Corrugated Boxes</h3>
+                  <div class="product-pricing">
+                    <span class="product-price">$3.10 / box</span>
+                    <span class="product-moq">MOQ: 200 boxes</span>
+                  </div>
+                  <div class="product-card-actions">
+                    <a href="products.html" class="btn btn-sm btn-secondary"
+                      >View Product</a
+                    >
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline edit-product-btn"
+                      data-product-id="4"
+                    >
+                      Edit Product
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- RECENT BUYERS / CUSTOMERS SECTION -->
+          <section
+            class="dashboard-section"
+            aria-labelledby="recentBuyersHeading"
+          >
+            <div class="section-header">
+              <h2 class="section-title" id="recentBuyersHeading">
+                Recent Buyers
+              </h2>
+              <a href="customers.html" class="section-action-link"
+                >View All Customers →</a
+              >
+            </div>
+
+            <div class="suppliers-grid">
+              <article class="supplier-card">
+                <div class="supplier-card-header">
+                  <div class="supplier-avatar-placeholder">M</div>
+                  <div class="supplier-header-info">
+                    <h3 class="supplier-name">Metro Retail Solutions</h3>
+                    <p class="supplier-location">📍 Chicago, IL, USA</p>
+                  </div>
+                </div>
+                <div class="supplier-stats">
+                  <div class="supplier-stat-item">
+                    <span class="stat-label">Orders</span>
+                    <span class="stat-num">12 Orders</span>
+                  </div>
+                  <div class="supplier-stat-item">
+                    <span class="stat-label">Total Spend</span>
+                    <span class="stat-num">$8,450 Total Purchases</span>
+                  </div>
+                </div>
+                <div class="supplier-card-footer">
+                  <a
+                    href="customers.html"
+                    class="btn btn-sm btn-outline btn-full"
+                    >View Customer</a
+                  >
+                </div>
+              </article>
+
+              <article class="supplier-card">
+                <div class="supplier-card-header">
+                  <div class="supplier-avatar-placeholder">B</div>
+                  <div class="supplier-header-info">
+                    <h3 class="supplier-name">BrightBuild Industries</h3>
+                    <p class="supplier-location">📍 New York, USA</p>
+                  </div>
+                </div>
+                <div class="supplier-stats">
+                  <div class="supplier-stat-item">
+                    <span class="stat-label">Orders</span>
+                    <span class="stat-num">8 Orders</span>
+                  </div>
+                  <div class="supplier-stat-item">
+                    <span class="stat-label">Total Spend</span>
+                    <span class="stat-num">$6,720 Total Purchases</span>
+                  </div>
+                </div>
+                <div class="supplier-card-footer">
+                  <a
+                    href="customers.html"
+                    class="btn btn-sm btn-outline btn-full"
+                    >View Customer</a
+                  >
+                </div>
+              </article>
+
+              <article class="supplier-card">
+                <div class="supplier-card-header">
+                  <div class="supplier-avatar-placeholder">P</div>
+                  <div class="supplier-header-info">
+                    <h3 class="supplier-name">PackLine Distributors</h3>
+                    <p class="supplier-location">📍 Toronto, Canada</p>
+                  </div>
+                </div>
+                <div class="supplier-stats">
+                  <div class="supplier-stat-item">
+                    <span class="stat-label">Orders</span>
+                    <span class="stat-num">15 Orders</span>
+                  </div>
+                  <div class="supplier-stat-item">
+                    <span class="stat-label">Total Spend</span>
+                    <span class="stat-num">$12,300 Total Purchases</span>
+                  </div>
+                </div>
+                <div class="supplier-card-footer">
+                  <a
+                    href="customers.html"
+                    class="btn btn-sm btn-outline btn-full"
+                    >View Customer</a
+                  >
+                </div>
+              </article>
+            </div>
+          </section>
+        </main>
+
+        <!-- DASHBOARD FOOTER -->
+        <footer class="dashboard-footer">
+          <div class="footer-copyright">
+            &copy; 2026 TradeNest. All rights reserved.
+          </div>
+          <nav class="footer-links" aria-label="Footer Navigation">
+            <a href="../../pages/public/about.html" class="footer-link"
+              >About</a
+            >
+            <a href="../../pages/public/contact.html" class="footer-link"
+              >Contact</a
+            >
+            <a href="../../pages/public/privacy.html" class="footer-link"
+              >Privacy</a
+            >
+            <a href="../../pages/public/terms.html" class="footer-link"
+              >Terms</a
+            >
+          </nav>
+        </footer>
+      </div>
+    </div>
+
+    <!-- EDIT PROFILE MODAL -->
+    <div class="profile-modal" id="profileModal" hidden>
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div
+        class="modal-container"
+        role="dialog"
+        aria-labelledby="modalTitle"
+        aria-modal="true"
+      >
+        <header class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Edit Supplier Profile</h2>
+          <button
+            type="button"
+            class="modal-close-btn"
+            id="closeProfileModal"
+            aria-label="Close modal"
+          >
+            &times;
+          </button>
+        </header>
+
+        <form id="profileEditForm" class="modal-body">
+          <div class="form-group">
+            <label for="editFullName">Full Name</label>
+            <input
+              type="text"
+              id="editFullName"
+              name="fullName"
+              class="form-control"
+              value="Supplier Name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="editEmail">Email Address</label>
+            <input
+              type="email"
+              id="editEmail"
+              name="email"
+              class="form-control"
+              value="supplier@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="editPhone">Phone Number</label>
+            <input
+              type="tel"
+              id="editPhone"
+              name="phone"
+              class="form-control"
+              value="+91 98765 43210"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="editCompany">Company Name</label>
+            <input
+              type="text"
+              id="editCompany"
+              name="company"
+              class="form-control"
+              value="TradeNest Supplies Pvt. Ltd."
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="editBusinessType">Business Type</label>
+            <input
+              type="text"
+              id="editBusinessType"
+              name="businessType"
+              class="form-control"
+              value="Manufacturer &amp; Wholesale Supplier"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="editLocation">Location</label>
+            <input
+              type="text"
+              id="editLocation"
+              name="location"
+              class="form-control"
+              value="Bengaluru, Karnataka, India"
+              required
+            />
+          </div>
+
+          <footer class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cancelProfileEdit"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="saveProfileButton"
+            >
+              Save Changes
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <script src="../../js/supplier/dashboard.js"></script>
+  </body>
+</html>
