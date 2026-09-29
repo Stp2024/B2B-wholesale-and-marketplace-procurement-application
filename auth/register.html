@@ -1,0 +1,632 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Create your TradeNest buyer or supplier account."
+    />
+
+    <title>Register | TradeNest</title>
+
+    <link rel="stylesheet" href="../css/register.css" />
+    <link rel="stylesheet" href="../css/shared.css" />
+  </head>
+
+  <body>
+    <div class="register-page">
+      <!-- =====================================================
+           LEFT INTRODUCTION PANEL
+      ====================================================== -->
+      <aside class="register-intro">
+        <div class="intro-content">
+          <!-- Brand -->
+          <a href="../index.html" class="brand" aria-label="TradeNest Home">
+            <img src="../images/TradeNest.webp" alt="TradeNest" class="auth-brand-logo" />
+          </a>
+
+          <!-- Introduction -->
+          <div class="intro-heading">
+            <span class="eyebrow"> B2B PROCUREMENT PLATFORM </span>
+
+            <h1>Build better business connections.</h1>
+
+            <p>
+              Create your TradeNest account and connect with trusted buyers,
+              suppliers and wholesale opportunities.
+            </p>
+          </div>
+
+          <!-- Introduction Points -->
+          <div class="intro-points">
+            <!-- Point 1 -->
+            <div class="intro-point">
+              <span class="point-icon">✓</span>
+
+              <div>
+                <strong> Connect with Businesses </strong>
+
+                <p>Find reliable buyers and suppliers.</p>
+              </div>
+            </div>
+
+            <!-- Point 2 -->
+            <div class="intro-point">
+              <span class="point-icon">✓</span>
+
+              <div>
+                <strong> Grow Your Business </strong>
+
+                <p>Discover new wholesale opportunities.</p>
+              </div>
+            </div>
+
+            <!-- Point 3 -->
+            <div class="intro-point">
+              <span class="point-icon">✓</span>
+
+              <div>
+                <strong> Build Trust </strong>
+
+                <p>Trade with verified business profiles.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Introduction Footer -->
+          <div class="intro-footer">
+            <span class="footer-line"></span>
+
+            <span> Professional B2B sourcing &amp; procurement </span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- =====================================================
+           REGISTRATION AREA
+      ====================================================== -->
+      <main class="register-container">
+        <form id="registrationForm" class="register-box" novalidate>
+          <!-- =================================================
+               HEADER
+          ================================================== -->
+          <header class="register-header">
+            <span class="form-label"> CREATE ACCOUNT </span>
+
+            <h2>Register with TradeNest</h2>
+
+            <p>Create your business account and start using the platform.</p>
+          </header>
+
+          <!-- =================================================
+               01 ACCOUNT TYPE
+          ================================================== -->
+          <section class="form-section">
+            <div class="section-title">
+              <span class="section-number"> 01 </span>
+
+              <div>
+                <h3>Account Type</h3>
+
+                <p>Choose how you want to use TradeNest.</p>
+              </div>
+            </div>
+
+            <div class="account-types">
+              <!-- SUPPLIER -->
+              <label class="account-option">
+                <input
+                  type="radio"
+                  name="accountType"
+                  value="supplier"
+                  checked
+                />
+
+                <div class="account-option-content">
+                  <span class="account-option-icon"> S </span>
+
+                  <div>
+                    <strong> Supplier Account </strong>
+
+                    <p>Sell products and respond to buyer requirements.</p>
+                  </div>
+                </div>
+              </label>
+
+              <!-- BUYER -->
+              <label class="account-option">
+                <input type="radio" name="accountType" value="buyer" />
+
+                <div class="account-option-content">
+                  <span class="account-option-icon"> B </span>
+
+                  <div>
+                    <strong> Buyer Account </strong>
+
+                    <p>Find products and connect with trusted suppliers.</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </section>
+
+          <!-- =================================================
+               02 ACCOUNT INFORMATION
+          ================================================== -->
+          <section class="form-section">
+            <div class="section-title">
+              <span class="section-number"> 02 </span>
+
+              <div>
+                <h3>Account Information</h3>
+
+                <p>Enter your basic account details.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- FULL NAME -->
+              <div class="form-group full-width">
+                <label for="fullName"> Full Name <span>*</span> </label>
+
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Enter your full name"
+                  autocomplete="name"
+                />
+              </div>
+
+              <!-- EMAIL -->
+              <div class="form-group">
+                <label for="email">
+                  Official Business Email <span>*</span>
+                </label>
+
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="name@company.com"
+                  autocomplete="email"
+                />
+              </div>
+
+              <!-- PHONE -->
+              <div class="form-group">
+                <label for="phone"> Mobile Number <span>*</span> </label>
+
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="Enter 10-digit mobile number"
+                  inputmode="numeric"
+                  maxlength="10"
+                  autocomplete="tel"
+                />
+              </div>
+
+              <!-- OTP -->
+              <div class="form-group full-width">
+                <label for="otp"> Mobile OTP <span>*</span> </label>
+
+                <div class="otp-row">
+                  <input
+                    type="text"
+                    id="otp"
+                    name="otp"
+                    placeholder="Enter 6-digit OTP"
+                    inputmode="numeric"
+                    maxlength="6"
+                    autocomplete="one-time-code"
+                  />
+
+                  <button type="button" class="otp-button" id="otpButton">
+                    Send OTP
+                  </button>
+                </div>
+
+                <small class="field-hint">
+                  Demo OTP verification is used for this frontend project.
+                </small>
+              </div>
+
+              <!-- PASSWORD -->
+              <div class="form-group">
+                <label for="password"> Password <span>*</span> </label>
+
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Create a strong password"
+                    autocomplete="new-password"
+                  />
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    id="togglePassword"
+                    aria-label="Show password"
+                    title="Show password"
+                  >
+                    <span class="eye-icon">◉</span>
+                  </button>
+                </div>
+
+                <small class="field-hint">
+                  Minimum 8 characters with uppercase, lowercase, number and
+                  special character.
+                </small>
+              </div>
+
+              <!-- CONFIRM PASSWORD -->
+              <div class="form-group">
+                <label for="confirmPassword">
+                  Confirm Password <span>*</span>
+                </label>
+
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    autocomplete="new-password"
+                  />
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    id="toggleConfirmPassword"
+                    aria-label="Show confirm password"
+                    title="Show password"
+                  >
+                    <span class="eye-icon">◉</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================
+               03 BUSINESS INFORMATION
+          ================================================== -->
+          <section class="form-section">
+            <div class="section-title">
+              <span class="section-number"> 03 </span>
+
+              <div>
+                <h3>Business Information</h3>
+
+                <p>Tell us about your business.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- BUSINESS NAME -->
+              <div class="form-group full-width">
+                <label for="businessName">
+                  Business / Company Name <span>*</span>
+                </label>
+
+                <input
+                  type="text"
+                  id="businessName"
+                  name="businessName"
+                  placeholder="Enter business or company name"
+                  autocomplete="organization"
+                />
+              </div>
+
+              <!-- BUSINESS TYPE -->
+              <div class="form-group">
+                <label for="businessType"> Business Type <span>*</span> </label>
+
+                <select id="businessType" name="businessType">
+                  <option value="">Select business type</option>
+
+                  <option value="sole-proprietorship">
+                    Sole Proprietorship
+                  </option>
+
+                  <option value="partnership">Partnership</option>
+
+                  <option value="llp">LLP</option>
+
+                  <option value="private-limited">
+                    Private Limited Company
+                  </option>
+
+                  <option value="public-limited">Public Limited Company</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- REGISTRATION NUMBER -->
+              <div class="form-group">
+                <label for="registrationNumber">
+                  Business Registration No. <span>*</span>
+                </label>
+
+                <input
+                  type="text"
+                  id="registrationNumber"
+                  name="registrationNumber"
+                  placeholder="Enter registration number"
+                />
+              </div>
+
+              <!-- GST -->
+              <div class="form-group">
+                <label for="gst"> GSTIN / Tax ID </label>
+
+                <input
+                  type="text"
+                  id="gst"
+                  name="gst"
+                  placeholder="Enter GSTIN / Tax ID"
+                  maxlength="15"
+                />
+
+                <small class="field-hint">
+                  Optional. Enter if applicable.
+                </small>
+              </div>
+
+              <!-- YEAR -->
+              <div class="form-group">
+                <label for="year"> Year Established <span>*</span> </label>
+
+                <select id="year" name="year">
+                  <option value="">Select year</option>
+                </select>
+              </div>
+
+              <!-- CATEGORY -->
+              <div class="form-group">
+                <label for="category"> Business Category <span>*</span> </label>
+
+                <select id="category" name="category">
+                  <option value="">Select category</option>
+
+                  <option value="industrial">
+                    Industrial &amp; Manufacturing
+                  </option>
+
+                  <option value="electronics">Electronics</option>
+
+                  <option value="office">Office Supplies</option>
+
+                  <option value="packaging">Packaging</option>
+
+                  <option value="construction">
+                    Construction &amp; Hardware
+                  </option>
+
+                  <option value="textiles">Textiles &amp; Apparel</option>
+
+                  <option value="food">Food &amp; Beverages</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- SUBCATEGORY -->
+              <div class="form-group">
+                <label for="subcategory"> Sub-Category <span>*</span> </label>
+
+                <select id="subcategory" name="subcategory">
+                  <option value="">Select sub-category</option>
+
+                  <option value="equipment">Equipment</option>
+
+                  <option value="raw-materials">Raw Materials</option>
+
+                  <option value="safety">Safety Products</option>
+
+                  <option value="components">Components</option>
+
+                  <option value="supplies">Business Supplies</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- WEBSITE -->
+              <div class="form-group">
+                <label for="website"> Website </label>
+
+                <input
+                  type="url"
+                  id="website"
+                  name="website"
+                  placeholder="https://www.example.com"
+                  autocomplete="url"
+                />
+
+                <small class="field-hint"> Optional URL. </small>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================
+               04 BUSINESS ADDRESS
+          ================================================== -->
+          <section class="form-section">
+            <div class="section-title">
+              <span class="section-number"> 04 </span>
+
+              <div>
+                <h3>Business Address</h3>
+
+                <p>Provide your business location.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- ADDRESS -->
+              <div class="form-group full-width">
+                <label for="address"> Address <span>*</span> </label>
+
+                <textarea
+                  id="address"
+                  name="address"
+                  rows="3"
+                  placeholder="Enter complete business address"
+                ></textarea>
+              </div>
+
+              <!-- COUNTRY -->
+              <div class="form-group">
+                <label for="country"> Country <span>*</span> </label>
+
+                <select id="country" name="country">
+                  <option value="">Select country</option>
+
+                  <option value="india">India</option>
+
+                  <option value="usa">United States</option>
+
+                  <option value="uk">United Kingdom</option>
+
+                  <option value="uae">United Arab Emirates</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- STATE -->
+              <div class="form-group">
+                <label for="state"> State <span>*</span> </label>
+
+                <select id="state" name="state">
+                  <option value="">Select state</option>
+
+                  <option value="karnataka">Karnataka</option>
+
+                  <option value="maharashtra">Maharashtra</option>
+
+                  <option value="tamilnadu">Tamil Nadu</option>
+
+                  <option value="telangana">Telangana</option>
+
+                  <option value="kerala">Kerala</option>
+
+                  <option value="delhi">Delhi</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- CITY -->
+              <div class="form-group">
+                <label for="city"> City <span>*</span> </label>
+
+                <select id="city" name="city">
+                  <option value="">Select city</option>
+
+                  <option value="bengaluru">Bengaluru</option>
+
+                  <option value="mysuru">Mysuru</option>
+
+                  <option value="mangaluru">Mangaluru</option>
+
+                  <option value="hubballi">Hubballi</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- PINCODE -->
+              <div class="form-group">
+                <label for="pincode"> Pincode <span>*</span> </label>
+
+                <input
+                  type="text"
+                  id="pincode"
+                  name="pincode"
+                  placeholder="Enter 6-digit pincode"
+                  inputmode="numeric"
+                  maxlength="6"
+                />
+              </div>
+
+              <!-- LOCATION TYPE -->
+              <div class="form-group">
+                <label for="locationType">
+                  Business Location Type <span>*</span>
+                </label>
+
+                <select id="locationType" name="locationType">
+                  <option value="">Select location type</option>
+
+                  <option value="office">Office</option>
+
+                  <option value="factory">Factory</option>
+
+                  <option value="warehouse">Warehouse</option>
+
+                  <option value="shop">Shop / Store</option>
+
+                  <option value="home-office">Home Office</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================
+               TERMS & CONDITIONS
+          ================================================== -->
+          <div class="terms">
+            <label class="terms-label">
+              <input type="checkbox" id="terms" name="terms" />
+
+              <span>
+                I agree to the
+
+                <a
+                  href="terms-conditions.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  TradeNest Terms &amp; Conditions
+                </a>
+
+                and confirm that the information provided is accurate.
+              </span>
+            </label>
+          </div>
+
+          <!-- =================================================
+               SUBMIT
+          ================================================== -->
+          <div class="submit-area">
+            <button type="submit" class="create-button" id="createButton">
+              Create Account
+            </button>
+
+            <p>
+              Already have a TradeNest account?
+
+              <a href="login.html"> Login here </a>
+            </p>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <!-- =========================================================
+         REGISTER JAVASCRIPT
+    ========================================================== -->
+    <script src="../js/register.js"></script>
+  </body>
+</html>

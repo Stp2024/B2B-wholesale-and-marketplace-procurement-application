@@ -1,0 +1,918 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Discover Suppliers | TradeNest B2B Wholesale & Procurement Marketplace
+    </title>
+    <meta
+      name="description"
+      content="Discover, filter, and compare wholesale suppliers based on your procurement requirements, trust scores, verified business credentials, and product categories on TradeNest."
+    />
+    <link rel="stylesheet" href="../css/discover-suppliers.css" />
+    <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/shared-nav.js" defer></script>
+  </head>
+  <body>
+    <!-- HEADER & NAVIGATION -->
+    <header class="site-header">
+      <div class="header-container">
+        <div class="brand-container">
+          <a href="../index.html" class="brand-logo-link">
+            <span class="brand-name">TradeNest</span>
+          </a>
+          <span class="brand-tagline"
+            >B2B Wholesale & Procurement Marketplace</span
+          >
+        </div>
+
+        <nav class="primary-nav" aria-label="Main Navigation">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="about.html" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+              <a href="products.html" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="suppliers.html" class="nav-link">Suppliers</a>
+            </li>
+            <li class="nav-item">
+              <a href="contact.html" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="discover-suppliers.html"
+                class="nav-link"
+                aria-current="page"
+                >Discover</a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="join-supplier-network.html" class="nav-link"
+                >Supplier Network</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <div class="auth-actions">
+          <a
+            href="../auth/login.html"
+            class="btn btn-secondary btn-login"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Login</a
+          >
+          <a
+            href="../auth/register.html"
+            class="btn btn-primary btn-register"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Register</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main id="main-content">
+      <!-- HERO SECTION -->
+      <section class="hero-section" id="discover-hero">
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1 class="hero-title">
+              Discover Suppliers That Match Your Business Needs
+            </h1>
+            <p class="hero-subtitle">
+              Search, filter and compare supplier information to find businesses
+              that may fit your sourcing requirements.
+            </p>
+            <div class="hero-cta-group">
+              <a href="#supplier-search" class="btn btn-primary"
+                >Explore Suppliers</a
+              >
+              <a href="products.html" class="btn btn-secondary"
+                >Browse Products</a
+              >
+            </div>
+          </div>
+          <div class="hero-media">
+            <img
+              src="../images/discover-suppliers-hero.webp"
+              alt="B2B Procurement professional reviewing supplier portfolios on modern workspace dashboard"
+              class="hero-image"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPLIER DISCOVERY SEARCH SECTION -->
+      <!-- Ready for future dynamic search state, query params, and asynchronous backend integration -->
+      <section class="search-section" id="supplier-search">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Find a Supplier</h2>
+            <p class="section-description">
+              Filter wholesale vendors by industry, location, trust metrics, and
+              delivery capabilities.
+            </p>
+          </header>
+
+          <form class="supplier-search-form" action="#" method="GET">
+            <div class="form-grid">
+              <div class="form-group form-group-wide">
+                <label for="search-keyword"
+                  >Search by Product or Supplier</label
+                >
+                <input
+                  type="text"
+                  id="search-keyword"
+                  name="keyword"
+                  placeholder="What are you looking for?"
+                  class="form-control"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="category-filter">Product Category</label>
+                <select
+                  id="category-filter"
+                  name="category"
+                  class="form-control"
+                >
+                  <option value="">All Categories</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="textiles">Textiles & Garments</option>
+                  <option value="food-beverages">Food & Beverages</option>
+                  <option value="industrial-equipment">
+                    Industrial Equipment
+                  </option>
+                  <option value="machinery">Machinery</option>
+                  <option value="packaging">Packaging</option>
+                  <option value="raw-materials">Raw Materials</option>
+                  <option value="chemicals">Chemicals</option>
+                  <option value="office-supplies">Office Supplies</option>
+                  <option value="construction">Construction Materials</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="location-filter">Location</label>
+                <input
+                  type="text"
+                  id="location-filter"
+                  name="location"
+                  placeholder="City, State or Country"
+                  class="form-control"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="trust-score-filter">Minimum Trust Score</label>
+                <select
+                  id="trust-score-filter"
+                  name="min_trust"
+                  class="form-control"
+                >
+                  <option value="">Any</option>
+                  <option value="70">70+</option>
+                  <option value="80">80+</option>
+                  <option value="90">90+</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="verification-filter">Verification</label>
+                <select
+                  id="verification-filter"
+                  name="verification"
+                  class="form-control"
+                >
+                  <option value="all">All Suppliers</option>
+                  <option value="verified">Verified Businesses</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="delivery-filter">Delivery Requirement</label>
+                <select
+                  id="delivery-filter"
+                  name="delivery"
+                  class="form-control"
+                >
+                  <option value="any">Any</option>
+                  <option value="fast">Fast Delivery</option>
+                  <option value="standard">Standard Delivery</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-search">
+                Find Suppliers
+              </button>
+              <button type="reset" class="btn btn-tertiary btn-clear">
+                Clear Filters
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- QUICK DISCOVERY CATEGORIES -->
+      <!-- Note: Category clicks will be routed via standard query params or dynamic JS routing backend in future iterations -->
+      <section class="categories-section" id="categories">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Explore by Category</h2>
+            <p class="section-description">
+              Quickly browse specialized suppliers by primary manufacturing and
+              procurement sector.
+            </p>
+          </header>
+
+          <div class="category-grid">
+            <a href="#" class="category-card">
+              <h3 class="category-title">Electronics Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Textile Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Food & Beverage Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Machinery Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Packaging Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Raw Material Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Industrial Equipment Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+            <a href="#" class="category-card">
+              <h3 class="category-title">Office Supply Suppliers</h3>
+              <span class="category-link-text">Browse Category &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECOMMENDED SUPPLIERS -->
+      <section class="recommended-section" id="recommended-suppliers">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Recommended Suppliers</h2>
+            <p class="section-description">
+              Supplier recommendations can be based on your product requirements
+              and available supplier information.
+            </p>
+          </header>
+
+          <!-- SAMPLE SUPPLIER DATA CONTAINER -->
+          <!-- Note: Data below represents sample cards for template preview. Final cards will be auto-generated via REST API -->
+          <div class="supplier-card-grid">
+            <!-- SAMPLE SUPPLIER 1 -->
+            <article class="supplier-card">
+              <header class="supplier-card-header">
+                <img
+                  src="../images/suppliers/placeholder-logo-1.webp"
+                  alt="Example Industrial Solutions Company Logo"
+                  class="supplier-logo"
+                />
+                <div class="supplier-title-group">
+                  <h3 class="supplier-name">Example Industrial Solutions</h3>
+                  <p class="supplier-industry">Industrial Equipment</p>
+                  <p class="supplier-location">Bengaluru, Karnataka</p>
+                </div>
+              </header>
+              <div class="supplier-card-body">
+                <div class="badge-group">
+                  <span class="badge badge-verified">Business Verified</span>
+                  <span class="badge badge-trust">Trust Score: 92/100</span>
+                </div>
+                <ul class="supplier-metrics-list">
+                  <li>
+                    <strong>Main Products:</strong> Industrial Components,
+                    Machinery Parts
+                  </li>
+                  <li><strong>Rating:</strong> 4.7 / 5</li>
+                  <li><strong>Response Time:</strong> Within 24 hours</li>
+                  <li><strong>MOQ:</strong> Varies by product</li>
+                </ul>
+                <p class="supplier-description">
+                  Sample profile: Precision component supplier offering custom
+                  machinery fittings, automated parts, and heavy-duty structural
+                  hardware.
+                </p>
+              </div>
+              <footer class="supplier-card-footer">
+                <a
+                  href="supplier-details.html?id=supplier-001"
+                  class="btn btn-primary btn-block"
+                  >View Supplier</a
+                >
+              </footer>
+            </article>
+
+            <!-- SAMPLE SUPPLIER 2 -->
+            <article class="supplier-card">
+              <header class="supplier-card-header">
+                <img
+                  src="../images/suppliers/placeholder-logo-2.webp"
+                  alt="Apex Tech Component Packaging Company Logo"
+                  class="supplier-logo"
+                />
+                <div class="supplier-title-group">
+                  <h3 class="supplier-name">Apex Packaging Enterprises</h3>
+                  <p class="supplier-industry">Packaging</p>
+                  <p class="supplier-location">Mumbai, Maharashtra</p>
+                </div>
+              </header>
+              <div class="supplier-card-body">
+                <div class="badge-group">
+                  <span class="badge badge-verified">Business Verified</span>
+                  <span class="badge badge-trust">Trust Score: 88/100</span>
+                </div>
+                <ul class="supplier-metrics-list">
+                  <li>
+                    <strong>Main Products:</strong> Corrugated Boxes,
+                    Biodegradable Wrap
+                  </li>
+                  <li><strong>Rating:</strong> 4.5 / 5</li>
+                  <li><strong>Response Time:</strong> Within 12 hours</li>
+                  <li><strong>MOQ:</strong> 500 units</li>
+                </ul>
+                <p class="supplier-description">
+                  Sample profile: Sustainable and heavy-duty shipping solutions
+                  designed for commercial logistics, wholesale distributors, and
+                  retail exporters.
+                </p>
+              </div>
+              <footer class="supplier-card-footer">
+                <a
+                  href="supplier-details.html?id=supplier-002"
+                  class="btn btn-primary btn-block"
+                  >View Supplier</a
+                >
+              </footer>
+            </article>
+
+            <!-- SAMPLE SUPPLIER 3 -->
+            <article class="supplier-card">
+              <header class="supplier-card-header">
+                <img
+                  src="../images/suppliers/placeholder-logo-3.webp"
+                  alt="Vanguard Electronics Group Logo"
+                  class="supplier-logo"
+                />
+                <div class="supplier-title-group">
+                  <h3 class="supplier-name">Vanguard Micro-Electronics</h3>
+                  <p class="supplier-industry">Electronics</p>
+                  <p class="supplier-location">Hyderabad, Telangana</p>
+                </div>
+              </header>
+              <div class="supplier-card-body">
+                <div class="badge-group">
+                  <span class="badge badge-verified">Business Verified</span>
+                  <span class="badge badge-trust">Trust Score: 95/100</span>
+                </div>
+                <ul class="supplier-metrics-list">
+                  <li>
+                    <strong>Main Products:</strong> Semiconductors, Power
+                    Adapters
+                  </li>
+                  <li><strong>Rating:</strong> 4.9 / 5</li>
+                  <li><strong>Response Time:</strong> Within 6 hours</li>
+                  <li><strong>MOQ:</strong> 1,000 units</li>
+                </ul>
+                <p class="supplier-description">
+                  Sample profile: High-reliability circuit board manufacturing,
+                  micro-controller distribution, and specialized B2B component
+                  sourcing.
+                </p>
+              </div>
+              <footer class="supplier-card-footer">
+                <a
+                  href="supplier-details.html?id=supplier-003"
+                  class="btn btn-primary btn-block"
+                  >View Supplier</a
+                >
+              </footer>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- BEST MATCH SECTION -->
+      <section class="best-match-section" id="best-match">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Best Match for Your Requirement</h2>
+            <p class="section-description">
+              A recommendation system can identify potentially relevant
+              suppliers based on factors such as product match, availability,
+              pricing, delivery performance, trust score, and customer ratings.
+            </p>
+          </header>
+
+          <div class="best-match-card-wrapper">
+            <article class="supplier-card best-match-card">
+              <div class="best-match-badge-header">
+                <span class="badge badge-featured">Recommended Match</span>
+              </div>
+              <header class="supplier-card-header">
+                <img
+                  src="../images/suppliers/placeholder-logo-1.webp"
+                  alt="Example Industrial Solutions Logo"
+                  class="supplier-logo"
+                />
+                <div class="supplier-title-group">
+                  <h3 class="supplier-name">Example Industrial Solutions</h3>
+                  <p class="supplier-industry">
+                    Industrial Equipment &amp; Automation
+                  </p>
+                  <p class="supplier-location">Bengaluru, Karnataka</p>
+                </div>
+              </header>
+
+              <div class="supplier-card-body">
+                <div class="match-reasons-block">
+                  <h4 class="match-reasons-title">
+                    Why this supplier may match your procurement criteria:
+                  </h4>
+                  <ul class="match-reasons-list">
+                    <li>
+                      <strong>Product/Category Match:</strong> 98% alignment
+                      with requested industrial components
+                    </li>
+                    <li>
+                      <strong>Trust Score:</strong> High historical reliability
+                      score (92/100)
+                    </li>
+                    <li>
+                      <strong>Response Time:</strong> Average initial reply
+                      under 24 hours
+                    </li>
+                    <li>
+                      <strong>Wholesale Pricing:</strong> Competitive bulk
+                      pricing tiers available
+                    </li>
+                    <li>
+                      <strong>Ratings &amp; Delivery:</strong> 4.7/5 average
+                      buyer feedback rating with standard fulfillment compliance
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <footer class="supplier-card-footer">
+                <a
+                  href="supplier-details.html?id=supplier-001"
+                  class="btn btn-primary"
+                  >View Supplier Profile</a
+                >
+              </footer>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRUST SCORE EXPLANATION SECTION -->
+      <section class="trust-score-info-section" id="trust-score-explanation">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Understand Supplier Trust Score</h2>
+            <p class="section-description">
+              Trust Score is an indicator designed to help buyers evaluate
+              available supplier information and performance signals.
+            </p>
+          </header>
+
+          <div class="trust-score-content">
+            <div class="trust-score-highlight-box">
+              <span class="trust-score-label">Sample Evaluated Metric</span>
+              <span class="trust-score-value">Trust Score: 92/100</span>
+            </div>
+
+            <div class="trust-score-factors">
+              <h3 class="factors-title">Key Indicators Analyzed:</h3>
+              <ul class="factors-list">
+                <li>
+                  <strong>Business Verification:</strong> Validation of business
+                  credentials, documentation, and regulatory registration.
+                </li>
+                <li>
+                  <strong>Completed Orders:</strong> Track record of
+                  successfully processed wholesale purchase transactions.
+                </li>
+                <li>
+                  <strong>On-Time Delivery:</strong> Historical performance
+                  regarding agreed shipment and fulfillment timelines.
+                </li>
+                <li>
+                  <strong>Customer Feedback:</strong> Verified ratings and
+                  reviews submitted by previous buyers.
+                </li>
+                <li>
+                  <strong>Response Time:</strong> Average speed in addressing
+                  RFQs, inquiry messages, and quote requests.
+                </li>
+              </ul>
+              <p class="trust-score-disclaimer">
+                <em
+                  >Note: Trust Score is one source of information and does not
+                  guarantee supplier performance. Buyers should complete their
+                  own due diligence prior to placing orders.</em
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPLIER COMPARISON PREVIEW -->
+      <!-- Future backend note: Data comparison matrix will be populated dynamically from user select state or local storage comparison basket -->
+      <section class="comparison-section" id="supplier-comparison">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Compare Suppliers</h2>
+            <p class="section-description">
+              Buyers can compare available information side-by-side to review
+              product options, order minimums, ratings, and delivery terms.
+            </p>
+          </header>
+
+          <div class="table-responsive">
+            <table class="comparison-table">
+              <caption>
+                Sample Supplier Comparison Data Matrix
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Supplier</th>
+                  <th scope="col">Main Product Line</th>
+                  <th scope="col">Price Range</th>
+                  <th scope="col">MOQ</th>
+                  <th scope="col">Trust Score</th>
+                  <th scope="col">Delivery Lead Time</th>
+                  <th scope="col">Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Sample Data Row 1 -->
+                <tr>
+                  <th scope="row">Example Industrial Solutions</th>
+                  <td>Industrial Components</td>
+                  <td>$15.00 - $120.00 / unit</td>
+                  <td>100 units</td>
+                  <td>92/100</td>
+                  <td>5 - 7 Days</td>
+                  <td>4.7 / 5</td>
+                </tr>
+                <!-- Sample Data Row 2 -->
+                <tr>
+                  <th scope="row">Apex Packaging Enterprises</th>
+                  <td>Corrugated Boxes &amp; Packaging</td>
+                  <td>$0.50 - $4.00 / unit</td>
+                  <td>500 units</td>
+                  <td>88/100</td>
+                  <td>3 - 5 Days</td>
+                  <td>4.5 / 5</td>
+                </tr>
+                <!-- Sample Data Row 3 -->
+                <tr>
+                  <th scope="row">Vanguard Micro-Electronics</th>
+                  <td>Semiconductors &amp; Circuit Boards</td>
+                  <td>$2.00 - $45.00 / unit</td>
+                  <td>1,000 units</td>
+                  <td>95/100</td>
+                  <td>7 - 12 Days</td>
+                  <td>4.9 / 5</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="comparison-actions">
+            <a href="#" class="btn btn-secondary">Compare Suppliers</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPLIER RECOMMENDATION PROCESS -->
+      <section class="process-section" id="how-discovery-works">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">How Supplier Discovery Works</h2>
+            <p class="section-description">
+              Follow a streamlined workflow to discover, evaluate, and establish
+              B2B sourcing relationships.
+            </p>
+          </header>
+
+          <div class="process-grid">
+            <article class="process-step-card">
+              <span class="step-number">01</span>
+              <h3 class="step-title">Enter Requirement</h3>
+              <p class="step-description">
+                Tell TradeNest what product or sourcing requirement you have by
+                using the discovery search tools or RFQ form.
+              </p>
+            </article>
+
+            <article class="process-step-card">
+              <span class="step-number">02</span>
+              <h3 class="step-title">Apply Filters</h3>
+              <p class="step-description">
+                Filter suppliers based on category, location, verification
+                status, and other available criteria to refine results.
+              </p>
+            </article>
+
+            <article class="process-step-card">
+              <span class="step-number">03</span>
+              <h3 class="step-title">Review Suppliers</h3>
+              <p class="step-description">
+                Explore verified supplier profiles, Trust Scores, available
+                product catalogs, and operational specifications.
+              </p>
+            </article>
+
+            <article class="process-step-card">
+              <span class="step-number">04</span>
+              <h3 class="step-title">Compare &amp; Connect</h3>
+              <p class="step-description">
+                Compare relevant suppliers and use the available
+                communication/RFQ workflow to establish contact directly.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIRECT BUSINESS CONNECTION -->
+      <section class="connection-section" id="direct-connection">
+        <div class="section-container">
+          <div class="content-block">
+            <h2 class="section-title">Connect Directly with Suppliers</h2>
+            <p class="section-description">
+              TradeNest is designed to facilitate direct communication between
+              buyers and verified suppliers without unnecessary intermediaries.
+            </p>
+            <div class="features-list-wrapper">
+              <h3 class="subsection-title">Available Sourcing Actions:</h3>
+              <ul class="check-list">
+                <li>View comprehensive supplier profile information</li>
+                <li>Ask specific product and specification inquiries</li>
+                <li>Request a tailored quotation (RFQ)</li>
+                <li>Request sample units for quality verification</li>
+                <li>Discuss bulk custom order specifications directly</li>
+                <li>Compare multiple supplier offers efficiently</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REQUEST A QUOTE (RFQ) SECTION -->
+      <!-- Future backend note: Link will trigger authenticated RFQ submission modal or direct routing to quote submission page -->
+      <section class="rfq-prompt-section" id="request-quote-prompt">
+        <div class="section-container">
+          <div class="cta-banner">
+            <div class="cta-text-content">
+              <h2 class="cta-title">Already Know What You Need?</h2>
+              <p class="cta-description">
+                Submit your requirement through an RFQ and allow relevant
+                suppliers to respond with their offers.
+              </p>
+            </div>
+            <div class="cta-action">
+              <a href="#" class="btn btn-primary">Request a Quote</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPLIER PROFILE PREVIEW SUMMARY -->
+      <section class="profile-preview-section" id="profile-preview">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Know Your Supplier Before You Connect</h2>
+            <p class="section-description">
+              Supplier profiles provide verified background and metric data so
+              you can make informed sourcing decisions.
+            </p>
+          </header>
+
+          <div class="profile-features-grid">
+            <div class="feature-item">
+              <h3 class="feature-title">Business &amp; Verification Details</h3>
+              <p class="feature-text">
+                Access verification status, corporate registration signals, and
+                facility information.
+              </p>
+            </div>
+            <div class="feature-item">
+              <h3 class="feature-title">Product Catalog &amp; MOQ</h3>
+              <p class="feature-text">
+                Review available inventory lines, minimum order quantities, and
+                custom production options.
+              </p>
+            </div>
+            <div class="feature-item">
+              <h3 class="feature-title">Trust Metrics &amp; Performance</h3>
+              <p class="feature-text">
+                Evaluate calculated Trust Scores, average response times, and
+                historical buyer feedback.
+              </p>
+            </div>
+            <div class="feature-item">
+              <h3 class="feature-title">
+                Location &amp; Delivery Capabilities
+              </h3>
+              <p class="feature-text">
+                Identify shipping origin points, geographic distribution reach,
+                and typical fulfillment timelines.
+              </p>
+            </div>
+          </div>
+
+          <div class="section-footer-action">
+            <a href="suppliers.html" class="btn btn-secondary"
+              >View Supplier Profiles</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- LOGIN CTA SECTION -->
+      <section class="account-cta-section" id="personalized-experience">
+        <div class="section-container">
+          <div class="account-cta-box">
+            <h2 class="cta-title">
+              Get a More Personalized Sourcing Experience
+            </h2>
+            <p class="cta-description">
+              Create an account to manage your supplier discoveries,
+              requirements and procurement activities.
+            </p>
+            <div class="cta-btn-group">
+              <a
+                href="../auth/login.html"
+                class="btn btn-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Login</a
+              >
+              <a
+                href="../auth/register.html"
+                class="btn btn-secondary"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Register</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL CALL TO ACTION -->
+      <section class="final-cta-section" id="final-cta">
+        <div class="section-container">
+          <div class="final-cta-content">
+            <h2 class="cta-title">Ready to Find Your Next Supplier?</h2>
+            <p class="cta-description">
+              Explore supplier information, compare available options and
+              connect with businesses that may match your requirements.
+            </p>
+            <div class="cta-btn-group">
+              <a href="suppliers.html" class="btn btn-primary"
+                >Explore Suppliers</a
+              >
+              <a href="products.html" class="btn btn-secondary"
+                >Explore Products</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-grid">
+          <!-- Column 1: Brand Info -->
+          <div class="footer-col footer-brand-col">
+            <span class="footer-brand-name">TradeNest</span>
+            <p class="footer-tagline">
+              B2B Wholesale &amp; Procurement Marketplace
+            </p>
+            <p class="footer-address">
+              Bengaluru, Karnataka, India<br />
+              Contact: support@tradenest-example.com
+            </p>
+          </div>
+
+          <!-- Column 2: Quick Links -->
+          <div class="footer-col">
+            <h3 class="footer-heading">Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="../index.html">Home</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="products.html">Products</a></li>
+              <li><a href="suppliers.html">Suppliers</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3: For Buyers -->
+          <div class="footer-col">
+            <h3 class="footer-heading">For Buyers</h3>
+            <ul class="footer-links">
+              <li><a href="discover-suppliers.html">Discover Suppliers</a></li>
+              <li><a href="#">Request a Quote</a></li>
+              <li><a href="#">Compare Suppliers</a></li>
+              <li><a href="#">Request a Sample</a></li>
+              <li><a href="#">Track Orders</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 4: For Suppliers -->
+          <div class="footer-col">
+            <h3 class="footer-heading">For Suppliers</h3>
+            <ul class="footer-links">
+              <li>
+                <a href="join-supplier-network.html"
+                  >Join Our Supplier Network</a
+                >
+              </li>
+              <li><a href="#">List Products</a></li>
+              <li><a href="#">Manage Quotes</a></li>
+              <li><a href="#">Supplier Collaboration</a></li>
+              <li><a href="#">Manage Orders</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 5: Account -->
+          <div class="footer-col">
+            <h3 class="footer-heading">Account</h3>
+            <ul class="footer-links">
+              <li>
+                <a
+                  href="../auth/login.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Login</a
+                >
+              </li>
+              <li>
+                <a
+                  href="../auth/register.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Register</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <span class="legal-divider">|</span>
+            <a href="#">Terms &amp; Conditions</a>
+          </div>
+          <div class="footer-socials">
+            <a href="#" aria-label="LinkedIn">LinkedIn</a>
+            <a href="#" aria-label="Twitter">Twitter</a>
+            <a href="#" aria-label="Facebook">Facebook</a>
+          </div>
+          <div class="footer-copyright">
+            <p>&copy; 2026 TradeNest. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- EXTERNAL SCRIPT LINK -->
+    <script src="../js/script.js"></script>
+  </body>
+</html>
