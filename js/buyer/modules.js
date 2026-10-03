@@ -48,6 +48,518 @@ document.addEventListener("DOMContentLoaded", function () {
     return store.getCurrentUser();
   }
 
+  function readJsonStorage(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function writeJsonStorage(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function getSavedProducts() {
+    const list = readJsonStorage("tradenest_saved_products", []);
+    return Array.isArray(list) ? list.filter((item) => item && item.id) : [];
+  }
+
+  function saveSavedProducts(list) {
+    return writeJsonStorage("tradenest_saved_products", Array.isArray(list) ? list : []);
+  }
+
+  function getSavedSuppliers() {
+    const list = readJsonStorage("tradenest_saved_suppliers", []);
+    return Array.isArray(list) ? list.filter((item) => item && item.id) : [];
+  }
+
+  function saveSavedSuppliers(list) {
+    return writeJsonStorage("tradenest_saved_suppliers", Array.isArray(list) ? list : []);
+  }
+
+  function addSavedProduct(productId) {
+    const state = getState();
+    const product = state.products.find((item) => item.id === productId);
+    if (!product) return false;
+
+    const saved = getSavedProducts();
+    if (saved.some((item) => item.id === productId)) return false;
+
+    saved.push({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      supplierName: product.supplierName,
+      price: product.price,
+      bulkPrice: product.bulkPrice,
+      moq: product.moq,
+      stock: product.stock,
+      availability: product.availability,
+      image: product.image
+    });
+
+    saveSavedProducts(saved);
+    return true;
+  }
+
+  function removeSavedProduct(productId) {
+    const saved = getSavedProducts().filter((item) => item.id !== productId);
+    saveSavedProducts(saved);
+    return true;
+  }
+
+  function addSavedSupplier(supplierId) {
+    const state = getState();
+    const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
+    if (!supplier) return false;
+
+    const saved = getSavedSuppliers();
+    if (saved.some((item) => item.id === supplierId)) return false;
+
+    saved.push({
+      id: supplier.id,
+      businessName: supplier.businessName,
+      description: supplier.description,
+      category: supplier.category,
+      location: supplier.location,
+      verificationStatus: supplier.verificationStatus,
+      trustScore: supplier.trustScore,
+      productCategories: supplier.products || [],
+      logo: supplier.logo
+    });
+
+    saveSavedSuppliers(saved);
+    return true;
+  }
+
+  function removeSavedSupplier(supplierId) {
+    const saved = getSavedSuppliers().filter((item) => item.id !== supplierId);
+    saveSavedSuppliers(saved);
+    return true;
+  }
+
+  function getBuyerProfileDefaults() {
+    const buyer = getBuyer();
+    return {
+      fullName: buyer.fullName || "Aisha Patel",
+      email: buyer.email || "aisha.patel@tradenest.com",
+      phone: buyer.phone || "+91 98765 43210",
+      businessName: buyer.businessName || buyer.company || "North Star Retail",
+      businessType: buyer.businessType || "Wholesale Buyer",
+      businessCategory: buyer.businessCategory || "Retail & Distribution",
+      gstin: buyer.gstin || "29ABCDE1234F1Z5",
+      address: buyer.address || "18th Cross Road",
+      city: buyer.city || "Bengaluru",
+      state: buyer.state || "Karnataka",
+      pincode: buyer.pincode || "560001",
+      profileImage: buyer.profileImage || "AP"
+    };
+  }
+
+  function getBuyerProfile() {
+    const current = getBuyer();
+    const stored = readJsonStorage("tradenestBuyerProfile", {});
+    return {
+      ...getBuyerProfileDefaults(),
+      ...stored,
+      ...current,
+      businessName: stored.businessName || current.businessName || current.company || getBuyerProfileDefaults().businessName,
+      fullName: stored.fullName || current.fullName || getBuyerProfileDefaults().fullName,
+      email: stored.email || current.email || getBuyerProfileDefaults().email,
+      phone: stored.phone || current.phone || getBuyerProfileDefaults().phone,
+      city: stored.city || current.city || getBuyerProfileDefaults().city,
+      state: stored.state || current.state || getBuyerProfileDefaults().state
+    };
+  }
+
+  function saveBuyerProfile(profile) {
+    const normalized = {
+      ...getBuyerProfileDefaults(),
+      ...(profile || {})
+    };
+
+    const user = getBuyer();
+    localStorage.setItem("tradenestBuyerProfile", JSON.stringify(normalized));
+    localStorage.setItem("tradenestCurrentUser", JSON.stringify({
+      ...user,
+      ...normalized,
+      businessName: normalized.businessName,
+      company: normalized.businessName,
+      city: normalized.city,
+      state: normalized.state,
+      country: user.country || "India"
+    }));
+    return normalized;
+  }
+
+  function getBuyerSettingsDefaults() {
+    return {
+      emailAlerts: true,
+      appNotifications: true,
+      orderUpdates: true,
+      priceAlerts: true,
+      supplierUpdates: false,
+      newsletterEmails: true,
+      profilePrivacy: "Private to my account",
+      theme: "Light",
+      autoSaveDrafts: true
+    };
+  }
+
+  function getBuyerSettings() {
+    const stored = readJsonStorage("tradenestBuyerSettings", {});
+    return { ...getBuyerSettingsDefaults(), ...stored };
+  }
+
+  function saveBuyerSettings(settings) {
+    const normalized = { ...getBuyerSettingsDefaults(), ...(settings || {}) };
+    localStorage.setItem("tradenestBuyerSettings", JSON.stringify(normalized));
+    return normalized;
+  }
+
+  function renderSavedProducts() {
+    const list = document.getElementById("saved-product-list");
+    if (!list) return;
+
+    const state = getState();
+    const searchInput = document.getElementById("saved-product-search");
+    const categorySelect = document.getElementById("saved-product-category");
+    const supplierSelect = document.getElementById("saved-product-supplier");
+    const sortSelect = document.getElementById("saved-product-sort");
+
+    const savedIds = getSavedProducts().map((item) => item.id);
+    const savedItems = state.products.filter((product) => savedIds.includes(product.id));
+
+    if (categorySelect) {
+      const categories = [...new Set(savedItems.map((product) => product.category))];
+      categorySelect.innerHTML = '<option value="">All categories</option>' + categories.map((category) => `<option value="${category}">${category}</option>`).join("");
+    }
+
+    if (supplierSelect) {
+      const suppliers = [...new Set(savedItems.map((product) => product.supplierId))];
+      supplierSelect.innerHTML = '<option value="">All suppliers</option>' + suppliers.map((supplierId) => {
+        const supplier = state.supplierProfiles.find((entry) => entry.id === supplierId);
+        return `<option value="${supplierId}">${supplier ? supplier.businessName : supplierId}</option>`;
+      }).join("");
+    }
+
+    function applyFilters() {
+      const searchTerm = (searchInput ? searchInput.value : "").toLowerCase();
+      const category = categorySelect ? categorySelect.value : "";
+      const supplier = supplierSelect ? supplierSelect.value : "";
+      const sort = sortSelect ? sortSelect.value : "name";
+
+      let results = savedItems.filter((product) => {
+        const matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm) || product.supplierName.toLowerCase().includes(searchTerm);
+        const matchesCategory = !category || product.category === category;
+        const matchesSupplier = !supplier || product.supplierId === supplier;
+        return matchesSearch && matchesCategory && matchesSupplier;
+      });
+
+      results.sort((a, b) => {
+        if (sort === "price-low") return a.price - b.price;
+        if (sort === "price-high") return b.price - a.price;
+        if (sort === "name") return a.name.localeCompare(b.name);
+        return 0;
+      });
+
+      if (!savedItems.length) {
+        list.innerHTML = '<div class="empty-state large"><h3>No Saved Products Yet</h3><p>Your saved product list is empty. Browse products and save the ones you want to revisit later.</p><a href="products.html" class="btn btn-primary" style="margin-top:12px;">Browse Products</a></div>';
+        return;
+      }
+
+      if (!results.length) {
+        list.innerHTML = '<div class="empty-state large">No Results Found.</div>';
+        return;
+      }
+
+      list.innerHTML = results.map((product) => `
+        <article class="product-card">
+          <div class="product-image-wrap">
+            <img src="${product.image}" alt="${product.name}" />
+            <span class="badge">${product.category}</span>
+          </div>
+          <div class="product-body">
+            <h3>${product.name}</h3>
+            <p class="muted">Supplier: ${product.supplierName}</p>
+            <p>${product.description}</p>
+            <div class="info-row"><span>Unit Price</span><strong>${formatCurrency(product.price)}</strong></div>
+            <div class="info-row"><span>Bulk Price</span><strong>${formatCurrency(product.bulkPrice)}</strong></div>
+            <div class="info-row"><span>MOQ</span><strong>${product.moq} ${product.unit}</strong></div>
+            <div class="info-row"><span>Stock</span><strong>${product.stock}</strong></div>
+            <div class="info-row"><span>Status</span><strong>${product.availability}</strong></div>
+            <div class="button-row">
+              <button class="btn btn-primary small" type="button" data-open-product="${product.id}">View Product</button>
+              <button class="btn btn-danger small" type="button" data-remove-saved-product="${product.id}">Remove</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    [searchInput, categorySelect, supplierSelect, sortSelect].forEach((element) => {
+      if (element) element.addEventListener("input", applyFilters);
+      if (element) element.addEventListener("change", applyFilters);
+    });
+
+    const resetBtn = document.getElementById("saved-product-reset");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", function () {
+        if (searchInput) searchInput.value = "";
+        if (categorySelect) categorySelect.value = "";
+        if (supplierSelect) supplierSelect.value = "";
+        if (sortSelect) sortSelect.value = "name";
+        applyFilters();
+      });
+    }
+
+    if (document.body.dataset.savedProductClickBound !== "true") {
+      document.body.dataset.savedProductClickBound = "true";
+      document.addEventListener("click", function (event) {
+        const removeButton = event.target.closest("[data-remove-saved-product]");
+        if (removeButton) {
+          const productId = removeButton.getAttribute("data-remove-saved-product");
+          removeSavedProduct(productId);
+          renderSavedProducts();
+          showToast("Product removed from saved list.", "success");
+          return;
+        }
+
+        const openButton = event.target.closest("[data-open-product]");
+        if (openButton) {
+          const productId = openButton.getAttribute("data-open-product");
+          localStorage.setItem("tradenestSelectedProductId", JSON.stringify(productId));
+          window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
+        }
+      });
+    }
+
+    applyFilters();
+  }
+
+  function renderSavedSuppliers() {
+    const list = document.getElementById("saved-supplier-list");
+    if (!list) return;
+
+    const state = getState();
+    const searchInput = document.getElementById("saved-supplier-search");
+    const categorySelect = document.getElementById("saved-supplier-category");
+    const locationSelect = document.getElementById("saved-supplier-location");
+    const sortSelect = document.getElementById("saved-supplier-sort");
+
+    const savedIds = getSavedSuppliers().map((item) => item.id);
+    const savedItems = state.supplierProfiles.filter((supplier) => savedIds.includes(supplier.id));
+
+    if (categorySelect) {
+      const categories = [...new Set(savedItems.map((supplier) => supplier.category))];
+      categorySelect.innerHTML = '<option value="">All categories</option>' + categories.map((category) => `<option value="${category}">${category}</option>`).join("");
+    }
+
+    if (locationSelect) {
+      const locations = [...new Set(savedItems.map((supplier) => supplier.location))];
+      locationSelect.innerHTML = '<option value="">All locations</option>' + locations.map((location) => `<option value="${location}">${location}</option>`).join("");
+    }
+
+    function applyFilters() {
+      const searchTerm = (searchInput ? searchInput.value : "").toLowerCase();
+      const category = categorySelect ? categorySelect.value : "";
+      const location = locationSelect ? locationSelect.value : "";
+      const sort = sortSelect ? sortSelect.value : "name";
+
+      let results = savedItems.filter((supplier) => {
+        const matchesSearch = !searchTerm || supplier.businessName.toLowerCase().includes(searchTerm) || supplier.category.toLowerCase().includes(searchTerm) || supplier.location.toLowerCase().includes(searchTerm);
+        const matchesCategory = !category || supplier.category === category;
+        const matchesLocation = !location || supplier.location === location;
+        return matchesSearch && matchesCategory && matchesLocation;
+      });
+
+      results.sort((a, b) => sort === "name" ? a.businessName.localeCompare(b.businessName) : b.trustScore - a.trustScore);
+
+      if (!savedItems.length) {
+        list.innerHTML = '<div class="empty-state large"><h3>No Saved Suppliers Yet</h3><p>Your saved supplier list is currently empty. Save trusted suppliers you want to compare.</p><a href="suppliers.html" class="btn btn-primary" style="margin-top:12px;">Browse Suppliers</a></div>';
+        return;
+      }
+
+      if (!results.length) {
+        list.innerHTML = '<div class="empty-state large">No Results Found.</div>';
+        return;
+      }
+
+      list.innerHTML = results.map((supplier) => `
+        <article class="supplier-card">
+          <div class="supplier-card-head">
+            <div class="supplier-logo">${supplier.logo}</div>
+            <div>
+              <h3>${supplier.businessName}</h3>
+              <span>${supplier.category}</span>
+            </div>
+          </div>
+          <p>${supplier.description}</p>
+          <div class="meta-grid">
+            <span>Location</span><strong>${supplier.location}</strong>
+            <span>Verification</span><strong>${supplier.verificationStatus}</strong>
+            <span>Trust</span><strong>${supplier.trustScore}/100</strong>
+            <span>Product categories</span><strong>${supplier.products ? supplier.products.length : 0}</strong>
+          </div>
+          <div class="button-row">
+            <button class="btn btn-primary small" type="button" data-supplier-id="${supplier.id}">View Supplier</button>
+            <button class="btn btn-danger small" type="button" data-remove-saved-supplier="${supplier.id}">Remove</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    [searchInput, categorySelect, locationSelect, sortSelect].forEach((element) => {
+      if (element) element.addEventListener("input", applyFilters);
+      if (element) element.addEventListener("change", applyFilters);
+    });
+
+    const resetBtn = document.getElementById("saved-supplier-reset");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", function () {
+        if (searchInput) searchInput.value = "";
+        if (categorySelect) categorySelect.value = "";
+        if (locationSelect) locationSelect.value = "";
+        if (sortSelect) sortSelect.value = "name";
+        applyFilters();
+      });
+    }
+
+    if (document.body.dataset.savedSupplierClickBound !== "true") {
+      document.body.dataset.savedSupplierClickBound = "true";
+      document.addEventListener("click", function (event) {
+        const removeButton = event.target.closest("[data-remove-saved-supplier]");
+        if (removeButton) {
+          const supplierId = removeButton.getAttribute("data-remove-saved-supplier");
+          removeSavedSupplier(supplierId);
+          renderSavedSuppliers();
+          showToast("Supplier removed from saved list.", "success");
+          return;
+        }
+
+        const profileButton = event.target.closest("[data-supplier-id]");
+        if (profileButton) {
+          const supplierId = profileButton.getAttribute("data-supplier-id");
+          localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplierId));
+          window.location.href = `supplier-details.html?id=${encodeURIComponent(supplierId)}`;
+        }
+      });
+    }
+
+    applyFilters();
+  }
+
+  function renderBuyerProfilePage() {
+    const container = document.getElementById("buyer-profile-card");
+    const form = document.getElementById("buyer-profile-form");
+    if (!container && !form) return;
+
+    const profile = getBuyerProfile();
+
+    if (container) {
+      const initials = (profile.fullName || "Buyer").split(" ").map((part) => part[0]).slice(0, 2).join("").toUpperCase();
+      container.innerHTML = `
+        <div class="profile-summary">
+          <div class="profile-avatar">${initials}</div>
+          <div>
+            <h2>${profile.fullName}</h2>
+            <p>${profile.businessName} • ${profile.businessType}</p>
+          </div>
+        </div>
+        <div class="profile-detail-grid">
+          <div class="profile-detail-card"><span>Email</span><strong>${profile.email}</strong></div>
+          <div class="profile-detail-card"><span>Phone</span><strong>${profile.phone}</strong></div>
+          <div class="profile-detail-card"><span>GSTIN</span><strong>${profile.gstin}</strong></div>
+          <div class="profile-detail-card"><span>Business Category</span><strong>${profile.businessCategory}</strong></div>
+          <div class="profile-detail-card"><span>Address</span><strong>${profile.address}</strong></div>
+          <div class="profile-detail-card"><span>Location</span><strong>${profile.city}, ${profile.state} - ${profile.pincode}</strong></div>
+        </div>
+      `;
+    }
+
+    if (form) {
+      form.fullName.value = profile.fullName || "";
+      form.email.value = profile.email || "";
+      form.phone.value = profile.phone || "";
+      form.businessName.value = profile.businessName || "";
+      form.businessType.value = profile.businessType || "";
+      form.businessCategory.value = profile.businessCategory || "";
+      form.gstin.value = profile.gstin || "";
+      form.address.value = profile.address || "";
+      form.city.value = profile.city || "";
+      form.state.value = profile.state || "";
+      form.pincode.value = profile.pincode || "";
+
+      if (form.dataset.bound !== "profile") {
+        form.dataset.bound = "profile";
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const nextProfile = {
+            fullName: form.fullName.value.trim(),
+            email: form.email.value.trim(),
+            phone: form.phone.value.trim(),
+            businessName: form.businessName.value.trim(),
+            businessType: form.businessType.value.trim(),
+            businessCategory: form.businessCategory.value.trim(),
+            gstin: form.gstin.value.trim(),
+            address: form.address.value.trim(),
+            city: form.city.value.trim(),
+            state: form.state.value.trim(),
+            pincode: form.pincode.value.trim()
+          };
+
+          saveBuyerProfile(nextProfile);
+          renderBuyerProfilePage();
+          showToast("Buyer profile updated successfully.", "success");
+        });
+      }
+    }
+  }
+
+  function renderBuyerSettingsPage() {
+    const form = document.getElementById("buyer-settings-form");
+    if (!form) return;
+
+    const settings = getBuyerSettings();
+    Object.entries(settings).forEach(([key, value]) => {
+      const input = form.elements.namedItem(key);
+      if (!input) return;
+      if (input.type === "checkbox") {
+        input.checked = Boolean(value);
+      } else {
+        input.value = value;
+      }
+    });
+
+    if (form.dataset.bound !== "settings") {
+      form.dataset.bound = "settings";
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const nextSettings = {};
+        Array.from(form.elements).forEach((element) => {
+          if (!element.name) return;
+          if (element.type === "checkbox") {
+            nextSettings[element.name] = element.checked;
+          } else if (element.type !== "submit") {
+            nextSettings[element.name] = element.value;
+          }
+        });
+        saveBuyerSettings(nextSettings);
+        showToast("Buyer settings saved successfully.", "success");
+      });
+    }
+  }
+
   function renderDashboard() {
     const state = getState();
     const buyer = getBuyer();
@@ -221,6 +733,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             <div class="button-row">
               <button class="btn btn-primary small" type="button" data-open-product="${product.id}">Open details</button>
+              <button class="btn btn-secondary small" type="button" data-save-product="${product.id}">${getSavedProducts().some((item) => item.id === product.id) ? "Saved" : "Save Product"}</button>
             </div>
           </div>
         </article>
@@ -253,16 +766,32 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    document.addEventListener("click", function (event) {
-      const button = event.target.closest("[data-open-product]");
-      if (!button) return;
-      const productId = button.getAttribute("data-open-product");
-      const product = state.products.find((item) => item.id === productId);
-      if (product) {
-        localStorage.setItem("tradenestSelectedProductId", JSON.stringify(productId));
-        window.location.href = "../product-details.html";
-      }
-    });
+    if (document.body.dataset.productClickBound !== "true") {
+      document.body.dataset.productClickBound = "true";
+      document.addEventListener("click", function (event) {
+        const saveButton = event.target.closest("[data-save-product]");
+        if (saveButton) {
+          const productId = saveButton.getAttribute("data-save-product");
+          const saved = addSavedProduct(productId);
+          if (saved) {
+            saveButton.textContent = "Saved";
+            showToast("Product saved successfully.", "success");
+          } else {
+            showToast("This product is already saved.", "info");
+          }
+          return;
+        }
+
+        const button = event.target.closest("[data-open-product]");
+        if (!button) return;
+        const productId = button.getAttribute("data-open-product");
+        const product = state.products.find((item) => item.id === productId);
+        if (product) {
+          localStorage.setItem("tradenestSelectedProductId", JSON.stringify(productId));
+          window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
+        }
+      });
+    }
 
     applyFilters();
   }
@@ -313,6 +842,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
           <div class="button-row">
             <button class="btn btn-primary small" type="button" data-supplier-id="${supplier.id}">Open profile</button>
+            <button class="btn btn-secondary small" type="button" data-save-supplier="${supplier.id}">${getSavedSuppliers().some((item) => item.id === supplier.id) ? "Saved" : "Save Supplier"}</button>
             <button class="btn btn-secondary small" type="button" data-enquiry-supplier="${supplier.id}">Send enquiry</button>
           </div>
         </article>
@@ -340,20 +870,36 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    document.addEventListener("click", function (event) {
-      const profileBtn = event.target.closest("[data-supplier-id]");
-      if (profileBtn) {
-        const supplierId = profileBtn.getAttribute("data-supplier-id");
-        localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplierId));
-        window.location.href = "../supplier-details.html";
-      }
-      const enquiryBtn = event.target.closest("[data-enquiry-supplier]");
-      if (enquiryBtn) {
-        const supplierId = enquiryBtn.getAttribute("data-enquiry-supplier");
-        const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
-        showToast(`Enquiry drafted for ${supplier ? supplier.businessName : "supplier"}.`, "success");
-      }
-    });
+    if (document.body.dataset.supplierClickBound !== "true") {
+      document.body.dataset.supplierClickBound = "true";
+      document.addEventListener("click", function (event) {
+        const saveSupplierBtn = event.target.closest("[data-save-supplier]");
+        if (saveSupplierBtn) {
+          const supplierId = saveSupplierBtn.getAttribute("data-save-supplier");
+          const saved = addSavedSupplier(supplierId);
+          if (saved) {
+            saveSupplierBtn.textContent = "Saved";
+            showToast("Supplier saved successfully.", "success");
+          } else {
+            showToast("This supplier is already saved.", "info");
+          }
+          return;
+        }
+
+        const profileBtn = event.target.closest("[data-supplier-id]");
+        if (profileBtn) {
+          const supplierId = profileBtn.getAttribute("data-supplier-id");
+          localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplierId));
+          window.location.href = `supplier-details.html?id=${encodeURIComponent(supplierId)}`;
+        }
+        const enquiryBtn = event.target.closest("[data-enquiry-supplier]");
+        if (enquiryBtn) {
+          const supplierId = enquiryBtn.getAttribute("data-enquiry-supplier");
+          const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
+          showToast(`Enquiry drafted for ${supplier ? supplier.businessName : "supplier"}.`, "success");
+        }
+      });
+    }
 
     applyFilters();
   }
@@ -918,6 +1464,10 @@ document.addEventListener("DOMContentLoaded", function () {
   if (page === "dashboard") renderDashboard();
   if (page === "products") renderProducts();
   if (page === "suppliers") renderSuppliers();
+  if (page === "saved-products") renderSavedProducts();
+  if (page === "saved-suppliers") renderSavedSuppliers();
+  if (page === "profile") renderBuyerProfilePage();
+  if (page === "settings") renderBuyerSettingsPage();
   if (page === "rfqs") renderRFQs();
   if (page === "quotations") renderQuotations();
   if (page === "comparison") renderComparison();

@@ -88,7 +88,7 @@
       unit: "pair",
       availability: "In Stock",
       specifications: "Nitrile coating, palm grip, reinforced stitching, heat resistance up to 350°C",
-      image: "../images/products/industrial-safety-gloves.webp"
+      image: "/images/products/industrial-safety-gloves.webp"
     },
     {
       id: "product-002",
@@ -104,7 +104,7 @@
       unit: "unit",
       availability: "In Stock",
       specifications: "ABS shell, adjustable harness, ANSI certified, anti-fog visor compatibility",
-      image: "../images/products/industrial-safety-gloves.webp"
+      image: "/images/products/industrial-safety-gloves.webp"
     },
     {
       id: "product-003",
@@ -120,7 +120,7 @@
       unit: "ream",
       availability: "In Stock",
       specifications: "80 GSM, 210 x 297 mm, premium brightness, low-noise copy performance",
-      image: "../images/products/office-paper.webp"
+      image: "/images/products/office-paper.webp"
     },
     {
       id: "product-004",
@@ -136,7 +136,7 @@
       unit: "set",
       availability: "Low Stock",
       specifications: "Metal frame, anti-slip base, stackable modules, laminate finish",
-      image: "../images/products/office-paper.webp"
+      image: "/images/products/office-paper.webp"
     },
     {
       id: "product-005",
@@ -152,7 +152,7 @@
       unit: "piece",
       availability: "In Stock",
       specifications: "40W, 4000K neutral white, dimmable, 3-year warranty",
-      image: "../images/products/led-bulbs.webp"
+      image: "/images/products/led-bulbs.webp"
     },
     {
       id: "product-006",
@@ -168,7 +168,7 @@
       unit: "box",
       availability: "In Stock",
       specifications: "Triple-wall construction, shock resistant, custom print options",
-      image: "../images/products/packaging-boxes.webp"
+      image: "/images/products/packaging-boxes.webp"
     },
     {
       id: "product-007",
@@ -184,7 +184,7 @@
       unit: "set",
       availability: "Low Stock",
       specifications: "PE foam, anti-static, cut-to-fit design, custom color options",
-      image: "../images/products/packaging-boxes.webp"
+      image: "/images/products/packaging-boxes.webp"
     },
     {
       id: "product-008",
@@ -200,7 +200,7 @@
       unit: "unit",
       availability: "In Stock",
       specifications: "Powder coated steel, modular design, 800kg load per shelf",
-      image: "../images/products/warehouse-shelving.webp"
+      image: "/images/products/stainless-steel-components.webp"
     }
   ];
 
@@ -537,6 +537,36 @@
     }
   }
 
+  function normalizeAssetPath(value) {
+    if (typeof value !== "string") return value;
+
+    const legacyImageMap = {
+      "warehouse-shelving.webp": "/images/products/stainless-steel-components.webp",
+      "warehouse-shelving.png": "/images/products/stainless-steel-components.webp"
+    };
+
+    const normalized = value.replace(/^(?:\.\.\/|\.\/|\/)?(?:\.\.\/)?images\//, "/images/");
+    const fileName = normalized.split("/").pop()?.toLowerCase();
+    return legacyImageMap[fileName] || normalized;
+  }
+
+  function normalizeStorePaths(state) {
+    if (!state || typeof state !== "object") return state;
+    if (Array.isArray(state.products)) {
+      state.products = state.products.map((product) => ({
+        ...product,
+        image: normalizeAssetPath(product.image)
+      }));
+    }
+    if (Array.isArray(state.inventory)) {
+      state.inventory = state.inventory.map((product) => ({
+        ...product,
+        image: normalizeAssetPath(product.image)
+      }));
+    }
+    return state;
+  }
+
   function ensureCollections(state) {
     const fallback = defaultState();
     const merged = clone(fallback);
@@ -545,22 +575,23 @@
         merged[key] = clone(state[key]);
       }
     });
-    return merged;
+    return normalizeStorePaths(merged);
   }
 
   function getStore() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultState()));
-        return clone(defaultState());
+        const fresh = normalizeStorePaths(defaultState());
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+        return clone(fresh);
       }
       const parsed = safeParse(raw, defaultState());
-      const normalized = ensureCollections(parsed);
+      const normalized = normalizeStorePaths(ensureCollections(parsed));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
       return normalized;
     } catch (error) {
-      return clone(defaultState());
+      return clone(normalizeStorePaths(defaultState()));
     }
   }
 

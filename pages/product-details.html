@@ -799,12 +799,19 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const store = window.TradeNestStore;
-        const productId = JSON.parse(
+        const params = new URLSearchParams(window.location.search);
+        const requestedId = params.get("id");
+        const fallbackProductId = JSON.parse(
           localStorage.getItem("tradenestSelectedProductId") || '"product-001"',
         );
+        const productId = requestedId || fallbackProductId;
         const product =
           store.getStore().products.find((item) => item.id === productId) ||
           store.getStore().products[0];
+
+        if (product && product.id) {
+          localStorage.setItem("tradenestSelectedProductId", JSON.stringify(product.id));
+        }
 
         document.title = `${product.name} | TradeNest`;
         const title = document.querySelector(".product-detail-title");

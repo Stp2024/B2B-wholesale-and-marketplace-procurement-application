@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest Buyer Settings</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  </head>
+  <body data-page="settings">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html">🏢 Suppliers</a>
+          <a href="saved-products.html">💾 Saved Products</a>
+          <a href="saved-suppliers.html">📁 Saved Suppliers</a>
+          <a href="profile.html">👤 Profile</a>
+          <a href="settings.html" class="active">⚙️ Settings</a>
+          <a href="rfqs.html">📝 RFQs</a>
+          <a href="quotations.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="orders.html">📦 Orders</a>
+        </nav>
+      </aside>
+      <main class="module-main">
+        <header class="module-header">
+          <h1>Buyer Settings</h1>
+        </header>
+
+        <section class="page-panel">
+          <form id="buyer-settings-form">
+            <div class="setting-list">
+              <label class="checkbox-field">
+                <span>Email order alerts</span>
+                <input type="checkbox" name="emailAlerts" />
+              </label>
+              <label class="checkbox-field">
+                <span>Push/app notifications</span>
+                <input type="checkbox" name="appNotifications" />
+              </label>
+              <label class="checkbox-field">
+                <span>Order status updates</span>
+                <input type="checkbox" name="orderUpdates" />
+              </label>
+              <label class="checkbox-field">
+                <span>Price alerts</span>
+                <input type="checkbox" name="priceAlerts" />
+              </label>
+              <label class="checkbox-field">
+                <span>Supplier updates</span>
+                <input type="checkbox" name="supplierUpdates" />
+              </label>
+              <label class="checkbox-field">
+                <span>Newsletter emails</span>
+                <input type="checkbox" name="newsletterEmails" />
+              </label>
+              <label class="checkbox-field">
+                <span>Auto-save quote drafts</span>
+                <input type="checkbox" name="autoSaveDrafts" />
+              </label>
+            </div>
+
+            <div class="form-grid" style="margin-top:24px;">
+              <div class="field">
+                <label for="profilePrivacy">Profile visibility</label>
+                <select id="profilePrivacy" name="profilePrivacy">
+                  <option value="Private to my account">Private to my account</option>
+                  <option value="Visible to verified suppliers">Visible to verified suppliers</option>
+                  <option value="Public to all buyers">Public to all buyers</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="theme">Theme</label>
+                <select id="theme" name="theme">
+                  <option value="Light">Light</option>
+                  <option value="Dark">Dark</option>
+                  <option value="System default">System default</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="button-row" style="margin-top:20px;">
+              <button class="btn btn-primary" type="submit">Save Settings</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
+  </body>
+</html>
