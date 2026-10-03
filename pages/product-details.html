@@ -795,6 +795,46 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/tradenest-store.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const store = window.TradeNestStore;
+        const productId = JSON.parse(
+          localStorage.getItem("tradenestSelectedProductId") || '"product-001"',
+        );
+        const product =
+          store.getStore().products.find((item) => item.id === productId) ||
+          store.getStore().products[0];
+
+        document.title = `${product.name} | TradeNest`;
+        const title = document.querySelector(".product-detail-title");
+        const desc = document.querySelector(".product-detail-description");
+        const category = document.querySelector(".product-category");
+        const price = document.querySelector(".detail-price");
+        const moq = document.querySelector(".info-value");
+        const availability = document.querySelector(".status-available");
+        const supplierName = document.querySelector(
+          ".product-detail-content .product-rating-trust",
+        );
+
+        if (title) title.textContent = product.name;
+        if (desc) desc.textContent = product.description;
+        if (category) category.textContent = product.category;
+        if (price) price.textContent = `₹${product.price}`;
+        if (moq) moq.textContent = `${product.moq} ${product.unit}`;
+        if (availability) availability.textContent = product.availability;
+        if (supplierName) {
+          const supplier = store
+            .getStore()
+            .supplierProfiles.find((item) => item.id === product.supplierId);
+          supplierName.innerHTML = `<div class="product-trust"><span>Supplier</span><strong>${supplier ? supplier.businessName : product.supplierName}</strong></div>`;
+        }
+        const image = document.querySelector(".product-detail-image");
+        if (image) image.src = product.image;
+        const alt = document.querySelector(".product-image-caption");
+        if (alt) alt.textContent = product.name;
+      });
+    </script>
     <script src="../js/script.js"></script>
   </body>
 </html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest Buyer Messages</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  </head>
+  <body data-page="messages">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html">🏢 Suppliers</a>
+          <a href="rfqs.html">📝 RFQs</a>
+          <a href="quotations.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="samples.html">🧪 Samples</a>
+          <a href="collaboration.html">🤝 Collaboration</a>
+          <a href="messages.html" class="active">📨 Messages</a>
+          <a href="orders.html">📦 Orders</a>
+          <a href="payments.html">💳 Payments</a>
+          <a href="delivery.html">🚚 Delivery</a>
+        </nav>
+      </aside>
+      <main class="module-main">
+        <header class="module-header">
+          <h1>Messages & Negotiation</h1>
+          <button
+            class="btn btn-secondary"
+            type="button"
+            id="reset-demo-data-btn"
+          >
+            Reset Local Data
+          </button>
+        </header>
+
+        <section class="page-panel">
+          <div class="form-grid">
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <h2>Conversations</h2>
+              <div id="conversation-list"></div>
+            </div>
+            <div>
+              <h2>Conversation</h2>
+              <div id="message-thread" class="message-thread"></div>
+              <form id="message-form" style="margin-top: 20px">
+                <div class="field">
+                  <label for="message-input">Send message</label>
+                  <textarea
+                    id="message-input"
+                    placeholder="Type your message..."
+                  ></textarea>
+                </div>
+                <div class="button-row" style="margin-top: 12px">
+                  <button class="btn btn-primary" type="submit">Send</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
+  </body>
+</html>

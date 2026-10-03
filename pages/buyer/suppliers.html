@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest Buyer Suppliers</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  </head>
+  <body data-page="suppliers">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html" class="active">🏢 Suppliers</a>
+          <a href="rfqs.html">📝 RFQs</a>
+          <a href="quotations.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="samples.html">🧪 Samples</a>
+          <a href="collaboration.html">🤝 Collaboration</a>
+          <a href="messages.html">📨 Messages</a>
+          <a href="orders.html">📦 Orders</a>
+          <a href="payments.html">💳 Payments</a>
+          <a href="delivery.html">🚚 Delivery</a>
+        </nav>
+      </aside>
+      <main class="module-main">
+        <header class="module-header">
+          <h1>Supplier Discovery</h1>
+          <button
+            class="btn btn-secondary"
+            type="button"
+            id="reset-demo-data-btn"
+          >
+            Reset Local Data
+          </button>
+        </header>
+
+        <section class="page-panel">
+          <div class="filter-grid">
+            <div class="field">
+              <label for="supplier-search">Search suppliers</label>
+              <input
+                id="supplier-search"
+                type="search"
+                placeholder="Business, category or location"
+              />
+            </div>
+            <div class="field">
+              <label for="supplier-location">Location</label>
+              <select id="supplier-location">
+                <option value="">All locations</option>
+                <option value="Bengaluru">Bengaluru</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Delhi">Delhi NCR</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Pune">Pune</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="supplier-category">Category</label>
+              <select id="supplier-category"></select>
+            </div>
+            <div class="field">
+              <label for="supplier-sort">Sort</label>
+              <select id="supplier-sort">
+                <option value="trust">Trust Score</option>
+                <option value="name">Name</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" type="button" id="supplier-reset">
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div id="supplier-list" class="card-grid"></div>
+        </section>
+      </main>
+    </div>
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
+  </body>
+</html>

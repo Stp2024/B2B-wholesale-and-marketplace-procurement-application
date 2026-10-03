@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../../css/shared.css" />
   </head>
 
-  <body>
+  <body data-page="dashboard">
     <!-- =========================================================
          MAIN DASHBOARD LAYOUT
     ========================================================== -->
@@ -23,7 +23,11 @@
         <!-- Brand Section -->
         <div class="sidebar-brand">
           <a href="../../index.html" class="brand-logo">
-            <img src="../../images/TradeNest.webp" alt="TradeNest" class="dashboard-brand-image" />
+            <img
+              src="../../images/TradeNest.webp"
+              alt="TradeNest"
+              class="dashboard-brand-image"
+            />
           </a>
 
           <span class="brand-subtitle"> Buyer Workspace </span>
@@ -260,7 +264,7 @@
                   <div class="profile-dropdown-info">
                     <h3 id="dropdownName">Buyer Name</h3>
 
-                    <p id="dropdownEmail">buyer@example.com</p>
+                    <p id="dropdownEmail">aisha.patel@tradenest.com</p>
 
                     <span class="account-type-tag"> Buyer Account </span>
                   </div>
@@ -281,7 +285,9 @@
                   <div class="profile-detail">
                     <span class="detail-label"> Email </span>
 
-                    <strong id="profileEmail"> buyer@example.com </strong>
+                    <strong id="profileEmail">
+                      aisha.patel@tradenest.com
+                    </strong>
                   </div>
 
                   <!-- Phone -->
@@ -295,7 +301,7 @@
                   <div class="profile-detail">
                     <span class="detail-label"> Company </span>
 
-                    <strong id="profileCompany"> TradeNest Logistics </strong>
+                    <strong id="profileCompany"> North Star Retail </strong>
                   </div>
 
                   <!-- Business Type -->
@@ -451,6 +457,56 @@
             </div>
           </section>
 
+          <section
+            class="stats-grid dynamic-overview"
+            aria-label="Dynamic buyer overview"
+          >
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Total RFQs </span>
+                <span class="stat-icon icon-blue"> 📝 </span>
+              </div>
+              <div class="stat-value" id="stat-total-rfqs">0</div>
+              <span class="stat-trend positive">Live from local data</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Pending Quotations </span>
+                <span class="stat-icon icon-orange"> 💬 </span>
+              </div>
+              <div class="stat-value" id="stat-pending-quotations">0</div>
+              <span class="stat-trend neutral">Awaiting response</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Sample Requests </span>
+                <span class="stat-icon icon-yellow"> 🧪 </span>
+              </div>
+              <div class="stat-value" id="stat-active-samples">0</div>
+              <span class="stat-trend neutral">In review</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Orders </span>
+                <span class="stat-icon icon-green"> 📦 </span>
+              </div>
+              <div class="stat-value" id="stat-active-orders">0</div>
+              <span class="stat-trend positive">Processing</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Completed Orders </span>
+                <span class="stat-icon icon-green"> ✅ </span>
+              </div>
+              <div class="stat-value" id="stat-completed-orders">0</div>
+              <span class="stat-trend positive">Delivered</span>
+            </div>
+          </section>
+
           <!-- ===================================================
                QUICK ACTIONS
           ==================================================== -->
@@ -502,6 +558,20 @@
                 </span>
               </a>
             </div>
+          </section>
+
+          <section class="dashboard-card" style="margin-bottom: 24px">
+            <div class="card-header">
+              <h2 class="card-title">Recent Activity</h2>
+            </div>
+            <ul id="dashboard-activity-list" class="activity-list"></ul>
+          </section>
+
+          <section class="dashboard-card" style="margin-bottom: 24px">
+            <div class="card-header">
+              <h2 class="card-title">Recommended Suppliers</h2>
+            </div>
+            <div id="recommended-suppliers" class="card-grid"></div>
           </section>
 
           <!-- ===================================================
@@ -1133,6 +1203,8 @@
     <!-- =========================================================
          BUYER DASHBOARD JAVASCRIPT
     ========================================================== -->
+    <script src="../../js/tradenest-store.js"></script>
     <script src="../../js/buyer/dashboard.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
   </body>
 </html>
