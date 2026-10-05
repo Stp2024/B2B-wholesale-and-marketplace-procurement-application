@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest Request Quote</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  </head>
+  <body data-page="rfqs">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html">🏢 Suppliers</a>
+          <a href="request-quote.html" class="active">📝 RFQs</a>
+          <a href="my-quotes.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="samples.html">🧪 Samples</a>
+          <a href="collaboration.html">🤝 Collaboration</a>
+          <a href="messages.html">📨 Messages</a>
+          <a href="orders.html">📦 Orders</a>
+          <a href="payments.html">💳 Payments</a>
+          <a href="delivery.html">🚚 Delivery</a>
+        </nav>
+      </aside>
+      <main class="module-main">
+        <header class="module-header">
+          <h1>Request a Quote</h1>
+          <button
+            class="btn btn-secondary"
+            type="button"
+            id="reset-demo-data-btn"
+          >
+            Reset Local Data
+          </button>
+        </header>
+
+        <section class="page-panel">
+          <form id="rfq-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="rfq-title">RFQ title</label>
+                <input id="rfq-title" name="title" type="text" required />
+              </div>
+              <div class="field">
+                <label for="rfq-product">Product</label>
+                <select id="rfq-product" name="productId" required></select>
+              </div>
+              <div class="field">
+                <label for="rfq-supplier">Supplier</label>
+                <select id="rfq-supplier" name="supplierId" required></select>
+              </div>
+              <div class="field">
+                <label for="rfq-quantity">Required quantity</label>
+                <input
+                  id="rfq-quantity"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="rfq-unit">Unit</label>
+                <input
+                  id="rfq-unit"
+                  name="unit"
+                  type="text"
+                  value="units"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="rfq-target-price">Target price</label>
+                <input
+                  id="rfq-target-price"
+                  name="targetPrice"
+                  type="number"
+                  min="1"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="rfq-location">Delivery location</label>
+                <input
+                  id="rfq-location"
+                  name="deliveryLocation"
+                  type="text"
+                  value="Bengaluru"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="rfq-date">Expected date</label>
+                <input id="rfq-date" name="expectedDate" type="date" required />
+              </div>
+              <div class="field">
+                <label for="rfq-response-deadline">Response deadline</label>
+                <input
+                  id="rfq-response-deadline"
+                  name="responseDeadline"
+                  type="date"
+                  required
+                />
+              </div>
+              <div class="field" style="grid-column: 1 / -1">
+                <label for="rfq-notes">Additional requirements</label>
+                <textarea id="rfq-notes" name="notes"></textarea>
+              </div>
+            </div>
+            <div class="button-row" style="margin-top: 18px">
+              <button class="btn btn-primary" type="submit">Save RFQ</button>
+              <button class="btn btn-secondary" type="reset">Clear</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
+  </body>
+</html>

@@ -415,7 +415,6 @@ function initProductPage() {
     } catch (e) {
         console.warn("Could not inject supplier products into catalogue:", e);
     }
-
     var productCards = $$(".product-card");
 
     if (!productCards.length) {

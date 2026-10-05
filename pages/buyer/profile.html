@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest Buyer Profile</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  </head>
+  <body data-page="profile">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html">🏢 Suppliers</a>
+          <a href="saved-products.html">💾 Saved Products</a>
+          <a href="saved-suppliers.html">📁 Saved Suppliers</a>
+          <a href="profile.html" class="active">👤 Profile</a>
+          <a href="settings.html">⚙️ Settings</a>
+          <a href="rfqs.html">📝 RFQs</a>
+          <a href="quotations.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="orders.html">📦 Orders</a>
+        </nav>
+      </aside>
+      <main class="module-main">
+        <header class="module-header">
+          <h1>Buyer Profile</h1>
+        </header>
+
+        <section class="page-panel">
+          <div id="buyer-profile-card"></div>
+        </section>
+
+        <section class="page-panel">
+          <h2 style="margin-top:0; margin-bottom:18px;">Edit Buyer Profile</h2>
+          <form id="buyer-profile-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="fullName">Full Name</label>
+                <input id="fullName" name="fullName" type="text" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" />
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" type="tel" />
+              </div>
+              <div class="field">
+                <label for="businessName">Business Name</label>
+                <input id="businessName" name="businessName" type="text" />
+              </div>
+              <div class="field">
+                <label for="businessType">Business Type</label>
+                <input id="businessType" name="businessType" type="text" />
+              </div>
+              <div class="field">
+                <label for="businessCategory">Business Category</label>
+                <input id="businessCategory" name="businessCategory" type="text" />
+              </div>
+              <div class="field">
+                <label for="gstin">GSTIN</label>
+                <input id="gstin" name="gstin" type="text" />
+              </div>
+              <div class="field">
+                <label for="address">Address</label>
+                <input id="address" name="address" type="text" />
+              </div>
+              <div class="field">
+                <label for="city">City</label>
+                <input id="city" name="city" type="text" />
+              </div>
+              <div class="field">
+                <label for="state">State</label>
+                <input id="state" name="state" type="text" />
+              </div>
+              <div class="field">
+                <label for="pincode">Pincode</label>
+                <input id="pincode" name="pincode" type="text" />
+              </div>
+            </div>
+            <div class="button-row" style="margin-top:20px;">
+              <button class="btn btn-primary" type="submit">Save Profile</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest Saved Suppliers</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  </head>
+  <body data-page="saved-suppliers">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html">🏢 Suppliers</a>
+          <a href="saved-products.html">💾 Saved Products</a>
+          <a href="saved-suppliers.html" class="active">📁 Saved Suppliers</a>
+          <a href="profile.html">👤 Profile</a>
+          <a href="settings.html">⚙️ Settings</a>
+          <a href="rfqs.html">📝 RFQs</a>
+          <a href="quotations.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="orders.html">📦 Orders</a>
+        </nav>
+      </aside>
+      <main class="module-main">
+        <header class="module-header">
+          <h1>Saved Suppliers</h1>
+          <a href="suppliers.html" class="btn btn-primary">Browse Suppliers</a>
+        </header>
+
+        <section class="page-panel">
+          <div class="filter-grid">
+            <div class="field">
+              <label for="saved-supplier-search">Search suppliers</label>
+              <input id="saved-supplier-search" type="search" placeholder="Business, category or location" />
+            </div>
+            <div class="field">
+              <label for="saved-supplier-category">Category</label>
+              <select id="saved-supplier-category"><option value="">All categories</option></select>
+            </div>
+            <div class="field">
+              <label for="saved-supplier-location">Location</label>
+              <select id="saved-supplier-location"><option value="">All locations</option></select>
+            </div>
+            <div class="field">
+              <label for="saved-supplier-sort">Sort</label>
+              <select id="saved-supplier-sort">
+                <option value="name">Name</option>
+                <option value="trust">Trust Score</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button class="btn btn-secondary" type="button" id="saved-supplier-reset">Reset Filters</button>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div id="saved-supplier-list" class="card-grid"></div>
+        </section>
+      </main>
+    </div>
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
+  </body>
+</html>

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../../css/shared.css" />
   </head>
 
-  <body>
+  <body data-page="dashboard">
     <!-- =========================================================
          MAIN DASHBOARD LAYOUT
     ========================================================== -->
@@ -22,8 +22,12 @@
       <aside class="sidebar" id="sidebar">
         <!-- Brand Section -->
         <div class="sidebar-brand">
-          <a href="../../index.html" class="brand-logo">
-            <img src="../../images/TradeNest.webp" alt="TradeNest" class="dashboard-brand-image" />
+          <a href="dashboard.html" class="brand-logo" aria-label="Buyer dashboard home">
+            <img
+              src="../../images/TradeNest.webp"
+              alt="TradeNest"
+              class="dashboard-brand-image"
+            />
           </a>
 
           <span class="brand-subtitle"> Buyer Workspace </span>
@@ -74,7 +78,7 @@
 
               <!-- Purchase History -->
               <li>
-                <a href="purchase-history.html" class="nav-link">
+                <a href="orders.html" class="nav-link">
                   <span class="nav-icon">📜</span>
                   <span class="nav-label">Purchase History</span>
                 </a>
@@ -128,9 +132,25 @@
             <ul class="nav-list">
               <!-- Recommendations -->
               <li>
-                <a href="recommendations.html" class="nav-link">
+                <a href="products.html" class="nav-link">
                   <span class="nav-icon">⭐</span>
                   <span class="nav-label">Recommendations</span>
+                </a>
+              </li>
+
+              <!-- Saved Products -->
+              <li>
+                <a href="saved-products.html" class="nav-link">
+                  <span class="nav-icon">💾</span>
+                  <span class="nav-label">Saved Products</span>
+                </a>
+              </li>
+
+              <!-- Saved Suppliers -->
+              <li>
+                <a href="saved-suppliers.html" class="nav-link">
+                  <span class="nav-icon">📁</span>
+                  <span class="nav-label">Saved Suppliers</span>
                 </a>
               </li>
 
@@ -155,10 +175,10 @@
 
         <!-- Sidebar Footer -->
         <div class="sidebar-footer">
-          <!-- Back to Website -->
-          <a href="../../index.html" class="nav-link">
-            <span class="nav-icon">⬅️</span>
-            <span class="nav-label">Back to Website</span>
+          <!-- Dashboard Home -->
+          <a href="dashboard.html" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard Home</span>
           </a>
 
           <!-- Logout -->
@@ -260,7 +280,7 @@
                   <div class="profile-dropdown-info">
                     <h3 id="dropdownName">Buyer Name</h3>
 
-                    <p id="dropdownEmail">buyer@example.com</p>
+                    <p id="dropdownEmail">aisha.patel@tradenest.com</p>
 
                     <span class="account-type-tag"> Buyer Account </span>
                   </div>
@@ -281,7 +301,9 @@
                   <div class="profile-detail">
                     <span class="detail-label"> Email </span>
 
-                    <strong id="profileEmail"> buyer@example.com </strong>
+                    <strong id="profileEmail">
+                      aisha.patel@tradenest.com
+                    </strong>
                   </div>
 
                   <!-- Phone -->
@@ -295,7 +317,7 @@
                   <div class="profile-detail">
                     <span class="detail-label"> Company </span>
 
-                    <strong id="profileCompany"> TradeNest Logistics </strong>
+                    <strong id="profileCompany"> North Star Retail </strong>
                   </div>
 
                   <!-- Business Type -->
@@ -451,6 +473,56 @@
             </div>
           </section>
 
+          <section
+            class="stats-grid dynamic-overview"
+            aria-label="Dynamic buyer overview"
+          >
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Total RFQs </span>
+                <span class="stat-icon icon-blue"> 📝 </span>
+              </div>
+              <div class="stat-value" id="stat-total-rfqs">0</div>
+              <span class="stat-trend positive">Live from local data</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Pending Quotations </span>
+                <span class="stat-icon icon-orange"> 💬 </span>
+              </div>
+              <div class="stat-value" id="stat-pending-quotations">0</div>
+              <span class="stat-trend neutral">Awaiting response</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Sample Requests </span>
+                <span class="stat-icon icon-yellow"> 🧪 </span>
+              </div>
+              <div class="stat-value" id="stat-active-samples">0</div>
+              <span class="stat-trend neutral">In review</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Orders </span>
+                <span class="stat-icon icon-green"> 📦 </span>
+              </div>
+              <div class="stat-value" id="stat-active-orders">0</div>
+              <span class="stat-trend positive">Processing</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Completed Orders </span>
+                <span class="stat-icon icon-green"> ✅ </span>
+              </div>
+              <div class="stat-value" id="stat-completed-orders">0</div>
+              <span class="stat-trend positive">Delivered</span>
+            </div>
+          </section>
+
           <!-- ===================================================
                QUICK ACTIONS
           ==================================================== -->
@@ -502,6 +574,20 @@
                 </span>
               </a>
             </div>
+          </section>
+
+          <section class="dashboard-card" style="margin-bottom: 24px">
+            <div class="card-header">
+              <h2 class="card-title">Recent Activity</h2>
+            </div>
+            <ul id="dashboard-activity-list" class="activity-list"></ul>
+          </section>
+
+          <section class="dashboard-card" style="margin-bottom: 24px">
+            <div class="card-header">
+              <h2 class="card-title">Recommended Suppliers</h2>
+            </div>
+            <div id="recommended-suppliers" class="card-grid"></div>
           </section>
 
           <!-- ===================================================
@@ -690,12 +776,12 @@
               <div class="product-card">
                 <div class="product-image-wrap">
                   <img
-                    src="../../images/products/safety-gloves.webp"
+                    src="../../images/products/industrial-safety-gloves.webp"
                     alt="Industrial Safety Gloves"
                     class="product-image"
                   />
 
-                  <span class="category-tag"> Safety Equipment </span>
+                  <span class="category-tag"> Industrial Equipment </span>
                 </div>
 
                 <div class="product-body">
@@ -710,14 +796,14 @@
                   </div>
 
                   <div class="product-price-info">
-                    <span class="product-price"> ₹4.90 </span>
+                    <span class="product-price"> ₹180 </span>
 
                     <span class="product-unit"> / pair </span>
                   </div>
 
-                  <p class="product-moq">MOQ: 100 pairs</p>
+                  <p class="product-moq">MOQ: 500 pairs</p>
 
-                  <a href="product-details.html?id=1" class="btn btn-card">
+                  <a href="product-details.html?id=product-001" class="btn btn-card">
                     View Product
                   </a>
                 </div>
@@ -728,7 +814,7 @@
                 <div class="product-image-wrap">
                   <img
                     src="../../images/products/office-paper.webp"
-                    alt="A4 Copy Paper Premium"
+                    alt="A4 Premium Copy Paper"
                     class="product-image"
                   />
 
@@ -736,7 +822,7 @@
                 </div>
 
                 <div class="product-body">
-                  <h3 class="product-title">A4 Copy Paper Premium</h3>
+                  <h3 class="product-title">A4 Premium Copy Paper</h3>
 
                   <p class="product-supplier">By PaperPro Solutions</p>
 
@@ -747,14 +833,14 @@
                   </div>
 
                   <div class="product-price-info">
-                    <span class="product-price"> ₹4.45 </span>
+                    <span class="product-price"> ₹420 </span>
 
                     <span class="product-unit"> / ream </span>
                   </div>
 
-                  <p class="product-moq">MOQ: 50 reams</p>
+                  <p class="product-moq">MOQ: 100 reams</p>
 
-                  <a href="product-details.html?id=2" class="btn btn-card">
+                  <a href="product-details.html?id=product-003" class="btn btn-card">
                     View Product
                   </a>
                 </div>
@@ -784,14 +870,14 @@
                   </div>
 
                   <div class="product-price-info">
-                    <span class="product-price"> ₹16.00 </span>
+                    <span class="product-price"> ₹1650 </span>
 
                     <span class="product-unit"> / piece </span>
                   </div>
 
-                  <p class="product-moq">MOQ: 20 pieces</p>
+                  <p class="product-moq">MOQ: 30 pieces</p>
 
-                  <a href="product-details.html?id=3" class="btn btn-card">
+                  <a href="product-details.html?id=product-005" class="btn btn-card">
                     View Product
                   </a>
                 </div>
@@ -802,7 +888,7 @@
                 <div class="product-image-wrap">
                   <img
                     src="../../images/products/packaging-boxes.webp"
-                    alt="Heavy Corrugated Boxes"
+                    alt="Corrugated Packaging Boxes"
                     class="product-image"
                   />
 
@@ -810,7 +896,7 @@
                 </div>
 
                 <div class="product-body">
-                  <h3 class="product-title">Heavy Corrugated Boxes</h3>
+                  <h3 class="product-title">Corrugated Packaging Boxes</h3>
 
                   <p class="product-supplier">By PackRight Corp.</p>
 
@@ -821,14 +907,14 @@
                   </div>
 
                   <div class="product-price-info">
-                    <span class="product-price"> ₹3.10 </span>
+                    <span class="product-price"> ₹55 </span>
 
                     <span class="product-unit"> / box </span>
                   </div>
 
-                  <p class="product-moq">MOQ: 200 boxes</p>
+                  <p class="product-moq">MOQ: 1000 boxes</p>
 
-                  <a href="product-details.html?id=4" class="btn btn-card">
+                  <a href="product-details.html?id=product-006" class="btn btn-card">
                     View Product
                   </a>
                 </div>
@@ -885,7 +971,7 @@
                 </div>
 
                 <a
-                  href="supplier-details.html?id=101"
+                  href="supplier-details.html?id=supplier-001"
                   class="btn btn-card-secondary"
                 >
                   View Supplier
@@ -928,7 +1014,7 @@
                 </div>
 
                 <a
-                  href="supplier-details.html?id=102"
+                  href="supplier-details.html?id=supplier-002"
                   class="btn btn-card-secondary"
                 >
                   View Supplier
@@ -949,7 +1035,7 @@
                       </span>
                     </div>
 
-                    <p class="supplier-location">📍 Hyderabad, India</p>
+                    <p class="supplier-location">📍 Delhi NCR, India</p>
                   </div>
                 </div>
 
@@ -971,7 +1057,7 @@
                 </div>
 
                 <a
-                  href="supplier-details.html?id=103"
+                  href="supplier-details.html?id=supplier-003"
                   class="btn btn-card-secondary"
                 >
                   View Supplier
@@ -991,13 +1077,9 @@
             </p>
 
             <nav class="footer-links" aria-label="Footer Links">
-              <a href="../../about.html"> About </a>
+              <a href="products.html"> Products </a>
 
-              <a href="../../contact.html"> Contact </a>
-
-              <a href="../../privacy.html"> Privacy </a>
-
-              <a href="../../terms.html"> Terms </a>
+              <a href="suppliers.html"> Suppliers </a>
             </nav>
           </div>
         </footer>
@@ -1133,6 +1215,8 @@
     <!-- =========================================================
          BUYER DASHBOARD JAVASCRIPT
     ========================================================== -->
+    <script src="../../js/tradenest-store.js"></script>
     <script src="../../js/buyer/dashboard.js"></script>
+    <script src="../../js/buyer/modules.js"></script>
   </body>
 </html>

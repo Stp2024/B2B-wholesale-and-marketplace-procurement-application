@@ -21,10 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
 
     const defaultBuyerProfile = {
-        fullName: "Buyer Name",
-        email: "buyer@example.com",
+        fullName: "Aisha Patel",
+        email: "aisha.patel@tradenest.com",
         phone: "+91 98765 43210",
-        company: "TradeNest Buyer Company",
+        company: "North Star Retail",
         businessType: "Retailer / Wholesale Buyer",
         location: "Bengaluru, Karnataka, India"
     };
@@ -176,6 +176,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    function normalizeStoredBuyerProfile(profile) {
+        const safeProfile = { ...defaultBuyerProfile, ...(profile || {}) };
+
+        if (String(safeProfile.email || "").includes("@tradenest.demo")) {
+            safeProfile.email = defaultBuyerProfile.email;
+        }
+
+        if (!safeProfile.fullName || safeProfile.fullName === "Buyer Name") {
+            safeProfile.fullName = defaultBuyerProfile.fullName;
+        }
+
+        if (!safeProfile.company || safeProfile.company === "TradeNest Buyer Company") {
+            safeProfile.company = defaultBuyerProfile.company;
+        }
+
+        return safeProfile;
+    }
+
     // ==========================================
     // 4. LOAD BUYER PROFILE
     // ==========================================
@@ -200,11 +218,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 createBuyerProfileFromUser(currentUser);
 
 
-            /*
-             * Check whether the buyer has already
-             * edited their dashboard profile.
-             */
-
             try {
 
                 const savedProfile =
@@ -224,16 +237,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         typeof parsedProfile === "object"
                     ) {
 
-                        /*
-                         * Keep edited profile information,
-                         * but make sure the logged-in
-                         * account information is available.
-                         */
-
-                        return {
+                        const mergedProfile = normalizeStoredBuyerProfile({
                             ...loggedInProfile,
                             ...parsedProfile
-                        };
+                        });
+
+                        saveBuyerProfileToStorage(mergedProfile);
+                        return mergedProfile;
                     }
                 }
 
@@ -247,18 +257,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            /*
-             * First login:
-             * Save registration information as
-             * the buyer dashboard profile.
-             */
+            saveBuyerProfileToStorage(loggedInProfile);
 
-            saveBuyerProfileToStorage(
-                loggedInProfile
-            );
-
-
-            return loggedInProfile;
+            return normalizeStoredBuyerProfile(loggedInProfile);
         }
 
 
@@ -286,10 +287,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     typeof parsed === "object"
                 ) {
 
-                    return {
+                    const normalizedProfile = normalizeStoredBuyerProfile({
                         ...defaultBuyerProfile,
                         ...parsed
-                    };
+                    });
+
+                    saveBuyerProfileToStorage(normalizedProfile);
+                    return normalizedProfile;
                 }
             }
 
@@ -303,9 +307,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        return {
+        const normalizedProfile = normalizeStoredBuyerProfile({
             ...defaultBuyerProfile
-        };
+        });
+
+        saveBuyerProfileToStorage(normalizedProfile);
+        return normalizedProfile;
     }
 
 
@@ -316,10 +323,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function saveBuyerProfileToStorage(profile) {
 
         try {
+            const normalizedProfile = normalizeStoredBuyerProfile(profile);
 
             localStorage.setItem(
                 "tradenestBuyerProfile",
-                JSON.stringify(profile)
+                JSON.stringify(normalizedProfile)
             );
 
             return true;

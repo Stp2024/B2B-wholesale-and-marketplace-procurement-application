@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details</title>
+    <link rel="stylesheet" href="../../css/buyer/dashboard.css" />
+    <link rel="stylesheet" href="../../css/shared.css" />
+    <style>
+      body {
+        margin: 0;
+        background: #f4f7fb;
+        font-family: Arial, sans-serif;
+      }
+      .detail-layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+        gap: 24px;
+        padding: 24px;
+      }
+      .detail-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+        padding: 24px;
+      }
+      .detail-image {
+        width: 100%;
+        max-height: 360px;
+        object-fit: cover;
+        border-radius: 12px;
+        background: #eef4ff;
+      }
+      .detail-meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .meta-box {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+      .meta-box small {
+        display: block;
+        color: #64748b;
+        margin-bottom: 6px;
+      }
+      .detail-content h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 3vw, 2.5rem);
+      }
+      .detail-content .eyebrow {
+        display: inline-block;
+        background: #e0f2fe;
+        color: #075985;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .detail-content p {
+        color: #475569;
+        line-height: 1.7;
+      }
+      .detail-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 18px;
+      }
+      .detail-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        padding: 0.8rem 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        border: 1px solid transparent;
+      }
+      .btn-primary {
+        background: #0f766e;
+        color: white;
+      }
+      .btn-secondary {
+        background: white;
+        border-color: #cbd5e1;
+        color: #0f172a;
+      }
+      @media (max-width: 820px) {
+        .detail-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <a href="dashboard.html" class="brand-logo" aria-label="Buyer dashboard home">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" class="dashboard-brand-image" />
+          </a>
+          <span class="brand-subtitle">Buyer Workspace</span>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer Navigation">
+          <div class="nav-section">
+            <span class="nav-section-title">Main Menu</span>
+            <ul class="nav-list">
+              <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a></li>
+              <li><a href="products.html" class="nav-link"><span class="nav-icon">🛍️</span><span class="nav-label">Products</span></a></li>
+              <li><a href="suppliers.html" class="nav-link"><span class="nav-icon">🏢</span><span class="nav-label">Suppliers</span></a></li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="top-navbar">
+          <div class="navbar-left">
+            <div class="page-title-group">
+              <h1 class="page-title">Product Details</h1>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-panel" style="padding: 24px;">
+          <div class="detail-layout">
+            <div class="detail-card">
+              <img id="detail-image" class="detail-image" src="" alt="Product" />
+              <div class="detail-meta">
+                <div class="meta-box"><small>Category</small><strong id="detail-category">-</strong></div>
+                <div class="meta-box"><small>Availability</small><strong id="detail-availability">-</strong></div>
+                <div class="meta-box"><small>MOQ</small><strong id="detail-moq">-</strong></div>
+                <div class="meta-box"><small>Stock</small><strong id="detail-stock">-</strong></div>
+              </div>
+            </div>
+
+            <div class="detail-card detail-content">
+              <span class="eyebrow" id="detail-supplier">Supplier</span>
+              <h1 id="detail-name">Loading product...</h1>
+              <p id="detail-description">Loading product description...</p>
+              <div class="detail-price" id="detail-price">₹0</div>
+              <div class="detail-actions">
+                <a href="products.html" class="btn btn-primary">Back to Products</a>
+                <button id="save-product-btn" class="btn btn-secondary" type="button">Save Product</button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="../../js/tradenest-store.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const store = window.TradeNestStore;
+        const params = new URLSearchParams(window.location.search);
+        const requestedId = params.get("id");
+        const fallbackId = JSON.parse(localStorage.getItem("tradenestSelectedProductId") || '"product-001"');
+        const productId = requestedId || fallbackId;
+        const product = store.getStore().products.find((item) => item.id === productId) || store.getStore().products[0];
+
+        if (product) {
+          localStorage.setItem("tradenestSelectedProductId", JSON.stringify(product.id));
+          document.getElementById("detail-image").src = product.image;
+          document.getElementById("detail-image").alt = product.name;
+          document.getElementById("detail-name").textContent = product.name;
+          document.getElementById("detail-description").textContent = product.description;
+          document.getElementById("detail-category").textContent = product.category;
+          document.getElementById("detail-availability").textContent = product.availability;
+          document.getElementById("detail-moq").textContent = `${product.moq} ${product.unit}`;
+          document.getElementById("detail-stock").textContent = `${product.stock} ${product.unit}`;
+          document.getElementById("detail-price").textContent = `₹${product.price}`;
+          document.getElementById("detail-supplier").textContent = product.supplierName || "Supplier";
+
+          const saveBtn = document.getElementById("save-product-btn");
+          saveBtn.addEventListener("click", function () {
+            const saved = JSON.parse(localStorage.getItem("tradenest_saved_products") || "[]");
+            const exists = (saved || []).some((item) => item && item.id === product.id);
+            const list = exists ? saved : [...saved, {
+              id: product.id,
+              name: product.name,
+              description: product.description,
+              category: product.category,
+              supplierName: product.supplierName,
+              price: product.price,
+              bulkPrice: product.bulkPrice,
+              moq: product.moq,
+              stock: product.stock,
+              availability: product.availability,
+              image: product.image
+            }];
+            localStorage.setItem("tradenest_saved_products", JSON.stringify(list));
+            saveBtn.textContent = "Saved";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

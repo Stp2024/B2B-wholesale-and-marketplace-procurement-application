@@ -736,6 +736,56 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/tradenest-store.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const store = window.TradeNestStore;
+        const supplierId = JSON.parse(
+          localStorage.getItem("tradenestSelectedSupplierId") ||
+            '"supplier-001"',
+        );
+        const supplier =
+          store
+            .getStore()
+            .supplierProfiles.find((item) => item.id === supplierId) ||
+          store.getStore().supplierProfiles[0];
+        const products = store
+          .getStore()
+          .products.filter((item) => item.supplierId === supplier.id);
+
+        const title = document.querySelector(".supplier-detail-title");
+        const desc = document.querySelector(".supplier-detail-description");
+        const location = document.querySelector(".supplier-info-location");
+        const trust = document.querySelector(".supplier-trust-score");
+        const productList = document.querySelector(".supplier-product-grid");
+
+        if (title) title.textContent = supplier.businessName;
+        if (desc) desc.textContent = supplier.description;
+        if (location) location.textContent = supplier.location;
+        if (trust) trust.textContent = `${supplier.trustScore}/100`;
+        if (productList) {
+          productList.innerHTML = products.length
+            ? products
+                .map(
+                  (product) => `
+            <article class="supplier-product-card">
+              <div class="product-image-wrapper">
+                <img src="${product.image}" alt="${product.name}" />
+              </div>
+              <div class="product-card-content">
+                <span class="product-category">${product.category}</span>
+                <h3>${product.name}</h3>
+                <p>${product.description}</p>
+                <a href="product-details.html?id=${product.id}" class="btn btn-secondary">View Product</a>
+              </div>
+            </article>
+          `,
+                )
+                .join("")
+            : '<div class="empty-state">No products are connected to this supplier yet.</div>';
+        }
+      });
+    </script>
     <script src="../js/script.js"></script>
   </body>
 </html>
