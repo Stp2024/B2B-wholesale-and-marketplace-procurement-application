@@ -661,49 +661,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateDashboardStats() {
 
-        const totalOrdersEl =
-            document.getElementById(
-                "totalOrders"
-            );
+        const storeRef = window.TradeNestStore;
+        const buyerId = storeRef && storeRef.getCurrentUser ? storeRef.getCurrentUser().id : "buyer-001";
+        const state = storeRef ? storeRef.getStore() : { orders: [], quotations: [], sampleRequests: [], rfqs: [] };
 
-        const pendingOrdersEl =
-            document.getElementById(
-                "pendingOrders"
-            );
+        const orders = (state.orders || []).filter((item) => item.buyerId === buyerId);
+        const quotations = (state.quotations || []).filter((item) => item.buyerId === buyerId);
+        const rfqs = (state.rfqs || []).filter((item) => item.buyerId === buyerId);
+        const sampleRequests = (state.sampleRequests || []).filter((item) => item.buyerId === buyerId);
 
-        const savedProductsEl =
-            document.getElementById(
-                "savedProducts"
-            );
+        const totalOrdersEl = document.getElementById("totalOrders");
+        const activeQuotesEl = document.getElementById("activeQuotes");
+        const pendingOrdersEl = document.getElementById("pendingOrders");
+        const completedPurchasesEl = document.getElementById("completedPurchases");
+        const savedProductsEl = document.getElementById("savedProducts");
+        const totalSpentEl = document.getElementById("totalSpent");
 
-        const totalSpentEl =
-            document.getElementById(
-                "totalSpent"
-            );
+        const activeQuotes = quotations.filter((item) => !["Accepted", "Rejected", "Cancelled"].includes(item.status)).length;
+        const pendingOrders = orders.filter((item) => !["Completed", "Delivered", "Cancelled", "Rejected"].includes(item.status)).length;
+        const completedPurchases = orders.filter((item) => ["Completed", "Delivered"].includes(item.status)).length;
+        const totalSpent = orders.reduce((sum, item) => sum + (Number(item.totalAmount || item.amount || 0) || 0), 0);
+        const savedProducts = JSON.parse(localStorage.getItem("tradenest_saved_products") || "[]").length;
 
+        if (totalOrdersEl) totalOrdersEl.textContent = orders.length;
+        if (activeQuotesEl) activeQuotesEl.textContent = activeQuotes;
+        if (pendingOrdersEl) pendingOrdersEl.textContent = pendingOrders;
+        if (completedPurchasesEl) completedPurchasesEl.textContent = completedPurchases;
+        if (savedProductsEl) savedProductsEl.textContent = savedProducts;
+        if (totalSpentEl) totalSpentEl.textContent = storeRef ? storeRef.formatCurrency(totalSpent) : `₹${totalSpent.toLocaleString("en-IN")}`;
 
-        if (totalOrdersEl) {
-            totalOrdersEl.textContent =
-                buyerStats.totalOrders;
-        }
+        const overviewTotalRfqs = document.getElementById("stat-total-rfqs");
+        const overviewPendingQuotations = document.getElementById("stat-pending-quotations");
+        const overviewActiveSamples = document.getElementById("stat-active-samples");
+        const overviewActiveOrders = document.getElementById("stat-active-orders");
+        const overviewCompletedOrders = document.getElementById("stat-completed-orders");
 
-
-        if (pendingOrdersEl) {
-            pendingOrdersEl.textContent =
-                buyerStats.pendingOrders;
-        }
-
-
-        if (savedProductsEl) {
-            savedProductsEl.textContent =
-                buyerStats.savedProducts;
-        }
-
-
-        if (totalSpentEl) {
-            totalSpentEl.textContent =
-                buyerStats.totalSpent;
-        }
+        if (overviewTotalRfqs) overviewTotalRfqs.textContent = rfqs.length;
+        if (overviewPendingQuotations) overviewPendingQuotations.textContent = quotations.filter((item) => ["Pending", "In Review", "Under Review", "Offer Received"].includes(item.status)).length;
+        if (overviewActiveSamples) overviewActiveSamples.textContent = sampleRequests.filter((item) => !["Delivered", "Feedback Submitted", "Rejected"].includes(item.status)).length;
+        if (overviewActiveOrders) overviewActiveOrders.textContent = orders.filter((item) => !["Completed", "Delivered", "Cancelled", "Rejected"].includes(item.status)).length;
+        if (overviewCompletedOrders) overviewCompletedOrders.textContent = completedPurchases;
     }
 
 
@@ -1838,46 +1835,46 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
     function syncWithSupplierWorkspace() {
         try {
-            // 1. Sync Orders from Supplier Store
-            const rawOrders = localStorage.getItem("tradenest_supplier_orders");
-            if (rawOrders) {
-                const orders = JSON.parse(rawOrders);
-                const ordersTbody = document.querySelector(".recent-orders-card .data-table tbody");
-                if (ordersTbody && orders.length > 0) {
-                    ordersTbody.innerHTML = orders.slice(0, 4).map(ord => {
-                        const statusClass = String(ord.status || "").toLowerCase().replace(/[^a-z]/g, "");
-                        return `
-                            <tr>
-                                <td><strong>#${ord.id}</strong></td>
-                                <td>${ord.productName} (x${ord.orderedQty})</td>
-                                <td>TradeNest Supplies Pvt. Ltd.</td>
-                                <td>₹${(ord.totalAmount || ord.orderAmount || 0).toLocaleString()}</td>
-                                <td><span class="status-badge ${statusClass}">${ord.status}</span></td>
-                            </tr>
-                        `;
-                    }).join("");
-                }
+            const storeRef = window.TradeNestStore;
+            const buyerId = storeRef && storeRef.getCurrentUser ? storeRef.getCurrentUser().id : "buyer-001";
+            const state = storeRef ? storeRef.getStore() : { orders: [], quotations: [] };
+
+            const orders = (state.orders || []).filter((item) => item.buyerId === buyerId);
+            const quotes = (state.quotations || []).filter((item) => item.buyerId === buyerId);
+
+            const ordersTbody = document.querySelector(".recent-orders-card .data-table tbody");
+            if (ordersTbody) {
+                ordersTbody.innerHTML = orders.length ? orders.slice(0, 4).map((ord) => {
+                    const statusClass = String(ord.status || "").toLowerCase().replace(/[^a-z]/g, "");
+                    return `
+                        <tr>
+                            <td><strong>#${ord.id}</strong></td>
+                            <td>${ord.productName} (x${ord.quantity})</td>
+                            <td>${ord.supplierName}</td>
+                            <td>${storeRef ? storeRef.formatCurrency(ord.totalAmount || ord.amount || 0) : `₹${(ord.totalAmount || ord.amount || 0).toLocaleString("en-IN")}`}</td>
+                            <td><span class="status-badge ${statusClass}">${ord.status}</span></td>
+                        </tr>
+                    `;
+                }).join("") : '<tr><td colspan="5"><div class="empty-state">No orders yet.</div></td></tr>';
             }
 
-            // 2. Sync Active Quotes from Supplier Store
-            const rawQuotes = localStorage.getItem("tradenest_supplier_quotations");
-            if (rawQuotes) {
-                const quotes = JSON.parse(rawQuotes);
-                const quotesList = document.querySelector(".active-quotes-card .quotes-list");
-                if (quotesList && quotes.length > 0) {
-                    quotesList.innerHTML = quotes.slice(0, 3).map(q => `
+            const quotesList = document.querySelector(".active-quotes-card .quotes-list");
+            if (quotesList) {
+                quotesList.innerHTML = quotes.length ? quotes.slice(0, 3).map((q) => {
+                    const statusClass = String(q.status || "").toLowerCase().replace(/[^a-z]/g, "");
+                    return `
                         <div class="quote-item">
                             <div class="quote-info">
                                 <h3 class="quote-product">${q.productName}</h3>
-                                <p class="quote-meta">Qty: ${q.offeredQty} ${q.uom || 'Units'} • Supplier: <strong>TradeNest Supplies Pvt. Ltd.</strong></p>
+                                <p class="quote-meta">Qty: ${q.quantity} ${q.unit || "Units"} • Supplier: <strong>${q.supplierName}</strong></p>
                             </div>
                             <div class="quote-details">
-                                <span class="quote-amount">₹${(q.totalAmount || q.subtotal || 0).toLocaleString()}</span>
-                                <span class="status-badge ${String(q.status || '').toLowerCase()}">${q.status}</span>
+                                <span class="quote-amount">${storeRef ? storeRef.formatCurrency(q.totalAmount || q.unitPrice * (q.quantity || 1) || 0) : `₹${((q.totalAmount || q.unitPrice * (q.quantity || 1) || 0)).toLocaleString("en-IN")}`}</span>
+                                <span class="status-badge ${statusClass}">${q.status}</span>
                             </div>
                         </div>
-                    `).join("");
-                }
+                    `;
+                }).join("") : '<div class="empty-state">No active quotes right now.</div>';
             }
         } catch (e) {
             console.warn("Cross-sync with supplier workspace error:", e);

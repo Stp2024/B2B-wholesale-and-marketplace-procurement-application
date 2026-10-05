@@ -560,21 +560,55 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function getStatusBadgeClass(status) {
+    const value = String(status || "").toLowerCase().trim();
+    if (!value) return "pending";
+    if (value.includes("processing") || value.includes("review") || value.includes("under")) return "processing";
+    if (value.includes("shipped") || value.includes("dispatch") || value.includes("in transit")) return "shipped";
+    if (value.includes("delivered") || value.includes("completed") || value.includes("approved") || value.includes("accepted")) return "delivered";
+    if (value.includes("pending") || value.includes("quote") || value.includes("offer")) return "pending";
+    return "pending";
+  }
+
   function renderDashboard() {
     const state = getState();
     const buyer = getBuyer();
-    const rfqs = state.rfqs.filter((item) => item.buyerId === buyer.id);
-    const quotations = state.quotations.filter((item) => item.buyerId === buyer.id);
-    const sampleRequests = state.sampleRequests.filter((item) => item.buyerId === buyer.id);
-    const orders = state.orders.filter((item) => item.buyerId === buyer.id);
-    const activeOrders = orders.filter((item) => !["Completed", "Delivered"].includes(item.status));
+    const buyerId = buyer && buyer.id ? buyer.id : "buyer-001";
+    const rfqs = (state.rfqs || []).filter((item) => item.buyerId === buyerId);
+    const quotations = (state.quotations || []).filter((item) => item.buyerId === buyerId);
+    const sampleRequests = (state.sampleRequests || []).filter((item) => item.buyerId === buyerId);
+    const orders = (state.orders || []).filter((item) => item.buyerId === buyerId);
+    const activeOrders = orders.filter((item) => !["Completed", "Delivered", "Cancelled", "Rejected"].includes(item.status));
     const completedOrders = orders.filter((item) => ["Completed", "Delivered"].includes(item.status));
 
     const totalRfqs = rfqs.length;
-    const pendingQuotations = quotations.filter((item) => item.status === "Pending" || item.status === "In Review").length;
-    const activeSamples = sampleRequests.filter((item) => !["Delivered", "Feedback Submitted"].includes(item.status)).length;
+    const pendingQuotations = quotations.filter((item) => ["Pending", "In Review", "Under Review", "Offer Received"].includes(item.status)).length;
+    const activeSamples = sampleRequests.filter((item) => !["Delivered", "Feedback Submitted", "Rejected"].includes(item.status)).length;
     const activeOrderCount = activeOrders.length;
     const completedOrderCount = completedOrders.length;
+
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter((item) => !["Completed", "Delivered", "Cancelled", "Rejected"].includes(item.status)).length;
+    const completedPurchases = completedOrders.length;
+    const totalSpent = orders.reduce((sum, item) => sum + (Number(item.totalAmount || item.amount || 0) || 0), 0);
+    const savedProductsCount = getSavedProducts().length;
+    const activeQuotesCount = quotations.filter((item) => !["Accepted", "Rejected", "Cancelled"].includes(item.status)).length;
+
+    const topStatEls = {
+      totalOrders: document.getElementById("totalOrders"),
+      activeQuotes: document.getElementById("activeQuotes"),
+      pendingOrders: document.getElementById("pendingOrders"),
+      completedPurchases: document.getElementById("completedPurchases"),
+      savedProducts: document.getElementById("savedProducts"),
+      totalSpent: document.getElementById("totalSpent")
+    };
+
+    if (topStatEls.totalOrders) topStatEls.totalOrders.textContent = totalOrders;
+    if (topStatEls.activeQuotes) topStatEls.activeQuotes.textContent = activeQuotesCount;
+    if (topStatEls.pendingOrders) topStatEls.pendingOrders.textContent = pendingOrders;
+    if (topStatEls.completedPurchases) topStatEls.completedPurchases.textContent = completedPurchases;
+    if (topStatEls.savedProducts) topStatEls.savedProducts.textContent = savedProductsCount;
+    if (topStatEls.totalSpent) topStatEls.totalSpent.textContent = formatCurrency(totalSpent);
 
     const statEls = {
       totalRfqs: document.getElementById("stat-total-rfqs"),
@@ -593,17 +627,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const recentFeed = document.getElementById("dashboard-activity-list");
     if (recentFeed) {
       const activity = [
-        ...state.rfqs.filter((item) => item.buyerId === buyer.id).map((item) => ({
+        ...rfqs.map((item) => ({
           title: `RFQ ${item.status}: ${item.title}`,
           meta: `Reference ${item.id}`,
           type: "rfq"
         })),
-        ...state.quotations.filter((item) => item.buyerId === buyer.id).map((item) => ({
+        ...quotations.map((item) => ({
           title: `Quotation ${item.status}: ${item.productName}`,
           meta: `${item.supplierName}`,
           type: "quote"
         })),
-        ...state.orders.filter((item) => item.buyerId === buyer.id).map((item) => ({
+        ...orders.map((item) => ({
           title: `Order update: ${item.productName}`,
           meta: `Status ${item.status}`,
           type: "order"
@@ -619,6 +653,37 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
         </li>
       `).join("") || '<li class="empty-state">No activity recorded yet.</li>';
+    }
+
+    const recentOrderTable = document.querySelector(".recent-orders-card tbody");
+    if (recentOrderTable) {
+      const rows = orders.slice(0, 4);
+      recentOrderTable.innerHTML = rows.length ? rows.map((order) => `
+        <tr>
+          <td><strong>#${order.id}</strong></td>
+          <td>${order.productName} (x${order.quantity})</td>
+          <td>${order.supplierName}</td>
+          <td>${formatCurrency(order.totalAmount || order.amount || 0)}</td>
+          <td><span class="status-badge ${getStatusBadgeClass(order.status)}">${order.status}</span></td>
+        </tr>
+      `).join("") : '<tr><td colspan="5"><div class="empty-state">No purchase orders yet.</div></td></tr>';
+    }
+
+    const activeQuotesList = document.querySelector(".active-quotes-card .quotes-list");
+    if (activeQuotesList) {
+      const list = quotations.slice(0, 3);
+      activeQuotesList.innerHTML = list.length ? list.map((quote) => `
+        <div class="quote-item">
+          <div class="quote-info">
+            <h3 class="quote-product">${quote.productName}</h3>
+            <p class="quote-meta">Qty: ${quote.quantity} ${quote.unit || "Units"} • Supplier: <strong>${quote.supplierName}</strong></p>
+          </div>
+          <div class="quote-details">
+            <span class="quote-amount">${formatCurrency(quote.totalAmount || quote.unitPrice * (quote.quantity || 1) || 0)}</span>
+            <span class="status-badge ${getStatusBadgeClass(quote.status)}">${quote.status}</span>
+          </div>
+        </div>
+      `).join("") : '<div class="empty-state">No active quotes right now.</div>';
     }
 
     const recommended = document.getElementById("recommended-suppliers");
@@ -642,7 +707,7 @@ document.addEventListener("DOMContentLoaded", function () {
       `).join("");
     }
 
-    const profileName = document.getElementById("welcome-user-name");
+    const profileName = document.getElementById("welcomeUserName");
     if (profileName) {
       profileName.textContent = buyer.fullName || buyer.businessName || "Buyer";
     }
@@ -919,44 +984,47 @@ document.addEventListener("DOMContentLoaded", function () {
       if (supplierSelect) {
         supplierSelect.innerHTML = '<option value="">Select supplier</option>' + state.supplierProfiles.map((supplier) => `<option value="${supplier.id}">${supplier.businessName}</option>`).join("");
       }
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(form);
-        const title = formData.get("title")?.trim();
-        const productId = formData.get("productId");
-        const supplierId = formData.get("supplierId");
-        const quantity = Number(formData.get("quantity"));
-        const targetPrice = Number(formData.get("targetPrice"));
-        if (!title || !productId || !supplierId || !quantity || !targetPrice) {
-          showToast("Please complete all required RFQ fields.", "error");
-          return;
-        }
-        const product = state.products.find((item) => item.id === productId);
-        const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
-        const newRFQ = {
-          id: `rfq-${Date.now()}`,
-          buyerId: buyer.id,
-          title,
-          productId,
-          supplierId,
-          productName: product ? product.name : "Product",
-          quantity,
-          unit: formData.get("unit") || "units",
-          targetPrice,
-          deliveryLocation: formData.get("deliveryLocation") || "Bengaluru",
-          expectedDate: formData.get("expectedDate") || new Date().toISOString().slice(0, 10),
-          notes: formData.get("notes") || "",
-          status: "Pending",
-          responseDeadline: formData.get("responseDeadline") || new Date().toISOString().slice(0, 10),
-          createdAt: new Date().toISOString()
-        };
-        state.rfqs.unshift(newRFQ);
-        saveState(state);
-        store.addActivity("RFQ", `RFQ created for ${newRFQ.productName}`);
-        form.reset();
-        renderRFQs();
-        showToast("RFQ saved successfully.", "success");
-      });
+      if (form.dataset.bound !== "rfq") {
+        form.dataset.bound = "rfq";
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = new FormData(form);
+          const title = formData.get("title")?.trim();
+          const productId = formData.get("productId");
+          const supplierId = formData.get("supplierId");
+          const quantity = Number(formData.get("quantity"));
+          const targetPrice = Number(formData.get("targetPrice"));
+          if (!title || !productId || !supplierId || !quantity || !targetPrice) {
+            showToast("Please complete all required RFQ fields.", "error");
+            return;
+          }
+          const product = state.products.find((item) => item.id === productId);
+          const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
+          const newRFQ = {
+            id: `rfq-${Date.now()}`,
+            buyerId: buyer.id,
+            title,
+            productId,
+            supplierId,
+            productName: product ? product.name : "Product",
+            quantity,
+            unit: formData.get("unit") || "units",
+            targetPrice,
+            deliveryLocation: formData.get("deliveryLocation") || "Bengaluru",
+            expectedDate: formData.get("expectedDate") || new Date().toISOString().slice(0, 10),
+            notes: formData.get("notes") || "",
+            status: "Pending",
+            responseDeadline: formData.get("responseDeadline") || new Date().toISOString().slice(0, 10),
+            createdAt: new Date().toISOString()
+          };
+          state.rfqs.unshift(newRFQ);
+          saveState(state);
+          store.addActivity("RFQ", `RFQ created for ${newRFQ.productName}`);
+          form.reset();
+          renderRFQs();
+          showToast("RFQ saved successfully.", "success");
+        });
+      }
     }
 
     if (!list) return;
@@ -984,30 +1052,33 @@ document.addEventListener("DOMContentLoaded", function () {
       </article>
     `).join("") : '<div class="empty-state large">No RFQs available yet.</div>';
 
-    document.addEventListener("click", function (event) {
-      const cancelBtn = event.target.closest("[data-rfq-cancel]");
-      if (cancelBtn) {
-        const rfqId = cancelBtn.getAttribute("data-rfq-cancel");
-        const rfqState = getState();
-        rfqState.rfqs = rfqState.rfqs.filter((item) => item.id !== rfqId);
-        saveState(rfqState);
-        renderRFQs();
-        showToast("RFQ cancelled.", "success");
-      }
-      const statusBtn = event.target.closest("[data-rfq-status]");
-      if (statusBtn) {
-        const rfqId = statusBtn.getAttribute("data-rfq-status");
-        const nextStatus = statusBtn.getAttribute("data-next-status");
-        const rfqState = getState();
-        const item = rfqState.rfqs.find((record) => record.id === rfqId);
-        if (item) {
-          item.status = nextStatus;
+    if (document.body.dataset.rfqHandlersBound !== "true") {
+      document.body.dataset.rfqHandlersBound = "true";
+      document.addEventListener("click", function (event) {
+        const cancelBtn = event.target.closest("[data-rfq-cancel]");
+        if (cancelBtn) {
+          const rfqId = cancelBtn.getAttribute("data-rfq-cancel");
+          const rfqState = getState();
+          rfqState.rfqs = rfqState.rfqs.filter((item) => item.id !== rfqId);
           saveState(rfqState);
           renderRFQs();
-          showToast(`RFQ updated to ${nextStatus}.`, "success");
+          showToast("RFQ cancelled.", "success");
         }
-      }
-    });
+        const statusBtn = event.target.closest("[data-rfq-status]");
+        if (statusBtn) {
+          const rfqId = statusBtn.getAttribute("data-rfq-status");
+          const nextStatus = statusBtn.getAttribute("data-next-status");
+          const rfqState = getState();
+          const item = rfqState.rfqs.find((record) => record.id === rfqId);
+          if (item) {
+            item.status = nextStatus;
+            saveState(rfqState);
+            renderRFQs();
+            showToast(`RFQ updated to ${nextStatus}.`, "success");
+          }
+        }
+      });
+    }
   }
 
   function renderQuotations() {
@@ -1039,91 +1110,94 @@ document.addEventListener("DOMContentLoaded", function () {
       </article>
     `).join("") : '<div class="empty-state large">No quotations received yet.</div>';
 
-    document.addEventListener("click", function (event) {
-      const acceptBtn = event.target.closest("[data-accept-quote]");
-      if (acceptBtn) {
-        const quoteId = acceptBtn.getAttribute("data-accept-quote");
-        const stateNow = getState();
-        const quote = stateNow.quotations.find((item) => item.id === quoteId);
-        if (!quote) return;
-        quote.status = "Accepted";
-        saveState(stateNow);
-        store.addActivity("Quotation", `Quotation accepted for ${quote.productName}`);
-        const orderId = `order-${Date.now()}`;
-        stateNow.orders.unshift({
-          id: orderId,
-          buyerId: buyer.id,
-          quotationId: quote.id,
-          supplierId: quote.supplierId,
-          supplierName: quote.supplierName,
-          productId: quote.productId,
-          productName: quote.productName,
-          quantity: quote.quantity,
-          unitPrice: quote.unitPrice,
-          totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
-          orderDate: new Date().toISOString().slice(0, 10),
-          expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
-          status: "Placed",
-          shipmentStatus: "Pending Dispatch"
-        });
-        const paymentId = `payment-${Date.now()}`;
-        stateNow.payments.unshift({
-          id: paymentId,
-          orderId,
-          supplierId: quote.supplierId,
-          supplierName: quote.supplierName,
-          amount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
-          paymentDate: new Date().toISOString().slice(0, 10),
-          paymentMethod: "Bank Transfer",
-          status: "Pending"
-        });
-        stateNow.invoices.unshift({
-          id: `invoice-${Date.now()}`,
-          orderId,
-          supplierId: quote.supplierId,
-          supplierName: quote.supplierName,
-          buyerName: buyer.businessName || buyer.fullName,
-          invoiceNumber: `INV-TRN-${Date.now()}`,
-          lineItems: [{ product: quote.productName, quantity: quote.quantity, unitPrice: quote.unitPrice, total: (quote.unitPrice * quote.quantity) }],
-          totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0)
-        });
-        stateNow.shipments.unshift({
-          id: `shipment-${Date.now()}`,
-          orderId,
-          shipmentReference: `SHIP-TRN-${Date.now()}`,
-          courierName: "BlueRoute Logistics",
-          trackingNumber: `BRL-${Date.now()}`,
-          dispatchDate: new Date().toISOString().slice(0, 10),
-          expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
-          deliveryAddress: `${buyer.businessName || buyer.fullName}, Bengaluru`,
-          status: "Confirmed",
-          timeline: [
-            { status: "Order Confirmed", date: new Date().toISOString().slice(0, 10) },
-            { status: "Processing", date: new Date().toISOString().slice(0, 10) },
-            { status: "Dispatched", date: new Date().toISOString().slice(0, 10) }
-          ]
-        });
-        saveState(stateNow);
-        renderQuotations();
-        renderOrders();
-        renderPayments();
-        renderDelivery();
-        showToast("Quotation accepted and order created.", "success");
-      }
-
-      const rejectBtn = event.target.closest("[data-reject-quote]");
-      if (rejectBtn) {
-        const quoteId = rejectBtn.getAttribute("data-reject-quote");
-        const stateNow = getState();
-        const quote = stateNow.quotations.find((item) => item.id === quoteId);
-        if (quote) {
-          quote.status = "Rejected";
+    if (document.body.dataset.quotationHandlersBound !== "true") {
+      document.body.dataset.quotationHandlersBound = "true";
+      document.addEventListener("click", function (event) {
+        const acceptBtn = event.target.closest("[data-accept-quote]");
+        if (acceptBtn) {
+          const quoteId = acceptBtn.getAttribute("data-accept-quote");
+          const stateNow = getState();
+          const quote = stateNow.quotations.find((item) => item.id === quoteId);
+          if (!quote) return;
+          quote.status = "Accepted";
+          saveState(stateNow);
+          store.addActivity("Quotation", `Quotation accepted for ${quote.productName}`);
+          const orderId = `order-${Date.now()}`;
+          stateNow.orders.unshift({
+            id: orderId,
+            buyerId: buyer.id,
+            quotationId: quote.id,
+            supplierId: quote.supplierId,
+            supplierName: quote.supplierName,
+            productId: quote.productId,
+            productName: quote.productName,
+            quantity: quote.quantity,
+            unitPrice: quote.unitPrice,
+            totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
+            orderDate: new Date().toISOString().slice(0, 10),
+            expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
+            status: "Placed",
+            shipmentStatus: "Pending Dispatch"
+          });
+          const paymentId = `payment-${Date.now()}`;
+          stateNow.payments.unshift({
+            id: paymentId,
+            orderId,
+            supplierId: quote.supplierId,
+            supplierName: quote.supplierName,
+            amount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
+            paymentDate: new Date().toISOString().slice(0, 10),
+            paymentMethod: "Bank Transfer",
+            status: "Pending"
+          });
+          stateNow.invoices.unshift({
+            id: `invoice-${Date.now()}`,
+            orderId,
+            supplierId: quote.supplierId,
+            supplierName: quote.supplierName,
+            buyerName: buyer.businessName || buyer.fullName,
+            invoiceNumber: `INV-TRN-${Date.now()}`,
+            lineItems: [{ product: quote.productName, quantity: quote.quantity, unitPrice: quote.unitPrice, total: (quote.unitPrice * quote.quantity) }],
+            totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0)
+          });
+          stateNow.shipments.unshift({
+            id: `shipment-${Date.now()}`,
+            orderId,
+            shipmentReference: `SHIP-TRN-${Date.now()}`,
+            courierName: "BlueRoute Logistics",
+            trackingNumber: `BRL-${Date.now()}`,
+            dispatchDate: new Date().toISOString().slice(0, 10),
+            expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
+            deliveryAddress: `${buyer.businessName || buyer.fullName}, Bengaluru`,
+            status: "Confirmed",
+            timeline: [
+              { status: "Order Confirmed", date: new Date().toISOString().slice(0, 10) },
+              { status: "Processing", date: new Date().toISOString().slice(0, 10) },
+              { status: "Dispatched", date: new Date().toISOString().slice(0, 10) }
+            ]
+          });
           saveState(stateNow);
           renderQuotations();
-          showToast("Quotation rejected.", "success");
+          renderOrders();
+          renderPayments();
+          renderDelivery();
+          showToast("Quotation accepted and order created.", "success");
         }
-      }
-    });
+
+        const rejectBtn = event.target.closest("[data-reject-quote]");
+        if (rejectBtn) {
+          const quoteId = rejectBtn.getAttribute("data-reject-quote");
+          const stateNow = getState();
+          const quote = stateNow.quotations.find((item) => item.id === quoteId);
+          if (quote) {
+            quote.status = "Rejected";
+            saveState(stateNow);
+            renderQuotations();
+            showToast("Quotation rejected.", "success");
+          }
+        }
+      });
+    }
   }
 
   function renderComparison() {
@@ -1182,42 +1256,45 @@ document.addEventListener("DOMContentLoaded", function () {
       const supplierSelect = document.getElementById("sample-supplier");
       if (productSelect) productSelect.innerHTML = '<option value="">Select product</option>' + state.products.map((product) => `<option value="${product.id}">${product.name}</option>`).join("");
       if (supplierSelect) supplierSelect.innerHTML = '<option value="">Select supplier</option>' + state.supplierProfiles.map((supplier) => `<option value="${supplier.id}">${supplier.businessName}</option>`).join("");
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(form);
-        const productId = formData.get("productId");
-        const supplierId = formData.get("supplierId");
-        const quantity = Number(formData.get("quantity"));
-        if (!productId || !supplierId || !quantity) {
-          showToast("Complete sample request details before saving.", "error");
-          return;
-        }
-        const product = state.products.find((item) => item.id === productId);
-        const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
-        const newSample = {
-          id: `sample-${Date.now()}`,
-          buyerId: buyer.id,
-          productId,
-          productName: product ? product.name : "Product",
-          supplierId,
-          supplierName: supplier ? supplier.businessName : "Supplier",
-          requestedQuantity: quantity,
-          deliveryAddress: formData.get("deliveryAddress") || "Bengaluru",
-          contactName: buyer.fullName,
-          contactInfo: buyer.phone,
-          notes: formData.get("notes") || "",
-          requestDate: new Date().toISOString().slice(0, 10),
-          status: "Requested",
-          dispatchDetails: "Awaiting dispatch confirmation",
-          feedback: ""
-        };
-        state.sampleRequests.unshift(newSample);
-        saveState(state);
-        store.addActivity("Sample", `Sample request created for ${newSample.productName}`);
-        form.reset();
-        renderSamples();
-        showToast("Sample request created.", "success");
-      });
+      if (form.dataset.sampleBound !== "true") {
+        form.dataset.sampleBound = "true";
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = new FormData(form);
+          const productId = formData.get("productId");
+          const supplierId = formData.get("supplierId");
+          const quantity = Number(formData.get("quantity"));
+          if (!productId || !supplierId || !quantity) {
+            showToast("Complete sample request details before saving.", "error");
+            return;
+          }
+          const product = state.products.find((item) => item.id === productId);
+          const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
+          const newSample = {
+            id: `sample-${Date.now()}`,
+            buyerId: buyer.id,
+            productId,
+            productName: product ? product.name : "Product",
+            supplierId,
+            supplierName: supplier ? supplier.businessName : "Supplier",
+            requestedQuantity: quantity,
+            deliveryAddress: formData.get("deliveryAddress") || "Bengaluru",
+            contactName: buyer.fullName,
+            contactInfo: buyer.phone,
+            notes: formData.get("notes") || "",
+            requestDate: new Date().toISOString().slice(0, 10),
+            status: "Requested",
+            dispatchDetails: "Awaiting dispatch confirmation",
+            feedback: ""
+          };
+          state.sampleRequests.unshift(newSample);
+          saveState(state);
+          store.addActivity("Sample", `Sample request created for ${newSample.productName}`);
+          form.reset();
+          renderSamples();
+          showToast("Sample request created.", "success");
+        });
+      }
     }
 
     list.innerHTML = samples.length ? samples.map((sample) => `
@@ -1242,34 +1319,37 @@ document.addEventListener("DOMContentLoaded", function () {
       </article>
     `).join("") : '<div class="empty-state large">No sample requests available.</div>';
 
-    document.addEventListener("click", function (event) {
-      const statusBtn = event.target.closest("[data-sample-status]");
-      if (statusBtn) {
-        const sampleId = statusBtn.getAttribute("data-sample-status");
-        const nextStatus = statusBtn.getAttribute("data-next-status");
-        const sampleState = getState();
-        const sample = sampleState.sampleRequests.find((item) => item.id === sampleId);
-        if (sample) {
-          sample.status = nextStatus;
-          saveState(sampleState);
-          renderSamples();
-          showToast(`Sample status updated to ${nextStatus}.`, "success");
+    if (document.body.dataset.sampleHandlersBound !== "true") {
+      document.body.dataset.sampleHandlersBound = "true";
+      document.addEventListener("click", function (event) {
+        const statusBtn = event.target.closest("[data-sample-status]");
+        if (statusBtn) {
+          const sampleId = statusBtn.getAttribute("data-sample-status");
+          const nextStatus = statusBtn.getAttribute("data-next-status");
+          const sampleState = getState();
+          const sample = sampleState.sampleRequests.find((item) => item.id === sampleId);
+          if (sample) {
+            sample.status = nextStatus;
+            saveState(sampleState);
+            renderSamples();
+            showToast(`Sample status updated to ${nextStatus}.`, "success");
+          }
         }
-      }
-      const feedbackBtn = event.target.closest("[data-sample-feedback]");
-      if (feedbackBtn) {
-        const sampleId = feedbackBtn.getAttribute("data-sample-feedback");
-        const sampleState = getState();
-        const sample = sampleState.sampleRequests.find((item) => item.id === sampleId);
-        if (sample) {
-          sample.feedback = sample.feedback || "Expected quality and timely dispatch were confirmed by the buyer.";
-          sample.status = "Feedback Submitted";
-          saveState(sampleState);
-          renderSamples();
-          showToast("Sample feedback submitted.", "success");
+        const feedbackBtn = event.target.closest("[data-sample-feedback]");
+        if (feedbackBtn) {
+          const sampleId = feedbackBtn.getAttribute("data-sample-feedback");
+          const sampleState = getState();
+          const sample = sampleState.sampleRequests.find((item) => item.id === sampleId);
+          if (sample) {
+            sample.feedback = sample.feedback || "Expected quality and timely dispatch were confirmed by the buyer.";
+            sample.status = "Feedback Submitted";
+            saveState(sampleState);
+            renderSamples();
+            showToast("Sample feedback submitted.", "success");
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   function renderCollaborations() {
@@ -1329,15 +1409,19 @@ document.addEventListener("DOMContentLoaded", function () {
       </button>
     `).join("");
 
-    document.addEventListener("click", function (event) {
-      const convo = event.target.closest("[data-conversation-id]");
-      if (convo) {
-        openConversation(convo.getAttribute("data-conversation-id"));
-      }
-    });
+    if (document.body.dataset.messagesHandlersBound !== "true") {
+      document.body.dataset.messagesHandlersBound = "true";
+      document.addEventListener("click", function (event) {
+        const convo = event.target.closest("[data-conversation-id]");
+        if (convo) {
+          openConversation(convo.getAttribute("data-conversation-id"));
+        }
+      });
+    }
 
     const form = document.getElementById("message-form");
-    if (form) {
+    if (form && form.dataset.messageBound !== "true") {
+      form.dataset.messageBound = "true";
       form.addEventListener("submit", function (event) {
         event.preventDefault();
         const conversationId = form.dataset.conversationId;
@@ -1403,23 +1487,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const orders = state.orders.filter((item) => item.buyerId === buyer.id);
     const paymentData = state.payments.filter((item) => orders.some((order) => order.id === item.orderId));
 
-    list.innerHTML = paymentData.length ? paymentData.map((payment) => `
-      <article class="record-card">
-        <div class="record-header">
-          <div>
-            <strong>${payment.id}</strong>
-            <h3>${payment.supplierName}</h3>
+    list.innerHTML = paymentData.length ? paymentData.map((payment) => {
+      const invoice = state.invoices.find((item) => item.orderId === payment.orderId);
+      const order = state.orders.find((item) => item.id === payment.orderId);
+      const isPending = payment.status === "Pending";
+      return `
+        <article class="record-card">
+          <div class="record-header">
+            <div>
+              <strong>${payment.id}</strong>
+              <h3>${payment.supplierName}</h3>
+            </div>
+            <span class="status-badge ${payment.status.toLowerCase().replace(/\s+/g, "-")}">${payment.status}</span>
           </div>
-          <span class="status-badge ${payment.status.toLowerCase().replace(/\s+/g, "-")}">${payment.status}</span>
-        </div>
-        <div class="meta-grid">
-          <span>Order</span><strong>${payment.orderId}</strong>
-          <span>Amount</span><strong>${formatCurrency(payment.amount)}</strong>
-          <span>Date</span><strong>${formatDate(payment.paymentDate)}</strong>
-          <span>Method</span><strong>${payment.paymentMethod}</strong>
-        </div>
-      </article>
-    `).join("") : '<div class="empty-state large">No payment records found.</div>';
+          <div class="meta-grid">
+            <span>Order</span><strong>${payment.orderId}</strong>
+            <span>Amount</span><strong>${formatCurrency(payment.amount)}</strong>
+            <span>Date</span><strong>${formatDate(payment.paymentDate)}</strong>
+            <span>Method</span><strong>${payment.paymentMethod}</strong>
+            <span>Invoice</span><strong>${invoice ? invoice.invoiceNumber : "—"}</strong>
+            <span>Product</span><strong>${order ? order.productName : "—"}</strong>
+          </div>
+          <div class="button-row">
+            <button class="btn btn-primary small" type="button" data-payment-status="${payment.id}" data-next-status="${isPending ? "Paid" : "Pending"}">${isPending ? "Mark paid" : "Mark pending"}</button>
+          </div>
+        </article>
+      `;
+    }).join("") : '<div class="empty-state large">No payment records found.</div>';
+
+    if (document.body.dataset.paymentHandlersBound !== "true") {
+      document.body.dataset.paymentHandlersBound = "true";
+      document.addEventListener("click", function (event) {
+        const button = event.target.closest("[data-payment-status]");
+        if (!button) return;
+        const paymentId = button.getAttribute("data-payment-status");
+        const nextStatus = button.getAttribute("data-next-status");
+        const stateNow = getState();
+        const payment = stateNow.payments.find((item) => item.id === paymentId);
+        if (!payment) return;
+        payment.status = nextStatus;
+        const order = stateNow.orders.find((item) => item.id === payment.orderId);
+        if (order) {
+          order.status = nextStatus === "Paid" ? "Confirmed" : "Processing";
+        }
+        saveState(stateNow);
+        renderPayments();
+        renderOrders();
+        showToast(`Payment marked as ${nextStatus}.`, "success");
+      });
+    }
   }
 
   function renderDelivery() {
@@ -1429,26 +1545,63 @@ document.addEventListener("DOMContentLoaded", function () {
     const buyer = getBuyer();
     const shipments = state.shipments.filter((item) => state.orders.some((order) => order.id === item.orderId && order.buyerId === buyer.id));
 
-    list.innerHTML = shipments.length ? shipments.map((shipment) => `
-      <article class="record-card">
-        <div class="record-header">
-          <div>
-            <strong>${shipment.shipmentReference}</strong>
-            <h3>${shipment.courierName}</h3>
+    list.innerHTML = shipments.length ? shipments.map((shipment) => {
+      const order = state.orders.find((item) => item.id === shipment.orderId);
+      const statusFlow = ["Processing", "Dispatched", "In Transit", "Out for Delivery", "Delivered"];
+      const currentIndex = statusFlow.indexOf(shipment.status);
+      const nextStatus = statusFlow[currentIndex + 1] || "Delivered";
+      return `
+        <article class="record-card">
+          <div class="record-header">
+            <div>
+              <strong>${shipment.shipmentReference}</strong>
+              <h3>${shipment.courierName}</h3>
+            </div>
+            <span class="status-badge ${shipment.status.toLowerCase().replace(/\s+/g, "-")}">${shipment.status}</span>
           </div>
-          <span class="status-badge ${shipment.status.toLowerCase().replace(/\s+/g, "-")}">${shipment.status}</span>
-        </div>
-        <div class="meta-grid">
-          <span>Tracking</span><strong>${shipment.trackingNumber}</strong>
-          <span>Order</span><strong>${shipment.orderId}</strong>
-          <span>Expected</span><strong>${formatDate(shipment.expectedDate)}</strong>
-          <span>Address</span><strong>${shipment.deliveryAddress}</strong>
-        </div>
-        <ul class="timeline">
-          ${shipment.timeline.map((step) => `<li><span>${step.status}</span><small>${formatDate(step.date)}</small></li>`).join("")}
-        </ul>
-      </article>
-    `).join("") : '<div class="empty-state large">No shipment tracking available.</div>';
+          <div class="meta-grid">
+            <span>Tracking</span><strong>${shipment.trackingNumber}</strong>
+            <span>Order</span><strong>${shipment.orderId}</strong>
+            <span>Expected</span><strong>${formatDate(shipment.expectedDate)}</strong>
+            <span>Product</span><strong>${order ? order.productName : "—"}</strong>
+            <span>Address</span><strong>${shipment.deliveryAddress}</strong>
+            <span>Next step</span><strong>${nextStatus}</strong>
+          </div>
+          <ul class="timeline">
+            ${shipment.timeline.map((step) => `<li><span>${step.status}</span><small>${formatDate(step.date)}</small></li>`).join("")}
+          </ul>
+          <div class="button-row">
+            <button class="btn btn-secondary small" type="button" data-shipment-status="${shipment.id}" data-next-status="${nextStatus}">Update status</button>
+          </div>
+        </article>
+      `;
+    }).join("") : '<div class="empty-state large">No shipment tracking available.</div>';
+
+    if (document.body.dataset.shipmentHandlersBound !== "true") {
+      document.body.dataset.shipmentHandlersBound = "true";
+      document.addEventListener("click", function (event) {
+        const button = event.target.closest("[data-shipment-status]");
+        if (!button) return;
+        const shipmentId = button.getAttribute("data-shipment-status");
+        const nextStatus = button.getAttribute("data-next-status");
+        const stateNow = getState();
+        const shipment = stateNow.shipments.find((item) => item.id === shipmentId);
+        if (!shipment) return;
+        shipment.status = nextStatus;
+        shipment.timeline.push({ status: nextStatus, date: new Date().toISOString().slice(0, 10) });
+        const order = stateNow.orders.find((item) => item.id === shipment.orderId);
+        if (order) {
+          order.shipmentStatus = nextStatus;
+          if (nextStatus === "Delivered") {
+            order.status = "Delivered";
+          }
+        }
+        saveState(stateNow);
+        renderDelivery();
+        renderOrders();
+        showToast(`Shipment updated to ${nextStatus}.`, "success");
+      });
+    }
   }
 
   function initGlobalActions() {
