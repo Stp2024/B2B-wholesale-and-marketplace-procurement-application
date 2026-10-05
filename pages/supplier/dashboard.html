@@ -3,111 +3,252 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Supplier Dashboard - TradeNest B2B Marketplace</title>
+    <title>Supplier Workspace - TradeNest B2B Marketplace</title>
+    <meta
+      name="description"
+      content="Comprehensive TradeNest B2B Supplier Workspace for managing products, inventory, RFQs, quotations, sample requests, collaboration networks, orders, payments, shipments, and TrustScore performance."
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../../css/supplier/dashboard.css" />
+    <link rel="stylesheet" href="../../css/supplier/modules.css" />
     <link rel="stylesheet" href="../../css/shared.css" />
   </head>
   <body>
     <div class="dashboard-container">
-      <!-- SIDEBAR NAVIGATION -->
+      <!-- =======================================================
+           SIDEBAR NAVIGATION (MODULES 15 to 28)
+      ======================================================== -->
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
           <a href="../../index.html" class="brand-logo">
             <div class="brand-text">
-              <img src="../../images/TradeNest.webp" alt="TradeNest" class="dashboard-brand-image" />
+              <img
+                src="../../images/TradeNest.webp"
+                alt="TradeNest B2B Marketplace"
+                class="dashboard-brand-image"
+              />
               <span class="brand-subtitle">Supplier Workspace</span>
             </div>
           </a>
         </div>
 
-        <nav class="sidebar-nav" aria-label="Main Navigation">
+        <nav class="sidebar-nav" aria-label="Supplier Workspace Navigation">
+          <!-- SECTION 1: CORE OVERVIEW -->
           <div class="nav-section">
-            <span class="nav-section-title">Main Menu</span>
+            <span class="nav-section-title">Overview</span>
             <ul class="nav-list">
               <li class="nav-item">
                 <a
-                  href="dashboard.html"
+                  href="#overview"
                   class="nav-link active"
-                  aria-current="page"
+                  data-view="overview"
+                  id="nav-link-overview"
                 >
                   <span class="nav-icon" aria-hidden="true">📊</span>
-                  <span class="nav-label">Dashboard</span>
+                  <span class="nav-label">Dashboard Overview</span>
                 </a>
               </li>
+            </ul>
+          </div>
+
+          <!-- SECTION 2: CATALOGUE & STOCK -->
+          <div class="nav-section">
+            <span class="nav-section-title">Catalogue &amp; Stock</span>
+            <ul class="nav-list">
               <li class="nav-item">
-                <a href="products.html" class="nav-link">
+                <a
+                  href="#products"
+                  class="nav-link"
+                  data-view="products"
+                  id="nav-link-products"
+                >
                   <span class="nav-icon" aria-hidden="true">📦</span>
                   <span class="nav-label">My Products</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="orders.html" class="nav-link">
+                <a
+                  href="#inventory"
+                  class="nav-link"
+                  data-view="inventory"
+                  id="nav-link-inventory"
+                >
+                  <span class="nav-icon" aria-hidden="true">📑</span>
+                  <span class="nav-label">Inventory Management</span>
+                  <span
+                    class="badge-pill badge-lowstock"
+                    id="navInventoryAlertBadge"
+                    style="display: none; padding: 2px 6px; font-size: 0.65rem;"
+                    >Low</span
+                  >
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- SECTION 3: PROCUREMENT & DEALS -->
+          <div class="nav-section">
+            <span class="nav-section-title">Procurement &amp; Quotes</span>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a
+                  href="#rfqs"
+                  class="nav-link"
+                  data-view="rfqs"
+                  id="nav-link-rfqs"
+                >
+                  <span class="nav-icon" aria-hidden="true">📥</span>
+                  <span class="nav-label">Incoming RFQs</span>
+                  <span
+                    class="badge-pill badge-quoted"
+                    id="navRFQCountBadge"
+                    style="padding: 2px 6px; font-size: 0.65rem;"
+                    >2</span
+                  >
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="#quotations"
+                  class="nav-link"
+                  data-view="quotations"
+                  id="nav-link-quotations"
+                >
+                  <span class="nav-icon" aria-hidden="true">📝</span>
+                  <span class="nav-label">Quotations</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="#samples"
+                  class="nav-link"
+                  data-view="samples"
+                  id="nav-link-samples"
+                >
+                  <span class="nav-icon" aria-hidden="true">🧪</span>
+                  <span class="nav-label">Sample Requests</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- SECTION 4: FULFILLMENT & LOGISTICS -->
+          <div class="nav-section">
+            <span class="nav-section-title">Sales &amp; Logistics</span>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a
+                  href="#orders"
+                  class="nav-link"
+                  data-view="orders"
+                  id="nav-link-orders"
+                >
                   <span class="nav-icon" aria-hidden="true">🛒</span>
                   <span class="nav-label">Orders</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="quote-requests.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">📝</span>
-                  <span class="nav-label">Quote Requests</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="supplier-offers.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">🏷️</span>
-                  <span class="nav-label">Supplier Offers</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="customers.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">👥</span>
-                  <span class="nav-label">Customers</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="nav-section">
-            <span class="nav-section-title">Business Management</span>
-            <ul class="nav-list">
-              <li class="nav-item">
-                <a href="sales-analytics.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">📈</span>
-                  <span class="nav-label">Sales &amp; Analytics</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="delivery-tracking.html" class="nav-link">
+                <a
+                  href="#shipping"
+                  class="nav-link"
+                  data-view="shipping"
+                  id="nav-link-shipping"
+                >
                   <span class="nav-icon" aria-hidden="true">🚚</span>
-                  <span class="nav-label">Delivery Tracking</span>
+                  <span class="nav-label">Shipping &amp; Delivery</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="messages.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">💬</span>
-                  <span class="nav-label">Messages</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="reviews.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">⭐</span>
-                  <span class="nav-label">Reviews</span>
+                <a
+                  href="#payments"
+                  class="nav-link"
+                  data-view="payments"
+                  id="nav-link-payments"
+                >
+                  <span class="nav-icon" aria-hidden="true">💳</span>
+                  <span class="nav-label">Payments &amp; Invoices</span>
                 </a>
               </li>
             </ul>
           </div>
 
+          <!-- SECTION 5: NETWORK & COMMUNICATION -->
           <div class="nav-section">
-            <span class="nav-section-title">Account</span>
+            <span class="nav-section-title">Network &amp; Comms</span>
             <ul class="nav-list">
               <li class="nav-item">
-                <a href="profile.html" class="nav-link">
-                  <span class="nav-icon" aria-hidden="true">👤</span>
-                  <span class="nav-label">Profile</span>
+                <a
+                  href="#collaboration"
+                  class="nav-link"
+                  data-view="collaboration"
+                  id="nav-link-collaboration"
+                >
+                  <span class="nav-icon" aria-hidden="true">🤝</span>
+                  <span class="nav-label">Collaboration Network</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="settings.html" class="nav-link">
+                <a
+                  href="#communication"
+                  class="nav-link"
+                  data-view="communication"
+                  id="nav-link-communication"
+                >
+                  <span class="nav-icon" aria-hidden="true">💬</span>
+                  <span class="nav-label">Buyer Messages</span>
+                  <span
+                    class="badge-pill badge-active"
+                    id="navMessagesBadge"
+                    style="padding: 2px 6px; font-size: 0.65rem;"
+                    >1</span
+                  >
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- SECTION 6: TRUST & SETTINGS -->
+          <div class="nav-section">
+            <span class="nav-section-title">Trust &amp; Settings</span>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a
+                  href="#performance"
+                  class="nav-link"
+                  data-view="performance"
+                  id="nav-link-performance"
+                >
+                  <span class="nav-icon" aria-hidden="true">🏆</span>
+                  <span class="nav-label">Performance &amp; Trust</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="#business-profile"
+                  class="nav-link"
+                  data-view="business-profile"
+                  id="nav-link-business-profile"
+                >
+                  <span class="nav-icon" aria-hidden="true">🏢</span>
+                  <span class="nav-label">Business Profile</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="#settings"
+                  class="nav-link"
+                  data-view="settings"
+                  id="nav-link-settings"
+                >
                   <span class="nav-icon" aria-hidden="true">⚙️</span>
                   <span class="nav-label">Settings</span>
                 </a>
@@ -119,20 +260,18 @@
         <div class="sidebar-footer">
           <a href="../../index.html" class="nav-link">
             <span class="nav-icon" aria-hidden="true">🌐</span>
-            <span class="nav-label">Back to Website</span>
+            <span class="nav-label">Back to Marketplace</span>
           </a>
-          <button
-            type="button"
-            class="logout-link-btn"
-            id="sidebarLogoutButton"
-          >
+          <button type="button" class="logout-link-btn" id="sidebarLogoutButton">
             <span class="nav-icon" aria-hidden="true">🚪</span>
             <span class="nav-label">Logout</span>
           </button>
         </div>
       </aside>
 
-      <!-- MAIN WRAPPER -->
+      <!-- =======================================================
+           MAIN WRAPPER
+      ======================================================== -->
       <div class="main-wrapper">
         <!-- TOP NAVBAR -->
         <header class="top-navbar">
@@ -146,7 +285,7 @@
               ☰
             </button>
             <div class="page-title-group">
-              <h1 class="page-title">Dashboard</h1>
+              <h1 class="page-title" id="currentSectionTitle">Dashboard Overview</h1>
               <span class="workspace-badge">SUPPLIER WORKSPACE</span>
             </div>
           </div>
@@ -167,10 +306,11 @@
               id="notificationButton"
               aria-label="View notifications"
             >
-              🛒
-              <span class="notification-badge">4</span>
+              🔔
+              <span class="notification-badge" id="globalNotificationBadge">3</span>
             </button>
 
+            <!-- PROFILE MENU -->
             <div class="profile-menu" id="profileMenu">
               <button
                 type="button"
@@ -189,75 +329,34 @@
                 <div class="dropdown-header">
                   <span class="profile-avatar" id="dropdownAvatar">S</span>
                   <div class="dropdown-user-info">
-                    <span class="dropdown-name" id="dropdownName"
-                      >Supplier Name</span
-                    >
-                    <span class="dropdown-email" id="dropdownEmail"
-                      >supplier@example.com</span
-                    >
-                    <span class="dropdown-role">Supplier Account</span>
+                    <span class="dropdown-name" id="dropdownName">Supplier Name</span>
+                    <span class="dropdown-email" id="dropdownEmail">supplier@example.com</span>
+                    <span class="dropdown-role">Verified Supplier</span>
                   </div>
                 </div>
 
                 <div class="dropdown-body">
                   <div class="profile-detail-item">
-                    <span class="detail-label">Full Name</span>
-                    <span class="detail-value" id="profileFullName"
-                      >Supplier Name</span
-                    >
-                  </div>
-                  <div class="profile-detail-item">
-                    <span class="detail-label">Email</span>
-                    <span class="detail-value" id="profileEmail"
-                      >supplier@example.com</span
-                    >
-                  </div>
-                  <div class="profile-detail-item">
-                    <span class="detail-label">Phone</span>
-                    <span class="detail-value" id="profilePhone"
-                      >+91 98765 43210</span
-                    >
-                  </div>
-                  <div class="profile-detail-item">
                     <span class="detail-label">Company</span>
-                    <span class="detail-value" id="profileCompany"
-                      >TradeNest Supplies Pvt. Ltd.</span
-                    >
+                    <span class="detail-value" id="profileCompany">TradeNest Supplies Pvt. Ltd.</span>
                   </div>
                   <div class="profile-detail-item">
-                    <span class="detail-label">Business Type</span>
-                    <span class="detail-value" id="profileBusinessType"
-                      >Manufacturer &amp; Wholesale Supplier</span
-                    >
+                    <span class="detail-label">GSTIN</span>
+                    <span class="detail-value" id="profileGstin">29AABCU9603R1ZM</span>
                   </div>
                   <div class="profile-detail-item">
-                    <span class="detail-label">Location</span>
-                    <span class="detail-value" id="profileLocation"
-                      >Bengaluru, Karnataka, India</span
-                    >
+                    <span class="detail-label">Verification</span>
+                    <span class="detail-value" style="color: var(--success); font-weight:700;">Verified (Tier 1)</span>
                   </div>
                 </div>
 
                 <div class="dropdown-actions">
-                  <button
-                    type="button"
-                    class="edit-profile-button"
-                    id="editProfileButton"
-                  >
+                  <button type="button" class="edit-profile-button" id="headerEditProfileBtn">
                     ✏️ Edit Profile
                   </button>
-                  <a
-                    href="profile.html"
-                    class="dropdown-link"
-                    id="dropdownEditProfile"
-                    >Profile Details</a
-                  >
-                  <a href="settings.html" class="dropdown-link">Settings</a>
-                  <button
-                    type="button"
-                    class="dropdown-logout-btn"
-                    id="dropdownLogout"
-                  >
+                  <a href="#business-profile" class="dropdown-link" id="headerViewBizProfile">Business Details</a>
+                  <a href="#settings" class="dropdown-link" id="headerViewSettings">Preferences</a>
+                  <button type="button" class="dropdown-logout-btn" id="dropdownLogout">
                     Logout
                   </button>
                 </div>
@@ -266,658 +365,1594 @@
           </div>
         </header>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="main-content">
-          <!-- WELCOME SECTION -->
-          <section class="welcome-section" aria-labelledby="welcomeTitle">
-            <div class="welcome-text">
-              <span class="welcome-subtitle">WELCOME BACK</span>
-              <h2 class="welcome-title" id="welcomeTitle">
-                Hello, <span id="welcomeUserName">Supplier</span>!
-              </h2>
-              <p class="welcome-description">
-                Manage your products, respond to buyer requests, process orders
-                and grow your business through your TradeNest supplier
-                workspace.
-              </p>
-            </div>
-            <div class="welcome-actions">
-              <a href="products.html" class="btn btn-primary"
-                >➕ Add New Product</a
-              >
-              <a href="quote-requests.html" class="btn btn-secondary"
-                >📝 View Quote Requests</a
-              >
-            </div>
-          </section>
+        <!-- =======================================================
+             MAIN CONTENT: MODULE VIEWS
+        ======================================================== -->
+        <main class="main-content" id="supplierMainContent">
 
-          <!-- STATISTICS GRID -->
-          <section
-            class="stats-grid"
-            aria-label="Supplier Dashboard Key Statistics"
-          >
-            <article class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Total Products</span>
-                <span class="stat-icon" aria-hidden="true">📦</span>
-              </div>
-              <div class="stat-value" id="totalProducts">48</div>
-              <div class="stat-trend trend-up">
-                <span>↑ +8% from last month</span>
-              </div>
-            </article>
-
-            <article class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Pending Orders</span>
-                <span class="stat-icon" aria-hidden="true">🛒</span>
-              </div>
-              <div class="stat-value" id="pendingOrders">12</div>
-              <div class="stat-trend trend-neutral">
-                <span>• 5 require action</span>
-              </div>
-            </article>
-
-            <article class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Quote Requests</span>
-                <span class="stat-icon" aria-hidden="true">📝</span>
-              </div>
-              <div class="stat-value" id="quoteRequests">18</div>
-              <div class="stat-trend trend-neutral">
-                <span>• 7 new requests</span>
-              </div>
-            </article>
-
-            <article class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Total Sales</span>
-                <span class="stat-icon" aria-hidden="true">💰</span>
-              </div>
-              <div class="stat-value" id="totalSales">$24,850</div>
-              <div class="stat-trend trend-up">
-                <span>↑ +14% this month</span>
-              </div>
-            </article>
-          </section>
-
-          <!-- QUICK ACTIONS -->
-          <section
-            class="quick-actions-section"
-            aria-labelledby="quickActionsHeading"
-          >
-            <h2 class="section-title" id="quickActionsHeading">
-              Quick Actions
-            </h2>
-            <div class="quick-actions-grid">
-              <a href="products.html" class="quick-action-card">
-                <span class="action-icon" aria-hidden="true">➕</span>
-                <h3 class="action-title">Add New Product</h3>
-                <p class="action-description">
-                  List a new product in the marketplace
-                </p>
-              </a>
-
-              <a href="orders.html" class="quick-action-card">
-                <span class="action-icon" aria-hidden="true">📦</span>
-                <h3 class="action-title">Manage Orders</h3>
-                <p class="action-description">
-                  Review and process buyer orders
-                </p>
-              </a>
-
-              <a href="quote-requests.html" class="quick-action-card">
-                <span class="action-icon" aria-hidden="true">📝</span>
-                <h3 class="action-title">Quote Requests</h3>
-                <p class="action-description">
-                  Respond to buyer procurement requests
-                </p>
-              </a>
-
-              <a href="messages.html" class="quick-action-card">
-                <span class="action-icon" aria-hidden="true">💬</span>
-                <h3 class="action-title">Messages</h3>
-                <p class="action-description">Communicate with buyers</p>
-              </a>
-            </div>
-          </section>
-
-          <!-- DASHBOARD DUAL GRID: RECENT ORDERS & RECENT QUOTE REQUESTS -->
-          <div class="dashboard-dual-grid">
-            <!-- RECENT ORDERS -->
-            <section
-              class="dashboard-card"
-              aria-labelledby="recentOrdersHeading"
-            >
-              <div class="card-header">
-                <h2 class="card-title" id="recentOrdersHeading">
-                  Recent Orders
+          <!-- ===================================================
+               MODULE 15: SUPPLIER DASHBOARD OVERVIEW
+          ==================================================== -->
+          <section class="module-view active" id="view-overview" aria-labelledby="overviewHeading">
+            <!-- Welcome Banner -->
+            <div class="welcome-section" style="margin-bottom: 24px;">
+              <div class="welcome-text">
+                <span class="welcome-subtitle">SUPPLIER PORTAL OVERVIEW</span>
+                <h2 class="welcome-title" id="overviewHeading">
+                  Welcome, <span id="welcomeUserName">Supplier</span>!
                 </h2>
-                <a href="orders.html" class="card-action-link"
-                  >View All Orders →</a
-                >
+                <p class="welcome-description">
+                  Real-time operational summary of your catalogue, incoming buyer RFQs, active quotations, inventory stock levels, order pipeline, and demonstration TrustScore.
+                </p>
               </div>
+              <div class="welcome-actions">
+                <button type="button" class="btn btn-primary" id="btnQuickAddProduct">
+                  ➕ Add Product
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnQuickCreateQuote">
+                  📝 Create Quotation
+                </button>
+              </div>
+            </div>
+
+            <!-- Low-Stock Warning Alert Banner (Dynamic) -->
+            <div class="alert-banner" id="overviewStockAlertBanner" style="display: none;">
+              <div class="alert-banner-left">
+                <span class="alert-banner-icon">⚠️</span>
+                <div class="alert-banner-text">
+                  <h4>Attention: Low Stock Threshold Alert</h4>
+                  <p id="overviewStockAlertText">Some products have dropped below minimum inventory thresholds.</p>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline" id="btnReviewStockFromAlert">
+                Manage Stock →
+              </button>
+            </div>
+
+            <!-- KPI Statistics Cards (8 metrics calculated live from records) -->
+            <div class="stats-grid-8" aria-label="Operational Key Metrics">
+              <!-- 1. Total Products -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Total Products</span>
+                  <div class="stat-compact-val" id="statTotalProducts">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">📦</div>
+              </div>
+
+              <!-- 2. Active Products -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Active Products</span>
+                  <div class="stat-compact-val" id="statActiveProducts" style="color: var(--success);">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">✅</div>
+              </div>
+
+              <!-- 3. Incoming RFQs -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Incoming RFQs</span>
+                  <div class="stat-compact-val" id="statIncomingRFQs" style="color: var(--warning);">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">📥</div>
+              </div>
+
+              <!-- 4. Pending Quotations -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Pending Quotations</span>
+                  <div class="stat-compact-val" id="statPendingQuotations">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">📝</div>
+              </div>
+
+              <!-- 5. Sample Requests -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Sample Requests</span>
+                  <div class="stat-compact-val" id="statSampleRequests">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">🧪</div>
+              </div>
+
+              <!-- 6. Active Orders -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Active Orders</span>
+                  <div class="stat-compact-val" id="statActiveOrders" style="color: var(--primary);">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">🛒</div>
+              </div>
+
+              <!-- 7. Completed Orders -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Completed Orders</span>
+                  <div class="stat-compact-val" id="statCompletedOrders" style="color: var(--success);">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">🏆</div>
+              </div>
+
+              <!-- 8. Low-Stock Products -->
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Low-Stock Items</span>
+                  <div class="stat-compact-val" id="statLowStockProducts" style="color: var(--danger);">0</div>
+                </div>
+                <div class="stat-compact-icon" aria-hidden="true">⚠️</div>
+              </div>
+            </div>
+
+            <!-- Quick Actions Grid -->
+            <section class="quick-actions-section" style="margin-bottom: 24px;">
+              <h3 class="section-title">Quick Actions</h3>
+              <div class="quick-actions-grid">
+                <a href="#products" class="quick-action-card" data-view="products">
+                  <span class="action-icon">➕</span>
+                  <h4 class="action-title">Add New Product</h4>
+                  <p class="action-description">List new industrial product in buyer catalogue</p>
+                </a>
+                <a href="#quotations" class="quick-action-card" data-view="quotations">
+                  <span class="action-icon">📝</span>
+                  <h4 class="action-title">Prepare Quotation</h4>
+                  <p class="action-description">Submit tiered bulk pricing to buyer RFQs</p>
+                </a>
+                <a href="#inventory" class="quick-action-card" data-view="inventory">
+                  <span class="action-icon">📑</span>
+                  <h4 class="action-title">Update Stock</h4>
+                  <p class="action-description">Adjust warehouse stock &amp; replenish items</p>
+                </a>
+                <a href="#shipping" class="quick-action-card" data-view="shipping">
+                  <span class="action-icon">🚚</span>
+                  <h4 class="action-title">Dispatch Shipment</h4>
+                  <p class="action-description">Enter carrier AWB &amp; track logistics milestones</p>
+                </a>
+                <a href="#communication" class="quick-action-card" data-view="communication">
+                  <span class="action-icon">💬</span>
+                  <h4 class="action-title">Buyer Messages</h4>
+                  <p class="action-description">Respond to client questions with RFQ context</p>
+                </a>
+                <a href="#collaboration" class="quick-action-card" data-view="collaboration">
+                  <span class="action-icon">🤝</span>
+                  <h4 class="action-title">Supplier Network</h4>
+                  <p class="action-description">Partner on high-volume procurement tenders</p>
+                </a>
+              </div>
+            </section>
+
+            <!-- Dual Split: Recent Activity & Recent Orders -->
+            <div class="dashboard-dual-grid">
+              <!-- Recent Orders Table -->
+              <section class="dashboard-card">
+                <div class="card-header">
+                  <h3 class="card-title">Recent Orders</h3>
+                  <a href="#orders" class="card-action-link" data-view="orders">All Orders →</a>
+                </div>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Order Ref</th>
+                        <th>Buyer</th>
+                        <th>Product</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="overviewRecentOrdersTableBody">
+                      <!-- Populated via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <!-- Recent Activity Feed -->
+              <section class="dashboard-card">
+                <div class="card-header">
+                  <h3 class="card-title">Recent Activity Feed</h3>
+                  <span class="badge-demo">Real-Time Events</span>
+                </div>
+                <div class="activity-feed-list" id="overviewActivityFeedList">
+                  <!-- Populated via JS -->
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 16: SUPPLIER BUSINESS PROFILE
+          ==================================================== -->
+          <section class="module-view" id="view-business-profile" aria-labelledby="bizProfileHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="bizProfileHeading">Supplier Business Profile</h2>
+                <p class="module-subtitle">Manage company information, GSTIN registration, contact persons, and demonstration verification documents.</p>
+              </div>
+              <div class="module-actions">
+                <button type="button" class="btn btn-primary" id="btnEditBusinessProfile">
+                  ✏️ Edit Business Details
+                </button>
+              </div>
+            </div>
+
+            <!-- Profile Hero Card -->
+            <div class="profile-overview-card">
+              <div class="profile-logo-wrap">
+                <img src="../../images/TradeNest.webp" alt="Business Logo" class="profile-logo-img" id="bizProfileLogoDisplay" />
+              </div>
+              <div class="profile-biz-details">
+                <div class="profile-info-heading">
+                  <h3 class="profile-biz-name" id="bizProfileCompanyName">TradeNest Supplies Pvt. Ltd.</h3>
+                  <span class="badge-pill badge-active" id="bizProfileVerificationBadge">Verified Tier-1 (Demo Only)</span>
+                </div>
+                <p class="profile-desc" id="bizProfileDescription">
+                  Leading ISO 9001 certified industrial safety gear, precision packaging, and electrical equipment manufacturer supplying wholesale buyers globally.
+                </p>
+                <div class="profile-meta-tags">
+                  <span class="meta-chip">Type: <strong id="bizProfileType">Manufacturer &amp; Wholesaler</strong></span>
+                  <span class="meta-chip">Primary: <strong id="bizProfilePrimaryCat">Safety Equipment</strong></span>
+                  <span class="meta-chip">Secondary: <strong id="bizProfileSecondaryCat">Packaging &amp; Electrical</strong></span>
+                  <span class="meta-chip">Location: <strong id="bizProfileLocation">Bengaluru, India</strong></span>
+                </div>
+              </div>
+              <div class="profile-biz-stats" style="text-align: right;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">TRUST SCORE</div>
+                <div style="font-size: 2rem; font-weight: 800; color: var(--success);">96/100</div>
+                <span class="badge-demo">Illustrative</span>
+              </div>
+            </div>
+
+            <!-- Key Identification & Contact Grid -->
+            <div class="profile-grid-details">
+              <div class="detail-card">
+                <h3>🏛️ Tax &amp; Business Identification</h3>
+                <div class="key-value-list">
+                  <div class="key-value-row">
+                    <span class="kv-key">GSTIN / Tax ID:</span>
+                    <span class="kv-val" id="bizGstinVal">29AABCU9603R1ZM</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">PAN Number:</span>
+                    <span class="kv-val" id="bizPanVal">AABCU9603R</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">Import-Export Code (IEC):</span>
+                    <span class="kv-val" id="bizIecVal">IEC-IND-8829102</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">Registered Address:</span>
+                    <span class="kv-val" id="bizAddressVal">Plot 42, Peenya Industrial Area, Phase 2, Bengaluru, Karnataka, 560058</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-card">
+                <h3>📞 Contact Information</h3>
+                <div class="key-value-list">
+                  <div class="key-value-row">
+                    <span class="kv-key">Primary Contact Person:</span>
+                    <span class="kv-val" id="bizContactPersonVal">Rajesh Sharma</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">Designation:</span>
+                    <span class="kv-val" id="bizDesignationVal">Director of Sales &amp; Operations</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">Official Phone:</span>
+                    <span class="kv-val" id="bizPhoneVal">+91 98765 43210</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">Official Business Email:</span>
+                    <span class="kv-val" id="bizEmailVal">supplier@example.com</span>
+                  </div>
+                  <div class="key-value-row">
+                    <span class="kv-key">Customer Support Desk:</span>
+                    <span class="kv-val" id="bizSupportEmailVal">support.supplies@tradenest.example</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Verification Documents Section -->
+            <div class="detail-card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="margin-bottom: 0; border-bottom: none;">📑 Verification Documents &amp; Certificates</h3>
+                <button type="button" class="btn btn-sm btn-secondary" id="btnUploadDocTrigger">
+                  📤 Upload Document
+                </button>
+              </div>
+
+              <!-- Mandatory Disclaimer Banner -->
+              <div class="alert-banner" style="margin-bottom: 16px;">
+                <div class="alert-banner-left">
+                  <span class="alert-banner-icon">ℹ️</span>
+                  <div class="alert-banner-text">
+                    <h4>Demonstration Verification Status</h4>
+                    <p>Demonstration verification statuses displayed here are for frontend simulation and UI demonstration purposes. Documents are stored in browser localStorage and are not legally verified.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="documents-list" id="bizDocumentsListContainer">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 17: SUPPLIER PRODUCT MANAGEMENT
+          ==================================================== -->
+          <section class="module-view" id="view-products" aria-labelledby="productsHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="productsHeading">Product Management</h2>
+                <p class="module-subtitle">Create, view, edit, and publish products displayed in the TradeNest buyer catalogue.</p>
+              </div>
+              <div class="module-actions">
+                <button type="button" class="btn btn-primary" id="btnAddNewProductModal">
+                  ➕ Add New Product
+                </button>
+              </div>
+            </div>
+
+            <!-- Products Toolbar: Search & Filters -->
+            <div class="toolbar-card">
+              <div class="toolbar-left">
+                <div class="search-input-wrap">
+                  <span class="search-icon">🔍</span>
+                  <input type="search" id="productSearchInput" placeholder="Search product name, SKU, specs..." />
+                </div>
+                <select class="filter-select" id="productCategoryFilter" aria-label="Filter by category">
+                  <option value="all">All Categories</option>
+                  <option value="Safety Equipment">Safety Equipment</option>
+                  <option value="Office Supplies">Office Supplies</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Packaging">Packaging</option>
+                  <option value="Textiles">Textiles</option>
+                  <option value="Hardware">Hardware</option>
+                </select>
+                <select class="filter-select" id="productStatusFilter" aria-label="Filter by status">
+                  <option value="all">All Statuses</option>
+                  <option value="active">Active Only</option>
+                  <option value="unavailable">Unavailable / Draft</option>
+                </select>
+              </div>
+              <div class="toolbar-right">
+                <span style="font-size: 0.85rem; color: var(--text-light);" id="productResultsCount">Showing 6 products</span>
+              </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-mgmt-grid" id="productsMgmtGrid">
+              <!-- Rendered via JS -->
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 18: SUPPLIER INVENTORY MANAGEMENT
+          ==================================================== -->
+          <section class="module-view" id="view-inventory" aria-labelledby="inventoryHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="inventoryHeading">Inventory Management</h2>
+                <p class="module-subtitle">Track available stock, reserved allocations, minimum thresholds, and low-stock alerts.</p>
+              </div>
+            </div>
+
+            <!-- Inventory KPI summary -->
+            <div class="inventory-summary-grid">
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Total Tracked SKUs</span>
+                  <div class="stat-compact-val" id="invTotalSKUs">6</div>
+                </div>
+                <div class="stat-compact-icon">🏷️</div>
+              </div>
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Total Units In Stock</span>
+                  <div class="stat-compact-val" id="invTotalUnits">2,140</div>
+                </div>
+                <div class="stat-compact-icon">📦</div>
+              </div>
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Low Stock Warnings</span>
+                  <div class="stat-compact-val" id="invLowStockCount" style="color: var(--warning);">2</div>
+                </div>
+                <div class="stat-compact-icon">⚠️</div>
+              </div>
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Out of Stock SKUs</span>
+                  <div class="stat-compact-val" id="invOutOfStockCount" style="color: var(--danger);">1</div>
+                </div>
+                <div class="stat-compact-icon">🚫</div>
+              </div>
+            </div>
+
+            <!-- Inventory Search Toolbar -->
+            <div class="toolbar-card">
+              <div class="toolbar-left">
+                <div class="search-input-wrap">
+                  <span class="search-icon">🔍</span>
+                  <input type="search" id="inventorySearchInput" placeholder="Filter by product name or SKU..." />
+                </div>
+                <select class="filter-select" id="inventoryStockFilter" aria-label="Filter by stock status">
+                  <option value="all">All Stock Statuses</option>
+                  <option value="low">Low Stock Only</option>
+                  <option value="out">Out of Stock Only</option>
+                  <option value="in">Normal In-Stock</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="table-card">
               <div class="table-responsive">
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th scope="col">Order ID</th>
-                      <th scope="col">Buyer</th>
-                      <th scope="col">Product</th>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Status</th>
+                      <th>Product &amp; SKU</th>
+                      <th>Category</th>
+                      <th>Available Stock</th>
+                      <th>Reserved</th>
+                      <th>Min Threshold</th>
+                      <th>Stock Status</th>
+                      <th>Last Updated</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <a href="orders.html" class="table-link">#ORD-98231</a>
-                      </td>
-                      <td>Metro Retail Solutions</td>
-                      <td>Industrial Safety Gloves</td>
-                      <td>$2,450.00</td>
-                      <td>
-                        <span class="status-badge processing">Processing</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <a href="orders.html" class="table-link">#ORD-98190</a>
-                      </td>
-                      <td>OfficeHub Enterprises</td>
-                      <td>A4 Copy Paper Premium</td>
-                      <td>$890.00</td>
-                      <td><span class="status-badge shipped">Shipped</span></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <a href="orders.html" class="table-link">#ORD-97845</a>
-                      </td>
-                      <td>BrightBuild Industries</td>
-                      <td>Commercial LED Panel Lights</td>
-                      <td>$1,600.00</td>
-                      <td>
-                        <span class="status-badge delivered">Delivered</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <a href="orders.html" class="table-link">#ORD-97612</a>
-                      </td>
-                      <td>PackLine Distributors</td>
-                      <td>Heavy Corrugated Boxes</td>
-                      <td>$3,100.00</td>
-                      <td><span class="status-badge pending">Pending</span></td>
-                    </tr>
+                  <tbody id="inventoryTableBody">
+                    <!-- Populated via JS -->
                   </tbody>
                 </table>
               </div>
-            </section>
-
-            <!-- RECENT QUOTE REQUESTS -->
-            <section
-              class="dashboard-card"
-              aria-labelledby="recentQuotesHeading"
-            >
-              <div class="card-header">
-                <h2 class="card-title" id="recentQuotesHeading">
-                  Recent Quote Requests
-                </h2>
-                <a href="quote-requests.html" class="card-action-link"
-                  >View All Requests →</a
-                >
-              </div>
-              <div class="quotes-list">
-                <article class="quote-item">
-                  <div class="quote-info">
-                    <h3 class="quote-product-name">Industrial Safety Gloves</h3>
-                    <p class="quote-meta">
-                      <span class="quote-buyer"
-                        >Buyer: Metro Retail Solutions</span
-                      >
-                      |
-                      <span class="quote-qty">Quantity: 500 Pairs</span>
-                    </p>
-                    <p class="quote-budget">
-                      Requested Budget: <strong>$2,500</strong>
-                    </p>
-                  </div>
-                  <div class="quote-status-wrapper">
-                    <span class="status-badge new-request">New Request</span>
-                    <a href="quote-requests.html" class="btn btn-sm btn-outline"
-                      >Respond</a
-                    >
-                  </div>
-                </article>
-
-                <article class="quote-item">
-                  <div class="quote-info">
-                    <h3 class="quote-product-name">
-                      Commercial LED Panel Lights
-                    </h3>
-                    <p class="quote-meta">
-                      <span class="quote-buyer"
-                        >Buyer: BrightBuild Industries</span
-                      >
-                      |
-                      <span class="quote-qty">Quantity: 100 Units</span>
-                    </p>
-                    <p class="quote-budget">
-                      Requested Budget: <strong>$1,700</strong>
-                    </p>
-                  </div>
-                  <div class="quote-status-wrapper">
-                    <span class="status-badge under-review">Under Review</span>
-                    <a href="quote-requests.html" class="btn btn-sm btn-outline"
-                      >View Details</a
-                    >
-                  </div>
-                </article>
-
-                <article class="quote-item">
-                  <div class="quote-info">
-                    <h3 class="quote-product-name">Heavy Corrugated Boxes</h3>
-                    <p class="quote-meta">
-                      <span class="quote-buyer"
-                        >Buyer: PackLine Distributors</span
-                      >
-                      |
-                      <span class="quote-qty">Quantity: 1,000 Boxes</span>
-                    </p>
-                    <p class="quote-budget">
-                      Requested Budget: <strong>$3,000</strong>
-                    </p>
-                  </div>
-                  <div class="quote-status-wrapper">
-                    <span class="status-badge response-sent"
-                      >Response Sent</span
-                    >
-                    <a href="quote-requests.html" class="btn btn-sm btn-outline"
-                      >View Offer</a
-                    >
-                  </div>
-                </article>
-              </div>
-            </section>
-          </div>
-
-          <!-- MY PRODUCTS SECTION -->
-          <section
-            class="dashboard-section"
-            aria-labelledby="myProductsHeading"
-          >
-            <div class="section-header">
-              <h2 class="section-title" id="myProductsHeading">
-                Your Products
-              </h2>
-              <a href="products.html" class="section-action-link"
-                >View All Products →</a
-              >
-            </div>
-
-            <div class="products-grid">
-              <article class="product-card" id="productCard1">
-                <div class="product-image-container">
-                  <img
-                    src="../../images/products/safety-gloves.webp"
-                    alt="Industrial Safety Gloves"
-                    class="product-image"
-                  />
-                  <span class="product-status-badge active">Active</span>
-                </div>
-                <div class="product-details">
-                  <span class="product-category">Safety Equipment</span>
-                  <h3 class="product-title">Industrial Safety Gloves</h3>
-                  <div class="product-pricing">
-                    <span class="product-price">$4.90 / pair</span>
-                    <span class="product-moq">MOQ: 100 pairs</span>
-                  </div>
-                  <div class="product-card-actions">
-                    <a href="products.html" class="btn btn-sm btn-secondary"
-                      >View Product</a
-                    >
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline edit-product-btn"
-                      data-product-id="1"
-                    >
-                      Edit Product
-                    </button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="product-card" id="productCard2">
-                <div class="product-image-container">
-                  <img
-                    src="../../images/products/office-paper.webp"
-                    alt="A4 Copy Paper Premium"
-                    class="product-image"
-                  />
-                  <span class="product-status-badge active">Active</span>
-                </div>
-                <div class="product-details">
-                  <span class="product-category">Office Supplies</span>
-                  <h3 class="product-title">A4 Copy Paper Premium</h3>
-                  <div class="product-pricing">
-                    <span class="product-price">$4.45 / ream</span>
-                    <span class="product-moq">MOQ: 50 reams</span>
-                  </div>
-                  <div class="product-card-actions">
-                    <a href="products.html" class="btn btn-sm btn-secondary"
-                      >View Product</a
-                    >
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline edit-product-btn"
-                      data-product-id="2"
-                    >
-                      Edit Product
-                    </button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="product-card" id="productCard3">
-                <div class="product-image-container">
-                  <img
-                    src="../../images/products/led-bulbs.webp"
-                    alt="Commercial LED Panel Lights"
-                    class="product-image"
-                  />
-                  <span class="product-status-badge active">Active</span>
-                </div>
-                <div class="product-details">
-                  <span class="product-category">Electrical</span>
-                  <h3 class="product-title">Commercial LED Panel Lights</h3>
-                  <div class="product-pricing">
-                    <span class="product-price">$16.00 / piece</span>
-                    <span class="product-moq">MOQ: 20 pieces</span>
-                  </div>
-                  <div class="product-card-actions">
-                    <a href="products.html" class="btn btn-sm btn-secondary"
-                      >View Product</a
-                    >
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline edit-product-btn"
-                      data-product-id="3"
-                    >
-                      Edit Product
-                    </button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="product-card" id="productCard4">
-                <div class="product-image-container">
-                  <img
-                    src="../../images/products/packaging-boxes.webp"
-                    alt="Heavy Corrugated Boxes"
-                    class="product-image"
-                  />
-                  <span class="product-status-badge active">Active</span>
-                </div>
-                <div class="product-details">
-                  <span class="product-category">Packaging</span>
-                  <h3 class="product-title">Heavy Corrugated Boxes</h3>
-                  <div class="product-pricing">
-                    <span class="product-price">$3.10 / box</span>
-                    <span class="product-moq">MOQ: 200 boxes</span>
-                  </div>
-                  <div class="product-card-actions">
-                    <a href="products.html" class="btn btn-sm btn-secondary"
-                      >View Product</a
-                    >
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline edit-product-btn"
-                      data-product-id="4"
-                    >
-                      Edit Product
-                    </button>
-                  </div>
-                </div>
-              </article>
             </div>
           </section>
 
-          <!-- RECENT BUYERS / CUSTOMERS SECTION -->
-          <section
-            class="dashboard-section"
-            aria-labelledby="recentBuyersHeading"
-          >
-            <div class="section-header">
-              <h2 class="section-title" id="recentBuyersHeading">
-                Recent Buyers
-              </h2>
-              <a href="customers.html" class="section-action-link"
-                >View All Customers →</a
-              >
+          <!-- ===================================================
+               MODULE 19: SUPPLIER INCOMING RFQs
+          ==================================================== -->
+          <section class="module-view" id="view-rfqs" aria-labelledby="rfqsHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="rfqsHeading">Incoming Requests for Quotation (RFQs)</h2>
+                <p class="module-subtitle">Review wholesale procurement requests from verified buyers and prepare customized quotations.</p>
+              </div>
             </div>
 
-            <div class="suppliers-grid">
-              <article class="supplier-card">
-                <div class="supplier-card-header">
-                  <div class="supplier-avatar-placeholder">M</div>
-                  <div class="supplier-header-info">
-                    <h3 class="supplier-name">Metro Retail Solutions</h3>
-                    <p class="supplier-location">📍 Chicago, IL, USA</p>
-                  </div>
-                </div>
-                <div class="supplier-stats">
-                  <div class="supplier-stat-item">
-                    <span class="stat-label">Orders</span>
-                    <span class="stat-num">12 Orders</span>
-                  </div>
-                  <div class="supplier-stat-item">
-                    <span class="stat-label">Total Spend</span>
-                    <span class="stat-num">$8,450 Total Purchases</span>
-                  </div>
-                </div>
-                <div class="supplier-card-footer">
-                  <a
-                    href="customers.html"
-                    class="btn btn-sm btn-outline btn-full"
-                    >View Customer</a
-                  >
-                </div>
-              </article>
+            <!-- RFQ Filter Tabs -->
+            <div class="toolbar-card">
+              <div class="tabs-nav" id="rfqStatusTabs">
+                <button type="button" class="tab-btn active" data-status="all">All RFQs</button>
+                <button type="button" class="tab-btn" data-status="New">New Requests</button>
+                <button type="button" class="tab-btn" data-status="Quoted">Quoted</button>
+                <button type="button" class="tab-btn" data-status="Accepted">Accepted</button>
+                <button type="button" class="tab-btn" data-status="Declined">Declined</button>
+              </div>
+              <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="search" id="rfqSearchInput" placeholder="Search RFQs by buyer, product..." />
+              </div>
+            </div>
 
-              <article class="supplier-card">
-                <div class="supplier-card-header">
-                  <div class="supplier-avatar-placeholder">B</div>
-                  <div class="supplier-header-info">
-                    <h3 class="supplier-name">BrightBuild Industries</h3>
-                    <p class="supplier-location">📍 New York, USA</p>
-                  </div>
-                </div>
-                <div class="supplier-stats">
-                  <div class="supplier-stat-item">
-                    <span class="stat-label">Orders</span>
-                    <span class="stat-num">8 Orders</span>
-                  </div>
-                  <div class="supplier-stat-item">
-                    <span class="stat-label">Total Spend</span>
-                    <span class="stat-num">$6,720 Total Purchases</span>
-                  </div>
-                </div>
-                <div class="supplier-card-footer">
-                  <a
-                    href="customers.html"
-                    class="btn btn-sm btn-outline btn-full"
-                    >View Customer</a
-                  >
-                </div>
-              </article>
-
-              <article class="supplier-card">
-                <div class="supplier-card-header">
-                  <div class="supplier-avatar-placeholder">P</div>
-                  <div class="supplier-header-info">
-                    <h3 class="supplier-name">PackLine Distributors</h3>
-                    <p class="supplier-location">📍 Toronto, Canada</p>
-                  </div>
-                </div>
-                <div class="supplier-stats">
-                  <div class="supplier-stat-item">
-                    <span class="stat-label">Orders</span>
-                    <span class="stat-num">15 Orders</span>
-                  </div>
-                  <div class="supplier-stat-item">
-                    <span class="stat-label">Total Spend</span>
-                    <span class="stat-num">$12,300 Total Purchases</span>
-                  </div>
-                </div>
-                <div class="supplier-card-footer">
-                  <a
-                    href="customers.html"
-                    class="btn btn-sm btn-outline btn-full"
-                    >View Customer</a
-                  >
-                </div>
-              </article>
+            <!-- RFQ Cards List -->
+            <div class="rfq-cards-list" id="rfqCardsContainer">
+              <!-- Populated via JS -->
             </div>
           </section>
+
+          <!-- ===================================================
+               MODULE 20: SUPPLIER QUOTATION MANAGEMENT
+          ==================================================== -->
+          <section class="module-view" id="view-quotations" aria-labelledby="quotationsHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="quotationsHeading">Quotation Management</h2>
+                <p class="module-subtitle">Prepare, calculate, revise, and dispatch commercial quotations with bulk tiered pricing and payment terms.</p>
+              </div>
+              <div class="module-actions">
+                <button type="button" class="btn btn-primary" id="btnCreateNewQuotationModal">
+                  ➕ Create New Quotation
+                </button>
+              </div>
+            </div>
+
+            <!-- Quotations Table Card -->
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Quote Ref</th>
+                      <th>Related RFQ</th>
+                      <th>Buyer</th>
+                      <th>Product</th>
+                      <th>Offered Qty</th>
+                      <th>Total Amount</th>
+                      <th>Valid Until</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="quotationsTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 21: SUPPLIER SAMPLE REQUEST MANAGEMENT
+          ==================================================== -->
+          <section class="module-view" id="view-samples" aria-labelledby="samplesHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="samplesHeading">Sample Request Management</h2>
+                <p class="module-subtitle">Review product evaluation samples requested by buyers, approve/reject, and record dispatch tracking details.</p>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Sample Ref</th>
+                      <th>Buyer Information</th>
+                      <th>Product</th>
+                      <th>Sample Qty</th>
+                      <th>Delivery Destination</th>
+                      <th>Requested Date</th>
+                      <th>Status</th>
+                      <th>Dispatch Tracking</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="samplesTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 22: SUPPLIER COLLABORATION NETWORK
+          ==================================================== -->
+          <section class="module-view" id="view-collaboration" aria-labelledby="collabHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="collabHeading">Supplier Collaboration Network</h2>
+                <p class="module-subtitle">Discover peer manufacturers and collaborate on large-volume enterprise procurement tenders.</p>
+              </div>
+              <div class="module-actions">
+                <button type="button" class="btn btn-primary" id="btnOpenNewCollabModal">
+                  🤝 Propose Collaboration
+                </button>
+              </div>
+            </div>
+
+            <!-- Collaboration Tabs -->
+            <div class="toolbar-card">
+              <div class="tabs-nav" id="collabTabs">
+                <button type="button" class="tab-btn active" data-collab-tab="discover">Discover Peer Suppliers</button>
+                <button type="button" class="tab-btn" data-collab-tab="requests">Collaboration Requests (Received &amp; Sent)</button>
+              </div>
+            </div>
+
+            <!-- Tab 1: Discover Suppliers Grid -->
+            <div id="collabDiscoverPane">
+              <div class="collab-grid" id="collabSuppliersGrid">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+            <!-- Tab 2: Collaboration Requests Table -->
+            <div id="collabRequestsPane" style="display: none;">
+              <div class="table-card">
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Proposal ID</th>
+                        <th>Type</th>
+                        <th>Partner Supplier</th>
+                        <th>Requirement / Tender</th>
+                        <th>Required Qty</th>
+                        <th>Proposed Contribution</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="collabRequestsTableBody">
+                      <!-- Populated via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 23: SUPPLIER BUYER COMMUNICATION
+          ==================================================== -->
+          <section class="module-view" id="view-communication" aria-labelledby="communicationHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="communicationHeading">Buyer Communication &amp; Messages</h2>
+                <p class="module-subtitle">Frontend interface for supplier-buyer discussions with context badges linked to RFQs, quotations, and active orders.</p>
+              </div>
+            </div>
+
+            <!-- Chat Layout -->
+            <div class="chat-layout-wrapper">
+              <!-- Left Sidebar: Conversations List -->
+              <div class="chat-threads-sidebar">
+                <div class="threads-search-bar">
+                  <div class="search-input-wrap" style="min-width: 100%;">
+                    <span class="search-icon">🔍</span>
+                    <input type="search" id="chatSearchInput" placeholder="Search discussions..." />
+                  </div>
+                </div>
+                <div class="threads-list" id="chatThreadsContainer">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+
+              <!-- Right: Active Chat Window -->
+              <div class="chat-main-pane">
+                <div class="chat-pane-header">
+                  <div class="chat-buyer-info">
+                    <h3 id="activeChatBuyerName">Metro Retail Solutions</h3>
+                    <p id="activeChatContactPerson">David Miller (Procurement Director)</p>
+                  </div>
+                  <div class="chat-context-badge" id="activeChatContextBadge">
+                    Context: RFQ-2026-881 / SMP-402
+                  </div>
+                </div>
+
+                <!-- Messages Stream -->
+                <div class="chat-messages-container" id="chatMessagesStream">
+                  <!-- Populated via JS -->
+                </div>
+
+                <!-- Quick Replies Bar -->
+                <div class="quick-replies-bar">
+                  <button type="button" class="quick-reply-chip" data-reply="Quotation sent with bulk discount tiers applied.">
+                    📝 Quotation sent
+                  </button>
+                  <button type="button" class="quick-reply-chip" data-reply="Stock is confirmed and ready for dispatch.">
+                    📦 Stock confirmed
+                  </button>
+                  <button type="button" class="quick-reply-chip" data-reply="Sample dispatch has been arranged via express air cargo.">
+                    🧪 Sample dispatched
+                  </button>
+                  <button type="button" class="quick-reply-chip" data-reply="Invoice has been uploaded with verified GSTIN details.">
+                    🧾 Invoice ready
+                  </button>
+                </div>
+
+                <!-- Input Field -->
+                <form id="chatMessageForm" class="chat-input-area">
+                  <input
+                    type="text"
+                    id="chatMessageInput"
+                    placeholder="Type a message to the buyer... (Press Enter to Send)"
+                    required
+                    autocomplete="off"
+                  />
+                  <button type="submit" class="btn btn-primary" id="btnSendChatMessage">
+                    Send 🚀
+                  </button>
+                </form>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 24: SUPPLIER ORDER MANAGEMENT
+          ==================================================== -->
+          <section class="module-view" id="view-orders" aria-labelledby="ordersHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="ordersHeading">Order Management</h2>
+                <p class="module-subtitle">Manage wholesale buyer orders, monitor payment status, and progress production and fulfillment.</p>
+              </div>
+            </div>
+
+            <!-- Orders Status Filter Tabs -->
+            <div class="toolbar-card">
+              <div class="tabs-nav" id="orderStatusTabs">
+                <button type="button" class="tab-btn active" data-status="all">All Orders</button>
+                <button type="button" class="tab-btn" data-status="Confirmed">Confirmed</button>
+                <button type="button" class="tab-btn" data-status="In Production">In Production</button>
+                <button type="button" class="tab-btn" data-status="Shipped">Shipped</button>
+                <button type="button" class="tab-btn" data-status="Delivered">Delivered</button>
+              </div>
+              <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="search" id="ordersSearchInput" placeholder="Search order ID, buyer..." />
+              </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Buyer</th>
+                      <th>Product</th>
+                      <th>Qty</th>
+                      <th>Order Value</th>
+                      <th>Order Date</th>
+                      <th>Est. Delivery</th>
+                      <th>Payment</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ordersTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 25: SUPPLIER PAYMENTS AND TRANSACTIONS
+          ==================================================== -->
+          <section class="module-view" id="view-payments" aria-labelledby="paymentsHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="paymentsHeading">Payments, Invoices &amp; Escrow</h2>
+                <p class="module-subtitle">Demonstration financial ledger, TradeShield escrow milestones, and formal tax invoice previews.</p>
+              </div>
+            </div>
+
+            <!-- Financial Widgets -->
+            <div class="inventory-summary-grid">
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Total Transaction Volume</span>
+                  <div class="stat-compact-val" id="finTotalVolume">$9,088.20</div>
+                </div>
+                <div class="stat-compact-icon">💰</div>
+              </div>
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">TradeShield In-Escrow</span>
+                  <div class="stat-compact-val" id="finEscrowProtected" style="color: var(--warning);">$6,284.00</div>
+                </div>
+                <div class="stat-compact-icon">🔒</div>
+              </div>
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Released to Supplier Account</span>
+                  <div class="stat-compact-val" id="finReleased" style="color: var(--success);">$2,804.20</div>
+                </div>
+                <div class="stat-compact-icon">✅</div>
+              </div>
+              <div class="stat-card-compact">
+                <div class="stat-compact-info">
+                  <span class="stat-compact-title">Pending Invoices</span>
+                  <div class="stat-compact-val" id="finPendingCount">0</div>
+                </div>
+                <div class="stat-compact-icon">🧾</div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Transaction Ref</th>
+                      <th>Order Ref</th>
+                      <th>Buyer</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                      <th>Payment Method</th>
+                      <th>Escrow Status</th>
+                      <th>Tax Invoice</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="paymentsTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 26: SUPPLIER SHIPPING AND DELIVERY
+          ==================================================== -->
+          <section class="module-view" id="view-shipping" aria-labelledby="shippingHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="shippingHeading">Shipping &amp; Delivery Progress</h2>
+                <p class="module-subtitle">Record courier dispatches, assign AWB numbers, and update shipment delivery milestones.</p>
+              </div>
+              <div class="module-actions">
+                <button type="button" class="btn btn-primary" id="btnCreateShipmentModal">
+                  🚚 Create Shipment
+                </button>
+              </div>
+            </div>
+
+            <!-- Shipments Table -->
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Shipment ID</th>
+                      <th>Order Ref</th>
+                      <th>Buyer &amp; Destination</th>
+                      <th>Courier Partner</th>
+                      <th>Tracking Number (AWB)</th>
+                      <th>Dispatch Date</th>
+                      <th>Expected Arrival</th>
+                      <th>Milestone Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="shipmentsTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 27: SUPPLIER PERFORMANCE AND TRUST SCORE
+          ==================================================== -->
+          <section class="module-view" id="view-performance" aria-labelledby="perfHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="perfHeading">Supplier Performance &amp; Trust Score</h2>
+                <p class="module-subtitle">Demonstration performance indicators, TrustScore™ breakdown, and verified client review ratings.</p>
+              </div>
+            </div>
+
+            <!-- Trust Score Hero Card -->
+            <div class="trust-hero-card">
+              <div class="trust-gauge-circle">
+                <div class="trust-gauge-inner">
+                  <span class="gauge-score" id="perfTrustScoreNum">96</span>
+                  <span class="gauge-max">/ 100</span>
+                </div>
+              </div>
+              <div class="trust-details-content">
+                <span class="trust-tier-badge" id="perfTierBadge">PLATINUM TIER VERIFIED</span>
+                <h3>Exceptional Sourcing Reliability</h3>
+                <p style="color: var(--text-light); font-size: 0.9rem; max-width: 650px;">
+                  Your TradeNest TrustScore™ reflects consistent on-time order fulfillment, rapid RFQ response times, low dispute frequency, and authenticated business credentials.
+                </p>
+                <div class="alert-banner" style="margin-top: 14px; padding: 10px 14px;">
+                  <span style="font-size: 0.8rem; color: var(--text-light);">
+                    * Illustrative demonstration metrics calculated from local browser records. Mock scores and ratings are for simulation purposes.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 Key Metrics -->
+            <div class="trust-metrics-quad">
+              <div class="trust-metric-box">
+                <div class="t-metric-val" id="metricFulfilmentRate">98.4%</div>
+                <div class="t-metric-label">Order Fulfilment Rate</div>
+              </div>
+              <div class="trust-metric-box">
+                <div class="t-metric-val" id="metricOnTimeDelivery">96.8%</div>
+                <div class="t-metric-label">On-Time Delivery Rate</div>
+              </div>
+              <div class="trust-metric-box">
+                <div class="t-metric-val" id="metricResponseTime">1.8h</div>
+                <div class="t-metric-label">Avg RFQ Response Time</div>
+              </div>
+              <div class="trust-metric-box">
+                <div class="t-metric-val" id="metricCompletedOrders">142</div>
+                <div class="t-metric-label">Total Completed Orders</div>
+              </div>
+            </div>
+
+            <!-- Performance Trend Chart (SVG) -->
+            <div class="chart-container-box">
+              <div class="chart-header">
+                <h3 style="font-size: 1.1rem; font-weight: 700;">6-Month Performance &amp; Volume Trends</h3>
+                <div class="chart-legend">
+                  <div class="legend-item">
+                    <span class="legend-dot" style="background: var(--primary);"></span>
+                    <span>Order Volume</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot" style="background: var(--success);"></span>
+                    <span>Fulfilment Rate (%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Clean Responsive SVG Chart -->
+              <div style="width: 100%; height: 220px; position: relative;">
+                <svg viewBox="0 0 700 200" style="width: 100%; height: 100%; overflow: visible;" preserveAspectRatio="none">
+                  <!-- Grid Lines -->
+                  <line x1="40" y1="20" x2="680" y2="20" stroke="#e4ddd8" stroke-dasharray="4" />
+                  <line x1="40" y1="70" x2="680" y2="70" stroke="#e4ddd8" stroke-dasharray="4" />
+                  <line x1="40" y1="120" x2="680" y2="120" stroke="#e4ddd8" stroke-dasharray="4" />
+                  <line x1="40" y1="170" x2="680" y2="170" stroke="#e4ddd8" />
+
+                  <!-- Y-Axis Labels -->
+                  <text x="5" y="25" font-size="10" fill="#9a918c">100%</text>
+                  <text x="10" y="75" font-size="10" fill="#9a918c">75%</text>
+                  <text x="10" y="125" font-size="10" fill="#9a918c">50%</text>
+                  <text x="15" y="175" font-size="10" fill="#9a918c">0</text>
+
+                  <!-- Fulfilment Line (Green) -->
+                  <polyline
+                    fill="none"
+                    stroke="#5f8068"
+                    stroke-width="3"
+                    points="70,35 180,30 290,26 400,28 510,24 620,25"
+                  />
+                  <!-- Points -->
+                  <circle cx="70" cy="35" r="4" fill="#5f8068" />
+                  <circle cx="180" cy="30" r="4" fill="#5f8068" />
+                  <circle cx="290" cy="26" r="4" fill="#5f8068" />
+                  <circle cx="400" cy="28" r="4" fill="#5f8068" />
+                  <circle cx="510" cy="24" r="4" fill="#5f8068" />
+                  <circle cx="620" cy="25" r="4" fill="#5f8068" />
+
+                  <!-- Order Volume Bars (Primary Brown) -->
+                  <rect x="55" y="90" width="30" height="80" fill="#7a5c52" opacity="0.8" rx="3" />
+                  <rect x="165" y="75" width="30" height="95" fill="#7a5c52" opacity="0.8" rx="3" />
+                  <rect x="275" y="60" width="30" height="110" fill="#7a5c52" opacity="0.8" rx="3" />
+                  <rect x="385" y="55" width="30" height="115" fill="#7a5c52" opacity="0.8" rx="3" />
+                  <rect x="495" y="45" width="30" height="125" fill="#7a5c52" opacity="0.8" rx="3" />
+                  <rect x="605" y="40" width="30" height="130" fill="#7a5c52" opacity="0.8" rx="3" />
+
+                  <!-- X-Axis Month Labels -->
+                  <text x="70" y="190" font-size="11" fill="#746d69" text-anchor="middle">May</text>
+                  <text x="180" y="190" font-size="11" fill="#746d69" text-anchor="middle">Jun</text>
+                  <text x="290" y="190" font-size="11" fill="#746d69" text-anchor="middle">Jul</text>
+                  <text x="400" y="190" font-size="11" fill="#746d69" text-anchor="middle">Aug</text>
+                  <text x="510" y="190" font-size="11" fill="#746d69" text-anchor="middle">Sep</text>
+                  <text x="620" y="190" font-size="11" fill="#746d69" text-anchor="middle">Oct (Curr)</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Customer Reviews Card -->
+            <div class="detail-card">
+              <h3>⭐ Verified Buyer Reviews &amp; Feedback</h3>
+              <div class="activity-feed-list" id="perfReviewsList">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               MODULE 28: SUPPLIER PROFILE AND SETTINGS
+          ==================================================== -->
+          <section class="module-view" id="view-settings" aria-labelledby="settingsHeading">
+            <div class="module-header">
+              <div class="module-title-group">
+                <h2 id="settingsHeading">Supplier Preferences &amp; Settings</h2>
+                <p class="module-subtitle">Manage account security, operational notifications, currency, and auto-quote configurations.</p>
+              </div>
+            </div>
+
+            <div class="profile-grid-details">
+              <!-- Account & Notifications -->
+              <div class="detail-card">
+                <h3>🔔 Notification Preferences</h3>
+                <form id="notificationSettingsForm">
+                  <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <strong>Instant Email on New RFQs</strong>
+                      <p class="form-help-text">Receive real-time email notification when buyers submit RFQs in your categories.</p>
+                    </div>
+                    <input type="checkbox" id="setRfqEmail" checked />
+                  </div>
+                  <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <strong>SMS Order &amp; Dispatch Alerts</strong>
+                      <p class="form-help-text">Get SMS updates on escrow funding and delivery milestone sign-offs.</p>
+                    </div>
+                    <input type="checkbox" id="setSmsAlerts" checked />
+                  </div>
+                  <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <strong>Low Stock Threshold Alerts</strong>
+                      <p class="form-help-text">Trigger dashboard and email warnings when warehouse stock falls below minimum.</p>
+                    </div>
+                    <input type="checkbox" id="setLowStockAlerts" checked />
+                  </div>
+                  <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <strong>Weekly Marketplace Insights</strong>
+                      <p class="form-help-text">Procurement pricing indices and wholesale demand trends.</p>
+                    </div>
+                    <input type="checkbox" id="setMarketingAlerts" />
+                  </div>
+                  <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                    Save Notification Preferences
+                  </button>
+                </form>
+              </div>
+
+              <!-- Regional & Operational -->
+              <div class="detail-card">
+                <h3>⚙️ Operational Preferences</h3>
+                <form id="operationalSettingsForm">
+                  <div class="form-group">
+                    <label for="setCurrency">Default Currency</label>
+                    <select id="setCurrency" class="form-control">
+                      <option value="USD ($)">USD ($)</option>
+                      <option value="INR (₹)">INR (₹)</option>
+                      <option value="EUR (€)">EUR (€)</option>
+                      <option value="GBP (£)">GBP (£)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="setTimezone">Operational Timezone</label>
+                    <select id="setTimezone" class="form-control">
+                      <option value="GMT+5:30 (India Standard Time)">GMT+5:30 (India Standard Time)</option>
+                      <option value="GMT-5:00 (Eastern Time)">GMT-5:00 (Eastern Time)</option>
+                      <option value="GMT+0:00 (UTC / London)">GMT+0:00 (UTC / London)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="setTwoFactor">Two-Factor Authentication (2FA)</label>
+                    <select id="setTwoFactor" class="form-control">
+                      <option value="disabled">Disabled (Demo)</option>
+                      <option value="enabled">Enabled via SMS OTP (Demo)</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                    Save Operational Settings
+                  </button>
+                </form>
+              </div>
+            </div>
+          </section>
+
         </main>
 
         <!-- DASHBOARD FOOTER -->
         <footer class="dashboard-footer">
           <div class="footer-copyright">
-            &copy; 2026 TradeNest. All rights reserved.
+            &copy; 2026 TradeNest B2B Marketplace. All rights reserved. Modules 15 to 28 Active.
           </div>
           <nav class="footer-links" aria-label="Footer Navigation">
-            <a href="../../pages/public/about.html" class="footer-link"
-              >About</a
-            >
-            <a href="../../pages/public/contact.html" class="footer-link"
-              >Contact</a
-            >
-            <a href="../../pages/public/privacy.html" class="footer-link"
-              >Privacy</a
-            >
-            <a href="../../pages/public/terms.html" class="footer-link"
-              >Terms</a
-            >
+            <a href="../../pages/about.html" class="footer-link">About</a>
+            <a href="../../pages/contact.html" class="footer-link">Contact</a>
+            <a href="../../pages/products.html" class="footer-link">Buyer Catalogue</a>
+            <a href="../../auth/terms-conditions.html" class="footer-link">Terms</a>
           </nav>
         </footer>
       </div>
     </div>
 
-    <!-- EDIT PROFILE MODAL -->
-    <div class="profile-modal" id="profileModal" hidden>
-      <div class="modal-overlay" id="modalOverlay"></div>
-      <div
-        class="modal-container"
-        role="dialog"
-        aria-labelledby="modalTitle"
-        aria-modal="true"
-      >
-        <header class="modal-header">
-          <h2 class="modal-title" id="modalTitle">Edit Supplier Profile</h2>
-          <button
-            type="button"
-            class="modal-close-btn"
-            id="closeProfileModal"
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
+    <!-- =======================================================
+         MODAL 1: ADD / EDIT PRODUCT MODAL (MODULE 17)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="productModal" hidden>
+      <div class="module-modal-container wide" role="dialog" aria-labelledby="productModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="productModalTitle">Add New Product</h3>
+          <button type="button" class="modal-close-btn" id="closeProductModal" aria-label="Close modal">&times;</button>
         </header>
+        <form id="productForm" class="module-modal-body">
+          <input type="hidden" id="prodFormId" value="" />
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="prodFormName">Product Name *</label>
+              <input type="text" id="prodFormName" class="form-control" required placeholder="e.g. Nitrile Industrial Gloves" />
+            </div>
+            <div class="form-group">
+              <label for="prodFormSku">SKU / Reference Code *</label>
+              <input type="text" id="prodFormSku" class="form-control" required placeholder="e.g. SKU-IND-GLV-01" />
+            </div>
+          </div>
 
-        <form id="profileEditForm" class="modal-body">
-          <div class="form-group">
-            <label for="editFullName">Full Name</label>
-            <input
-              type="text"
-              id="editFullName"
-              name="fullName"
-              class="form-control"
-              value="Supplier Name"
-              required
-            />
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="prodFormCategory">Category *</label>
+              <select id="prodFormCategory" class="form-control" required>
+                <option value="Safety Equipment">Safety Equipment</option>
+                <option value="Office Supplies">Office Supplies</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Textiles">Textiles</option>
+                <option value="Hardware">Hardware</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prodFormUom">Unit of Measurement (UOM) *</label>
+              <input type="text" id="prodFormUom" class="form-control" required placeholder="e.g. Pairs, Boxes, Reams, Pieces" />
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="editEmail">Email Address</label>
-            <input
-              type="email"
-              id="editEmail"
-              name="email"
-              class="form-control"
-              value="supplier@example.com"
-              required
-            />
+            <label for="prodFormDescription">Product Description *</label>
+            <textarea id="prodFormDescription" class="form-control" rows="3" required placeholder="Detailed commercial description..."></textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="prodFormUnitPrice">Base Unit Price ($) *</label>
+              <input type="number" step="0.01" id="prodFormUnitPrice" class="form-control" required placeholder="4.90" />
+            </div>
+            <div class="form-group">
+              <label for="prodFormMoq">Minimum Order Quantity (MOQ) *</label>
+              <input type="number" id="prodFormMoq" class="form-control" required placeholder="100" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="prodFormStock">Available Stock *</label>
+              <input type="number" id="prodFormStock" class="form-control" required placeholder="1000" />
+            </div>
+            <div class="form-group">
+              <label for="prodFormThreshold">Minimum Stock Threshold *</label>
+              <input type="number" id="prodFormThreshold" class="form-control" required placeholder="200" />
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="editPhone">Phone Number</label>
-            <input
-              type="tel"
-              id="editPhone"
-              name="phone"
-              class="form-control"
-              value="+91 98765 43210"
-              required
-            />
+            <label for="prodFormImage">Product Image Path / URL</label>
+            <input type="text" id="prodFormImage" class="form-control" value="../../images/products/safety-gloves.webp" />
+            <span class="form-help-text">Select or enter image path (e.g. ../../images/products/safety-gloves.webp)</span>
           </div>
 
           <div class="form-group">
-            <label for="editCompany">Company Name</label>
-            <input
-              type="text"
-              id="editCompany"
-              name="company"
-              class="form-control"
-              value="TradeNest Supplies Pvt. Ltd."
-              required
-            />
+            <label for="prodFormSpecs">Specifications (Key: Value per line)</label>
+            <textarea id="prodFormSpecs" class="form-control" rows="3" placeholder="Material: High-Grade Nitrile&#10;Grade: EN388 Standard&#10;Sizes: M, L, XL"></textarea>
           </div>
 
-          <div class="form-group">
-            <label for="editBusinessType">Business Type</label>
-            <input
-              type="text"
-              id="editBusinessType"
-              name="businessType"
-              class="form-control"
-              value="Manufacturer &amp; Wholesale Supplier"
-              required
-            />
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelProductModal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSaveProductSubmit">Save Product</button>
           </div>
-
-          <div class="form-group">
-            <label for="editLocation">Location</label>
-            <input
-              type="text"
-              id="editLocation"
-              name="location"
-              class="form-control"
-              value="Bengaluru, Karnataka, India"
-              required
-            />
-          </div>
-
-          <footer class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              id="cancelProfileEdit"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              id="saveProfileButton"
-            >
-              Save Changes
-            </button>
-          </footer>
         </form>
       </div>
     </div>
 
+    <!-- =======================================================
+         MODAL 2: UPDATE STOCK MODAL (MODULE 18)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="stockModal" hidden>
+      <div class="module-modal-container" role="dialog" aria-labelledby="stockModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="stockModalTitle">Update Warehouse Stock</h3>
+          <button type="button" class="modal-close-btn" id="closeStockModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="stockForm" class="module-modal-body">
+          <input type="hidden" id="stockFormProdId" value="" />
+          <div class="form-group">
+            <label>Product Name</label>
+            <strong id="stockFormProdName" style="font-size: 1.1rem; color: var(--text);">Industrial Safety Gloves</strong>
+          </div>
+          <div class="form-group">
+            <label for="stockFormNewQty">New Available Quantity</label>
+            <input type="number" id="stockFormNewQty" class="form-control" required min="0" />
+          </div>
+          <div class="form-group">
+            <label for="stockFormMinThresh">Minimum Threshold Alert Level</label>
+            <input type="number" id="stockFormMinThresh" class="form-control" required min="1" />
+          </div>
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelStockModal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSaveStockSubmit">Update Stock</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 3: RFQ DETAILS & DECLINE REASON MODAL (MODULE 19)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="rfqModal" hidden>
+      <div class="module-modal-container wide" role="dialog" aria-labelledby="rfqModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="rfqModalTitle">RFQ Details</h3>
+          <button type="button" class="modal-close-btn" id="closeRFQModal" aria-label="Close modal">&times;</button>
+        </header>
+        <div class="module-modal-body" id="rfqModalBody">
+          <!-- Populated via JS -->
+        </div>
+        <footer class="module-modal-footer" id="rfqModalFooter">
+          <button type="button" class="btn btn-secondary" id="btnCloseRFQModalBtn">Close</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 4: CREATE / EDIT QUOTATION MODAL (MODULE 20)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="quoteModal" hidden>
+      <div class="module-modal-container wide" role="dialog" aria-labelledby="quoteModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="quoteModalTitle">Create Commercial Quotation</h3>
+          <button type="button" class="modal-close-btn" id="closeQuoteModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="quoteForm" class="module-modal-body">
+          <input type="hidden" id="quoteFormId" value="" />
+          <input type="hidden" id="quoteFormRfqRef" value="" />
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="quoteFormBuyer">Buyer Business Name *</label>
+              <input type="text" id="quoteFormBuyer" class="form-control" required placeholder="e.g. Metro Retail Solutions" />
+            </div>
+            <div class="form-group">
+              <label for="quoteFormProductSelect">Select Product *</label>
+              <select id="quoteFormProductSelect" class="form-control" required>
+                <!-- Populated via JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="quoteFormOfferedQty">Offered Quantity *</label>
+              <input type="number" id="quoteFormOfferedQty" class="form-control" required min="1" />
+            </div>
+            <div class="form-group">
+              <label for="quoteFormUnitPrice">Unit Price ($) *</label>
+              <input type="number" step="0.01" id="quoteFormUnitPrice" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="quoteFormDeliveryFee">Delivery / Freight Charges ($)</label>
+              <input type="number" step="0.01" id="quoteFormDeliveryFee" class="form-control" value="75.00" />
+            </div>
+            <div class="form-group">
+              <label for="quoteFormTimeline">Delivery Timeline *</label>
+              <input type="text" id="quoteFormTimeline" class="form-control" value="5 to 7 business days from PO" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="quoteFormPaymentTerms">Payment Terms *</label>
+              <select id="quoteFormPaymentTerms" class="form-control">
+                <option value="TradeShield B2B Escrow - 100% Release upon Inspection">TradeShield B2B Escrow (100% Release on Delivery)</option>
+                <option value="30% Advance with PO, 70% against Proof of Dispatch">30% Advance, 70% against Dispatch</option>
+                <option value="Net 30 Days Corporate Account">Net 30 Days Corporate Credit</option>
+                <option value="Letter of Credit (LC) at Sight">Letter of Credit (LC)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="quoteFormValidity">Quotation Validity Date *</label>
+              <input type="date" id="quoteFormValidity" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quoteFormConditions">Additional Terms &amp; Conditions</label>
+            <textarea id="quoteFormConditions" class="form-control" rows="2" placeholder="e.g. Includes manufacturer warranty and certified batch testing report."></textarea>
+          </div>
+
+          <!-- Dynamic Live Calculation Box -->
+          <div class="quote-calc-card">
+            <div class="calc-row">
+              <span>Subtotal:</span>
+              <strong id="calcSubtotal">$0.00</strong>
+            </div>
+            <div class="calc-row">
+              <span>Estimated Tax (8%):</span>
+              <strong id="calcTax">$0.00</strong>
+            </div>
+            <div class="calc-row">
+              <span>Freight &amp; Handling:</span>
+              <strong id="calcDelivery">$75.00</strong>
+            </div>
+            <div class="calc-row total-row">
+              <span>Total Quotation Amount:</span>
+              <span id="calcGrandTotal" style="color: var(--primary);">$0.00</span>
+            </div>
+          </div>
+
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelQuoteModal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitQuote">Dispatch Quotation</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 5: DISPATCH SAMPLE MODAL (MODULE 21)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="sampleDispatchModal" hidden>
+      <div class="module-modal-container" role="dialog" aria-labelledby="sampleDispatchTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="sampleDispatchTitle">Dispatch Evaluation Sample</h3>
+          <button type="button" class="modal-close-btn" id="closeSampleDispatchModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="sampleDispatchForm" class="module-modal-body">
+          <input type="hidden" id="sampleDispatchId" value="" />
+          <div class="form-group">
+            <label>Sample Request Ref</label>
+            <strong id="sampleDispatchRefLabel">SMP-409</strong>
+          </div>
+          <div class="form-group">
+            <label for="sampleCourier">Courier / Carrier Partner *</label>
+            <select id="sampleCourier" class="form-control" required>
+              <option value="BlueDart Express / DHL Air">BlueDart Express / DHL Air</option>
+              <option value="Delhivery B2B Courier">Delhivery B2B Courier</option>
+              <option value="FedEx Express Cargo">FedEx Express Cargo</option>
+              <option value="India Post EMS SpeedPost">India Post EMS SpeedPost</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sampleTrackingNo">Air Waybill (AWB) / Tracking Number *</label>
+            <input type="text" id="sampleTrackingNo" class="form-control" required placeholder="e.g. BD-99482104" />
+          </div>
+          <div class="form-group">
+            <label for="sampleArrivalDate">Estimated Delivery Date *</label>
+            <input type="date" id="sampleArrivalDate" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="sampleNotes">Dispatch Notes / Enclosures</label>
+            <textarea id="sampleNotes" class="form-control" rows="2" placeholder="e.g. Sample swatch card & test compliance certificate included."></textarea>
+          </div>
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelSampleDispatch">Cancel</button>
+            <button type="submit" class="btn btn-primary">Confirm Sample Dispatch</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 6: CREATE COLLABORATION PROPOSAL (MODULE 22)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="collabModal" hidden>
+      <div class="module-modal-container" role="dialog" aria-labelledby="collabModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="collabModalTitle">Propose Supplier Collaboration</h3>
+          <button type="button" class="modal-close-btn" id="closeCollabModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="collabForm" class="module-modal-body">
+          <div class="form-group">
+            <label for="collabPartnerSelect">Partner Supplier *</label>
+            <select id="collabPartnerSelect" class="form-control" required>
+              <option value="SteelCraft Global Works">SteelCraft Global Works (Pune, MH)</option>
+              <option value="EcoPolymer Packaging Ltd">EcoPolymer Packaging Ltd (Ahmedabad, GJ)</option>
+              <option value="Vanguard Textiles &amp; Safety">Vanguard Textiles &amp; Safety (Tirupur, TN)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="collabCategory">Product Category *</label>
+            <input type="text" id="collabCategory" class="form-control" required placeholder="e.g. Safety Equipment / Fasteners" />
+          </div>
+          <div class="form-group">
+            <label for="collabTitle">Requirement / Project Title *</label>
+            <input type="text" id="collabTitle" class="form-control" required placeholder="e.g. Mega-Port Construction Tender Collaboration" />
+          </div>
+          <div class="form-group">
+            <label for="collabReqQty">Total Volume Required *</label>
+            <input type="text" id="collabReqQty" class="form-control" required placeholder="e.g. 50,000 Units" />
+          </div>
+          <div class="form-group">
+            <label for="collabProposed">Proposed Contribution Split *</label>
+            <input type="text" id="collabProposed" class="form-control" required placeholder="e.g. We supply 30,000; Partner supplies 20,000" />
+          </div>
+          <div class="form-group">
+            <label for="collabNotes">Collaboration Notes &amp; Terms</label>
+            <textarea id="collabNotes" class="form-control" rows="2" placeholder="Brief outline of tender scope, timeline, and joint execution terms."></textarea>
+          </div>
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelCollabModal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit Collaboration Proposal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 7: TAX INVOICE PREVIEW MODAL (MODULE 25)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="invoiceModal" hidden>
+      <div class="module-modal-container wide" role="dialog" aria-labelledby="invoiceModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="invoiceModalTitle">Commercial Tax Invoice</h3>
+          <button type="button" class="modal-close-btn" id="closeInvoiceModal" aria-label="Close modal">&times;</button>
+        </header>
+        <div class="module-modal-body" id="invoiceModalBody">
+          <!-- Populated via JS -->
+        </div>
+        <footer class="module-modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnPrintInvoice">🖨️ Print / Save PDF</button>
+          <button type="button" class="btn btn-primary" id="btnCloseInvoiceBtn">Close</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 8: CREATE SHIPMENT MODAL (MODULE 26)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="shipmentModal" hidden>
+      <div class="module-modal-container" role="dialog" aria-labelledby="shipmentModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="shipmentModalTitle">Create &amp; Dispatch Shipment</h3>
+          <button type="button" class="modal-close-btn" id="closeShipmentModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="shipmentForm" class="module-modal-body">
+          <div class="form-group">
+            <label for="shipmentOrderSelect">Select Active Order *</label>
+            <select id="shipmentOrderSelect" class="form-control" required>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="shipmentCourier">Courier Partner *</label>
+            <select id="shipmentCourier" class="form-control" required>
+              <option value="BlueDart Express / DHL Freight">BlueDart Express / DHL Freight</option>
+              <option value="Delhivery B2B Freight">Delhivery B2B Freight</option>
+              <option value="FedEx Freight Cargo">FedEx Freight Cargo</option>
+              <option value="TCI Freight Logistics">TCI Freight Logistics</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="shipmentTrackingNo">Air Waybill / Tracking No (AWB) *</label>
+            <input type="text" id="shipmentTrackingNo" class="form-control" required placeholder="e.g. BLU-99281726" />
+          </div>
+          <div class="form-group">
+            <label for="shipmentExpectedDelivery">Expected Delivery Date *</label>
+            <input type="date" id="shipmentExpectedDelivery" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="shipmentAddress">Delivery Destination Address *</label>
+            <input type="text" id="shipmentAddress" class="form-control" required placeholder="Destination address..." />
+          </div>
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelShipmentModal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Confirm &amp; Dispatch</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 9: EDIT BUSINESS PROFILE MODAL (MODULE 16 & 28)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="profileModal" hidden>
+      <div class="module-modal-container wide" role="dialog" aria-labelledby="profileModalTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="profileModalTitle">Edit Business Profile &amp; Identification</h3>
+          <button type="button" class="modal-close-btn" id="closeProfileModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="profileEditForm" class="module-modal-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editCompany">Company / Business Name *</label>
+              <input type="text" id="editCompany" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editBusinessType">Business Type *</label>
+              <input type="text" id="editBusinessType" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editDescription">Company Description *</label>
+            <textarea id="editDescription" class="form-control" rows="3" required></textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editPrimaryCat">Primary Category *</label>
+              <input type="text" id="editPrimaryCat" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editSecondaryCat">Secondary Category</label>
+              <input type="text" id="editSecondaryCat" class="form-control" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editGstin">GSTIN / Tax ID *</label>
+              <input type="text" id="editGstin" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editPan">PAN Number</label>
+              <input type="text" id="editPan" class="form-control" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editLocation">Registered Address *</label>
+            <input type="text" id="editLocation" class="form-control" required />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editContactPerson">Contact Person *</label>
+              <input type="text" id="editContactPerson" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editPhone">Contact Phone *</label>
+              <input type="tel" id="editPhone" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editEmail">Official Business Email *</label>
+              <input type="email" id="editEmail" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editSupportEmail">Customer Support Email</label>
+              <input type="email" id="editSupportEmail" class="form-control" />
+            </div>
+          </div>
+
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelProfileEdit">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveProfileButton">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 10: DOCUMENT UPLOAD MODAL (MODULE 16)
+    ======================================================== -->
+    <div class="module-modal-overlay" id="uploadDocModal" hidden>
+      <div class="module-modal-container" role="dialog" aria-labelledby="uploadDocTitle" aria-modal="true">
+        <header class="module-modal-header">
+          <h3 id="uploadDocTitle">Upload Verification Document</h3>
+          <button type="button" class="modal-close-btn" id="closeUploadDocModal" aria-label="Close modal">&times;</button>
+        </header>
+        <form id="uploadDocForm" class="module-modal-body">
+          <div class="form-group">
+            <label for="docFileName">Document Title / File Name *</label>
+            <input type="text" id="docFileName" class="form-control" placeholder="e.g. Factory_Pollution_Clearance_2026.pdf" required />
+          </div>
+          <div class="form-group">
+            <label for="docCategorySelect">Document Category *</label>
+            <select id="docCategorySelect" class="form-control" required>
+              <option value="Tax & Identification">GST / Tax Registration</option>
+              <option value="Enterprise Certificate">MSME / Udyam Certificate</option>
+              <option value="Quality Compliance">ISO 9001 / Quality Audit</option>
+              <option value="Legal Entity">Certificate of Incorporation</option>
+              <option value="Lab Test Report">Product Metallurgical / Cut Resistance Test</option>
+            </select>
+          </div>
+          <div class="upload-dropzone" id="demoDocDropzone">
+            <div class="dropzone-icon">📁</div>
+            <strong>Click to select simulation file</strong>
+            <p class="form-help-text">Simulates PDF, PNG, JPG file selection (up to 10 MB)</p>
+          </div>
+          <div class="module-modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelUploadDoc">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Document</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/supplier/supplier-store.js"></script>
     <script src="../../js/supplier/dashboard.js"></script>
   </body>
 </html>

@@ -1826,18 +1826,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ==========================================
-    // 23. INITIALIZATION
+    // 23. CROSS-SYNC WITH SUPPLIER WORKSPACE
+    // ==========================================
+    function syncWithSupplierWorkspace() {
+        try {
+            // 1. Sync Orders from Supplier Store
+            const rawOrders = localStorage.getItem("tradenest_supplier_orders");
+            if (rawOrders) {
+                const orders = JSON.parse(rawOrders);
+                const ordersTbody = document.querySelector(".recent-orders-card .data-table tbody");
+                if (ordersTbody && orders.length > 0) {
+                    ordersTbody.innerHTML = orders.slice(0, 4).map(ord => {
+                        const statusClass = String(ord.status || "").toLowerCase().replace(/[^a-z]/g, "");
+                        return `
+                            <tr>
+                                <td><strong>#${ord.id}</strong></td>
+                                <td>${ord.productName} (x${ord.orderedQty})</td>
+                                <td>TradeNest Supplies Pvt. Ltd.</td>
+                                <td>₹${(ord.totalAmount || ord.orderAmount || 0).toLocaleString()}</td>
+                                <td><span class="status-badge ${statusClass}">${ord.status}</span></td>
+                            </tr>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 2. Sync Active Quotes from Supplier Store
+            const rawQuotes = localStorage.getItem("tradenest_supplier_quotations");
+            if (rawQuotes) {
+                const quotes = JSON.parse(rawQuotes);
+                const quotesList = document.querySelector(".active-quotes-card .quotes-list");
+                if (quotesList && quotes.length > 0) {
+                    quotesList.innerHTML = quotes.slice(0, 3).map(q => `
+                        <div class="quote-item">
+                            <div class="quote-info">
+                                <h3 class="quote-product">${q.productName}</h3>
+                                <p class="quote-meta">Qty: ${q.offeredQty} ${q.uom || 'Units'} • Supplier: <strong>TradeNest Supplies Pvt. Ltd.</strong></p>
+                            </div>
+                            <div class="quote-details">
+                                <span class="quote-amount">₹${(q.totalAmount || q.subtotal || 0).toLocaleString()}</span>
+                                <span class="status-badge ${String(q.status || '').toLowerCase()}">${q.status}</span>
+                            </div>
+                        </div>
+                    `).join("");
+                }
+            }
+        } catch (e) {
+            console.warn("Cross-sync with supplier workspace error:", e);
+        }
+    }
+
+    // ==========================================
+    // 24. INITIALIZATION
     // ==========================================
 
     const initialProfile =
         loadBuyerProfile();
 
-
     updateProfileUI(
         initialProfile
     );
 
-
     updateDashboardStats();
+
+    syncWithSupplierWorkspace();
 
 });

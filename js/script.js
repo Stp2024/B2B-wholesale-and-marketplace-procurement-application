@@ -369,6 +369,53 @@ function initBackToTop() {
 ========================================================= */
 
 function initProductPage() {
+    // Dynamic injection of supplier products from Supplier Workspace
+    try {
+        var grid = $(".products-grid");
+        var rawSupplierProducts = localStorage.getItem("tradenest_supplier_products");
+        if (grid && rawSupplierProducts) {
+            var sProducts = JSON.parse(rawSupplierProducts);
+            sProducts.forEach(function (sp) {
+                if (sp.status === "active" && !$('[data-product-id="' + sp.id + '"]', grid)) {
+                    var card = document.createElement("article");
+                    card.className = "product-card";
+                    card.setAttribute("data-product-id", sp.id);
+                    var imgPath = sp.image ? sp.image.replace(/^\.\.\/\.\.\//, "../") : "../images/products/industrial-safety-gloves.webp";
+                    card.innerHTML = `
+                        <div class="product-image-container">
+                            <img src="${imgPath}" alt="${sp.name}" class="product-image" />
+                            <span class="badge badge-stock">${sp.availableStock > 0 ? "In Stock" : "Out of Stock"}</span>
+                        </div>
+                        <div class="product-content">
+                            <span class="product-category">${sp.category}</span>
+                            <h3 class="product-title">${sp.name}</h3>
+                            <p class="product-description">${sp.description}</p>
+                            <div class="product-pricing-info">
+                                <span class="product-price">INR ${Math.round(sp.unitPrice * 80)} <small>/ ${sp.uom}</small></span>
+                                <span class="product-moq">MOQ: ${sp.moq} ${sp.uom}</span>
+                            </div>
+                            <div class="product-supplier-info">
+                                <span class="supplier-name">TradeNest Supplies Pvt. Ltd.</span>
+                                <span class="verification-badge status-verified">Verified Supplier</span>
+                            </div>
+                            <div class="product-metrics">
+                                <span class="trust-score">Trust Score: <strong>96/100</strong></span>
+                                <span class="rating-stars" aria-label="Rating: 5 out of 5 stars"><small>5.0 / 5</small></span>
+                            </div>
+                            <div class="product-card-actions">
+                                <a href="product-details.html?id=${sp.id}" class="btn btn-primary btn-sm">View Product</a>
+                                <a href="supplier-details.html" class="btn btn-outline btn-sm">View Supplier</a>
+                            </div>
+                        </div>
+                    `;
+                    grid.prepend(card);
+                }
+            });
+        }
+    } catch (e) {
+        console.warn("Could not inject supplier products into catalogue:", e);
+    }
+
     var productCards = $$(".product-card");
 
     if (!productCards.length) {
