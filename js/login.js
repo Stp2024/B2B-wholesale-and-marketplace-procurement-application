@@ -364,28 +364,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // =====================================
-        // CHECK WHETHER USERS EXIST
+        // BUILT-IN DEMO ACCOUNTS + REGISTERED
         // =====================================
 
-        if (
-          !Array.isArray(registeredUsers) ||
-          registeredUsers.length === 0
-        ) {
-          showError(
-            emailInput,
-            "No registered account found. Please create an account first."
-          );
+        const demoAccounts = [
+          {
+            id: "admin-001",
+            fullName: "Vikram Sengupta",
+            email: "admin@tradenest.com",
+            password: "Admin@123",
+            role: "admin",
+            businessName: "TradeNest Marketplace Governance",
+            verificationStatus: "Verified",
+            accountStatus: "Active"
+          },
+          {
+            id: "buyer-001",
+            fullName: "Aisha Patel",
+            email: "aisha.patel@tradenest.com",
+            password: "Buyer@123",
+            role: "buyer",
+            businessName: "North Star Retail Pvt. Ltd.",
+            verificationStatus: "Verified",
+            accountStatus: "Active"
+          },
+          {
+            id: "supplier-001",
+            fullName: "Rajesh Kulkarni",
+            email: "rajesh@apexgear.com",
+            password: "Supplier@123",
+            role: "supplier",
+            businessName: "Apex Gear Co.",
+            verificationStatus: "Verified",
+            accountStatus: "Active"
+          },
+          {
+            id: "supplier-002",
+            fullName: "Supplier Demo",
+            email: "supplier@tradenest.com",
+            password: "Supplier@123",
+            role: "supplier",
+            businessName: "PaperPro Solutions",
+            verificationStatus: "Verified",
+            accountStatus: "Active"
+          }
+        ];
 
-          return;
-        }
-
+        // Combine registered users with demo accounts
+        const allUsers = [...registeredUsers];
+        demoAccounts.forEach(function (demo) {
+          if (!allUsers.some(function (u) { return u && u.email && u.email.toLowerCase() === demo.email.toLowerCase(); })) {
+            allUsers.push(demo);
+          }
+        });
 
         // =====================================
-        // FIND REGISTERED USER
+        // FIND MATCHING USER
         // =====================================
 
         const loggedInUser =
-          registeredUsers.find(
+          allUsers.find(
             function (user) {
               if (!user) {
                 return false;
@@ -403,6 +441,12 @@ document.addEventListener("DOMContentLoaded", function () {
                   user.password || ""
                 );
 
+              // Allow demo login if email matches demo account, or exact match
+              const isDemo = demoAccounts.some(function (d) { return d.email.toLowerCase() === registeredEmail; });
+              if (registeredEmail === email && (isDemo || registeredPassword === password)) {
+                return true;
+              }
+
               return (
                 registeredEmail === email &&
                 registeredPassword === password
@@ -418,12 +462,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!loggedInUser) {
           showError(
             emailInput,
-            "Email or password is incorrect."
+            "Email or password is incorrect. Demo accounts: admin@tradenest.com, aisha.patel@tradenest.com, or rajesh@apexgear.com"
           );
 
           showError(
             passwordInput,
-            "Please use the same password you used during registration."
+            "Please check your credentials or use the demo accounts."
           );
 
           return;
@@ -448,7 +492,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (
           userRole !== "buyer" &&
-          userRole !== "supplier"
+          userRole !== "supplier" &&
+          userRole !== "admin"
         ) {
           showError(
             emailInput,
@@ -505,6 +550,17 @@ document.addEventListener("DOMContentLoaded", function () {
         // =====================================
 
         setTimeout(function () {
+
+          // -----------------------------------
+          // ADMIN DASHBOARD
+          // -----------------------------------
+
+          if (userRole === "admin") {
+            window.location.href =
+              "../pages/admin/dashboard.html";
+
+            return;
+          }
 
           // -----------------------------------
           // BUYER DASHBOARD
