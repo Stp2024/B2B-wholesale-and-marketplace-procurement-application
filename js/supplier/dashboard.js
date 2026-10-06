@@ -157,6 +157,23 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSectionTitle.textContent = VIEW_TITLES[viewName];
         }
 
+        // Update top back button (hidden on overview, shown on other module views)
+        const supplierBackBtn = document.getElementById("supplierTopBackButton");
+        if (supplierBackBtn) {
+            if (viewName === "overview") {
+                supplierBackBtn.style.display = "none";
+            } else {
+                supplierBackBtn.style.display = "inline-flex";
+                supplierBackBtn.onclick = function () {
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        switchView("overview");
+                    }
+                };
+            }
+        }
+
         // Close mobile sidebar if open
         if (sidebar && sidebar.classList.contains("open")) {
             sidebar.classList.remove("open");
@@ -171,6 +188,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Scroll to top of main content
+        const mainWrapper = document.querySelector(".main-wrapper");
+        if (mainWrapper) {
+            mainWrapper.scrollTo({ top: 0, behavior: "smooth" });
+        }
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 

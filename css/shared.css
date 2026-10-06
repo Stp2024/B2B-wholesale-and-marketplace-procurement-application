@@ -35,6 +35,12 @@ body {
   gap: 30px;
 }
 
+.tn-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .tn-brand {
   display: inline-flex;
   flex: 0 0 auto;
@@ -289,3 +295,66 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================
+   TRADE NEST - REUSABLE PREMIUM BACK BUTTON
+   ========================================================= */
+.tn-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--tn-ink, #192d3a);
+  background: #ffffff;
+  border: 1px solid var(--tn-line, #e1e7e8);
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(25, 45, 58, 0.05);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.tn-back-button:hover {
+  background: #f8fafc;
+  color: var(--tn-accent, #d87543);
+  border-color: var(--tn-accent, #d87543);
+  transform: translateX(-3px);
+  box-shadow: 0 4px 14px rgba(216, 117, 67, 0.16);
+}
+
+.tn-back-button:active {
+  transform: translateX(-1px) scale(0.98);
+}
+
+.tn-back-button .tn-back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tn-back-button:hover .tn-back-icon {
+  transform: translateX(-2px);
+}
+
+.tn-back-button:focus-visible {
+  outline: 3px solid rgba(216, 117, 67, 0.4);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .tn-header-left {
+    gap: 10px;
+  }
+  .tn-back-button {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    gap: 6px;
+  }
+}
