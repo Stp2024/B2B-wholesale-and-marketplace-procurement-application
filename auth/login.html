@@ -155,19 +155,82 @@
           <div class="login-heading">
             <h1>Login to <span>TradeNest</span></h1>
 
-            <p>Enter your credentials to access your account</p>
+            <p>Select your portal and enter your credentials to access your account</p>
           </div>
 
           <!-- Login Box -->
           <div class="login-box">
+            <!-- Role Selection Options (Login as Admin, Buyer, Supplier) -->
+            <div class="role-selector-container">
+              <span class="role-selector-label">Login As:</span>
+              <div class="role-selector-tabs" role="tablist" aria-label="Choose your role">
+                <button
+                  type="button"
+                  class="role-tab"
+                  data-role="admin"
+                  id="roleTabAdmin"
+                  role="tab"
+                  aria-selected="false"
+                  aria-label="Login as Admin"
+                >
+                  <span class="role-tab-icon">🛡️</span>
+                  <span class="role-tab-text">
+                    <strong class="role-tab-name">Admin</strong>
+                    <small class="role-tab-hint">Governance</small>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  class="role-tab active"
+                  data-role="buyer"
+                  id="roleTabBuyer"
+                  role="tab"
+                  aria-selected="true"
+                  aria-label="Login as Buyer"
+                >
+                  <span class="role-tab-icon">🏢</span>
+                  <span class="role-tab-text">
+                    <strong class="role-tab-name">Buyer</strong>
+                    <small class="role-tab-hint">Procurement</small>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  class="role-tab"
+                  data-role="supplier"
+                  id="roleTabSupplier"
+                  role="tab"
+                  aria-selected="false"
+                  aria-label="Login as Supplier"
+                >
+                  <span class="role-tab-icon">🏭</span>
+                  <span class="role-tab-text">
+                    <strong class="role-tab-name">Supplier</strong>
+                    <small class="role-tab-hint">Merchant</small>
+                  </span>
+                </button>
+              </div>
+
+              <!-- Active Role Context Indicator Banner -->
+              <div class="role-context-badge role-buyer" id="roleContextBadge">
+                <span class="role-context-dot"></span>
+                <span class="role-context-title" id="roleContextTitle">Buyer Portal</span>
+                <span class="role-context-desc" id="roleContextDesc">— Browse products, request quotes &amp; manage orders</span>
+              </div>
+            </div>
+
             <!-- Login Form -->
-            <form action="#" method="post">
+            <form action="#" method="post" id="loginForm">
+              <input type="hidden" name="selectedRole" id="selectedRoleInput" value="buyer" />
+
               <!-- =================================================
                    EMAIL
                    ================================================= -->
               <div class="form-group">
-                <label for="email">
-                  Official Email / Business Email
+                <label for="email" id="emailLabel">
+                  Buyer Business Email
                   <span>*</span>
                 </label>
 
@@ -178,7 +241,7 @@
                     type="email"
                     id="email"
                     name="email"
-                    placeholder="Enter your email address"
+                    placeholder="Enter your buyer business email"
                     autocomplete="email"
                     required
                   />
@@ -209,9 +272,18 @@
                   <button
                     type="button"
                     class="password-icon"
+                    id="passwordToggleBtn"
                     aria-label="Show password"
+                    title="Show password"
                   >
-                    ◉
+                    <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -226,36 +298,16 @@
                   <span>Remember me</span>
                 </label>
 
-                <a href="#" class="forgot-password"> Forgot Password? </a>
+                <a href="#reset-password" class="forgot-password" id="forgotPasswordBtn"> Forgot Password? </a>
               </div>
 
               <!-- =================================================
                    LOGIN BUTTON
                    ================================================= -->
-              <button type="submit" class="login-button">
-                Login
+              <button type="submit" class="login-button" id="loginSubmitBtn">
+                Login as Buyer
                 <span>→</span>
               </button>
-
-              <!-- =================================================
-                   DEMO CREDENTIALS QUICK-FILL BAR
-                   ================================================= -->
-              <div class="demo-login-strip" style="margin-top: 18px; padding: 14px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.82rem;">
-                <div style="font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; font-size: 0.74rem; letter-spacing: 0.04em;">
-                  ⚡ Quick Demo Access:
-                </div>
-                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <button type="button" class="btn-demo-chip" style="background: #0f172a; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;" onclick="document.getElementById('email').value='admin@tradenest.com'; document.getElementById('password').value='Admin@123';">
-                    🛡️ Admin Demo
-                  </button>
-                  <button type="button" class="btn-demo-chip" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;" onclick="document.getElementById('email').value='aisha.patel@tradenest.com'; document.getElementById('password').value='Buyer@123';">
-                    🏢 Buyer Demo
-                  </button>
-                  <button type="button" class="btn-demo-chip" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;" onclick="document.getElementById('email').value='rajesh@apexgear.com'; document.getElementById('password').value='Supplier@123';">
-                    🏭 Supplier Demo
-                  </button>
-                </div>
-              </div>
             </form>
 
             <!-- =================================================
@@ -313,6 +365,120 @@
           <a href="#"> Terms of Service </a>
         </div>
       </footer>
+    </div>
+
+    <!-- =========================================================
+         RESET PASSWORD MODAL DIALOG (FORGOTTEN PASSWORD OPTION)
+         ========================================================= -->
+    <div class="tn-modal-overlay" id="resetPasswordModal" role="dialog" aria-modal="true" aria-labelledby="resetModalTitle" style="display: none;">
+      <div class="tn-modal-card">
+        <div class="tn-modal-header">
+          <div class="tn-modal-title-wrap">
+            <div class="tn-modal-icon">🔐</div>
+            <div>
+              <h2 id="resetModalTitle" class="tn-modal-title">Reset Account Password</h2>
+              <p class="tn-modal-subtitle">Choose an existing account or enter your email to set a new password</p>
+            </div>
+          </div>
+          <button type="button" class="tn-modal-close" id="closeResetModalBtn" aria-label="Close dialog">✕</button>
+        </div>
+
+        <form id="resetPasswordForm" class="tn-modal-form" novalidate>
+          <!-- Live Feedback Banner -->
+          <div id="resetAlertMessage" class="tn-modal-alert" style="display: none;" role="alert"></div>
+
+          <!-- Email Input -->
+          <div class="form-group">
+            <label for="resetEmail">
+              Account Email Address <span>*</span>
+            </label>
+            <div class="input-box">
+              <span class="input-icon">✉</span>
+              <input
+                type="email"
+                id="resetEmail"
+                name="resetEmail"
+                placeholder="name@business.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+            <small class="field-hint" id="resetEmailHint">Enter your registered business or account email.</small>
+          </div>
+
+          <!-- New Password Input -->
+          <div class="form-group">
+            <label for="resetNewPassword">
+              New Password <span>*</span>
+            </label>
+            <div class="input-box">
+              <span class="input-icon">▣</span>
+              <input
+                type="password"
+                id="resetNewPassword"
+                name="resetNewPassword"
+                placeholder="Enter at least 6 characters"
+                minlength="6"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                class="password-icon reset-toggle-pwd"
+                data-target="resetNewPassword"
+                aria-label="Toggle password visibility"
+                title="Toggle password visibility"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Confirm New Password Input -->
+          <div class="form-group">
+            <label for="resetConfirmPassword">
+              Confirm New Password <span>*</span>
+            </label>
+            <div class="input-box">
+              <span class="input-icon">✓</span>
+              <input
+                type="password"
+                id="resetConfirmPassword"
+                name="resetConfirmPassword"
+                placeholder="Re-enter your new password"
+                minlength="6"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                class="password-icon reset-toggle-pwd"
+                data-target="resetConfirmPassword"
+                aria-label="Toggle password visibility"
+                title="Toggle password visibility"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Action Buttons -->
+          <div class="tn-modal-actions">
+            <button type="button" class="btn-modal-cancel" id="cancelResetModalBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-modal-submit" id="submitResetPasswordBtn">
+              Update Password <span>→</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- =========================================================

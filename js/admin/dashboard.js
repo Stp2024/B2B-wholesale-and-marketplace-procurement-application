@@ -212,6 +212,22 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Admin global back button handler
+  const adminGlobalBackBtn = document.getElementById("adminGlobalBackBtn");
+  if (adminGlobalBackBtn) {
+    adminGlobalBackBtn.addEventListener("click", function () {
+      const currentHash = window.location.hash.replace("#", "") || "overview";
+      if (currentHash !== "overview") {
+        // Return to overview if inside any subview
+        switchView("overview");
+      } else if (window.history.length > 1 && document.referrer && !document.referrer.endsWith("/dashboard.html")) {
+        window.history.back();
+      } else {
+        window.location.href = "../../index.html";
+      }
+    });
+  }
+
   // Hash change listener
   window.addEventListener("hashchange", function () {
     const hash = window.location.hash.replace("#", "") || "overview";

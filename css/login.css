@@ -1168,3 +1168,405 @@ input:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================================
+   ROLE SELECTOR (LOGIN AS ADMIN, BUYER, SUPPLIER)
+   ========================================================= */
+
+.role-selector-container {
+  margin-bottom: 22px;
+}
+
+.role-selector-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 9px;
+}
+
+.role-selector-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: var(--surface-soft);
+  padding: 5px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+}
+
+.role-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.role-tab:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.role-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.role-tab-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.role-tab:hover .role-tab-icon {
+  transform: scale(1.12);
+}
+
+.role-tab-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.15;
+}
+
+.role-tab-name {
+  font-size: 0.86rem;
+  font-weight: 750;
+  color: inherit;
+}
+
+.role-tab-hint {
+  font-size: 0.67rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Active states for each role */
+.role-tab.active {
+  background: var(--surface);
+  box-shadow: 0 4px 14px rgba(30, 42, 58, 0.09);
+}
+
+.role-tab[data-role="admin"].active {
+  border-color: #0f172a;
+  color: #0f172a;
+}
+.role-tab[data-role="admin"].active .role-tab-name {
+  color: #0f172a;
+}
+.role-tab[data-role="admin"].active .role-tab-hint {
+  color: #475569;
+}
+
+.role-tab[data-role="buyer"].active {
+  border-color: #0284c7;
+  color: #0369a1;
+}
+.role-tab[data-role="buyer"].active .role-tab-name {
+  color: #0369a1;
+}
+.role-tab[data-role="buyer"].active .role-tab-hint {
+  color: #0284c7;
+}
+
+.role-tab[data-role="supplier"].active {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+.role-tab[data-role="supplier"].active .role-tab-name {
+  color: var(--accent-dark);
+}
+.role-tab[data-role="supplier"].active .role-tab-hint {
+  color: var(--accent);
+}
+
+/* Role context indicator banner below tabs */
+.role-context-badge {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.role-context-badge.role-admin {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+.role-context-badge.role-admin .role-context-dot {
+  background: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.15);
+}
+
+.role-context-badge.role-buyer {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+.role-context-badge.role-buyer .role-context-dot {
+  background: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+}
+
+.role-context-badge.role-supplier {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+.role-context-badge.role-supplier .role-context-dot {
+  background: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.18);
+}
+
+.role-context-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.role-context-title {
+  font-weight: 750;
+  letter-spacing: 0.01em;
+}
+
+.role-context-desc {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 580px) {
+  .role-selector-tabs {
+    grid-template-columns: 1fr;
+  }
+  .role-tab {
+    justify-content: flex-start;
+    padding: 9px 12px;
+  }
+  .role-context-desc {
+    display: none;
+  }
+}
+
+/* =========================================================
+   PASSWORD TOGGLE SVG
+   ========================================================= */
+
+.password-icon svg {
+  display: block;
+  pointer-events: none;
+}
+
+/* =========================================================
+   RESET PASSWORD MODAL DIALOG
+   ========================================================= */
+
+.tn-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalOverlayFadeIn 0.25s ease both;
+}
+
+@keyframes modalOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tn-modal-card {
+  width: min(520px, 100%);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 30px;
+  animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.tn-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tn-modal-title-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.tn-modal-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-radius: 12px;
+  font-size: 1.4rem;
+}
+
+.tn-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.tn-modal-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.tn-modal-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-size: 1.1rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tn-modal-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.tn-modal-alert {
+  padding: 12px 14px;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tn-modal-alert.alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.tn-modal-alert.alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+
+
+.field-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.73rem;
+  color: var(--muted);
+}
+
+.tn-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.btn-modal-cancel {
+  padding: 10px 18px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-cancel:hover {
+  background: #e2ded7;
+  color: var(--ink);
+}
+
+.btn-modal-submit {
+  padding: 10px 22px;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(217, 119, 69, 0.28);
+  transition: all 0.2s ease;
+}
+
+.btn-modal-submit:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(185, 94, 49, 0.35);
+}
+
+.btn-modal-submit:active {
+  transform: translateY(0);
+}
+
