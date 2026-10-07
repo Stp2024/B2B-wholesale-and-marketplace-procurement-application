@@ -752,15 +752,21 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const store = window.TradeNestStore;
-        const supplierId = JSON.parse(
+        const params = new URLSearchParams(window.location.search);
+        const requestedId = params.get("id");
+        const fallbackId = JSON.parse(
           localStorage.getItem("tradenestSelectedSupplierId") ||
             '"supplier-001"',
         );
+        const supplierId = requestedId || fallbackId;
         const supplier =
           store
             .getStore()
             .supplierProfiles.find((item) => item.id === supplierId) ||
           store.getStore().supplierProfiles[0];
+        if (supplier && supplier.id) {
+          localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplier.id));
+        }
         const products = store
           .getStore()
           .products.filter((item) => item.supplierId === supplier.id);

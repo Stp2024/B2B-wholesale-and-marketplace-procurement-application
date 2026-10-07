@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest | Central Administrative & Governance Platform</title>
+    <meta
+      name="description"
+      content="TradeNest B2B Administration & Governance Console for managing buyers, suppliers, business verifications, product listings, platform risk, order escrows, complaints, and trust score metrics."
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Admin Stylesheet -->
+    <link rel="stylesheet" href="../../css/admin/dashboard.css" />
+  </head>
+  <body>
+    <div class="admin-layout">
+      <!-- =====================================================================
+           ADMIN SIDEBAR NAVIGATION
+           ===================================================================== -->
+      <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+          <a href="../../index.html" class="sidebar-brand">
+            <img
+              src="../../images/TradeNest.webp"
+              alt="TradeNest"
+              class="sidebar-logo"
+            />
+          </a>
+          <span class="brand-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Admin Navigation">
+          <!-- GROUP 1: OVERVIEW -->
+          <div class="nav-group">
+            <div class="nav-group-title">Executive Control</div>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="#overview" data-view="overview" class="active">
+                  <span class="nav-icon">📊</span>
+                  <span>Overview</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- GROUP 2: USER & VERIFICATION -->
+          <div class="nav-group">
+            <div class="nav-group-title">Identity & Governance</div>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="#users" data-view="users">
+                  <span class="nav-icon">👥</span>
+                  <span>User Directory</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#verification" data-view="verification">
+                  <span class="nav-icon">🛡️</span>
+                  <span>Verifications</span>
+                  <span class="nav-badge warning" id="navVerifBadge">3</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#trust" data-view="trust">
+                  <span class="nav-icon">⭐</span>
+                  <span>Trust Scores</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- GROUP 3: CATALOG & COMPLIANCE -->
+          <div class="nav-group">
+            <div class="nav-group-title">Marketplace Monitoring</div>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="#products" data-view="products">
+                  <span class="nav-icon">📦</span>
+                  <span>Product Catalog</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#orders" data-view="orders">
+                  <span class="nav-icon">🛒</span>
+                  <span>Orders & Escrow</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#risk" data-view="risk">
+                  <span class="nav-icon">⚠️</span>
+                  <span>Risk & Activity</span>
+                  <span class="nav-badge danger" id="navRiskBadge">2</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#complaints" data-view="complaints">
+                  <span class="nav-icon">⚖️</span>
+                  <span>Disputes & Reports</span>
+                  <span class="nav-badge warning" id="navComplaintsBadge">1</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- GROUP 4: INTELLIGENCE -->
+          <div class="nav-group">
+            <div class="nav-group-title">Intelligence</div>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="#reports" data-view="reports">
+                  <span class="nav-icon">📈</span>
+                  <span>Reports & Analytics</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="admin-profile-card">
+            <div class="admin-avatar">VS</div>
+            <div class="admin-profile-info">
+              <div class="admin-profile-name">Vikram Sengupta</div>
+              <div class="admin-profile-role">Governance Head</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- =====================================================================
+           MAIN CONTENT AREA
+           ===================================================================== -->
+      <main class="admin-main">
+        <!-- Topbar -->
+        <header class="admin-topbar">
+          <div class="topbar-left">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation Menu">
+              ☰
+            </button>
+            <div class="view-breadcrumb">
+              <a href="#overview" class="breadcrumb-root">Admin Console</a>
+              <span>/</span>
+              <span class="breadcrumb-current" id="breadcrumbCurrent">Dashboard Overview</span>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <div class="system-status-indicator">
+              <span class="pulse-dot"></span>
+              <span>Platform Node Live (INR Core)</span>
+            </div>
+
+            <div class="topbar-actions">
+              <button
+                class="btn-icon"
+                title="Pending Verifications"
+                onclick="window.location.hash='verification'"
+              >
+                <span>🛡️</span>
+                <span class="icon-badge" id="topPendingVerifBadge">3</span>
+              </button>
+
+              <button
+                class="btn-icon"
+                title="Active Risk Alerts"
+                onclick="window.location.hash='risk'"
+              >
+                <span>🚨</span>
+                <span class="icon-badge" id="topRiskBadge">2</span>
+              </button>
+
+              <a href="../buyer/dashboard.html" class="role-switch-link" title="Switch to Buyer View">
+                Buyer View ↗
+              </a>
+              <a href="../supplier/dashboard.html" class="role-switch-link" title="Switch to Supplier View">
+                Supplier View ↗
+              </a>
+
+              <button class="btn btn-secondary btn-sm" id="resetAdminDemoBtn" title="Reset Demo Data">
+                Reset Demo
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content Views -->
+        <div class="admin-content">
+          <!-- =================================================================
+               VIEW 1: OVERVIEW (ADMIN DASHBOARD OVERVIEW)
+               ================================================================= -->
+          <section class="view-section active" id="view-overview">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Administrative Dashboard</h1>
+                <p class="section-subtitle">
+                  High-level platform activity, financial volumes, and active governance queues.
+                </p>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-secondary" onclick="window.location.hash='reports'">
+                  Generate Analytics Report
+                </button>
+                <button class="btn btn-primary" onclick="window.location.hash='verification'">
+                  Process Verifications →
+                </button>
+              </div>
+            </div>
+
+            <!-- KPI Metric Cards Grid -->
+            <div class="kpi-grid" id="overviewKpiGrid">
+              <!-- Dynamically hydrated by dashboard.js -->
+            </div>
+
+            <!-- Charts & Visualization Row -->
+            <div class="charts-grid">
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3 class="chart-title">Gross Marketplace Value (GMV Trend)</h3>
+                    <p style="font-size: 0.8rem; color: #64748b;">
+                      Monthly transaction settlement trajectory in INR (₹)
+                    </p>
+                  </div>
+                  <span class="status-pill status-approved">+18.4% MoM</span>
+                </div>
+                <div class="chart-container" id="overviewGmvChart">
+                  <!-- SVG vector chart hydrated here -->
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3 class="chart-title">Trading Sectors</h3>
+                    <p style="font-size: 0.8rem; color: #64748b;">Sourcing category breakdown</p>
+                  </div>
+                </div>
+                <div class="chart-container" id="overviewCategoryDonut">
+                  <!-- Donut vector chart hydrated here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Activity Stream -->
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h2>Recent Administrative Activity</h2>
+                  <p>Real-time audit log of governance actions and compliance triggers</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="window.location.hash='risk'">
+                  View Complete Audit Trail →
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="activity-stream" id="overviewActivityStream">
+                  <!-- Dynamically rendered -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 2: MODULE 30: BUYER & SUPPLIER MANAGEMENT
+               ================================================================= -->
+          <section class="view-section" id="view-users">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Buyer &amp; Supplier Management</h1>
+                <p class="section-subtitle">
+                  Directory of registered enterprise procurement buyers and verified suppliers.
+                </p>
+              </div>
+              <div class="section-actions">
+                <span id="usersTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
+                  Loading...
+                </span>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-body">
+                <div class="filter-toolbar">
+                  <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input
+                      type="text"
+                      class="search-input"
+                      id="userSearchInput"
+                      placeholder="Search by user name, enterprise, or email..."
+                    />
+                  </div>
+
+                  <div class="filter-group">
+                    <select class="select-filter" id="userRoleSelect" aria-label="Filter by role">
+                      <option value="all">All Roles</option>
+                      <option value="buyer">Buyers Only</option>
+                      <option value="supplier">Suppliers Only</option>
+                    </select>
+
+                    <select class="select-filter" id="userStatusSelect" aria-label="Filter by account status">
+                      <option value="all">All Statuses</option>
+                      <option value="active">Active Accounts</option>
+                      <option value="suspended">Suspended Accounts</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>User &amp; Organization</th>
+                        <th>Role</th>
+                        <th>Official Email</th>
+                        <th>Joined</th>
+                        <th>Account Status</th>
+                        <th>Verification</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                      <!-- Rendered by dashboard.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 3: MODULE 31: BUSINESS VERIFICATION
+               ================================================================= -->
+          <section class="view-section" id="view-verification">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Business Verification Queue</h1>
+                <p class="section-subtitle">
+                  Review enterprise documentation, GST credentials, and corporate identity proofs.
+                </p>
+              </div>
+            </div>
+
+            <div class="demo-disclaimer-banner">
+              <span class="disclaimer-icon">🛡️</span>
+              <div class="disclaimer-text">
+                <strong>Demonstration Workflow:</strong> All verification actions occur locally in the client demonstration. No real legal verification or government registry lookup is executed.
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <div class="tab-pills" id="verifTabPills">
+                <button class="tab-pill active" data-tab="all">All Requests</button>
+                <button class="tab-pill" data-tab="pending">Pending Review</button>
+                <button class="tab-pill" data-tab="approved">Approved</button>
+                <button class="tab-pill" data-tab="rejected">Rejected</button>
+              </div>
+            </div>
+
+            <div class="verification-grid" id="verificationGrid">
+              <!-- Rendered by dashboard.js -->
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 4: MODULE 32: PRODUCT MONITORING
+               ================================================================= -->
+          <section class="view-section" id="view-products">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Product Catalog Moderation</h1>
+                <p class="section-subtitle">
+                  Inspect wholesale listings, MOQ rules, reported specifications, and compliance flags.
+                </p>
+              </div>
+              <div class="section-actions">
+                <span id="productsTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
+                  Loading...
+                </span>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-body">
+                <div class="filter-toolbar">
+                  <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input
+                      type="text"
+                      class="search-input"
+                      id="productSearchInput"
+                      placeholder="Search listings by product name, supplier, or category..."
+                    />
+                  </div>
+
+                  <div class="filter-group">
+                    <select class="select-filter" id="productStatusSelect" aria-label="Filter by moderation status">
+                      <option value="all">All Moderation Statuses</option>
+                      <option value="approved">Approved &amp; Live</option>
+                      <option value="flagged">Flagged for Review</option>
+                      <option value="pending moderation">Pending Moderation</option>
+                      <option value="delisted">Delisted</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Product &amp; SKU</th>
+                        <th>Supplier</th>
+                        <th>Category</th>
+                        <th>Unit Price</th>
+                        <th>MOQ &amp; Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                      <!-- Rendered by dashboard.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 5: MODULE 33: RISK & ACTIVITY MONITORING
+               ================================================================= -->
+          <section class="view-section" id="view-risk">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Risk &amp; Activity Monitoring</h1>
+                <p class="section-subtitle">
+                  Automated velocity checks, suspicious quote patterns, and account risk flags.
+                </p>
+              </div>
+            </div>
+
+            <div class="demo-disclaimer-banner">
+              <span class="disclaimer-icon">⚠️</span>
+              <div class="disclaimer-text">
+                <strong>Limitation:</strong> Actual fraud and risk detection algorithms require backend machine learning services and heuristic microservices. This interface demonstrates administrative risk triage and manual review flows using frontend demonstration data.
+              </div>
+            </div>
+
+            <div class="kpi-grid" id="riskCardsGrid">
+              <!-- Rendered by dashboard.js -->
+            </div>
+
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h2>Flagged Incident Log</h2>
+                  <p>Prioritized queue of accounts, listings, and payout actions requiring review</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Incident ID</th>
+                        <th>Entity Involved</th>
+                        <th>Risk Score</th>
+                        <th>Triggered Heuristic</th>
+                        <th>Status</th>
+                        <th>Detected</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="riskTableBody">
+                      <!-- Rendered by dashboard.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 6: MODULE 34: ORDER & TRANSACTION MONITORING
+               ================================================================= -->
+          <section class="view-section" id="view-orders">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Order &amp; Transaction Ledger</h1>
+                <p class="section-subtitle">
+                  Supervise procurement contracts, escrow allocations, and fulfillment dispatch.
+                </p>
+              </div>
+            </div>
+
+            <!-- Financial Metrics Bar -->
+            <div class="financial-strip" id="ordersFinancialStrip">
+              <!-- Rendered by dashboard.js -->
+            </div>
+
+            <div class="admin-card">
+              <div class="card-body">
+                <div class="filter-toolbar">
+                  <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input
+                      type="text"
+                      class="search-input"
+                      id="orderSearchInput"
+                      placeholder="Search by Order ID, Buyer, Supplier, or Product..."
+                    />
+                  </div>
+
+                  <div class="filter-group">
+                    <select class="select-filter" id="orderStatusSelect" aria-label="Filter by order status">
+                      <option value="all">All Order Statuses</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="in production">In Production</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Order Ref</th>
+                        <th>Procuring Buyer</th>
+                        <th>Supplier</th>
+                        <th>Total Amount</th>
+                        <th>Fulfillment</th>
+                        <th>Payment / Escrow</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                      <!-- Rendered by dashboard.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 7: MODULE 35: COMPLAINTS & REPORTS
+               ================================================================= -->
+          <section class="view-section" id="view-complaints">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Disputes &amp; Reports Center</h1>
+                <p class="section-subtitle">
+                  Formal buyer and supplier complaints, spec disputes, and escrow mediation tickets.
+                </p>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <div class="tab-pills" id="complaintTabPills">
+                <button class="tab-pill active" data-tab="all">All Tickets</button>
+                <button class="tab-pill" data-tab="open">Active Inquiries</button>
+                <button class="tab-pill" data-tab="resolved">Resolved Cases</button>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Ticket ID</th>
+                        <th>Complainant</th>
+                        <th>Reported Entity</th>
+                        <th>Category</th>
+                        <th>Severity</th>
+                        <th>Case Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="complaintsTableBody">
+                      <!-- Rendered by dashboard.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 8: MODULE 36: TRUST SCORE MONITORING
+               ================================================================= -->
+          <section class="view-section" id="view-trust">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">TrustScore Performance Index</h1>
+                <p class="section-subtitle">
+                  Algorithmic reliability scores evaluating fulfillment rate, SLA, disputes, and reviews.
+                </p>
+              </div>
+            </div>
+
+            <div class="demo-disclaimer-banner">
+              <span class="disclaimer-icon">ℹ️</span>
+              <div class="disclaimer-text">
+                <strong>Demonstration Data:</strong> Trust Scores displayed are mock illustrative algorithms for workflow testing. They do not constitute certified credit or third-party credit bureau ratings.
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Enterprise Entity</th>
+                        <th>TrustScore Index</th>
+                        <th>Fulfillment Rate</th>
+                        <th>On-Time Dispatch</th>
+                        <th>Dispute Ratio</th>
+                        <th>Buyer Sentiment</th>
+                        <th>Audit</th>
+                      </tr>
+                    </thead>
+                    <tbody id="trustScoresTableBody">
+                      <!-- Rendered by dashboard.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 9: MODULE 37: REPORTS & ANALYTICS
+               ================================================================= -->
+          <section class="view-section" id="view-reports">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Governance Analytics &amp; Reports</h1>
+                <p class="section-subtitle">
+                  Multi-dimensional marketplace summaries calculated from local transactional data.
+                </p>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-secondary" id="exportJsonBtn">Export JSON Audit</button>
+                <button class="btn btn-secondary" id="exportCsvBtn">Export CSV Ledger</button>
+                <button class="btn btn-primary" id="printReportBtn">Print Report 🖨️</button>
+              </div>
+            </div>
+
+            <div class="kpi-grid" id="reportsMetricsGrid">
+              <!-- Rendered by dashboard.js -->
+            </div>
+
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Category Trading Volume (INR Lakhs)</h3>
+                  <p>Aggregate procurement value distributed by product category</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div id="reportsCategoryBarChart">
+                  <!-- Vector bar chart rendered by dashboard.js -->
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- =====================================================================
+         REUSABLE MODAL DIALOG
+         ===================================================================== -->
+    <div class="modal-overlay" id="adminModalOverlay" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 class="modal-title" id="adminModalTitle">Modal Title</h2>
+          <button class="modal-close-btn" id="adminModalCloseBtn" aria-label="Close dialog">✕</button>
+        </div>
+        <div class="modal-body" id="adminModalBody">
+          <!-- Injected dynamically -->
+        </div>
+        <div class="modal-footer" id="adminModalFooter">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/admin/admin-store.js"></script>
+    <script src="../../js/admin/dashboard.js"></script>
+  </body>
+</html>
