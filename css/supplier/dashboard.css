@@ -596,6 +596,148 @@ ol {
   animation: fadeInDown 0.2s ease;
 }
 
+/* ==========================================================================
+   NOTIFICATION DROPDOWN & INTERACTIVE CARDS
+   ========================================================================== */
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  overflow: hidden;
+  animation: fadeInDown 0.2s ease;
+}
+
+.notification-dropdown-header {
+  padding: 14px 16px;
+  background-color: var(--background-soft);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notif-mark-read-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.785rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.notif-mark-read-btn:hover {
+  background-color: rgba(122, 92, 82, 0.1);
+}
+
+.notification-dropdown-body {
+  max-height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item {
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-light, #eee8e4);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  text-decoration: none;
+  color: inherit;
+}
+
+.notification-item:hover {
+  background-color: var(--background-soft);
+}
+
+.notification-item.unread {
+  background-color: rgba(122, 92, 82, 0.04);
+}
+
+.notif-icon-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.notif-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-item-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.notif-item-desc {
+  font-size: 0.775rem;
+  color: var(--text-light);
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.notif-item-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.notification-dropdown-footer {
+  padding: 10px 16px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+/* INTERACTIVE CARDS & ROWS */
+.stat-card-compact[data-view],
+.stat-card-compact.clickable-stat {
+  cursor: pointer;
+  user-select: none;
+}
+
+.stat-card-compact[data-view]:hover,
+.stat-card-compact.clickable-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.stat-card-compact[data-view]:active,
+.stat-card-compact.clickable-stat:active {
+  transform: translateY(-1px);
+}
+
+.overview-order-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.overview-order-row:hover {
+  background-color: rgba(122, 92, 82, 0.05);
+}
+
 @keyframes fadeInDown {
   from {
     opacity: 0;

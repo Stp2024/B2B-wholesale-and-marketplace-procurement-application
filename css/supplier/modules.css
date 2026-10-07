@@ -291,12 +291,30 @@
   align-items: center;
   justify-content: space-between;
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .stat-card-compact:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.stat-card-compact.clickable-stat,
+.stat-card-compact[data-view] {
+  cursor: pointer;
+  user-select: none;
+}
+
+.stat-card-compact.clickable-stat:hover,
+.stat-card-compact[data-view]:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.stat-card-compact.clickable-stat:active,
+.stat-card-compact[data-view]:active {
+  transform: translateY(-1px);
 }
 
 .stat-compact-info .stat-compact-title {

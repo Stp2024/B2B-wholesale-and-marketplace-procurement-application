@@ -312,15 +312,36 @@
               />
             </div>
 
-            <button
-              type="button"
-              class="notification-button"
-              id="notificationButton"
-              aria-label="View notifications"
-            >
-              🔔
-              <span class="notification-badge" id="globalNotificationBadge">3</span>
-            </button>
+            <!-- NOTIFICATION MENU -->
+            <div class="notification-menu-wrapper" id="notificationMenu" style="position: relative;">
+              <button
+                type="button"
+                class="notification-button"
+                id="notificationButton"
+                aria-label="View notifications"
+                aria-expanded="false"
+                aria-controls="notificationDropdown"
+              >
+                🔔
+                <span class="notification-badge" id="globalNotificationBadge">3</span>
+              </button>
+
+              <div class="notification-dropdown" id="notificationDropdown" hidden>
+                <div class="notification-dropdown-header">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight: 700; font-size: 0.95rem; color: var(--text);">Notifications</span>
+                    <span class="badge-pill badge-quoted" id="notifUnreadBadge" style="font-size: 0.7rem; padding: 2px 7px;">3 New</span>
+                  </div>
+                  <button type="button" class="notif-mark-read-btn" id="btnMarkAllNotifsRead">Mark all read</button>
+                </div>
+                <div class="notification-dropdown-body" id="notificationDropdownList">
+                  <!-- Populated via JS -->
+                </div>
+                <div class="notification-dropdown-footer">
+                  <button type="button" class="btn btn-sm btn-outline btn-full" id="btnClearAllNotifs">Clear all notifications</button>
+                </div>
+              </div>
+            </div>
 
             <!-- PROFILE MENU -->
             <div class="profile-menu" id="profileMenu">
@@ -424,7 +445,7 @@
             <!-- KPI Statistics Cards (8 metrics calculated live from records) -->
             <div class="stats-grid-8" aria-label="Operational Key Metrics">
               <!-- 1. Total Products -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="products" role="button" tabindex="0" title="Click to view all products">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Total Products</span>
                   <div class="stat-compact-val" id="statTotalProducts">0</div>
@@ -433,7 +454,7 @@
               </div>
 
               <!-- 2. Active Products -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="products" role="button" tabindex="0" title="Click to view active products">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Active Products</span>
                   <div class="stat-compact-val" id="statActiveProducts" style="color: var(--success);">0</div>
@@ -442,7 +463,7 @@
               </div>
 
               <!-- 3. Incoming RFQs -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="rfqs" role="button" tabindex="0" title="Click to view incoming RFQs">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Incoming RFQs</span>
                   <div class="stat-compact-val" id="statIncomingRFQs" style="color: var(--warning);">0</div>
@@ -451,7 +472,7 @@
               </div>
 
               <!-- 4. Pending Quotations -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="quotations" role="button" tabindex="0" title="Click to view pending quotations">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Pending Quotations</span>
                   <div class="stat-compact-val" id="statPendingQuotations">0</div>
@@ -460,7 +481,7 @@
               </div>
 
               <!-- 5. Sample Requests -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="samples" role="button" tabindex="0" title="Click to view sample requests">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Sample Requests</span>
                   <div class="stat-compact-val" id="statSampleRequests">0</div>
@@ -469,7 +490,7 @@
               </div>
 
               <!-- 6. Active Orders -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="orders" role="button" tabindex="0" title="Click to view active orders">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Active Orders</span>
                   <div class="stat-compact-val" id="statActiveOrders" style="color: var(--primary);">0</div>
@@ -478,7 +499,7 @@
               </div>
 
               <!-- 7. Completed Orders -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="orders" role="button" tabindex="0" title="Click to view completed orders">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Completed Orders</span>
                   <div class="stat-compact-val" id="statCompletedOrders" style="color: var(--success);">0</div>
@@ -487,7 +508,7 @@
               </div>
 
               <!-- 8. Low-Stock Products -->
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" data-view="inventory" role="button" tabindex="0" title="Click to manage low-stock inventory">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Low-Stock Items</span>
                   <div class="stat-compact-val" id="statLowStockProducts" style="color: var(--danger);">0</div>
@@ -754,31 +775,31 @@
 
             <!-- Inventory KPI summary -->
             <div class="inventory-summary-grid">
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardInvTotalSKUs" role="button" tabindex="0" title="Click to view all SKUs">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Total Tracked SKUs</span>
                   <div class="stat-compact-val" id="invTotalSKUs">6</div>
                 </div>
                 <div class="stat-compact-icon">🏷️</div>
               </div>
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardInvTotalUnits" role="button" tabindex="0" title="Click to reset filter and show all stock">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Total Units In Stock</span>
                   <div class="stat-compact-val" id="invTotalUnits">2,140</div>
                 </div>
                 <div class="stat-compact-icon">📦</div>
               </div>
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardInvLowStock" role="button" tabindex="0" title="Click to filter Low Stock items">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Low Stock Warnings</span>
                   <div class="stat-compact-val" id="invLowStockCount" style="color: var(--warning);">2</div>
                 </div>
                 <div class="stat-compact-icon">⚠️</div>
               </div>
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardInvOutOfStock" role="button" tabindex="0" title="Click to filter Out of Stock items">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Out of Stock SKUs</span>
-                  <div class="stat-compact-val" id="invOutOfStockCount" style="color: var(--danger);">1</div>
+                  <div class="stat-compact-val" id="invOutOfStockCount" style="color: var(--danger);">0</div>
                 </div>
                 <div class="stat-compact-icon">🚫</div>
               </div>
@@ -1131,28 +1152,28 @@
 
             <!-- Financial Widgets -->
             <div class="inventory-summary-grid">
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardFinTotal" role="button" tabindex="0" title="Click to view all transactions">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Total Transaction Volume</span>
                   <div class="stat-compact-val" id="finTotalVolume">$9,088.20</div>
                 </div>
                 <div class="stat-compact-icon">💰</div>
               </div>
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardFinEscrow" role="button" tabindex="0" title="Click to filter In-Escrow transactions">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">TradeShield In-Escrow</span>
                   <div class="stat-compact-val" id="finEscrowProtected" style="color: var(--warning);">$6,284.00</div>
                 </div>
                 <div class="stat-compact-icon">🔒</div>
               </div>
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardFinReleased" role="button" tabindex="0" title="Click to filter Released transactions">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Released to Supplier Account</span>
                   <div class="stat-compact-val" id="finReleased" style="color: var(--success);">$2,804.20</div>
                 </div>
                 <div class="stat-compact-icon">✅</div>
               </div>
-              <div class="stat-card-compact">
+              <div class="stat-card-compact clickable-stat" id="cardFinPending" role="button" tabindex="0" title="Click to view pending invoice payments">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Pending Invoices</span>
                   <div class="stat-compact-val" id="finPendingCount">0</div>

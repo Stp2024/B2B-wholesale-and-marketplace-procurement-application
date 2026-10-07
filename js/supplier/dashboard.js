@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 recentOrdersTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No orders found.</td></tr>`;
             } else {
                 recentOrdersTbody.innerHTML = orders.map(ord => `
-                    <tr>
+                    <tr class="overview-order-row" data-order-id="${ord.id}" title="Click to view details for Order #${ord.id}">
                         <td><strong>#${ord.id}</strong></td>
                         <td>${escapeHtml(ord.buyerName)}</td>
                         <td>${escapeHtml(ord.productName)}</td>
@@ -286,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (activityFeedList) {
             const activities = store.getActivityFeed().slice(0, 5);
             activityFeedList.innerHTML = activities.map(act => `
-                <div class="activity-item">
+                <div class="activity-item" style="cursor: pointer;" title="Click to view activity context" data-view="${act.view || 'orders'}">
                     <div class="activity-icon-wrap" aria-hidden="true">${act.icon || "📌"}</div>
                     <div class="activity-content">
                         <p class="activity-text">${escapeHtml(act.text)}</p>
@@ -297,7 +297,34 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Overview buttons
+    // Overview buttons & interactive rows
+    const recentOrdersTbody = document.getElementById("overviewRecentOrdersTableBody");
+    if (recentOrdersTbody) {
+        recentOrdersTbody.addEventListener("click", function (e) {
+            const row = e.target.closest(".overview-order-row");
+            if (row) {
+                const orderId = row.getAttribute("data-order-id");
+                switchView("orders");
+                const ordersSearchInput = document.getElementById("ordersSearchInput");
+                if (ordersSearchInput) {
+                    ordersSearchInput.value = orderId;
+                    renderOrders();
+                }
+            }
+        });
+    }
+
+    const activityFeedList = document.getElementById("overviewActivityFeedList");
+    if (activityFeedList) {
+        activityFeedList.addEventListener("click", function (e) {
+            const item = e.target.closest(".activity-item");
+            if (item) {
+                const targetView = item.getAttribute("data-view") || "orders";
+                switchView(targetView);
+            }
+        });
+    }
+
     const btnQuickAddProduct = document.getElementById("btnQuickAddProduct");
     if (btnQuickAddProduct) {
         btnQuickAddProduct.addEventListener("click", () => openProductModal());
@@ -803,6 +830,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (inventorySearchInput) inventorySearchInput.addEventListener("input", renderInventory);
     if (inventoryStockFilter) inventoryStockFilter.addEventListener("change", renderInventory);
+
+    // Interactive Inventory KPI Cards
+    const cardInvLowStock = document.getElementById("cardInvLowStock");
+    if (cardInvLowStock) {
+        cardInvLowStock.addEventListener("click", () => {
+            if (inventoryStockFilter) inventoryStockFilter.value = "low";
+            renderInventory();
+            showToast("Filtering Low Stock items", "info");
+        });
+    }
+    const cardInvOutOfStock = document.getElementById("cardInvOutOfStock");
+    if (cardInvOutOfStock) {
+        cardInvOutOfStock.addEventListener("click", () => {
+            if (inventoryStockFilter) inventoryStockFilter.value = "out";
+            renderInventory();
+            showToast("Filtering Out of Stock items", "info");
+        });
+    }
+    const cardInvTotalSKUs = document.getElementById("cardInvTotalSKUs");
+    if (cardInvTotalSKUs) {
+        cardInvTotalSKUs.addEventListener("click", () => {
+            if (inventoryStockFilter) inventoryStockFilter.value = "all";
+            renderInventory();
+            showToast("Showing all tracked SKUs", "info");
+        });
+    }
+    const cardInvTotalUnits = document.getElementById("cardInvTotalUnits");
+    if (cardInvTotalUnits) {
+        cardInvTotalUnits.addEventListener("click", () => {
+            if (inventoryStockFilter) inventoryStockFilter.value = "all";
+            renderInventory();
+        });
+    }
 
     // Stock Modal
     const stockFormProdId = document.getElementById("stockFormProdId");
@@ -1750,9 +1810,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================================================
     const paymentsTableBody = document.getElementById("paymentsTableBody");
 
-    function renderPayments() {
+    let currentPaymentFilter = "all";
+
+    function renderPayments(filterStatus = null) {
         if (!paymentsTableBody) return;
-        const payments = store.getPayments();
+        if (filterStatus !== null) {
+            currentPaymentFilter = filterStatus;
+        }
+
+        let payments = store.getPayments();
+        if (currentPaymentFilter !== "all") {
+            payments = payments.filter(p => p.status === currentPaymentFilter);
+        }
+
+        if (payments.length === 0) {
+            paymentsTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">No transactions found under "${currentPaymentFilter}" status.</td></tr>`;
+            return;
+        }
 
         paymentsTableBody.innerHTML = payments.map(p => {
             const isReleased = p.status === "Released";
@@ -1774,6 +1848,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 </tr>
             `;
         }).join("");
+    }
+
+    // Payments KPI Cards click filtering
+    const cardFinEscrow = document.getElementById("cardFinEscrow");
+    if (cardFinEscrow) {
+        cardFinEscrow.addEventListener("click", () => {
+            renderPayments("Escrow");
+            showToast("Filtering In-Escrow transactions", "info");
+        });
+    }
+    const cardFinReleased = document.getElementById("cardFinReleased");
+    if (cardFinReleased) {
+        cardFinReleased.addEventListener("click", () => {
+            renderPayments("Released");
+            showToast("Filtering Released transactions", "info");
+        });
+    }
+    const cardFinPending = document.getElementById("cardFinPending");
+    if (cardFinPending) {
+        cardFinPending.addEventListener("click", () => {
+            renderPayments("Escrow");
+            showToast("Filtering In-Escrow transactions", "info");
+        });
+    }
+    const cardFinTotal = document.getElementById("cardFinTotal");
+    if (cardFinTotal) {
+        cardFinTotal.addEventListener("click", () => {
+            renderPayments("all");
+            showToast("Showing all transactions", "info");
+        });
     }
 
     if (paymentsTableBody) {
@@ -2047,7 +2151,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Render Reviews
         const perfReviewsList = document.getElementById("perfReviewsList");
         if (perfReviewsList) {
-            perfReviewsList.innerHTML = reviews.map(rev => `
+            perfReviewsList.innerHTML = reviews.map(rev => {
+                const revKey = rev.id || rev.buyerName.replace(/\s+/g, "_");
+                return `
                 <div class="activity-item">
                     <div class="activity-icon-wrap" style="color: #b48645;">★</div>
                     <div class="activity-content">
@@ -2057,10 +2163,64 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                         <p class="activity-text">${escapeHtml(rev.comment)}</p>
                         <span class="activity-time">${rev.date}</span>
+
+                        <div style="margin-top: 8px;">
+                            ${rev.reply ? `
+                                <div style="background: rgba(122,92,82,0.06); border-left: 3px solid var(--primary); padding: 6px 10px; border-radius: 4px; font-size: 0.8rem; margin-top: 4px;">
+                                    <strong>Your Response:</strong> ${escapeHtml(rev.reply)}
+                                </div>
+                            ` : `
+                                <button type="button" class="btn btn-sm btn-outline btn-reply-review" data-rev-id="${revKey}" style="font-size: 0.75rem; padding: 3px 8px;">
+                                    💬 Reply to Buyer
+                                </button>
+                                <div class="review-reply-form" id="replyForm-${revKey}" style="display: none; margin-top: 6px;">
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" class="form-control form-control-sm reply-input" placeholder="Type verified supplier response..." style="font-size: 0.8rem; padding: 5px 10px;" />
+                                        <button type="button" class="btn btn-sm btn-primary btn-submit-review-reply" data-rev-id="${revKey}">Send</button>
+                                    </div>
+                                </div>
+                            `}
+                        </div>
                     </div>
                 </div>
-            `).join("");
+            `}).join("");
         }
+    }
+
+    const perfReviewsList = document.getElementById("perfReviewsList");
+    if (perfReviewsList) {
+        perfReviewsList.addEventListener("click", function (e) {
+            const toggleBtn = e.target.closest(".btn-reply-review");
+            if (toggleBtn) {
+                const revId = toggleBtn.getAttribute("data-rev-id");
+                const form = document.getElementById(`replyForm-${revId}`);
+                if (form) {
+                    form.style.display = form.style.display === "none" ? "block" : "none";
+                }
+                return;
+            }
+
+            const submitBtn = e.target.closest(".btn-submit-review-reply");
+            if (submitBtn) {
+                const revId = submitBtn.getAttribute("data-rev-id");
+                const form = document.getElementById(`replyForm-${revId}`);
+                if (form) {
+                    const input = form.querySelector(".reply-input");
+                    const text = input ? input.value.trim() : "";
+                    if (!text) {
+                        showToast("Please enter a reply message.", "warning");
+                        return;
+                    }
+                    const reviews = store.getReviews();
+                    const targetRev = reviews.find(r => (r.id || r.buyerName.replace(/\s+/g, "_")) === revId);
+                    if (targetRev) {
+                        targetRev.reply = text;
+                        renderPerformance();
+                        showToast("Reply published to buyer review!", "success");
+                    }
+                }
+            }
+        });
     }
 
     // ==========================================================================
@@ -2139,6 +2299,166 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // ==========================================================================
+    // NOTIFICATION CENTER
+    // ==========================================================================
+    const notificationButton = document.getElementById("notificationButton");
+    const notificationDropdown = document.getElementById("notificationDropdown");
+    const notificationMenu = document.getElementById("notificationMenu");
+    const notifUnreadBadge = document.getElementById("notifUnreadBadge");
+    const btnMarkAllNotifsRead = document.getElementById("btnMarkAllNotifsRead");
+    const btnClearAllNotifs = document.getElementById("btnClearAllNotifs");
+    const notificationDropdownList = document.getElementById("notificationDropdownList");
+
+    let notifications = [
+        {
+            id: "notif-1",
+            icon: "📥",
+            title: "New RFQ Received",
+            desc: "Metro Retail Solutions requested quote for 2,000 units Nitrile Gloves",
+            time: "10 mins ago",
+            view: "rfqs",
+            unread: true
+        },
+        {
+            id: "notif-2",
+            icon: "💰",
+            title: "TradeShield Escrow Funded",
+            desc: "Payment of $6,284.00 funded in escrow for Order #ORD-2026-1049",
+            time: "1 hour ago",
+            view: "payments",
+            unread: true
+        },
+        {
+            id: "notif-3",
+            icon: "⚠️",
+            title: "Low Inventory Warning",
+            desc: "Nitrile Industrial Gloves stock is below minimum threshold (200 units)",
+            time: "3 hours ago",
+            view: "inventory",
+            unread: true
+        },
+        {
+            id: "notif-4",
+            icon: "⭐",
+            title: "New 5-Star Buyer Review",
+            desc: "BuildCraft Logistics rated order: 'Exceptional packing and prompt dispatch!'",
+            time: "Yesterday",
+            view: "performance",
+            unread: false
+        }
+    ];
+
+    function renderNotifications() {
+        if (!notificationDropdownList) return;
+        const unreadCount = notifications.filter(n => n.unread).length;
+        if (globalNotificationBadge) {
+            globalNotificationBadge.textContent = unreadCount;
+            globalNotificationBadge.style.display = unreadCount > 0 ? "inline-flex" : "none";
+        }
+        if (notifUnreadBadge) {
+            notifUnreadBadge.textContent = unreadCount > 0 ? `${unreadCount} New` : "All Read";
+        }
+
+        if (notifications.length === 0) {
+            notificationDropdownList.innerHTML = `
+                <div style="padding: 28px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                    <div>🔔</div>
+                    <div style="margin-top: 6px;">No notifications at this time</div>
+                </div>
+            `;
+            return;
+        }
+
+        notificationDropdownList.innerHTML = notifications.map(n => `
+            <div class="notification-item ${n.unread ? 'unread' : ''}" data-view="${n.view}" data-id="${n.id}">
+                <div class="notif-icon-wrap" aria-hidden="true">${n.icon}</div>
+                <div class="notif-item-content">
+                    <div class="notif-item-title">${escapeHtml(n.title)}</div>
+                    <div class="notif-item-desc">${escapeHtml(n.desc)}</div>
+                    <div class="notif-item-time">${escapeHtml(n.time)}</div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function closeNotificationDropdown() {
+        if (notificationDropdown) notificationDropdown.hidden = true;
+        if (notificationButton) notificationButton.setAttribute("aria-expanded", "false");
+    }
+
+    if (notificationButton) {
+        notificationButton.addEventListener("click", function (e) {
+            e.stopPropagation();
+            closeProfileDropdown();
+            const isHidden = notificationDropdown.hidden;
+            notificationDropdown.hidden = !isHidden;
+            notificationButton.setAttribute("aria-expanded", String(isHidden));
+        });
+    }
+
+    if (notificationDropdownList) {
+        notificationDropdownList.addEventListener("click", function (e) {
+            const item = e.target.closest(".notification-item");
+            if (item) {
+                const notifId = item.getAttribute("data-id");
+                const view = item.getAttribute("data-view");
+                const targetNotif = notifications.find(n => n.id === notifId);
+                if (targetNotif) targetNotif.unread = false;
+                renderNotifications();
+                closeNotificationDropdown();
+                if (view) switchView(view);
+            }
+        });
+    }
+
+    if (btnMarkAllNotifsRead) {
+        btnMarkAllNotifsRead.addEventListener("click", function (e) {
+            e.stopPropagation();
+            notifications.forEach(n => n.unread = false);
+            renderNotifications();
+            showToast("All notifications marked as read", "info");
+        });
+    }
+
+    if (btnClearAllNotifs) {
+        btnClearAllNotifs.addEventListener("click", function (e) {
+            e.stopPropagation();
+            notifications = [];
+            renderNotifications();
+            showToast("Notification list cleared", "info");
+        });
+    }
+
+    // ==========================================================================
+    // MODAL DISMISSAL & ESCAPE KEY ACCESSIBILITY
+    // ==========================================================================
+    function closeAllModals() {
+        document.querySelectorAll(".module-modal-overlay").forEach(overlay => {
+            overlay.hidden = true;
+        });
+    }
+
+    // Modal backdrop click
+    document.querySelectorAll(".module-modal-overlay").forEach(overlay => {
+        overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) {
+                overlay.hidden = true;
+            }
+        });
+    });
+
+    // Global Escape Key Listener (window & document)
+    function handleGlobalEscape(e) {
+        if (e.key === "Escape") {
+            closeAllModals();
+            closeProfileDropdown();
+            closeNotificationDropdown();
+        }
+    }
+    window.addEventListener("keydown", handleGlobalEscape);
+    document.addEventListener("keydown", handleGlobalEscape);
+
     function closeProfileDropdown() {
         if (profileDropdown) profileDropdown.hidden = true;
         if (profileButton) profileButton.setAttribute("aria-expanded", "false");
@@ -2147,6 +2467,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (profileButton) {
         profileButton.addEventListener("click", function (e) {
             e.stopPropagation();
+            closeNotificationDropdown();
             const isExpanded = profileButton.getAttribute("aria-expanded") === "true";
             profileButton.setAttribute("aria-expanded", String(!isExpanded));
             profileDropdown.hidden = isExpanded;
@@ -2157,6 +2478,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (profileMenu && !profileMenu.contains(e.target)) {
             closeProfileDropdown();
         }
+        if (notificationMenu && !notificationMenu.contains(e.target)) {
+            closeNotificationDropdown();
+        }
     });
 
     // Mobile sidebar toggle
@@ -2166,18 +2490,36 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Navbar search global filter
+    // Navbar search global filter & live search
     if (navbarSearch) {
+        navbarSearch.addEventListener("input", function () {
+            const q = navbarSearch.value.trim().toLowerCase();
+            const currentHash = window.location.hash.replace("#", "") || "overview";
+            if (currentHash === "products" && productSearchInput) {
+                productSearchInput.value = q;
+                renderProducts();
+            } else if (currentHash === "orders" && ordersSearchInput) {
+                ordersSearchInput.value = q;
+                renderOrders();
+            } else if (currentHash === "rfqs" && rfqSearchInput) {
+                rfqSearchInput.value = q;
+                renderRFQs();
+            } else if (currentHash === "inventory" && inventorySearchInput) {
+                inventorySearchInput.value = q;
+                renderInventory();
+            }
+        });
+
         navbarSearch.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
                 const query = navbarSearch.value.trim();
                 if (!query) return;
-                // Switch to products or orders and filter
                 switchView("products");
                 if (productSearchInput) {
                     productSearchInput.value = query;
                     renderProducts();
                 }
+                showToast(`Search results for "${query}"`, "info");
             }
         });
     }
@@ -2279,6 +2621,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 20. INITIALIZATION
     // ==========================================================================
     updateTopBarProfile();
+    renderNotifications();
 
     const initialHash = window.location.hash.replace("#", "") || "overview";
     switchView(initialHash);

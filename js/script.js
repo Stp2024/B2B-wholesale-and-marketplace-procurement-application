@@ -1369,6 +1369,39 @@ function initSupplierPage() {
         }
 
 
+        // URL Param pre-filter (e.g. ?industry=electronics)
+        try {
+            var urlParams = new URLSearchParams(window.location.search);
+            var indParam = urlParams.get("industry");
+            if (indParam) {
+                var indSelect = document.getElementById("filter-industry");
+                if (indSelect) {
+                    indSelect.value = indParam;
+                }
+            }
+        } catch (e) {}
+
+        // Category Cards click delegation
+        document.addEventListener("click", function(e) {
+            var catCard = e.target.closest(".category-card, .category-link");
+            if (catCard) {
+                var card = catCard.closest(".category-card") || catCard;
+                var industry = card.getAttribute("data-industry");
+                if (industry) {
+                    e.preventDefault();
+                    var indSelect = document.getElementById("filter-industry");
+                    if (indSelect) {
+                        indSelect.value = industry;
+                        applySupplierFilters();
+                    }
+                    var listingSec = document.querySelector(".supplier-listing-section") || document.querySelector(".supplier-cards-list");
+                    if (listingSec) {
+                        listingSec.scrollIntoView({ behavior: "smooth" });
+                    }
+                }
+            }
+        });
+
         applySupplierFilters();
         sortSuppliers();
     });
@@ -2096,6 +2129,30 @@ function initButtonsAndLinks() {
             );
         }
     );
+
+    // Smart supplier details CTA handlers
+    var btnContactSupp = document.getElementById("btnContactSupplierDetails");
+    if (btnContactSupp) {
+        btnContactSupp.addEventListener("click", function(e) {
+            var user = null;
+            try { user = JSON.parse(localStorage.getItem("tradenestCurrentUser")); } catch(err) {}
+            if (user) {
+                e.preventDefault();
+                window.location.href = "buyer/messages.html?supplier=Example%20Manufacturing%20Co.";
+            }
+        });
+    }
+    var btnReqQuote = document.getElementById("btnRequestQuoteDetails");
+    if (btnReqQuote) {
+        btnReqQuote.addEventListener("click", function(e) {
+            var user = null;
+            try { user = JSON.parse(localStorage.getItem("tradenestCurrentUser")); } catch(err) {}
+            if (user) {
+                e.preventDefault();
+                window.location.href = "buyer/rfqs.html?supplier=Example%20Manufacturing%20Co.";
+            }
+        });
+    }
 
 
     $$(".product-card .btn, .supplier-card .btn")
