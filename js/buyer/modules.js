@@ -36,6 +36,19 @@ document.addEventListener("DOMContentLoaded", function () {
     return store.formatCurrency(value);
   }
 
+  function productTrustMarkup(product, state) {
+    const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId);
+    const trustScore = supplier ? Number(supplier.trustScore) : NaN;
+    if (!supplier || supplier.verificationStatus !== "Verified" || !Number.isFinite(trustScore)) return "";
+
+    return `
+      <div class="supplier-trust-line">
+        <span class="verified-label">Verified</span>
+        <span class="trust-score">Trust score <strong>${trustScore}/100</strong></span>
+      </div>
+    `;
+  }
+
   function getState() {
     return store.getStore();
   }
@@ -292,6 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="product-body">
             <h3>${product.name}</h3>
             <p class="muted">Supplier: ${product.supplierName}</p>
+            ${productTrustMarkup(product, state)}
             <p>${product.description}</p>
             <div class="info-row"><span>Unit Price</span><strong>${formatCurrency(product.price)}</strong></div>
             <div class="info-row"><span>Bulk Price</span><strong>${formatCurrency(product.bulkPrice)}</strong></div>
@@ -705,6 +719,20 @@ document.addEventListener("DOMContentLoaded", function () {
           <button class="btn btn-secondary small" type="button" data-supplier-id="${supplier.id}">View profile</button>
         </article>
       `).join("");
+
+      if (document.body.dataset.dashboardSupplierClickBound !== "true") {
+        document.body.dataset.dashboardSupplierClickBound = "true";
+        recommended.addEventListener("click", function (event) {
+          const profileButton = event.target.closest("[data-supplier-id]");
+          if (!profileButton) return;
+
+          const supplierId = profileButton.getAttribute("data-supplier-id");
+          if (!supplierId) return;
+
+          localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplierId));
+          window.location.href = `supplier-details.html?id=${encodeURIComponent(supplierId)}`;
+        });
+      }
     }
 
     const profileName = document.getElementById("welcomeUserName");
@@ -779,6 +807,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="product-body">
             <h3>${product.name}</h3>
             <p class="muted">Supplier: ${product.supplierName}</p>
+            ${productTrustMarkup(product, state)}
             <p>${product.description}</p>
             <div class="info-row">
               <span>Unit Price</span>
@@ -891,24 +920,31 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       list.innerHTML = results.map((supplier) => `
-        <article class="supplier-card">
+        <article class="supplier-card supplier-discovery-card">
           <div class="supplier-card-head">
             <div class="supplier-logo">${supplier.logo}</div>
-            <div>
+            <div class="supplier-discovery-title">
               <h3>${supplier.businessName}</h3>
               <span>${supplier.category}</span>
             </div>
           </div>
-          <p>${supplier.description}</p>
-          <div class="meta-grid">
-            <span>Location</span><strong>${supplier.location}</strong>
-            <span>Verification</span><strong>${supplier.verificationStatus}</strong>
-            <span>Trust</span><strong>${supplier.trustScore}/100</strong>
+          <span class="supplier-verification-badge">${supplier.verificationStatus}</span>
+          <p class="supplier-discovery-description">${supplier.description}</p>
+          <div class="supplier-discovery-meta">
+            <div class="supplier-discovery-meta-item">
+              <span>Location</span><strong>${supplier.location}</strong>
+            </div>
+            <div class="supplier-discovery-meta-item">
+              <span>Trust score</span><strong>${supplier.trustScore}<small>/100</small></strong>
+            </div>
+            <div class="supplier-discovery-meta-item">
+              <span>Products</span><strong>${supplier.products ? supplier.products.length : 0}</strong>
+            </div>
           </div>
-          <div class="button-row">
+          <div class="button-row supplier-card-actions">
             <button class="btn btn-primary small" type="button" data-supplier-id="${supplier.id}">Open profile</button>
-            <button class="btn btn-secondary small" type="button" data-save-supplier="${supplier.id}">${getSavedSuppliers().some((item) => item.id === supplier.id) ? "Saved" : "Save Supplier"}</button>
             <button class="btn btn-secondary small" type="button" data-enquiry-supplier="${supplier.id}">Send enquiry</button>
+            <button class="btn btn-save-supplier small" type="button" data-save-supplier="${supplier.id}">${getSavedSuppliers().some((item) => item.id === supplier.id) ? "Saved" : "Save supplier"}</button>
           </div>
         </article>
       `).join("");
