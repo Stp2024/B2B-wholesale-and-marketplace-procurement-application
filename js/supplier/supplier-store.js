@@ -831,10 +831,33 @@
     // Sync products so they appear in buyer views
     function syncProductsToBuyerCatalogue() {
         try {
-            const products = getProducts();
-            localStorage.setItem("tradenest_custom_products", JSON.stringify(products));
+            // This is the single handoff point. Buyer pages derive their catalogue
+            // from this record instead of the supplier store rewriting buyer state.
+            localStorage.setItem("tradenest_custom_products", JSON.stringify(getProducts()));
+            localStorage.setItem("tradenest_supplier_business_profile", JSON.stringify(getBusinessProfile()));
+            if (window.TradeNestStore) window.TradeNestStore.getStore();
         } catch (err) {
             console.warn("[SupplierStore] sync error:", err);
+        }
+    }
+
+    function getMarketplaceState() {
+        try {
+            if (window.TradeNestStore) return window.TradeNestStore.getStore();
+            const raw = localStorage.getItem("tradenest_demo_store_v1");
+            return raw ? JSON.parse(raw) : null;
+        } catch (err) {
+            console.warn("[SupplierStore] marketplace read error:", err);
+            return null;
+        }
+    }
+
+    function saveMarketplaceState(state) {
+        try {
+            if (window.TradeNestStore) window.TradeNestStore.saveStore(state);
+            else localStorage.setItem("tradenest_demo_store_v1", JSON.stringify(state));
+        } catch (err) {
+            console.warn("[SupplierStore] marketplace write error:", err);
         }
     }
 
@@ -947,7 +970,11 @@
             products[existingIdx] = { ...products[existingIdx], ...productData, updatedAt: new Date().toISOString() };
             logActivity("📦", `Product "${productData.name}" updated`, "products");
         } else {
-            const newId = "PRD-" + String(products.length + 1).padStart(3, "0");
+            const highestId = products.reduce((highest, product) => {
+                const match = /^PRD-(\d+)$/.exec(String(product.id || ""));
+                return match ? Math.max(highest, Number(match[1])) : highest;
+            }, 0);
+            const newId = "PRD-" + String(highestId + 1).padStart(3, "0");
             const newProduct = {
                 id: newId,
                 status: "active",
@@ -1053,7 +1080,33 @@
     // MODULE 19: Incoming RFQs
     // ==========================================
     function getRFQs() {
-        return readStorage(KEYS.RFQS, SEED_DATA.rfqs);
+        const localRFQs = readStorage(KEYS.RFQS, SEED_DATA.rfqs);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localRFQs;
+        const buyerRFQs = (marketplace.rfqs || []).filter((rfq) => rfq.supplierId === "supplier-001").map((rfq) => {
+            const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === rfq.buyerId) || {};
+            const product = (marketplace.products || []).find((item) => item.id === rfq.productId) || {};
+            return {
+                id: rfq.id,
+                buyerId: rfq.buyerId,
+                buyerName: buyer.businessName || buyer.fullName || "TradeNest Buyer",
+                buyerContact: buyer.email || buyer.phone || "",
+                buyerLocation: rfq.deliveryLocation || buyer.city || "",
+                productId: rfq.productId,
+                productName: rfq.productName || product.name || rfq.title,
+                requiredQty: rfq.quantity,
+                uom: rfq.unit || product.unit || "units",
+                targetBudget: ((Number(rfq.targetPrice) || 0) * (Number(rfq.quantity) || 1)) / 80,
+                specifications: rfq.notes || rfq.title || "",
+                deliveryLocation: rfq.deliveryLocation || "",
+                expectedDeliveryDate: rfq.expectedDate || "",
+                responseDeadline: rfq.responseDeadline || "",
+                status: rfq.status === "Pending" ? "New" : rfq.status,
+                marketplaceRFQ: true
+            };
+        });
+        const marketplaceIds = new Set(buyerRFQs.map((rfq) => rfq.id));
+        return [...buyerRFQs, ...localRFQs.filter((rfq) => !rfq.marketplaceRFQ && !marketplaceIds.has(rfq.id))];
     }
 
     function getRFQById(id) {
@@ -1067,6 +1120,13 @@
             rfq.status = newStatus;
             if (reason) rfq.declineReason = reason;
             writeStorage(KEYS.RFQS, rfqs);
+            const marketplace = getMarketplaceState();
+            const sharedRFQ = marketplace && (marketplace.rfqs || []).find((item) => item.id === id);
+            if (sharedRFQ) {
+                sharedRFQ.status = newStatus === "New" ? "Pending" : newStatus;
+                if (reason) sharedRFQ.declineReason = reason;
+                saveMarketplaceState(marketplace);
+            }
             logActivity(
                 newStatus === "Accepted" ? "✅" : (newStatus === "Declined" ? "❌" : "📝"),
                 `RFQ ${id} from ${rfq.buyerName} marked as ${newStatus}`,
@@ -1082,7 +1142,12 @@
     // MODULE 20: Quotations
     // ==========================================
     function getQuotations() {
-        return readStorage(KEYS.QUOTATIONS, SEED_DATA.quotations);
+        const localQuotations = readStorage(KEYS.QUOTATIONS, SEED_DATA.quotations);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localQuotations;
+        const sharedQuotes = (marketplace.quotations || []).filter((quote) => quote.supplierId === "supplier-001");
+        const statusById = new Map(sharedQuotes.map((quote) => [quote.id, quote.status]));
+        return localQuotations.map((quote) => statusById.has(quote.id) ? { ...quote, status: statusById.get(quote.id) } : quote);
     }
 
     function getQuotationById(id) {
@@ -1099,12 +1164,40 @@
         } else {
             const newId = "QUO-" + (9000 + quotations.length + 1);
             const newQuote = {
-                id: newId,
                 status: "Sent",
                 createdAt: new Date().toISOString().split("T")[0],
-                ...quoteData
+                ...quoteData,
+                id: newId
             };
             quotations.unshift(newQuote);
+
+            const marketplace = getMarketplaceState();
+            const matchingRFQ = marketplace && (marketplace.rfqs || []).find((rfq) => rfq.id === quoteData.rfqRef);
+            if (marketplace && matchingRFQ) {
+                const profile = getBusinessProfile();
+                const existingShared = (marketplace.quotations || []).findIndex((quote) => quote.id === newId);
+                const buyerQuote = {
+                    id: newId,
+                    rfqId: matchingRFQ.id,
+                    supplierId: "supplier-001",
+                    supplierName: profile.businessName,
+                    productId: quoteData.productId || matchingRFQ.productId,
+                    productName: quoteData.productName,
+                    quantity: Number(quoteData.offeredQty) || Number(matchingRFQ.quantity) || 1,
+                    unitPrice: (Number(quoteData.unitPrice) || 0) * 80,
+                    deliveryCharges: ((Number(quoteData.deliveryCharges) || 0) + (Number(quoteData.taxAmount) || 0)) * 80,
+                    totalAmount: (Number(quoteData.totalAmount) || 0) * 80,
+                    deliveryTimeline: quoteData.deliveryTimeline,
+                    paymentTerms: quoteData.paymentTerms,
+                    validityDate: quoteData.validityDate,
+                    status: "Pending",
+                    buyerId: matchingRFQ.buyerId
+                };
+                if (existingShared >= 0) marketplace.quotations[existingShared] = buyerQuote;
+                else marketplace.quotations.unshift(buyerQuote);
+                matchingRFQ.status = "Quoted";
+                saveMarketplaceState(marketplace);
+            }
 
             // Mark RFQ as Quoted if linked
             if (quoteData.rfqRef) {
@@ -1120,6 +1213,38 @@
             logActivity("📤", `Quotation ${newId} sent to ${quoteData.buyerName} ($${quoteData.totalAmount || quoteData.subtotal})`, "quotations");
         }
 
+        const finalQuote = quotations.find((quote) => quote.id === quoteData.id) || quotations[0];
+        const marketplaceState = getMarketplaceState();
+        const matchingMarketplaceRFQ = marketplaceState && (marketplaceState.rfqs || []).find((rfq) => rfq.id === (finalQuote && finalQuote.rfqRef));
+        if (marketplaceState && matchingMarketplaceRFQ && finalQuote) {
+            const profile = getBusinessProfile();
+            const sharedQuoteIndex = (marketplaceState.quotations || []).findIndex((quote) => quote.id === finalQuote.id);
+            const previousSharedQuote = sharedQuoteIndex >= 0 ? marketplaceState.quotations[sharedQuoteIndex] : null;
+            const sharedQuote = {
+                id: finalQuote.id,
+                rfqId: matchingMarketplaceRFQ.id,
+                supplierId: "supplier-001",
+                supplierName: profile.businessName,
+                productId: finalQuote.productId || matchingMarketplaceRFQ.productId,
+                productName: finalQuote.productName,
+                quantity: Number(finalQuote.offeredQty) || Number(matchingMarketplaceRFQ.quantity) || 1,
+                unitPrice: (Number(finalQuote.unitPrice) || 0) * 80,
+                deliveryCharges: ((Number(finalQuote.deliveryCharges) || 0) + (Number(finalQuote.taxAmount) || 0)) * 80,
+                totalAmount: (Number(finalQuote.totalAmount) || Number(finalQuote.subtotal) || 0) * 80,
+                deliveryTimeline: finalQuote.deliveryTimeline,
+                paymentTerms: finalQuote.paymentTerms,
+                validityDate: finalQuote.validityDate,
+                status: previousSharedQuote ? previousSharedQuote.status : "Pending",
+                buyerId: matchingMarketplaceRFQ.buyerId
+            };
+            if (sharedQuoteIndex >= 0) marketplaceState.quotations[sharedQuoteIndex] = sharedQuote;
+            else {
+                marketplaceState.quotations = marketplaceState.quotations || [];
+                marketplaceState.quotations.unshift(sharedQuote);
+            }
+            if (!previousSharedQuote || previousSharedQuote.status === "Pending") matchingMarketplaceRFQ.status = "Quoted";
+            saveMarketplaceState(marketplaceState);
+        }
         writeStorage(KEYS.QUOTATIONS, quotations);
         notifyChange("quotations");
         return true;
@@ -1129,6 +1254,11 @@
         let quotations = getQuotations();
         quotations = quotations.filter(q => q.id !== id);
         writeStorage(KEYS.QUOTATIONS, quotations);
+        const marketplace = getMarketplaceState();
+        if (marketplace) {
+            marketplace.quotations = (marketplace.quotations || []).filter((quote) => quote.id !== id);
+            saveMarketplaceState(marketplace);
+        }
         notifyChange("quotations");
         return true;
     }
@@ -1137,7 +1267,25 @@
     // MODULE 21: Sample Requests
     // ==========================================
     function getSampleRequests() {
-        return readStorage(KEYS.SAMPLES, SEED_DATA.sampleRequests);
+        const localSamples = readStorage(KEYS.SAMPLES, SEED_DATA.sampleRequests);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localSamples;
+        const sharedSamples = (marketplace.sampleRequests || []).filter((sample) => sample.supplierId === "supplier-001").map((sample) => ({
+            id: sample.id,
+            buyerId: sample.buyerId,
+            buyerName: sample.contactName || (marketplace.buyerProfiles || []).find((buyer) => buyer.id === sample.buyerId)?.businessName || "TradeNest Buyer",
+            buyerContact: sample.contactInfo || "",
+            deliveryAddress: sample.deliveryAddress || "",
+            productId: sample.productId,
+            productName: sample.productName,
+            sampleQty: `${sample.requestedQuantity} ${sample.unit || "units"}`,
+            requestDate: sample.requestDate,
+            status: ({ Requested: "Pending", Processing: "Approved" })[sample.status] || sample.status,
+            dispatchDetails: sample.dispatchDetails && typeof sample.dispatchDetails === "object" ? sample.dispatchDetails : null,
+            marketplaceSample: true
+        }));
+        const sharedIds = new Set(sharedSamples.map((sample) => sample.id));
+        return [...sharedSamples, ...localSamples.filter((sample) => !sample.marketplaceSample && !sharedIds.has(sample.id))];
     }
 
     function getSampleRequestById(id) {
@@ -1153,6 +1301,13 @@
                 sample.dispatchDetails = dispatchDetails;
             }
             writeStorage(KEYS.SAMPLES, samples);
+            const marketplace = getMarketplaceState();
+            const sharedSample = marketplace && (marketplace.sampleRequests || []).find((item) => item.id === id);
+            if (sharedSample) {
+                sharedSample.status = ({ Pending: "Requested", Approved: "Processing" })[newStatus] || newStatus;
+                if (dispatchDetails) sharedSample.dispatchDetails = dispatchDetails;
+                saveMarketplaceState(marketplace);
+            }
             logActivity(
                 newStatus === "Dispatched" ? "🚚" : "🧪",
                 `Sample Request ${id} for ${sample.buyerName} updated to ${newStatus}`,
@@ -1208,7 +1363,28 @@
     // MODULE 23: Buyer Communication
     // ==========================================
     function getConversations() {
-        return readStorage(KEYS.CONVERSATIONS, SEED_DATA.conversations);
+        const localConversations = readStorage(KEYS.CONVERSATIONS, SEED_DATA.conversations);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localConversations;
+        const sharedConversations = (marketplace.conversations || []).filter((conversation) => conversation.supplierId === "supplier-001").map((conversation) => ({
+            id: conversation.id,
+            buyerId: conversation.buyerId,
+            buyerName: (marketplace.buyerProfiles || []).find((buyer) => buyer.id === conversation.buyerId)?.businessName || "TradeNest Buyer",
+            supplierName: conversation.supplierName || getBusinessProfile().businessName,
+            rfqRef: conversation.rfqId,
+            quotationRef: conversation.quotationId,
+            lastMessage: conversation.preview || "",
+            lastTimestamp: conversation.updatedAt || "",
+            unread: 0,
+            messages: (marketplace.messages || []).filter((message) => message.conversationId === conversation.id).map((message) => ({
+                sender: message.sender,
+                text: message.text,
+                time: message.sentAt
+            })),
+            marketplaceConversation: true
+        }));
+        const sharedIds = new Set(sharedConversations.map((conversation) => conversation.id));
+        return [...sharedConversations, ...localConversations.filter((conversation) => !conversation.marketplaceConversation && !sharedIds.has(conversation.id))];
     }
 
     function getConversationById(id) {
@@ -1233,10 +1409,28 @@
         if (sender === "buyer") conv.unread = (conv.unread || 0) + 1;
 
         writeStorage(KEYS.CONVERSATIONS, conversations);
+        const marketplace = getMarketplaceState();
+        const sharedConversation = marketplace && (marketplace.conversations || []).find((item) => item.id === convId);
+        if (sharedConversation) {
+            const sharedMessage = {
+                id: `message-${Date.now()}`,
+                conversationId: convId,
+                buyerId: sharedConversation.buyerId,
+                supplierId: sharedConversation.supplierId,
+                sender: sender || "supplier",
+                text,
+                sentAt: new Date().toISOString()
+            };
+            marketplace.messages = marketplace.messages || [];
+            marketplace.messages.push(sharedMessage);
+            sharedConversation.preview = text;
+            sharedConversation.updatedAt = sharedMessage.sentAt;
+            saveMarketplaceState(marketplace);
+        }
         notifyChange("communication");
 
         // Simulate Buyer response if supplier sent message
-        if (sender === "supplier") {
+        if (sender === "supplier" && !sharedConversation) {
             setTimeout(() => {
                 simulateBuyerReply(convId);
             }, 1800);
@@ -1277,7 +1471,33 @@
     // MODULE 24: Orders Management
     // ==========================================
     function getOrders() {
-        return readStorage(KEYS.ORDERS, SEED_DATA.orders);
+        const localOrders = readStorage(KEYS.ORDERS, SEED_DATA.orders);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localOrders;
+        const sharedOrders = (marketplace.orders || []).filter((order) => order.supplierId === "supplier-001").map((order) => {
+            const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === order.buyerId) || {};
+            const shipment = (marketplace.shipments || []).find((item) => item.orderId === order.id) || {};
+            return {
+                id: order.id,
+                buyerId: order.buyerId,
+                buyerName: buyer.businessName || buyer.fullName || "TradeNest Buyer",
+                buyerContact: buyer.email || buyer.phone || "",
+                productId: order.productId,
+                productName: order.productName,
+                orderedQty: order.quantity,
+                uom: order.unit || "units",
+                orderAmount: (Number(order.totalAmount) || 0) / 80,
+                totalAmount: (Number(order.totalAmount) || 0) / 80,
+                orderDate: order.orderDate,
+                expectedDeliveryDate: order.expectedDate,
+                deliveryAddress: shipment.deliveryAddress || `${buyer.businessName || buyer.fullName || "Buyer"}, ${buyer.city || ""}`,
+                paymentStatus: order.paymentStatus || "Escrow Protected",
+                status: ({ Placed: "Confirmed", Processing: "In Production", Shipped: "Shipped" })[order.status] || order.status,
+                marketplaceOrder: true
+            };
+        });
+        const sharedIds = new Set(sharedOrders.map((order) => order.id));
+        return [...sharedOrders, ...localOrders.filter((order) => !order.marketplaceOrder && !sharedIds.has(order.id))];
     }
 
     function getOrderById(id) {
@@ -1302,6 +1522,17 @@
             }
 
             writeStorage(KEYS.ORDERS, orders);
+            const marketplace = getMarketplaceState();
+            const sharedOrder = marketplace && (marketplace.orders || []).find((item) => item.id === id);
+            if (sharedOrder) {
+                sharedOrder.status = ({ Confirmed: "Placed", "In Production": "Processing" })[newStatus] || newStatus;
+                if (newStatus === "Delivered") sharedOrder.shipmentStatus = "Delivered";
+                if (newStatus === "Delivered") {
+                    const sharedPayment = (marketplace.payments || []).find((payment) => payment.orderId === id);
+                    if (sharedPayment) sharedPayment.status = "Released";
+                }
+                saveMarketplaceState(marketplace);
+            }
             logActivity("🛒", `Order #${id} status updated to "${newStatus}"`, "orders");
             notifyChange("orders");
             return true;
@@ -1313,7 +1544,27 @@
     // MODULE 25: Payments & Transactions
     // ==========================================
     function getPayments() {
-        return readStorage(KEYS.PAYMENTS, SEED_DATA.payments);
+        const localPayments = readStorage(KEYS.PAYMENTS, SEED_DATA.payments);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localPayments;
+        const sharedPayments = (marketplace.payments || []).filter((payment) => payment.supplierId === "supplier-001").map((payment) => {
+            const order = (marketplace.orders || []).find((item) => item.id === payment.orderId) || {};
+            const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === order.buyerId) || {};
+            const invoice = (marketplace.invoices || []).find((item) => item.orderId === payment.orderId) || {};
+            return {
+                id: payment.id,
+                orderRef: payment.orderId,
+                buyerName: buyer.businessName || buyer.fullName || "TradeNest Buyer",
+                amount: (Number(payment.amount) || 0) / 80,
+                date: payment.paymentDate,
+                method: payment.paymentMethod,
+                status: ["Paid", "Released"].includes(payment.status) ? "Released" : "Escrow",
+                invoiceRef: invoice.invoiceNumber || `INV-${payment.orderId}`,
+                marketplacePayment: true
+            };
+        });
+        const sharedOrderIds = new Set(sharedPayments.map((payment) => payment.orderRef));
+        return [...sharedPayments, ...localPayments.filter((payment) => !payment.marketplacePayment && !sharedOrderIds.has(payment.orderRef))];
     }
 
     function getPaymentByOrder(orderId) {
@@ -1324,7 +1575,31 @@
     // MODULE 26: Shipping & Delivery
     // ==========================================
     function getShipments() {
-        return readStorage(KEYS.SHIPMENTS, SEED_DATA.shipments);
+        const localShipments = readStorage(KEYS.SHIPMENTS, SEED_DATA.shipments);
+        const marketplace = getMarketplaceState();
+        if (!marketplace) return localShipments;
+        const sharedShipments = (marketplace.shipments || []).filter((shipment) => {
+            const order = (marketplace.orders || []).find((item) => item.id === shipment.orderId);
+            return order && order.supplierId === "supplier-001";
+        }).map((shipment) => {
+            const order = (marketplace.orders || []).find((item) => item.id === shipment.orderId) || {};
+            const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === order.buyerId) || {};
+            return {
+                id: shipment.shipmentReference || shipment.id,
+                orderRef: shipment.orderId,
+                buyerName: buyer.businessName || buyer.fullName || "TradeNest Buyer",
+                deliveryAddress: shipment.deliveryAddress || "",
+                courier: shipment.courierName || "",
+                trackingNumber: shipment.trackingNumber || "",
+                dispatchDate: shipment.dispatchDate || "",
+                expectedDeliveryDate: shipment.expectedDate || "",
+                status: shipment.status,
+                history: shipment.timeline || [],
+                marketplaceShipment: true
+            };
+        });
+        const sharedOrderIds = new Set(sharedShipments.map((shipment) => shipment.orderRef));
+        return [...sharedShipments, ...localShipments.filter((shipment) => !shipment.marketplaceShipment && !sharedOrderIds.has(shipment.orderRef))];
     }
 
     function getShipmentById(id) {
@@ -1350,6 +1625,33 @@
 
         shipments.unshift(newShipment);
         writeStorage(KEYS.SHIPMENTS, shipments);
+
+        const marketplace = getMarketplaceState();
+        const sharedOrder = marketplace && (marketplace.orders || []).find((order) => order.id === shipmentData.orderRef);
+        if (marketplace && sharedOrder) {
+            let sharedShipment = (marketplace.shipments || []).find((shipment) => shipment.orderId === sharedOrder.id);
+            if (!sharedShipment) {
+                sharedShipment = {
+                    id: newId,
+                    shipmentReference: newId,
+                    orderId: sharedOrder.id,
+                    timeline: []
+                };
+                marketplace.shipments = marketplace.shipments || [];
+                marketplace.shipments.unshift(sharedShipment);
+            }
+            sharedShipment.courierName = shipmentData.courier;
+            sharedShipment.trackingNumber = shipmentData.trackingNumber;
+            sharedShipment.dispatchDate = newShipment.dispatchDate;
+            sharedShipment.expectedDate = shipmentData.expectedDeliveryDate;
+            sharedShipment.deliveryAddress = shipmentData.deliveryAddress;
+            sharedShipment.status = "Dispatched";
+            sharedShipment.timeline = sharedShipment.timeline || [];
+            sharedShipment.timeline.push({ status: "Dispatched", date: newShipment.dispatchDate });
+            sharedOrder.status = "Shipped";
+            sharedOrder.shipmentStatus = "Dispatched";
+            saveMarketplaceState(marketplace);
+        }
 
         // Also update linked order to "Shipped"
         if (shipmentData.orderRef) {
@@ -1384,6 +1686,19 @@
             }
 
             writeStorage(KEYS.SHIPMENTS, shipments);
+            const marketplace = getMarketplaceState();
+            const sharedShipment = marketplace && (marketplace.shipments || []).find((item) => item.id === shipmentId || item.shipmentReference === shipmentId);
+            if (sharedShipment) {
+                sharedShipment.status = newStatus;
+                sharedShipment.timeline = sharedShipment.timeline || [];
+                sharedShipment.timeline.push({ status: newStatus, date: new Date().toISOString().slice(0, 10), note: note || "" });
+                const sharedOrder = (marketplace.orders || []).find((item) => item.id === sharedShipment.orderId);
+                if (sharedOrder) {
+                    sharedOrder.shipmentStatus = newStatus;
+                    if (newStatus === "Delivered") sharedOrder.status = "Delivered";
+                }
+                saveMarketplaceState(marketplace);
+            }
             logActivity("🚚", `Shipment ${shipmentId} milestone: ${newStatus}`, "shipping");
             notifyChange("shipping");
             return true;

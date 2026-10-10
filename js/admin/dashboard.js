@@ -18,12 +18,35 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", function () {
+  let currentUser = null;
+  try {
+    const storedUser = localStorage.getItem("tradenestCurrentUser");
+    currentUser = storedUser ? JSON.parse(storedUser) : null;
+  } catch (error) {
+    console.error("Error validating admin dashboard session:", error);
+  }
+
+  const currentRole = String(
+    currentUser && (currentUser.role || currentUser.accountType) || ""
+  ).trim().toLowerCase();
+  if (!currentUser || currentRole !== "admin") {
+    window.location.href = "../../auth/admin-login.html";
+    return;
+  }
+
   if (!window.AdminStore) {
     console.error("AdminStore is missing! Ensure admin-store.js is loaded first.");
     return;
   }
 
   const store = window.AdminStore;
+  const logoutButton = document.getElementById("adminLogoutBtn");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", function () {
+      localStorage.removeItem("tradenestCurrentUser");
+      window.location.href = "../../auth/admin-login.html";
+    });
+  }
 
   // DOM Elements
   const menuToggle = document.getElementById("menuToggle");
@@ -1540,6 +1563,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Subscribe to store updates for live reactivity
   store.subscribe(() => {
     updateGlobalBadges();
+  });
+
+  window.addEventListener("storage", function (event) {
+    if (event.key !== "tradenest_demo_store_v1") return;
+    switchView(currentActiveView);
   });
 
   // Initialize view from URL hash on load

@@ -58,6 +58,15 @@ function normalizeText(value) {
         .trim();
 }
 
+function escapeCatalogueText(value) {
+    return String(value === null || value === undefined ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function getNumber(value) {
     if (value === null || value === undefined) {
         return 0;
@@ -927,65 +936,86 @@ function initHomeProductCatalog() {
 ========================================================= */
 
 function initProductPage() {
-    function populateDynamicProducts() {
-        var grid = $(".products-listing-section .products-grid") || $(".products-grid");
-        if (!grid || !window.TradeNestProductService) {
+    var productGrid = $(".products-listing-section .products-grid");
+    var featuredProductGrid = $(".featured-products-section .featured-grid");
+    var category = $("#filter-category");
+    var location = $("#filter-location");
+    var productCards = [];
+    var catalogueState = null;
+
+    function refreshProductCatalogue() {
+        if (!window.TradeNestStore) {
+            productCards = $$(".product-card");
             return;
         }
-        var activeProds = window.TradeNestProductService.getProductsSync({ onlyActive: true });
-        if (activeProds && activeProds.length) {
-            grid.innerHTML = activeProds.map(function(sp) {
-                var imgPath = sp.image || "../images/products/industrial-safety-gloves.webp";
-                if (imgPath.startsWith("../../")) {
-                    imgPath = imgPath.replace("../../", "../");
-                }
-                var stock = sp.availableStock !== undefined ? sp.availableStock : (sp.stock || 0);
-                var priceINR = Math.round(sp.price || (sp.unitPrice ? sp.unitPrice * 80 : 390));
-                var uom = sp.uom || "units";
-                var moq = sp.moq || 50;
-                var supplier = sp.supplierName || "TradeNest Verified Partner";
-                var delivery = sp.deliveryInfo || "3-5 business days";
-                var categorySlug = (sp.category || "General").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-                var rating = sp.rating || 4.8;
-                var trust = sp.trustScore || 96;
 
-                return `
-                    <article class="product-card" data-product-id="${sp.id}" data-category="${categorySlug}">
-                        <div class="product-image-container">
-                            <img src="${imgPath}" alt="${sp.name}" class="product-image" onerror="this.src='../images/products/industrial-safety-gloves.webp'" />
-                            <span class="badge badge-stock">${stock > 0 ? "In Stock (" + stock + ")" : "Out of Stock"}</span>
-                        </div>
-                        <div class="product-content">
-                            <span class="product-category">${sp.category || "General"}</span>
-                            <h3 class="product-title">${sp.name}</h3>
-                            <p class="product-description">${sp.description || "Certified wholesale commercial quality specifications."}</p>
-                            <div class="product-pricing-info">
-                                <span class="product-price">INR ${priceINR} <small>/ ${uom}</small></span>
-                                <span class="product-moq">MOQ: ${moq} ${uom}</span>
-                            </div>
-                            <div class="product-supplier-info">
-                                <span class="supplier-name">${supplier}</span>
-                                <span class="verification-badge status-verified">Verified Supplier</span>
-                            </div>
-                            <div class="product-metrics">
-                                <span class="trust-score">Trust Score: <strong>${trust}/100</strong></span>
-                                <span class="rating-stars" aria-label="Rating: ${rating} out of 5 stars"><small>${rating} / 5</small></span>
-                            </div>
-                            <div class="product-delivery-info" style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">
-                                <span>🚚 Lead Time: <strong>${delivery}</strong></span>
-                            </div>
-                            <div class="product-card-actions">
-                                <a href="product-details.html?id=${encodeURIComponent(sp.id)}" class="btn btn-primary btn-sm">View Details</a>
-                                <a href="buyer/rfqs.html?productId=${encodeURIComponent(sp.id)}" class="btn btn-outline btn-sm">Request RFQ</a>
-                            </div>
-                        </div>
-                    </article>
-                `;
+        catalogueState = window.TradeNestStore.getStore();
+        var visibleProducts = catalogueState.products.filter(function (product) {
+            return product.availability !== "Unavailable";
+        });
+        var cardMarkup = function (product, isFeatured) {
+            var supplier = catalogueState.supplierProfiles.find(function (item) {
+                return item.id === product.supplierId;
+            }) || {};
+            var rating = Number(product.rating) || 0;
+            var stockBadge = Number(product.stock) <= 0
+                ? "Out of Stock"
+                : (product.availability || "In Stock");
+            var image = product.image || "../images/products/industrial-safety-gloves.webp";
+            if (!/^https?:|^data:/i.test(image)) {
+                image = image.replace(/^\.\.\/\.\.\//, "../");
+            }
+
+            return `<article class="product-card${isFeatured ? " featured-card" : ""}" data-product-id="${escapeCatalogueText(product.id)}">
+                <div class="product-image-container"><img src="${escapeCatalogueText(image)}" alt="${escapeCatalogueText(product.name)}" class="product-image" loading="lazy" />
+                <span class="badge ${isFeatured ? "badge-featured" : "badge-stock"}">${isFeatured ? "Featured" : escapeCatalogueText(stockBadge)}</span></div>
+                <div class="product-content"><span class="product-category">${escapeCatalogueText(product.category)}</span><h3 class="product-title">${escapeCatalogueText(product.name)}</h3>
+                <p class="product-description">${escapeCatalogueText(product.description)}</p><div class="product-pricing-info">
+                <span class="product-price">${escapeCatalogueText(window.TradeNestStore.formatCurrency(product.price))} <small>/ ${escapeCatalogueText(product.unit)}</small></span>
+                <span class="product-moq">MOQ: ${escapeCatalogueText(product.moq)} ${escapeCatalogueText(product.unit)}</span></div>
+                <div class="product-supplier-info"><span class="supplier-name">${escapeCatalogueText(supplier.businessName || product.supplierName)}</span>
+                <span class="supplier-location" hidden>${escapeCatalogueText(supplier.location || "")}</span><span class="verification-badge ${supplier.verificationStatus === "Verified" ? "status-verified" : ""}">${supplier.verificationStatus === "Verified" ? "Verified Supplier" : "Verification Pending"}</span></div>
+                <div class="product-metrics"><span class="trust-score">Trust Score: <strong>${Number(supplier.trustScore) || 0}/100</strong></span>
+                <span class="rating-stars" aria-label="Rating: ${rating ? rating.toFixed(1) + " out of 5" : "Not yet rated"}"><small>${rating ? rating.toFixed(1) + " / 5" : "New"}</small></span></div>
+                <div class="product-card-actions"><a href="product-details.html?id=${encodeURIComponent(product.id)}" class="btn btn-primary btn-sm">View Product</a>
+                <a href="supplier-details.html?id=${encodeURIComponent(supplier.id || "")}" class="btn btn-outline btn-sm">View Supplier</a></div></div></article>`;
+        };
+
+        if (productGrid) {
+            productGrid.innerHTML = visibleProducts.map(function (product) {
+                return cardMarkup(product, false);
             }).join("");
+        }
+        if (featuredProductGrid) {
+            featuredProductGrid.innerHTML = visibleProducts.slice(0, 3).map(function (product) {
+                return cardMarkup(product, true);
+            }).join("");
+        }
+        productCards = $$(".product-card");
+
+        if (category) {
+            var selectedCategory = category.value;
+            var categories = Array.from(new Set(catalogueState.products.map(function (product) {
+                return product.category;
+            }).filter(Boolean))).sort();
+            category.innerHTML = '<option value="">All Categories</option>' + categories.map(function (value) {
+                return `<option value="${escapeCatalogueText(value)}">${escapeCatalogueText(value)}</option>`;
+            }).join("");
+            if (categories.includes(selectedCategory)) category.value = selectedCategory;
+        }
+        if (location) {
+            var selectedLocation = location.value;
+            var locations = Array.from(new Set(catalogueState.supplierProfiles.map(function (supplier) {
+                return supplier.location;
+            }).filter(Boolean))).sort();
+            location.innerHTML = '<option value="">All Locations</option>' + locations.map(function (value) {
+                return `<option value="${escapeCatalogueText(value)}">${escapeCatalogueText(value)}</option>`;
+            }).join("");
+            if (locations.includes(selectedLocation)) location.value = selectedLocation;
         }
     }
 
-    populateDynamicProducts();
+    refreshProductCatalogue();
 
     // Category cards click navigation
     $$(".category-card").forEach(function(card) {
@@ -1021,7 +1051,7 @@ function initProductPage() {
             }
         });
     });
-    var productCards = $$(".product-card");
+    productCards = $$(".product-card");
 
     if (!productCards.length) {
         return;
@@ -1029,14 +1059,14 @@ function initProductPage() {
 
     var searchForm = $(".search-filter-form");
     var searchInput = $("#product-search-input");
-    var category = $("#filter-category");
-    var location = $("#filter-location");
     var verification = $("#filter-verification");
     var trustScore = $("#filter-trust-score");
     var availability = $("#filter-availability");
     var deliveryTime = $("#filter-delivery-time");
     var moq = $("#filter-moq");
     var rating = $("#filter-rating");
+    var minPriceInput = $("#filter-price-min");
+    var maxPriceInput = $("#filter-price-max");
     var sortSelect = $("#sort-products");
 
     if (!searchForm && !searchInput && !sortSelect) {
@@ -1173,6 +1203,8 @@ function initProductPage() {
         var selectedRating = rating
             ? getNumber(rating.value)
             : 0;
+        var selectedMinPrice = minPriceInput ? getNumber(minPriceInput.value) : 0;
+        var selectedMaxPrice = maxPriceInput ? getNumber(maxPriceInput.value) : 0;
 
         var visibleCards = [];
 
@@ -1204,9 +1236,12 @@ function initProductPage() {
                     selectedVerification
                 ) !== -1 ||
                 (
-                    selectedVerification === "verified" &&
+                    selectedVerification.indexOf("verified") !== -1 &&
                     data.text.indexOf("verified") !== -1
                 );
+
+            var matchesPrice = (!selectedMinPrice || data.price >= selectedMinPrice) &&
+                (!selectedMaxPrice || data.price <= selectedMaxPrice);
 
             var matchesTrust =
                 !selectedTrust ||
@@ -1219,8 +1254,8 @@ function initProductPage() {
 
             var matchesDelivery =
                 !selectedDelivery ||
+                !data.delivery ||
                 (
-                    data.delivery > 0 &&
                     data.delivery <=
                         selectedDelivery
                 );
@@ -1234,8 +1269,8 @@ function initProductPage() {
 
             var matchesRating =
                 !selectedRating ||
+                !data.rating ||
                 (
-                    data.rating > 0 &&
                     data.rating >= selectedRating
                 );
 
@@ -1244,6 +1279,7 @@ function initProductPage() {
                 matchesCategory &&
                 matchesLocation &&
                 matchesVerification &&
+                matchesPrice &&
                 matchesTrust &&
                 matchesAvailability &&
                 matchesDelivery &&
@@ -1396,7 +1432,9 @@ function initProductPage() {
         availability,
         deliveryTime,
         moq,
-        rating
+        rating,
+        minPriceInput,
+        maxPriceInput
     ].forEach(function (field) {
         if (!field) {
             return;
@@ -1429,16 +1467,20 @@ function initProductPage() {
     sortProducts();
 
     window.addEventListener("tradenest:products-changed", function () {
-        populateDynamicProducts();
-        productCards = $$(".product-card");
+        refreshProductCatalogue();
         applyProductFilters();
         sortProducts();
     });
 
     window.addEventListener("storage", function (e) {
-        if (e.key === "tradenest_shared_products_v2" || e.key === "tradenest_supplier_products") {
-            populateDynamicProducts();
-            productCards = $$(".product-card");
+        if ([
+            "tradenest_shared_products_v2",
+            "tradenest_supplier_products",
+            "tradenest_demo_store_v1",
+            "tradenest_custom_products",
+            "tradenest_supplier_business_profile"
+        ].includes(e.key)) {
+            refreshProductCatalogue();
             applyProductFilters();
             sortProducts();
         }

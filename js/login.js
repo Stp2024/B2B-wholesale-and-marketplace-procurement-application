@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const roleContextTitle = document.getElementById("roleContextTitle");
   const roleContextDesc = document.getElementById("roleContextDesc");
   const emailLabel = document.getElementById("emailLabel");
+  const forcedRole = document.body.dataset.loginRole || "";
 
 
   // =========================================
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   function setRole(roleKey) {
-    const config = roleConfigs[roleKey] || roleConfigs.buyer;
+    const config = roleConfigs[forcedRole] || roleConfigs[roleKey] || roleConfigs.buyer;
 
     // Update active tab styles & ARIA attributes
     roleTabs.forEach(function (tab) {
@@ -114,7 +115,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check URL query parameters for initial role (?role=admin, ?role=supplier, ?role=buyer)
   const urlParams = new URLSearchParams(window.location.search);
   const paramRole = (urlParams.get("role") || "").toLowerCase();
-  if (roleConfigs[paramRole]) {
+  if (forcedRole && roleConfigs[forcedRole]) {
+    setRole(forcedRole);
+  } else if (roleConfigs[paramRole]) {
     setRole(paramRole);
   } else {
     setRole("buyer");
@@ -274,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const email = emailInput.value.trim().toLowerCase();
       const password = passwordInput.value;
-      const currentSelectedRole = selectedRoleInput ? selectedRoleInput.value : "buyer";
+      const currentSelectedRole = selectedRoleInput ? selectedRoleInput.value : (forcedRole || "buyer");
 
       removeError(emailInput);
       removeError(passwordInput);
@@ -405,6 +408,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (userRole !== currentSelectedRole) {
         const correctRoleName = roleDisplayNames[userRole] || userRole;
         const chosenRoleName = roleDisplayNames[currentSelectedRole] || currentSelectedRole;
+        if (forcedRole) {
+          showError(
+            emailInput,
+            "This account does not have administrator access. Use the regular login portal for buyer or supplier accounts."
+          );
+          return;
+        }
         showError(
           emailInput,
           `This account is registered as a ${correctRoleName}, not a ${chosenRoleName}. Please select "${correctRoleName}" above to log in.`
@@ -441,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Redirect to appropriate portal dashboard
       setTimeout(function () {
         const redirectParam = urlParams.get("redirect");
-        if (redirectParam && redirectParam.startsWith("pages/")) {
+        if (!forcedRole && redirectParam && redirectParam.startsWith("pages/")) {
           window.location.href = `../${redirectParam}`;
           return;
         }
