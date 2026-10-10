@@ -1,6 +1,7 @@
 (function () {
   const STORAGE_KEY = "tradenest_demo_store_v1";
   const CURRENT_USER_KEY = "tradenestCurrentUser";
+  const STORE_SCRIPT_URL = document.currentScript ? document.currentScript.src : "";
 
   const demoBuyer = {
     id: "buyer-001",
@@ -47,7 +48,7 @@
       verificationStatus: "Verified",
       trustScore: 94,
       logo: "L",
-      products: ["product-005"]
+      products: ["product-005", "product-010"]
     },
     {
       id: "supplier-004",
@@ -70,6 +71,61 @@
       trustScore: 90,
       logo: "S",
       products: ["product-008"]
+    },
+    {
+      id: "supplier-006",
+      businessName: "Vardhman Weaves & Tex",
+      category: "Textiles",
+      location: "Coimbatore",
+      description: "Bulk cotton fabrics and textile materials for garment and uniform manufacturers.",
+      verificationStatus: "Verified",
+      trustScore: 89,
+      logo: "V",
+      products: ["product-009"]
+    },
+    {
+      id: "supplier-007",
+      businessName: "BioPack Green Solutions",
+      category: "Packaging",
+      location: "Ahmedabad",
+      description: "Food-service packaging and material options for commercial buyers.",
+      verificationStatus: "Verified",
+      trustScore: 88,
+      logo: "B",
+      products: ["product-012"]
+    },
+    {
+      id: "supplier-008",
+      businessName: "Precision Tooling Works",
+      category: "Machinery",
+      location: "Pune",
+      description: "Precision cutting tools and consumables for CNC machining operations.",
+      verificationStatus: "Verified",
+      trustScore: 96,
+      logo: "P",
+      products: ["product-013"]
+    },
+    {
+      id: "supplier-009",
+      businessName: "GreenChem Polymers Corp.",
+      category: "Materials",
+      location: "Vadodara",
+      description: "Biodegradable polymer materials for commercial processing and packaging.",
+      verificationStatus: "Verified",
+      trustScore: 95,
+      logo: "G",
+      products: ["product-014"]
+    },
+    {
+      id: "supplier-010",
+      businessName: "UrbanWork Office Systems",
+      category: "Office Supplies",
+      location: "Bengaluru",
+      description: "Commercial workspace furniture and ergonomic seating for business offices.",
+      verificationStatus: "Verified",
+      trustScore: 90,
+      logo: "U",
+      products: ["product-015"]
     }
   ];
 
@@ -93,7 +149,7 @@
     {
       id: "product-002",
       name: "Industrial Safety Helmets",
-      description: "High-impact head protection with adjustable suspension for industrial operations.",
+      description: "Impact-resistant hard hats designed to protect crews on construction sites, in warehouses and across industrial facilities.",
       category: "Industrial Equipment",
       supplierId: "supplier-001",
       supplierName: "Apex Gear Co.",
@@ -103,13 +159,13 @@
       stock: 760,
       unit: "unit",
       availability: "In Stock",
-      specifications: "ABS shell, adjustable harness, ANSI certified, anti-fog visor compatibility",
-      image: "/images/products/industrial-safety-gloves.webp"
+      specifications: "Durable ABS shell, adjustable 6-point suspension, ratchet fit, chin-strap compatible",
+      image: "/images/products/industrial-safety-helmets.webp"
     },
     {
       id: "product-003",
       name: "A4 Premium Copy Paper",
-      description: "High-brightness office paper for printing, writing and business documentation.",
+      description: "Smooth, high-brightness A4 sheets for crisp everyday printing, copying and professional office documents.",
       category: "Office Supplies",
       supplierId: "supplier-002",
       supplierName: "PaperPro Solutions",
@@ -119,13 +175,13 @@
       stock: 2500,
       unit: "ream",
       availability: "In Stock",
-      specifications: "80 GSM, 210 x 297 mm, premium brightness, low-noise copy performance",
-      image: "/images/products/office-paper.webp"
+      specifications: "80 GSM, 210 x 297 mm, high opacity, jam-resistant finish, 500 sheets per ream",
+      image: "/images/products/a4-premium-copy-paper.webp"
     },
     {
       id: "product-004",
-      name: "Executive Desk Organiser",
-      description: "Modular office organiser designed for high-density workspaces and storage efficiency.",
+      name: "Executive Desk Organizer",
+      description: "A refined desktop organizer that keeps pens, notes and everyday office essentials neatly within reach.",
       category: "Office Supplies",
       supplierId: "supplier-002",
       supplierName: "PaperPro Solutions",
@@ -135,13 +191,13 @@
       stock: 420,
       unit: "set",
       availability: "Low Stock",
-      specifications: "Metal frame, anti-slip base, stackable modules, laminate finish",
-      image: "/images/products/office-paper.webp"
+      specifications: "Solid wood construction, multi-slot pen and pencil storage, smooth finish, compact desk footprint",
+      image: "/images/products/executive-desk-organizer.webp"
     },
     {
       id: "product-005",
       name: "Commercial LED Panel Lights",
-      description: "Energy efficient panel lighting for retail, office and commercial spaces.",
+      description: "Low-glare LED panel lighting delivers even, energy-efficient illumination for offices, retail floors and commercial interiors.",
       category: "Electrical",
       supplierId: "supplier-003",
       supplierName: "Lumina Electric",
@@ -151,8 +207,8 @@
       stock: 200,
       unit: "piece",
       availability: "In Stock",
-      specifications: "40W, 4000K neutral white, dimmable, 3-year warranty",
-      image: "/images/products/led-bulbs.webp"
+      specifications: "40W, 4000K neutral white, wide beam, low-glare diffuser, 3-year warranty",
+      image: "/images/products/commercial-led-panel-lights.webp"
     },
     {
       id: "product-006",
@@ -167,13 +223,13 @@
       stock: 9600,
       unit: "box",
       availability: "In Stock",
-      specifications: "Triple-wall construction, shock resistant, custom print options",
-      image: "/images/products/packaging-boxes.webp"
+      specifications: "3-ply and 5-ply corrugated board options, recyclable kraft paper, custom dimensions and print options",
+      image: "/images/products/corrugated-packaging-boxes.webp"
     },
     {
       id: "product-007",
       name: "Protective Foam Inserts",
-      description: "Custom foam inserts for product protection and secure packing during transit.",
+      description: "Precision-cut foam inserts cushion fragile equipment and components through storage, handling and shipment.",
       category: "Packaging",
       supplierId: "supplier-004",
       supplierName: "PackRight Corp.",
@@ -183,8 +239,8 @@
       stock: 640,
       unit: "set",
       availability: "Low Stock",
-      specifications: "PE foam, anti-static, cut-to-fit design, custom color options",
-      image: "/images/products/packaging-boxes.webp"
+      specifications: "Custom-cut foam profiles, shock-absorbing cushioning, configurable fit, reusable design",
+      image: "/images/products/protective-foam-inserts.webp"
     },
     {
       id: "product-008",
@@ -201,6 +257,102 @@
       availability: "In Stock",
       specifications: "Powder coated steel, modular design, 800kg load per shelf",
       image: "/images/products/stainless-steel-components.webp"
+    },
+    {
+      id: "product-009",
+      name: "Cotton Fabric Rolls",
+      description: "Bulk cotton fabric supplied in production-ready rolls for apparel, uniforms and textile manufacturing.",
+      category: "Textiles",
+      supplierId: "supplier-006",
+      supplierName: "Vardhman Weaves & Tex",
+      price: 145,
+      bulkPrice: 132,
+      moq: 100,
+      stock: 3200,
+      unit: "meter",
+      availability: "In Stock",
+      specifications: "100% cotton, 180 GSM, 180 cm usable width, roll-packed, color and finish options available by order",
+      image: "/images/products/cotton-fabric-rolls.webp"
+    },
+    {
+      id: "product-010",
+      name: "Commercial LED Bulbs",
+      description: "Energy-efficient LED bulbs for offices, retail spaces and other commercial interiors.",
+      category: "Electrical",
+      supplierId: "supplier-003",
+      supplierName: "Lumina Electric",
+      price: 120,
+      bulkPrice: 105,
+      moq: 100,
+      stock: 1800,
+      unit: "piece",
+      availability: "In Stock",
+      specifications: "9W LED, B22 or E27 base options, 6500K daylight, 220-240V input, non-dimmable",
+      image: "/images/products/led-bulbs.webp"
+    },
+    {
+      id: "product-012",
+      name: "Food Packaging Materials",
+      description: "Bulk food-service packaging for takeaways, caterers and food processors, with formats suited to packing and dispatch.",
+      category: "Packaging",
+      supplierId: "supplier-007",
+      supplierName: "BioPack Green Solutions",
+      price: 450,
+      bulkPrice: 410,
+      moq: 100,
+      stock: 850,
+      unit: "pack",
+      availability: "In Stock",
+      specifications: "Food-grade packaging options, heat-sealable pouches, leak-resistant trays, pack sizes configurable by order",
+      image: "/images/products/food-packaging-materials.webp"
+    },
+    {
+      id: "product-013",
+      name: "Carbide CNC Milling Cutters",
+      description: "Precision carbide end mills for machining metal components and production parts on CNC milling equipment.",
+      category: "Machinery",
+      supplierId: "supplier-008",
+      supplierName: "Precision Tooling Works",
+      price: 1150,
+      bulkPrice: 1050,
+      moq: 25,
+      stock: 500,
+      unit: "piece",
+      availability: "In Stock",
+      specifications: "Solid carbide cutting tool, end-mill format, multiple diameters and flute options, for CNC milling",
+      image: "/images/products/featured-cnc-milling-cutters.webp"
+    },
+    {
+      id: "product-014",
+      name: "Biodegradable Trash Bags",
+      description: "Bulk-supplied biodegradable refuse bags for commercial facilities, retail operations and workplace waste collection.",
+      category: "Packaging",
+      supplierId: "supplier-009",
+      supplierName: "GreenChem Polymers Corp.",
+      price: 210,
+      bulkPrice: 190,
+      moq: 100,
+      stock: 4000,
+      unit: "pack",
+      availability: "In Stock",
+      specifications: "Biodegradable bag material, roll-packed, multiple bag sizes and thickness options, bulk case quantities available",
+      image: "/images/products/featured-biodegradable-polymers.webp"
+    },
+    {
+      id: "product-015",
+      name: "Commercial Ergonomic Office Chairs",
+      description: "Ergonomic seating for offices and shared workspaces, designed for everyday desk-based use.",
+      category: "Office Supplies",
+      supplierId: "supplier-010",
+      supplierName: "UrbanWork Office Systems",
+      price: 4850,
+      bulkPrice: 4500,
+      moq: 20,
+      stock: 160,
+      unit: "chair",
+      availability: "In Stock",
+      specifications: "Breathable mesh back, lumbar support, adjustable seat height, rolling casters, assembly required",
+      image: "/images/products/featured-office-ergonomic-chairs.webp"
     }
   ];
 
@@ -541,13 +693,15 @@
     if (typeof value !== "string") return value;
 
     const legacyImageMap = {
-      "warehouse-shelving.webp": "/images/products/stainless-steel-components.webp",
-      "warehouse-shelving.png": "/images/products/stainless-steel-components.webp"
+      "warehouse-shelving.webp": "stainless-steel-components.webp",
+      "warehouse-shelving.png": "stainless-steel-components.webp"
     };
 
-    const normalized = value.replace(/^(?:\.\.\/|\.\/|\/)?(?:\.\.\/)?images\//, "/images/");
-    const fileName = normalized.split("/").pop()?.toLowerCase();
-    return legacyImageMap[fileName] || normalized;
+    const fileName = value.split(/[\\/]/).pop()?.toLowerCase();
+    const resolvedFileName = legacyImageMap[fileName] || fileName;
+    return STORE_SCRIPT_URL
+      ? new URL(`../images/products/${resolvedFileName}`, STORE_SCRIPT_URL).href
+      : `/images/products/${resolvedFileName}`;
   }
 
   function normalizeStorePaths(state) {
@@ -574,6 +728,56 @@
       if (Array.isArray(state[key])) {
         merged[key] = clone(state[key]);
       }
+    });
+    const addedProductIds = new Set([
+      "product-009",
+      "product-010",
+      "product-012",
+      "product-013",
+      "product-014",
+      "product-015"
+    ]);
+    const removedProductIds = new Set(["product-011"]);
+    fallback.supplierProfiles.forEach((seedSupplier) => {
+      const supplier = merged.supplierProfiles.find((item) => item.id === seedSupplier.id);
+      if (!supplier) {
+        merged.supplierProfiles.push(clone(seedSupplier));
+        return;
+      }
+      const addedSupplierProducts = seedSupplier.products.filter((productId) => addedProductIds.has(productId));
+      supplier.products = [...new Set([...(supplier.products || []).filter((productId) => !removedProductIds.has(productId)), ...addedSupplierProducts])];
+    });
+    const refreshedProductIds = new Set([
+      "product-002",
+      "product-003",
+      "product-004",
+      "product-005",
+      "product-006",
+      "product-007"
+    ]);
+    ["products", "inventory"].forEach((collectionName) => {
+      if (!Array.isArray(merged[collectionName])) return;
+      const products = merged[collectionName].filter((product) => !removedProductIds.has(product.id)).map((product) => {
+        const currentProduct = fallback.products.find((item) => item.id === product.id);
+        if (addedProductIds.has(product.id) && currentProduct) {
+          return { ...product, ...currentProduct };
+        }
+        if (!refreshedProductIds.has(product.id) || !currentProduct) return product;
+        return {
+          ...product,
+          name: currentProduct.name,
+          description: currentProduct.description,
+          specifications: currentProduct.specifications,
+          image: currentProduct.image
+        };
+      });
+      const existingProductIds = new Set(products.map((product) => product.id));
+      fallback.products.forEach((product) => {
+        if (addedProductIds.has(product.id) && !existingProductIds.has(product.id)) {
+          products.push(clone(product));
+        }
+      });
+      merged[collectionName] = products;
     });
     return normalizeStorePaths(merged);
   }

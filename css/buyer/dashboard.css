@@ -163,13 +163,12 @@ table {
   top: 0;
   left: 0;
   bottom: 0;
-  background-color: var(--surface);
+  background-color: var(--surface-tinted, #f2eeeb);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   z-index: 100;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   transition: transform var(--transition-smooth);
 }
 
@@ -177,17 +176,17 @@ table {
    7. SIDEBAR BRAND
    -------------------------------------------------------------------------- */
 .sidebar-brand {
-  padding: 1.5rem 1.25rem 1.25rem;
+  padding: 24px 20px;
   border-bottom: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  flex-shrink: 0;
 }
 
 .brand-logo {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .logo-icon {
@@ -216,40 +215,63 @@ table {
    -------------------------------------------------------------------------- */
 .sidebar-nav {
   flex: 1;
-  padding: 1.25rem 0.85rem;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 24px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(216, 117, 67, 0.35) transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 .nav-section {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 8px;
 }
 
 .nav-section-title {
-  font-size: 0.6875rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-muted);
-  padding: 0 0.75rem 0.25rem;
+  padding: 0 12px;
 }
 
 .nav-list {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
+  gap: 12px;
+  padding: 10px 14px;
   color: var(--text-light);
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 500;
   border-radius: 8px;
   transition: all var(--transition-fast);
@@ -289,31 +311,31 @@ table {
    10. SIDEBAR FOOTER & ACTIONS
    -------------------------------------------------------------------------- */
 .sidebar-footer {
-  padding: 1rem 0.85rem 1.25rem;
+  padding: 16px;
   border-top: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  background-color: var(--surface);
+  gap: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
 }
 
 .logout-link-btn {
-  width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
-  color: var(--text-light);
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: 12px;
+  padding: 10px 14px;
+  width: 100%;
   border-radius: 8px;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 500;
   text-align: left;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .logout-link-btn:hover {
   background-color: var(--danger-light);
-  color: var(--danger);
 }
 
 /* --------------------------------------------------------------------------
@@ -1386,6 +1408,31 @@ table {
 .product-supplier {
   font-size: 0.75rem;
   color: var(--text-light);
+}
+
+.supplier-trust-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.1rem 0 0.25rem;
+  font-size: 0.7rem;
+}
+
+.verified-label {
+  color: #176b43;
+  background: #e8f5ed;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  font-weight: 700;
+}
+
+.trust-score {
+  color: var(--text-light);
+}
+
+.trust-score strong {
+  color: #234c7a;
 }
 
 .product-rating {
