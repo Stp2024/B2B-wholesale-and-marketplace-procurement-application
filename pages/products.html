@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="../css/products.css" />
     <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/product-service.js"></script>
     <script src="../js/shared-nav.js" defer></script>
   </head>
 
@@ -23,13 +24,7 @@
 
     <header class="site-header">
       <div class="header-container">
-        <div class="brand-container" style="display: flex; align-items: center; gap: 12px;">
-          <button class="tn-back-button" type="button" onclick="if(window.history.length > 1){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back">
-            <span class="tn-back-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </span>
-            <span>Back</span>
-          </button>
+        <div class="brand-container">
           <a href="../index.html" class="brand-logo-link">
             <span class="brand-name">TradeNest</span>
           </a>
@@ -114,6 +109,17 @@
     </header>
 
     <main id="main-content">
+      <!-- BREADCRUMB & BACK NAVIGATION -->
+      <section class="breadcrumb-section">
+        <div class="container">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>/</span>
+            <span aria-current="page">Products</span>
+          </nav>
+        </div>
+      </section>
+
       <!-- ================================================== -->
       <!-- PRODUCT HERO SECTION                               -->
       <!-- ================================================== -->
@@ -398,7 +404,7 @@
                 Industrial electronics, LED components, semiconductors, and
                 circuit boards.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -407,7 +413,7 @@
                 Bulk cotton fabrics, synthetic yarns, commercial textiles, and
                 apparel.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -416,7 +422,7 @@
                 Bulk agricultural produce, processed ingredients, beverages, and
                 spices.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -425,7 +431,7 @@
                 Heavy machinery parts, safety gears, valves, fittings, and
                 workshop tools.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -434,7 +440,7 @@
                 Corrugated boxes, food-grade packaging containers, tapes, and
                 shipping bags.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -443,7 +449,7 @@
                 Metal sheets, plastic granules, rubber compounds, and mineral
                 ores.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -452,7 +458,7 @@
                 Commercial stationery, ergonomic furniture, paper goods, and IT
                 hardware.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -461,7 +467,7 @@
                 Manufacturing equipment, CNC machines, conveyors, and processing
                 plants.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -470,7 +476,7 @@
                 Industrial solvents, specialty polymers, organic compounds, and
                 reagents.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -479,7 +485,7 @@
                 Hospitality goods, commercial appliances, sanitation equipment,
                 and fixtures.
               </p>
-              <a href="#" class="category-link"> View Products </a>
+              <a href="#products-listing-heading" class="category-link">View Products</a>
             </article>
           </div>
         </div>
@@ -946,43 +952,6 @@
             </article>
           </div>
 
-          <!-- ================================================== -->
-          <!-- PAGINATION                                         -->
-          <!-- ================================================== -->
-
-          <nav class="pagination-container" aria-label="Products Pagination">
-            <ul class="pagination-list">
-              <li class="pagination-item disabled">
-                <a href="#" class="pagination-link" aria-disabled="true">
-                  Previous
-                </a>
-              </li>
-
-              <li class="pagination-item active">
-                <a href="#" class="pagination-link" aria-current="page"> 1 </a>
-              </li>
-
-              <li class="pagination-item">
-                <a href="#" class="pagination-link">2</a>
-              </li>
-
-              <li class="pagination-item">
-                <a href="#" class="pagination-link">3</a>
-              </li>
-
-              <li class="pagination-item">
-                <a href="#" class="pagination-link">4</a>
-              </li>
-
-              <li class="pagination-item">
-                <a href="#" class="pagination-link">5</a>
-              </li>
-
-              <li class="pagination-item">
-                <a href="#" class="pagination-link">Next</a>
-              </li>
-            </ul>
-          </nav>
         </div>
       </section>
 
@@ -1320,7 +1289,7 @@
               to fulfil it.
             </p>
 
-            <a href="#" class="btn btn-light"> Request a Quote </a>
+            <a href="buyer/rfqs.html" class="btn btn-light">Request a Quote</a>
           </div>
         </div>
       </section>
@@ -1413,19 +1382,19 @@
               </li>
 
               <li>
-                <a href="#">Request a Quote</a>
+                <a href="buyer/rfqs.html">Request a Quote</a>
               </li>
 
               <li>
-                <a href="#">Compare Suppliers</a>
+                <a href="buyer/compare-quotes.html">Compare Suppliers</a>
               </li>
 
               <li>
-                <a href="#">Request a Sample</a>
+                <a href="buyer/samples.html">Request a Sample</a>
               </li>
 
               <li>
-                <a href="#">Track Orders</a>
+                <a href="buyer/orders.html">Track Orders</a>
               </li>
             </ul>
           </div>
@@ -1443,19 +1412,19 @@
               </li>
 
               <li>
-                <a href="#">List Products</a>
+                <a href="supplier/products.html">List Products</a>
               </li>
 
               <li>
-                <a href="#">Manage Quotes</a>
+                <a href="supplier/quotations.html">Manage Quotes</a>
               </li>
 
               <li>
-                <a href="#">Supplier Collaboration</a>
+                <a href="supplier/collaboration.html">Supplier Collaboration</a>
               </li>
 
               <li>
-                <a href="#">Manage Orders</a>
+                <a href="supplier/orders.html">Manage Orders</a>
               </li>
             </ul>
           </div>
@@ -1469,8 +1438,6 @@
               <li>
                 <a
                   href="../auth/login.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   Login
                 </a>
@@ -1479,8 +1446,6 @@
               <li>
                 <a
                   href="../auth/register.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   Register
                 </a>
@@ -1503,11 +1468,11 @@
           </div>
 
           <div class="social-links-placeholder">
-            <a href="#" aria-label="TradeNest LinkedIn Profile"> LinkedIn </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="TradeNest LinkedIn Profile"> LinkedIn </a>
 
-            <a href="#" aria-label="TradeNest Twitter/X Profile"> Twitter </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="TradeNest Twitter/X Profile"> Twitter </a>
 
-            <a href="#" aria-label="TradeNest Facebook Profile"> Facebook </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="TradeNest Facebook Profile"> Facebook </a>
           </div>
         </div>
 
@@ -1517,11 +1482,11 @@
           </p>
 
           <div class="legal-links">
-            <a href="#"> Privacy Policy </a>
+            <a href="../auth/terms-conditions.html#privacy"> Privacy Policy </a>
 
             <span class="legal-separator"> | </span>
 
-            <a href="#"> Terms &amp; Conditions </a>
+            <a href="../auth/terms-conditions.html"> Terms &amp; Conditions </a>
           </div>
         </div>
       </div>
@@ -1529,6 +1494,7 @@
 
     <!-- External JavaScript File Link -->
 
+    <script src="../js/product-service.js"></script>
     <script src="../js/script.js"></script>
   </body>
 </html>

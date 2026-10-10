@@ -743,6 +743,42 @@ document.addEventListener("DOMContentLoaded", function () {
     const availabilitySelect = document.getElementById("product-availability");
     const sortSelect = document.getElementById("product-sort");
 
+    let productsList = [];
+    if (window.TradeNestProductService && typeof window.TradeNestProductService.getAllProducts === "function") {
+      const rawProducts = window.TradeNestProductService.getAllProducts();
+      productsList = rawProducts.map((p) => {
+        const calculatedPrice = p.price !== undefined ? p.price : (p.unitPrice && p.moq ? Math.round(p.unitPrice * p.moq) : (p.unitPrice || 0));
+        return {
+          id: p.id,
+          name: p.name,
+          category: p.category || "General",
+          supplierId: p.supplierId || "supplier-001",
+          supplierName: p.supplierName || "Apex Gear Co.",
+          description: p.description || "",
+          price: calculatedPrice,
+          unitPrice: p.unitPrice || calculatedPrice,
+          moq: p.moq || 1,
+          unit: p.uom || p.unit || "units",
+          stock: p.availableStock !== undefined ? p.availableStock : (p.stock || 0),
+          availability: (p.availableStock > 0 || p.stock > 0 || p.status === "Active") ? "In Stock" : "Low Stock",
+          image: p.image || "../../images/products/industrial-safety-gloves.webp",
+          deliveryInfo: p.deliveryInfo || "3-5 business days"
+        };
+      });
+    } else {
+      productsList = state.products || [];
+    }
+
+    if (supplierSelect) {
+      const uniqueSuppliers = [...new Map(productsList.map((p) => [p.supplierId || p.supplierName, p.supplierName])).entries()];
+      supplierSelect.innerHTML = '<option value="">All suppliers</option>' + uniqueSuppliers.map(([id, name]) => `<option value="${id}">${name}</option>`).join("");
+    }
+
+    if (categorySelect) {
+      const categories = [...new Set(productsList.map((product) => product.category).filter(Boolean))];
+      categorySelect.innerHTML = '<option value="">All categories</option>' + categories.map((cat) => `<option value="${cat}">${cat}</option>`).join("");
+    }
+
     function applyFilters() {
       const searchTerm = (searchInput ? searchInput.value : "").toLowerCase();
       const category = categorySelect ? categorySelect.value : "";
@@ -750,10 +786,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const availability = availabilitySelect ? availabilitySelect.value : "";
       const sort = sortSelect ? sortSelect.value : "name";
 
-      let results = state.products.filter((product) => {
+      let results = productsList.filter((product) => {
         const matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm) || product.supplierName.toLowerCase().includes(searchTerm);
         const matchesCategory = !category || product.category === category;
-        const matchesSupplier = !supplier || product.supplierId === supplier;
+        const matchesSupplier = !supplier || product.supplierId === supplier || product.supplierName === supplier;
         const matchesAvailability = !availability || product.availability === availability;
         return matchesSearch && matchesCategory && matchesSupplier && matchesAvailability;
       });
@@ -770,48 +806,52 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      list.innerHTML = results.map((product) => `
-        <article class="product-card">
-          <div class="product-image-wrap">
-            <img src="${product.image}" alt="${product.name}" />
-            <span class="badge">${product.category}</span>
-          </div>
-          <div class="product-body">
-            <h3>${product.name}</h3>
-            <p class="muted">Supplier: ${product.supplierName}</p>
-            <p>${product.description}</p>
-            <div class="info-row">
-              <span>Unit Price</span>
-              <strong>${formatCurrency(product.price)}</strong>
-            </div>
-            <div class="info-row">
-              <span>MOQ</span>
-              <strong>${product.moq} ${product.unit}</strong>
-            </div>
-            <div class="info-row">
-              <span>Stock</span>
-              <strong>${product.stock} ${product.unit}</strong>
-            </div>
-            <div class="info-row">
-              <span>Availability</span>
-              <strong>${product.availability}</strong>
-            </div>
-            <div class="button-row">
-              <button class="btn btn-primary small" type="button" data-open-product="${product.id}">Open details</button>
-              <button class="btn btn-secondary small" type="button" data-save-product="${product.id}">${getSavedProducts().some((item) => item.id === product.id) ? "Saved" : "Save Product"}</button>
-            </div>
-          </div>
-        </article>
-      `).join("");
-    }
+      list.innerHTML = results.map((product) => {
+        let img = product.image || "../../images/products/industrial-safety-gloves.webp";
+        if (img.startsWith("../../../")) {
+          img = img.replace("../../../", "../../");
+        } else if (!img.startsWith("../../") && !img.startsWith("http") && !img.startsWith("data:")) {
+          img = "../../" + img.replace(/^\/+/, "");
+        }
 
-    if (supplierSelect) {
-      supplierSelect.innerHTML = '<option value="">All suppliers</option>' + state.supplierProfiles.map((supplier) => `<option value="${supplier.id}">${supplier.businessName}</option>`).join("");
-    }
-
-    if (categorySelect) {
-      const categories = [...new Set(state.products.map((product) => product.category))];
-      categorySelect.innerHTML = '<option value="">All categories</option>' + categories.map((cat) => `<option value="${cat}">${cat}</option>`).join("");
+        return `
+          <article class="product-card" data-product-id="${product.id}">
+            <div class="product-image-wrap">
+              <img src="${img}" alt="${product.name}" onerror="this.src='../../images/products/industrial-safety-gloves.webp'" />
+              <span class="badge">${product.category}</span>
+            </div>
+            <div class="product-body">
+              <h3>${product.name}</h3>
+              <p class="muted">🏢 Supplier: <strong>${product.supplierName}</strong></p>
+              <p>${product.description}</p>
+              <div class="info-row">
+                <span>Unit Price</span>
+                <strong>${formatCurrency(product.price)}</strong>
+              </div>
+              <div class="info-row">
+                <span>MOQ</span>
+                <strong>${product.moq} ${product.unit}</strong>
+              </div>
+              <div class="info-row">
+                <span>Stock</span>
+                <strong>${product.stock} ${product.unit}</strong>
+              </div>
+              <div class="info-row">
+                <span>Availability</span>
+                <strong style="color: ${product.stock > 0 ? '#10b981' : '#ef4444'};">${product.availability}</strong>
+              </div>
+              <div class="info-row" style="font-size: 0.8rem; color: #64748b;">
+                <span>Delivery</span>
+                <strong>🚚 ${product.deliveryInfo || '3-5 business days'}</strong>
+              </div>
+              <div class="button-row" style="margin-top: 10px;">
+                <button class="btn btn-primary small" type="button" data-open-product="${product.id}">Open details</button>
+                <button class="btn btn-secondary small" type="button" data-save-product="${product.id}">${getSavedProducts().some((item) => item.id === product.id) ? "Saved" : "Save Product"}</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
     }
 
     [searchInput, categorySelect, supplierSelect, availabilitySelect, sortSelect].forEach((element) => {
@@ -850,10 +890,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const button = event.target.closest("[data-open-product]");
         if (!button) return;
         const productId = button.getAttribute("data-open-product");
-        const product = state.products.find((item) => item.id === productId);
+        const product = productsList.find((item) => item.id === productId);
         if (product) {
           localStorage.setItem("tradenestSelectedProductId", JSON.stringify(productId));
           window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
+        }
+      });
+    }
+
+    if (document.body.dataset.productsSyncBound !== "true") {
+      document.body.dataset.productsSyncBound = "true";
+      window.addEventListener("tradenest:products-changed", renderProducts);
+      window.addEventListener("storage", function (e) {
+        if (e.key === "tradenest_shared_products_v2" || e.key === "tradenest_supplier_products") {
+          renderProducts();
         }
       });
     }

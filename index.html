@@ -13,6 +13,7 @@
 
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/shared.css" />
+  <script src="js/product-service.js"></script>
   <script src="js/shared-nav.js" defer></script>
 </head>
 
@@ -108,6 +109,82 @@
         <div class="hero-media">
           <img src="images/tradenest-hero.webp"
             alt="B2B wholesale trading operations and digital procurement platform interface" class="hero-image" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- LOGGED-IN HOME PAGE USER PROFILE CARD              -->
+    <!-- ================================================== -->
+    <section class="home-user-profile-section" id="homeUserProfileSection" style="display: none;">
+      <div class="container" style="max-width: 1240px; margin: 0 auto; padding: 0 20px;">
+        <div class="user-profile-card" id="userProfileCard">
+          <div class="profile-header-layout">
+            <div class="profile-identity-group">
+              <div class="profile-avatar-circle" id="profileAvatarInitials" aria-hidden="true">
+                TN
+              </div>
+              <div class="profile-main-info">
+                <div class="profile-status-badges">
+                  <span class="tn-badge-role role-buyer" id="profileRoleBadge">Buyer</span>
+                  <span class="tn-badge-verified" id="profileVerifiedBadge">
+                    <span class="check-icon">✓</span> Profile Verified
+                  </span>
+                </div>
+                <h2 class="profile-user-fullname" id="profileFullName">TradeNest User</h2>
+                <div class="profile-business-title" id="profileBusinessName">
+                  <span class="profile-business-icon">🏢</span> TradeNest Enterprise
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-meta-grid">
+            <div class="profile-meta-item">
+              <span class="profile-meta-icon">✉️</span>
+              <div>
+                <span class="profile-meta-label">Email Address</span>
+                <p class="profile-meta-value" id="profileEmail">user@tradenest.com</p>
+              </div>
+            </div>
+            <div class="profile-meta-item">
+              <span class="profile-meta-icon">📞</span>
+              <div>
+                <span class="profile-meta-label">Contact Phone</span>
+                <p class="profile-meta-value" id="profilePhone">+91 98765 43210</p>
+              </div>
+            </div>
+            <div class="profile-meta-item">
+              <span class="profile-meta-icon">🛡️</span>
+              <div>
+                <span class="profile-meta-label">Account Role</span>
+                <p class="profile-meta-value" id="profileRoleText">Buyer</p>
+              </div>
+            </div>
+            <div class="profile-meta-item">
+              <span class="profile-meta-icon">✓</span>
+              <div>
+                <span class="profile-meta-label">Verification Status</span>
+                <p class="profile-meta-value" id="profileVerificationText">Profile Verified</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-actions-row">
+            <!-- Dynamic Role-Based Dashboard Button (Only 1 shown based on role!) -->
+            <a href="buyer-dashboard.html" class="btn-profile-dashboard" id="profileDashboardBtn">
+              <span>🏢</span> <span id="profileDashboardBtnText">My Buyer Dashboard</span>
+            </a>
+            <button type="button" class="btn-profile-action" id="profileViewBtn">
+              <span>👁️</span> View Profile
+            </button>
+            <button type="button" class="btn-profile-action" id="profileEditBtn">
+              <span>✏️</span> Edit Profile
+            </button>
+            <button type="button" class="btn-profile-logout" id="profileLogoutBtn">
+              <span>🚪</span> Logout
+            </button>
+          </div>
         </div>
       </div>
     </section>

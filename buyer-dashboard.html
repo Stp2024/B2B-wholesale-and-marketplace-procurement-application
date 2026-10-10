@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Buyer Dashboard - TradeNest B2B Marketplace</title>
+
+    <!-- Buyer Dashboard Stylesheet -->
+    <link rel="stylesheet" href="css/buyer/dashboard.css" />
+    <link rel="stylesheet" href="css/shared.css" />
+  </head>
+
+  <body data-page="dashboard">
+    <!-- =========================================================
+         MAIN DASHBOARD LAYOUT
+    ========================================================== -->
+    <div class="dashboard-container">
+      <!-- =======================================================
+           SIDEBAR NAVIGATION
+      ======================================================== -->
+      <aside class="sidebar" id="sidebar">
+        <!-- Brand Section -->
+        <div class="sidebar-brand">
+          <a href="buyer-dashboard.html" class="brand-logo" aria-label="Buyer dashboard home">
+            <img
+              src="images/TradeNest.webp"
+              alt="TradeNest"
+              class="dashboard-brand-image"
+            />
+          </a>
+
+          <span class="brand-subtitle"> Buyer Workspace </span>
+        </div>
+
+        <!-- Buyer Navigation Links -->
+        <nav class="sidebar-nav" aria-label="Buyer Navigation">
+          <!-- Main Menu -->
+          <div class="nav-section">
+            <span class="nav-section-title"> Main Menu </span>
+
+            <ul class="nav-list">
+              <!-- Dashboard -->
+              <li>
+                <a
+                  href="buyer-dashboard.html"
+                  class="nav-link active"
+                  aria-current="page"
+                >
+                  <span class="nav-icon">📊</span>
+                  <span class="nav-label">Dashboard</span>
+                </a>
+              </li>
+
+              <!-- Products -->
+              <li>
+                <a href="pages/buyer/products.html" class="nav-link">
+                  <span class="nav-icon">🛍️</span>
+                  <span class="nav-label">Products</span>
+                </a>
+              </li>
+
+              <!-- Suppliers -->
+              <li>
+                <a href="pages/buyer/suppliers.html" class="nav-link">
+                  <span class="nav-icon">🏢</span>
+                  <span class="nav-label">Suppliers</span>
+                </a>
+              </li>
+
+              <!-- Orders -->
+              <li>
+                <a href="pages/buyer/orders.html" class="nav-link">
+                  <span class="nav-icon">📦</span>
+                  <span class="nav-label">My Orders</span>
+                </a>
+              </li>
+
+              <!-- Purchase History -->
+              <li>
+                <a href="pages/buyer/orders.html" class="nav-link">
+                  <span class="nav-icon">📜</span>
+                  <span class="nav-label">Purchase History</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Quotes -->
+          <div class="nav-section">
+            <span class="nav-section-title"> Quotes </span>
+
+            <ul class="nav-list">
+              <!-- Request Quote -->
+              <li>
+                <a href="pages/buyer/request-quote.html" class="nav-link">
+                  <span class="nav-icon">📝</span>
+                  <span class="nav-label">Request Quote</span>
+                </a>
+              </li>
+
+              <!-- My Quotes -->
+              <li>
+                <a href="pages/buyer/my-quotes.html" class="nav-link">
+                  <span class="nav-icon">💬</span>
+                  <span class="nav-label">My Quotes</span>
+                </a>
+              </li>
+
+              <!-- Supplier Offers -->
+              <li>
+                <a href="pages/buyer/supplier-offers.html" class="nav-link">
+                  <span class="nav-icon">🏷️</span>
+                  <span class="nav-label">Supplier Offers</span>
+                </a>
+              </li>
+
+              <!-- Compare Quotes -->
+              <li>
+                <a href="pages/buyer/compare-quotes.html" class="nav-link">
+                  <span class="nav-icon">⚖️</span>
+                  <span class="nav-label">Compare Quotes</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Account -->
+          <div class="nav-section">
+            <span class="nav-section-title"> Account </span>
+
+            <ul class="nav-list">
+              <!-- Recommendations -->
+              <li>
+                <a href="pages/buyer/products.html" class="nav-link">
+                  <span class="nav-icon">⭐</span>
+                  <span class="nav-label">Recommendations</span>
+                </a>
+              </li>
+
+              <!-- Saved Products -->
+              <li>
+                <a href="pages/buyer/saved-products.html" class="nav-link">
+                  <span class="nav-icon">💾</span>
+                  <span class="nav-label">Saved Products</span>
+                </a>
+              </li>
+
+              <!-- Saved Suppliers -->
+              <li>
+                <a href="pages/buyer/saved-suppliers.html" class="nav-link">
+                  <span class="nav-icon">📁</span>
+                  <span class="nav-label">Saved Suppliers</span>
+                </a>
+              </li>
+
+              <!-- Profile -->
+              <li>
+                <a href="pages/buyer/profile.html" class="nav-link">
+                  <span class="nav-icon">👤</span>
+                  <span class="nav-label">Profile</span>
+                </a>
+              </li>
+
+              <!-- Settings -->
+              <li>
+                <a href="pages/buyer/settings.html" class="nav-link">
+                  <span class="nav-icon">⚙️</span>
+                  <span class="nav-label">Settings</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <!-- Dashboard Home -->
+          <a href="buyer-dashboard.html" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard Home</span>
+          </a>
+
+          <!-- Logout -->
+          <button
+            type="button"
+            class="logout-link-btn"
+            id="sidebarLogoutButton"
+          >
+            <span class="nav-icon">🚪</span>
+            <span class="nav-label">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- =======================================================
+           MAIN WORKSPACE
+      ======================================================== -->
+      <div class="main-wrapper">
+        <!-- =====================================================
+             TOP NAVBAR
+        ====================================================== -->
+        <header class="top-navbar">
+          <!-- Navbar Left -->
+          <div class="navbar-left">
+            <!-- Mobile Menu -->
+            <button
+              type="button"
+              class="mobile-menu-toggle"
+              id="menuToggle"
+              aria-label="Toggle navigation menu"
+            >
+              <span class="hamburger-icon">☰</span>
+            </button>
+
+            <!-- Page Title -->
+            <div class="page-title-group">
+              <h1 class="page-title">Dashboard</h1>
+
+              <span class="workspace-badge"> BUYER WORKSPACE </span>
+            </div>
+          </div>
+
+          <!-- Navbar Right -->
+          <div class="navbar-right">
+            <!-- Search -->
+            <div class="navbar-search">
+              <span class="search-icon"> 🔍 </span>
+
+              <input
+                type="search"
+                id="navbarSearch"
+                placeholder="Search orders, products, suppliers..."
+                aria-label="Search dashboard"
+              />
+            </div>
+
+            <!-- Notifications -->
+            <button
+              type="button"
+              class="notification-button"
+              id="notificationButton"
+              aria-label="View notifications"
+            >
+              <span class="notification-icon"> 🔔 </span>
+
+              <span class="notification-badge"> 3 </span>
+            </button>
+
+            <!-- =================================================
+                 BUYER PROFILE
+            ================================================== -->
+            <div class="profile-menu" id="profileMenu">
+              <!-- Profile Button -->
+              <button
+                type="button"
+                class="profile-button"
+                id="profileButton"
+                aria-label="Open profile menu"
+                aria-expanded="false"
+                aria-controls="profileDropdown"
+              >
+                <span class="profile-avatar" id="profileAvatar"> B </span>
+
+                <span class="profile-name" id="profileName"> Buyer Name </span>
+
+                <span class="profile-arrow" aria-hidden="true"> ▼ </span>
+              </button>
+
+              <!-- =================================================
+                   PROFILE DROPDOWN
+              ================================================== -->
+              <div class="profile-dropdown" id="profileDropdown" hidden>
+                <!-- Profile Header -->
+                <div class="profile-dropdown-header">
+                  <div class="profile-dropdown-avatar" id="dropdownAvatar">
+                    B
+                  </div>
+
+                  <div class="profile-dropdown-info">
+                    <h3 id="dropdownName">Buyer Name</h3>
+
+                    <p id="dropdownEmail">aisha.patel@tradenest.com</p>
+
+                    <span class="account-type-tag"> Buyer Account </span>
+                  </div>
+                </div>
+
+                <!-- =================================================
+                     PROFILE DETAILS
+                ================================================== -->
+                <div class="profile-details-section">
+                  <!-- Full Name -->
+                  <div class="profile-detail">
+                    <span class="detail-label"> Full Name </span>
+
+                    <strong id="profileFullName"> Buyer Name </strong>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="profile-detail">
+                    <span class="detail-label"> Email </span>
+
+                    <strong id="profileEmail">
+                      aisha.patel@tradenest.com
+                    </strong>
+                  </div>
+
+                  <!-- Phone -->
+                  <div class="profile-detail">
+                    <span class="detail-label"> Phone </span>
+
+                    <strong id="profilePhone"> +91 88888 12345 </strong>
+                  </div>
+
+                  <!-- Company -->
+                  <div class="profile-detail">
+                    <span class="detail-label"> Company </span>
+
+                    <strong id="profileCompany"> North Star Retail </strong>
+                  </div>
+
+                  <!-- Business Type -->
+                  <div class="profile-detail">
+                    <span class="detail-label"> Business Type </span>
+
+                    <strong id="profileBusinessType">
+                      Wholesale Procurement
+                    </strong>
+                  </div>
+
+                  <!-- Location -->
+                  <div class="profile-detail">
+                    <span class="detail-label"> Location </span>
+
+                    <strong id="profileLocation"> Bengaluru, India </strong>
+                  </div>
+                </div>
+
+                <!-- =================================================
+                     EDIT PROFILE
+                ================================================== -->
+                <div class="profile-edit-action">
+                  <button
+                    type="button"
+                    class="edit-profile-button"
+                    id="editProfileButton"
+                  >
+                    ✏️ Edit Profile
+                  </button>
+                </div>
+
+                <!-- =================================================
+                     PROFILE ACTIONS
+                ================================================== -->
+                <div class="profile-actions">
+                  <button
+                    type="button"
+                    id="dropdownEditProfile"
+                    class="dropdown-action-btn"
+                  >
+                    Edit Profile
+                  </button>
+
+                  <a href="pages/buyer/settings.html" class="dropdown-action-link">
+                    Settings
+                  </a>
+
+                  <button
+                    type="button"
+                    id="dropdownLogout"
+                    class="dropdown-action-btn logout-btn"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+              <!-- End Profile Dropdown -->
+            </div>
+            <!-- End Profile Menu -->
+          </div>
+        </header>
+
+        <!-- =====================================================
+             MAIN CONTENT
+        ====================================================== -->
+        <main class="main-content">
+          <!-- ===================================================
+               WELCOME SECTION
+          ==================================================== -->
+          <section class="welcome-section" aria-labelledby="welcomeTitle">
+            <div class="welcome-text-content">
+              <span class="welcome-subtitle"> WELCOME BACK </span>
+
+              <h2 class="welcome-title" id="welcomeTitle">
+                Hello,
+                <span id="welcomeUserName"> Buyer </span>!
+              </h2>
+
+              <p class="welcome-description">
+                Manage your procurement activities, track orders and discover
+                trusted suppliers from your TradeNest workspace.
+              </p>
+            </div>
+
+            <div class="welcome-actions">
+              <a href="pages/buyer/request-quote.html" class="btn btn-primary">
+                Request a Quote
+              </a>
+
+              <a href="pages/buyer/products.html" class="btn btn-secondary">
+                Browse Products
+              </a>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               DASHBOARD STATISTICS
+          ==================================================== -->
+          <section class="stats-grid" aria-label="Dashboard Key Statistics">
+            <!-- Total Orders -->
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Total Orders </span>
+
+                <span class="stat-icon icon-blue"> 📦 </span>
+              </div>
+
+              <div class="stat-value" id="totalOrders">24</div>
+
+              <span class="stat-trend positive"> ↑ +12% from last month </span>
+            </div>
+
+            <!-- Active Quotes -->
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Quotes </span>
+
+                <span class="stat-icon icon-orange"> 💬 </span>
+              </div>
+
+              <div class="stat-value" id="activeQuotes">08</div>
+
+              <span class="stat-trend neutral"> • 2 pending review </span>
+            </div>
+
+            <!-- Pending Orders -->
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Pending Orders </span>
+
+                <span class="stat-icon icon-yellow"> ⏳ </span>
+              </div>
+
+              <div class="stat-value" id="pendingOrders">03</div>
+
+              <span class="stat-trend neutral">
+                • Est. delivery this week
+              </span>
+            </div>
+
+            <!-- Completed Purchases -->
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Completed Purchases </span>
+
+                <span class="stat-icon icon-green"> ✅ </span>
+              </div>
+
+              <div class="stat-value" id="completedPurchases">21</div>
+
+              <span class="stat-trend positive"> ↑ 100% fulfillment rate </span>
+            </div>
+          </section>
+
+          <section
+            class="stats-grid dynamic-overview"
+            aria-label="Dynamic buyer overview"
+          >
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Total RFQs </span>
+                <span class="stat-icon icon-blue"> 📝 </span>
+              </div>
+              <div class="stat-value" id="stat-total-rfqs">0</div>
+              <span class="stat-trend positive">Live from local data</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Pending Quotations </span>
+                <span class="stat-icon icon-orange"> 💬 </span>
+              </div>
+              <div class="stat-value" id="stat-pending-quotations">0</div>
+              <span class="stat-trend neutral">Awaiting response</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Sample Requests </span>
+                <span class="stat-icon icon-yellow"> 🧪 </span>
+              </div>
+              <div class="stat-value" id="stat-active-samples">0</div>
+              <span class="stat-trend neutral">In review</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Active Orders </span>
+                <span class="stat-icon icon-green"> 📦 </span>
+              </div>
+              <div class="stat-value" id="stat-active-orders">0</div>
+              <span class="stat-trend positive">Processing</span>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title"> Completed Orders </span>
+                <span class="stat-icon icon-green"> ✅ </span>
+              </div>
+              <div class="stat-value" id="stat-completed-orders">0</div>
+              <span class="stat-trend positive">Delivered</span>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               QUICK ACTIONS
+          ==================================================== -->
+          <section class="quick-actions-section">
+            <h2 class="section-title">Quick Actions</h2>
+
+            <div class="quick-actions-grid">
+              <!-- Browse Products -->
+              <a href="pages/buyer/products.html" class="quick-action-card">
+                <span class="quick-action-icon"> 🛍️ </span>
+
+                <span class="quick-action-title"> Browse Products </span>
+
+                <span class="quick-action-desc">
+                  Explore thousands of wholesale items
+                </span>
+              </a>
+
+              <!-- Find Suppliers -->
+              <a href="pages/buyer/suppliers.html" class="quick-action-card">
+                <span class="quick-action-icon"> 🏢 </span>
+
+                <span class="quick-action-title"> Find Suppliers </span>
+
+                <span class="quick-action-desc">
+                  Connect with verified B2B vendors
+                </span>
+              </a>
+
+              <!-- Request Quote -->
+              <a href="pages/buyer/request-quote.html" class="quick-action-card">
+                <span class="quick-action-icon"> 📝 </span>
+
+                <span class="quick-action-title"> Request a Quote </span>
+
+                <span class="quick-action-desc">
+                  Get customized bulk pricing
+                </span>
+              </a>
+
+              <!-- Track Orders -->
+              <a href="pages/buyer/orders.html" class="quick-action-card">
+                <span class="quick-action-icon"> 🚚 </span>
+
+                <span class="quick-action-title"> Track Orders </span>
+
+                <span class="quick-action-desc">
+                  Check shipment and delivery status
+                </span>
+              </a>
+            </div>
+          </section>
+
+          <section class="dashboard-card" style="margin-bottom: 24px">
+            <div class="card-header">
+              <h2 class="card-title">Recent Activity</h2>
+            </div>
+            <ul id="dashboard-activity-list" class="activity-list"></ul>
+          </section>
+
+          <section class="dashboard-card" style="margin-bottom: 24px">
+            <div class="card-header">
+              <h2 class="card-title">Recommended Suppliers</h2>
+            </div>
+            <div id="recommended-suppliers" class="card-grid"></div>
+          </section>
+
+          <!-- ===================================================
+               DUAL DASHBOARD GRID
+          ==================================================== -->
+          <div class="dashboard-dual-grid">
+            <!-- =================================================
+                 RECENT ORDERS
+            ================================================== -->
+            <section class="dashboard-card recent-orders-card">
+              <div class="card-header">
+                <h2 class="card-title">Recent Orders</h2>
+
+                <a href="pages/buyer/orders.html" class="view-all-link">
+                  View All Orders →
+                </a>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Order ID</th>
+                      <th scope="col">Product</th>
+                      <th scope="col">Supplier</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>#ORD-98231</strong>
+                      </td>
+
+                      <td>Industrial Safety Gloves (x500)</td>
+
+                      <td>Apex Gear Co.</td>
+
+                      <td>₹2,450.00</td>
+
+                      <td>
+                        <span class="status-badge processing">
+                          Processing
+                        </span>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <strong>#ORD-98190</strong>
+                      </td>
+
+                      <td>A4 Multipurpose Copy Paper (x200)</td>
+
+                      <td>PaperPro Solutions</td>
+
+                      <td>₹890.00</td>
+
+                      <td>
+                        <span class="status-badge shipped"> Shipped </span>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <strong>#ORD-97845</strong>
+                      </td>
+
+                      <td>Commercial LED Panel Bulbs (x100)</td>
+
+                      <td>Lumina Electric</td>
+
+                      <td>₹1,600.00</td>
+
+                      <td>
+                        <span class="status-badge delivered"> Delivered </span>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <strong>#ORD-97612</strong>
+                      </td>
+
+                      <td>Corrugated Packaging Boxes (x1000)</td>
+
+                      <td>PackRight Corp.</td>
+
+                      <td>₹3,100.00</td>
+
+                      <td>
+                        <span class="status-badge pending"> Pending </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- =================================================
+                 ACTIVE QUOTES
+            ================================================== -->
+            <section class="dashboard-card active-quotes-card">
+              <div class="card-header">
+                <h2 class="card-title">Active Quotes</h2>
+
+                <a href="pages/buyer/my-quotes.html" class="view-all-link">
+                  View All Quotes →
+                </a>
+              </div>
+
+              <div class="quotes-list">
+                <!-- Quote 1 -->
+                <div class="quote-item">
+                  <div class="quote-info">
+                    <h3 class="quote-product">Heavy-Duty Warehouse Shelving</h3>
+
+                    <p class="quote-meta">
+                      Qty: 50 Units • Supplier:
+                      <strong> SteelCraft Ltd. </strong>
+                    </p>
+                  </div>
+
+                  <div class="quote-details">
+                    <span class="quote-amount"> ₹4,200.00 </span>
+
+                    <span class="status-badge processing"> Under Review </span>
+                  </div>
+                </div>
+
+                <!-- Quote 2 -->
+                <div class="quote-item">
+                  <div class="quote-info">
+                    <h3 class="quote-product">Ergonomic Mesh Office Chairs</h3>
+
+                    <p class="quote-meta">
+                      Qty: 120 Units • Supplier:
+                      <strong> Comfort Workspace </strong>
+                    </p>
+                  </div>
+
+                  <div class="quote-details">
+                    <span class="quote-amount"> ₹8,400.00 </span>
+
+                    <span class="status-badge pending"> Offer Received </span>
+                  </div>
+                </div>
+
+                <!-- Quote 3 -->
+                <div class="quote-item">
+                  <div class="quote-info">
+                    <h3 class="quote-product">Custom Printed Shipping Tape</h3>
+
+                    <p class="quote-meta">
+                      Qty: 500 Rolls • Supplier:
+                      <strong> PackRight Corp. </strong>
+                    </p>
+                  </div>
+
+                  <div class="quote-details">
+                    <span class="quote-amount"> ₹750.00 </span>
+
+                    <span class="status-badge shipped"> Negotiating </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- ===================================================
+               RECOMMENDED PRODUCTS
+          ==================================================== -->
+          <section class="recommendations-section">
+            <div class="section-header">
+              <h2 class="section-title">Recommended Products</h2>
+
+              <a href="pages/buyer/products.html" class="view-all-link">
+                Explore Marketplace →
+              </a>
+            </div>
+
+            <div class="products-grid">
+              <!-- Product 1 -->
+              <div class="product-card">
+                <div class="product-image-wrap">
+                  <img
+                    src="images/products/industrial-safety-gloves.webp"
+                    alt="Industrial Safety Gloves"
+                    class="product-image"
+                  />
+
+                  <span class="category-tag"> Industrial Equipment </span>
+                </div>
+
+                <div class="product-body">
+                  <h3 class="product-title">Industrial Safety Gloves</h3>
+
+                  <p class="product-supplier">By Apex Gear Co.</p>
+
+                  <div class="product-rating">
+                    <span class="stars"> ★★★★★ </span>
+
+                    <span class="rating-value"> 4.9 </span>
+                  </div>
+
+                  <div class="product-price-info">
+                    <span class="product-price"> ₹180 </span>
+
+                    <span class="product-unit"> / pair </span>
+                  </div>
+
+                  <p class="product-moq">MOQ: 500 pairs</p>
+
+                  <a href="pages/buyer/product-details.html?id=product-001" class="btn btn-card">
+                    View Product
+                  </a>
+                </div>
+              </div>
+
+              <!-- Product 2 -->
+              <div class="product-card">
+                <div class="product-image-wrap">
+                  <img
+                    src="images/products/office-paper.webp"
+                    alt="A4 Premium Copy Paper"
+                    class="product-image"
+                  />
+
+                  <span class="category-tag"> Office Supplies </span>
+                </div>
+
+                <div class="product-body">
+                  <h3 class="product-title">A4 Premium Copy Paper</h3>
+
+                  <p class="product-supplier">By PaperPro Solutions</p>
+
+                  <div class="product-rating">
+                    <span class="stars"> ★★★★☆ </span>
+
+                    <span class="rating-value"> 4.7 </span>
+                  </div>
+
+                  <div class="product-price-info">
+                    <span class="product-price"> ₹420 </span>
+
+                    <span class="product-unit"> / ream </span>
+                  </div>
+
+                  <p class="product-moq">MOQ: 100 reams</p>
+
+                  <a href="pages/buyer/product-details.html?id=product-003" class="btn btn-card">
+                    View Product
+                  </a>
+                </div>
+              </div>
+
+              <!-- Product 3 -->
+              <div class="product-card">
+                <div class="product-image-wrap">
+                  <img
+                    src="images/products/led-bulbs.webp"
+                    alt="Commercial LED Panel Lights"
+                    class="product-image"
+                  />
+
+                  <span class="category-tag"> Electrical </span>
+                </div>
+
+                <div class="product-body">
+                  <h3 class="product-title">Commercial LED Panel Lights</h3>
+
+                  <p class="product-supplier">By Lumina Electric</p>
+
+                  <div class="product-rating">
+                    <span class="stars"> ★★★★★ </span>
+
+                    <span class="rating-value"> 4.8 </span>
+                  </div>
+
+                  <div class="product-price-info">
+                    <span class="product-price"> ₹1650 </span>
+
+                    <span class="product-unit"> / piece </span>
+                  </div>
+
+                  <p class="product-moq">MOQ: 30 pieces</p>
+
+                  <a href="pages/buyer/product-details.html?id=product-005" class="btn btn-card">
+                    View Product
+                  </a>
+                </div>
+              </div>
+
+              <!-- Product 4 -->
+              <div class="product-card">
+                <div class="product-image-wrap">
+                  <img
+                    src="images/products/packaging-boxes.webp"
+                    alt="Corrugated Packaging Boxes"
+                    class="product-image"
+                  />
+
+                  <span class="category-tag"> Packaging </span>
+                </div>
+
+                <div class="product-body">
+                  <h3 class="product-title">Corrugated Packaging Boxes</h3>
+
+                  <p class="product-supplier">By PackRight Corp.</p>
+
+                  <div class="product-rating">
+                    <span class="stars"> ★★★★☆ </span>
+
+                    <span class="rating-value"> 4.6 </span>
+                  </div>
+
+                  <div class="product-price-info">
+                    <span class="product-price"> ₹55 </span>
+
+                    <span class="product-unit"> / box </span>
+                  </div>
+
+                  <p class="product-moq">MOQ: 1000 boxes</p>
+
+                  <a href="pages/buyer/product-details.html?id=product-006" class="btn btn-card">
+                    View Product
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               RECOMMENDED SUPPLIERS
+          ==================================================== -->
+          <section class="recommendations-section">
+            <div class="section-header">
+              <h2 class="section-title">Recommended Suppliers</h2>
+
+              <a href="pages/buyer/suppliers.html" class="view-all-link">
+                View All Suppliers →
+              </a>
+            </div>
+
+            <div class="suppliers-grid">
+              <!-- Supplier 1 -->
+              <div class="supplier-card">
+                <div class="supplier-header">
+                  <div class="supplier-avatar">AG</div>
+
+                  <div class="supplier-title-area">
+                    <div class="supplier-name-wrap">
+                      <h3 class="supplier-name">Apex Gear Co.</h3>
+
+                      <span class="verified-badge" title="Verified Supplier">
+                        ✓ Verified
+                      </span>
+                    </div>
+
+                    <p class="supplier-location">📍 Bengaluru, India</p>
+                  </div>
+                </div>
+
+                <p class="supplier-desc">
+                  Manufacturer and bulk distributor of industrial safety
+                  equipment, protective gear, and workplace PPE.
+                </p>
+
+                <div class="supplier-meta">
+                  <div>
+                    <strong>Rating:</strong>
+                    4.9 ★
+                  </div>
+
+                  <div>
+                    <strong>Experience:</strong>
+                    12 Years
+                  </div>
+                </div>
+
+                <a
+                  href="pages/buyer/supplier-details.html?id=supplier-001"
+                  class="btn btn-card-secondary"
+                >
+                  View Supplier
+                </a>
+              </div>
+
+              <!-- Supplier 2 -->
+              <div class="supplier-card">
+                <div class="supplier-header">
+                  <div class="supplier-avatar">PP</div>
+
+                  <div class="supplier-title-area">
+                    <div class="supplier-name-wrap">
+                      <h3 class="supplier-name">PaperPro Solutions</h3>
+
+                      <span class="verified-badge" title="Verified Supplier">
+                        ✓ Verified
+                      </span>
+                    </div>
+
+                    <p class="supplier-location">📍 Mumbai, India</p>
+                  </div>
+                </div>
+
+                <p class="supplier-desc">
+                  Leading B2B provider of commercial paper products, office
+                  stationery, and eco-friendly printing paper.
+                </p>
+
+                <div class="supplier-meta">
+                  <div>
+                    <strong>Rating:</strong>
+                    4.7 ★
+                  </div>
+
+                  <div>
+                    <strong>Experience:</strong>
+                    8 Years
+                  </div>
+                </div>
+
+                <a
+                  href="pages/buyer/supplier-details.html?id=supplier-002"
+                  class="btn btn-card-secondary"
+                >
+                  View Supplier
+                </a>
+              </div>
+
+              <!-- Supplier 3 -->
+              <div class="supplier-card">
+                <div class="supplier-header">
+                  <div class="supplier-avatar">LE</div>
+
+                  <div class="supplier-title-area">
+                    <div class="supplier-name-wrap">
+                      <h3 class="supplier-name">Lumina Electric</h3>
+
+                      <span class="verified-badge" title="Verified Supplier">
+                        ✓ Verified
+                      </span>
+                    </div>
+
+                    <p class="supplier-location">📍 Delhi NCR, India</p>
+                  </div>
+                </div>
+
+                <p class="supplier-desc">
+                  High-efficiency commercial and industrial LED lighting
+                  solutions for offices, warehouses, and factories.
+                </p>
+
+                <div class="supplier-meta">
+                  <div>
+                    <strong>Rating:</strong>
+                    4.8 ★
+                  </div>
+
+                  <div>
+                    <strong>Experience:</strong>
+                    15 Years
+                  </div>
+                </div>
+
+                <a
+                  href="pages/buyer/supplier-details.html?id=supplier-003"
+                  class="btn btn-card-secondary"
+                >
+                  View Supplier
+                </a>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+        <footer class="dashboard-footer">
+          <div class="footer-content">
+            <p class="copyright-text">
+              &copy; 2026 TradeNest. All rights reserved.
+            </p>
+
+            <nav class="footer-links" aria-label="Footer Links">
+              <a href="pages/buyer/products.html"> Products </a>
+
+              <a href="pages/buyer/suppliers.html"> Suppliers </a>
+            </nav>
+          </div>
+        </footer>
+      </div>
+      <!-- End Main Wrapper -->
+    </div>
+    <!-- End Dashboard Container -->
+
+    <!-- =========================================================
+         EDIT PROFILE MODAL
+    ========================================================== -->
+    <div class="profile-modal" id="profileModal" hidden>
+      <!-- Modal Overlay -->
+      <div class="modal-overlay" id="modalOverlay"></div>
+
+      <!-- Modal Container -->
+      <div
+        class="modal-container"
+        role="dialog"
+        aria-labelledby="modalTitle"
+        aria-modal="true"
+      >
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Edit Profile</h2>
+
+          <button
+            type="button"
+            class="modal-close-button"
+            id="closeProfileModal"
+            aria-label="Close modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <!-- Profile Edit Form -->
+        <form id="profileEditForm" class="profile-edit-form">
+          <div class="modal-body">
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="editFullName"> Full Name </label>
+
+              <input
+                type="text"
+                id="editFullName"
+                name="fullName"
+                required
+                placeholder="Enter full name"
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="editEmail"> Email Address </label>
+
+              <input
+                type="email"
+                id="editEmail"
+                name="email"
+                required
+                placeholder="Enter email address"
+              />
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+              <label for="editPhone"> Phone Number </label>
+
+              <input
+                type="tel"
+                id="editPhone"
+                name="phone"
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            <!-- Company -->
+            <div class="form-group">
+              <label for="editCompany"> Company Name </label>
+
+              <input
+                type="text"
+                id="editCompany"
+                name="company"
+                placeholder="Enter company name"
+              />
+            </div>
+
+            <!-- Business Type -->
+            <div class="form-group">
+              <label for="editBusinessType"> Business Type </label>
+
+              <input
+                type="text"
+                id="editBusinessType"
+                name="businessType"
+                placeholder="e.g. Wholesale, Retail, Manufacturer"
+              />
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+              <label for="editLocation"> Location </label>
+
+              <input
+                type="text"
+                id="editLocation"
+                name="location"
+                placeholder="City, Country"
+              />
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="cancel-button" id="cancelProfileEdit">
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="save-profile-button"
+              id="saveProfileButton"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         BUYER DASHBOARD JAVASCRIPT
+    ========================================================== -->
+    <script src="js/product-service.js"></script>
+    <script src="js/tradenest-store.js"></script>
+    <script src="js/buyer/dashboard.js"></script>
+    <script src="js/buyer/modules.js"></script>
+  </body>
+</html>
+
+

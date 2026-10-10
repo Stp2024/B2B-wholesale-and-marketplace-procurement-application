@@ -20,6 +20,7 @@
     <!-- Product Details CSS -->
     <link rel="stylesheet" href="../css/product-details.css" />
     <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/product-service.js"></script>
     <script src="../js/shared-nav.js" defer></script>
   </head>
 
@@ -30,13 +31,7 @@
 
     <header class="site-header">
       <div class="header-container">
-        <div class="brand-container" style="display: flex; align-items: center; gap: 12px;">
-          <button class="tn-back-button" type="button" onclick="if(window.history.length > 1){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back">
-            <span class="tn-back-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </span>
-            <span>Back</span>
-          </button>
+        <div class="brand-container">
           <a href="../index.html" class="brand-logo-link">
             <span class="brand-name">TradeNest</span>
           </a>
@@ -122,12 +117,6 @@
             <span>/</span>
             <span aria-current="page">Industrial Safety Gloves</span>
           </nav>
-          <button class="tn-back-button" type="button" onclick="if(window.history.length > 1){window.history.back();}else{window.location.href='products.html';}" aria-label="Go back to products">
-            <span class="tn-back-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </span>
-            <span>Back to Products</span>
-          </button>
         </div>
       </section>
 
@@ -780,11 +769,11 @@
           </div>
 
           <div class="social-links-placeholder">
-            <a href="#" aria-label="TradeNest LinkedIn Profile"> LinkedIn </a>
+            <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="TradeNest LinkedIn Profile"> LinkedIn </a>
 
-            <a href="#" aria-label="TradeNest Twitter/X Profile"> Twitter </a>
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="TradeNest Twitter/X Profile"> Twitter </a>
 
-            <a href="#" aria-label="TradeNest Facebook Profile"> Facebook </a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="TradeNest Facebook Profile"> Facebook </a>
           </div>
         </div>
 
@@ -796,11 +785,11 @@
           </p>
 
           <div class="legal-links">
-            <a href="#"> Privacy Policy </a>
+            <a href="../auth/privacy-policy.html"> Privacy Policy </a>
 
             <span class="legal-separator"> | </span>
 
-            <a href="#"> Terms &amp; Conditions </a>
+            <a href="../auth/terms-conditions.html"> Terms &amp; Conditions </a>
           </div>
         </div>
       </div>
@@ -810,48 +799,207 @@
     <script src="../js/tradenest-store.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const store = window.TradeNestStore;
         const params = new URLSearchParams(window.location.search);
         const requestedId = params.get("id");
         const fallbackProductId = JSON.parse(
           localStorage.getItem("tradenestSelectedProductId") || '"product-001"',
         );
         const productId = requestedId || fallbackProductId;
-        const product =
-          store.getStore().products.find((item) => item.id === productId) ||
-          store.getStore().products[0];
+
+        let product = null;
+
+        // 0. Primary source: TradeNestProductService
+        if (window.TradeNestProductService) {
+          const sp = window.TradeNestProductService.getProductByIdSync(productId);
+          if (sp) {
+            let cleanImg = sp.image || "../images/products/industrial-safety-gloves.webp";
+            if (cleanImg.startsWith("../../")) {
+              cleanImg = cleanImg.replace("../../", "../");
+            } else if (!cleanImg.startsWith("../") && !cleanImg.startsWith("http") && !cleanImg.startsWith("data:")) {
+              cleanImg = "../" + cleanImg;
+            }
+            product = {
+              id: sp.id,
+              name: sp.name,
+              description: sp.description,
+              category: sp.category,
+              price: sp.price || (sp.unitPrice ? (sp.unitPrice * 80).toFixed(0) : "390"),
+              rawPrice: sp.unitPrice || (sp.price ? (sp.price / 80) : 5),
+              uom: sp.uom || "units",
+              moq: sp.moq || 50,
+              unit: sp.uom || "units",
+              stock: sp.availableStock !== undefined ? sp.availableStock : (sp.stock || 0),
+              availability: sp.status === "active"
+                ? ((sp.availableStock > 0 || sp.stock > 0) ? `In Stock (${sp.availableStock || sp.stock} ${sp.uom || 'units'} available)` : "Out of Stock")
+                : (sp.status === "out-of-stock" ? "Out of Stock" : "Inactive"),
+              deliveryInfo: sp.deliveryInfo || "Standard 3-5 business days dispatch",
+              image: cleanImg,
+              supplierName: sp.supplierName || "TradeNest Verified Supplier",
+              supplierLocation: sp.supplierLocation || "Mumbai, Maharashtra",
+              specs: sp.specs || {
+                "Material": "Commercial Wholesale Standard",
+                "Grade": "B2B Export Certified",
+                "Delivery Lead Time": sp.deliveryInfo || "3-5 business days",
+                "Origin": "India"
+              }
+            };
+          }
+        }
+
+        // 1. Check SupplierStore / tradenest_supplier_products in localStorage
+        if (!product) {
+          try {
+            const supRaw = localStorage.getItem("tradenest_supplier_products");
+          let supProducts = [];
+          if (supRaw) {
+            supProducts = JSON.parse(supRaw);
+          } else if (window.SupplierStore && typeof window.SupplierStore.getProducts === "function") {
+            supProducts = window.SupplierStore.getProducts();
+          }
+
+          if (Array.isArray(supProducts) && supProducts.length > 0) {
+            const found = supProducts.find(p => 
+              p.id === productId || 
+              p.sku === productId || 
+              (productId && p.name && p.name.toLowerCase() === productId.toLowerCase())
+            );
+
+            if (found) {
+              // Retrieve supplier business profile
+              let bizName = "ABC Trade";
+              let bizLocation = "Bengaluru, Karnataka";
+              try {
+                const curUserRaw = localStorage.getItem("tradenestCurrentUser");
+                if (curUserRaw) {
+                  const u = JSON.parse(curUserRaw);
+                  if (u.businessName) bizName = u.businessName;
+                }
+                const bizRaw = localStorage.getItem("tradenest_supplier_biz_profile");
+                if (bizRaw) {
+                  const b = JSON.parse(bizRaw);
+                  if (!curUserRaw && b.businessName) bizName = b.businessName;
+                  if (b.registeredAddress) bizLocation = b.registeredAddress;
+                }
+              } catch (e) {}
+
+              // Format clean image path
+              let cleanImage = found.image || "../images/products/industrial-safety-gloves.webp";
+              if (cleanImage.startsWith("../../")) {
+                cleanImage = cleanImage.replace("../../", "../");
+              } else if (!cleanImage.startsWith("../") && !cleanImage.startsWith("http") && !cleanImage.startsWith("data:")) {
+                cleanImage = "../" + cleanImage;
+              }
+
+              product = {
+                id: found.id,
+                name: found.name,
+                description: found.description,
+                category: found.category,
+                price: found.unitPrice ? (found.unitPrice * 80).toFixed(0) : "390",
+                rawPrice: found.unitPrice,
+                uom: found.uom || "units",
+                moq: found.moq || 100,
+                unit: found.uom || "units",
+                stock: found.availableStock || 0,
+                availability: found.status === "active" 
+                  ? (found.availableStock > 0 ? `In Stock (${found.availableStock} ${found.uom || 'units'} available)` : "Out of Stock") 
+                  : "Unavailable",
+                image: cleanImage,
+                supplierName: bizName,
+                supplierLocation: bizLocation,
+                specs: found.specs || {
+                  "Material": "Commercial Wholesale Standard",
+                  "Grade": "B2B Export Certified",
+                  "Origin": "India"
+                }
+              };
+            }
+          }
+        } catch (e) {
+          console.warn("Error parsing supplier product:", e);
+        }
+        }
+
+        // 2. Fallback to TradeNestStore if not found in SupplierStore
+        if (!product && window.TradeNestStore) {
+          const store = window.TradeNestStore;
+          const storeProducts = store.getStore().products;
+          product = storeProducts.find((item) => item.id === productId) || storeProducts[0];
+        }
 
         if (product && product.id) {
           localStorage.setItem("tradenestSelectedProductId", JSON.stringify(product.id));
         }
 
-        document.title = `${product.name} | TradeNest`;
-        const title = document.querySelector(".product-detail-title");
-        const desc = document.querySelector(".product-detail-description");
-        const category = document.querySelector(".product-category");
-        const price = document.querySelector(".detail-price");
-        const moq = document.querySelector(".info-value");
-        const availability = document.querySelector(".status-available");
-        const supplierName = document.querySelector(
-          ".product-detail-content .product-rating-trust",
-        );
+        if (product) {
+          document.title = `${product.name} | TradeNest`;
 
-        if (title) title.textContent = product.name;
-        if (desc) desc.textContent = product.description;
-        if (category) category.textContent = product.category;
-        if (price) price.textContent = `₹${product.price}`;
-        if (moq) moq.textContent = `${product.moq} ${product.unit}`;
-        if (availability) availability.textContent = product.availability;
-        if (supplierName) {
-          const supplier = store
-            .getStore()
-            .supplierProfiles.find((item) => item.id === product.supplierId);
-          supplierName.innerHTML = `<div class="product-trust"><span>Supplier</span><strong>${supplier ? supplier.businessName : product.supplierName}</strong></div>`;
+          // Breadcrumb
+          const breadcrumbCurrent = document.querySelector(".breadcrumb span[aria-current='page']");
+          if (breadcrumbCurrent) breadcrumbCurrent.textContent = product.name;
+
+          // Main Header Info
+          const title = document.querySelector(".product-detail-title");
+          const desc = document.querySelector(".product-detail-description");
+          const category = document.querySelector(".product-category");
+          const price = document.querySelector(".detail-price");
+          const priceUnit = document.querySelector(".price-unit");
+          const moq = document.querySelector(".product-info-item:nth-child(1) .info-value");
+          const availability = document.querySelector(".status-available");
+          const locationEl = document.querySelector(".product-info-item:nth-child(4) .info-value");
+          const supplierName = document.querySelector(".product-detail-content .product-rating-trust");
+
+          if (title) title.textContent = product.name;
+          if (desc) desc.textContent = product.description;
+          if (category) category.textContent = product.category;
+          if (price) {
+            price.textContent = product.rawPrice ? `$${product.rawPrice.toFixed(2)}` : `₹${product.price}`;
+          }
+          if (priceUnit) priceUnit.textContent = ` / ${product.unit || product.uom || 'unit'}`;
+          if (moq) moq.textContent = `${product.moq} ${product.unit || product.uom || 'units'}`;
+          if (availability) availability.textContent = product.availability;
+          if (locationEl && product.supplierLocation) locationEl.textContent = product.supplierLocation;
+
+          if (supplierName) {
+            supplierName.innerHTML = `
+              <div class="product-trust"><span>Supplier</span><strong>${product.supplierName}</strong></div>
+              <div class="product-trust"><span>Trust Score</span><strong>96/100</strong></div>
+            `;
+          }
+
+          // Image & Caption
+          const image = document.querySelector(".product-detail-image");
+          if (image && product.image) {
+            image.src = product.image;
+            image.alt = product.name;
+            image.onerror = function() {
+              this.src = "../images/products/industrial-safety-gloves.webp";
+            };
+          }
+          const alt = document.querySelector(".product-image-caption");
+          if (alt) alt.textContent = product.name;
+
+          // Specifications Table
+          if (product.specs && Object.keys(product.specs).length > 0) {
+            const specTable = document.querySelector(".specification-table");
+            if (specTable) {
+              specTable.innerHTML = Object.entries(product.specs).map(([key, val]) => `
+                <div class="specification-row">
+                  <span>${key}</span>
+                  <strong>${val}</strong>
+                </div>
+              `).join("");
+            }
+          }
+
+          // Supplier Information Section
+          const supSectionTitle = document.querySelector(".supplier-details-section .section-title");
+          if (supSectionTitle) supSectionTitle.textContent = product.supplierName;
+          const supCardName = document.querySelector(".supplier-details-card .supplier-name");
+          if (supCardName) supCardName.textContent = product.supplierName;
+          const supLocation = document.querySelector(".supplier-metric:nth-child(2) .metric-value");
+          if (supLocation && product.supplierLocation) supLocation.textContent = product.supplierLocation;
         }
-        const image = document.querySelector(".product-detail-image");
-        if (image) image.src = product.image;
-        const alt = document.querySelector(".product-image-caption");
-        if (alt) alt.textContent = product.name;
       });
     </script>
     <script src="../js/script.js"></script>

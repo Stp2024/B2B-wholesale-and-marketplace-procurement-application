@@ -23,8 +23,10 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     initSharedNavigation();
+    initHomePageAuthState();
     initSmoothScrolling();
     initBackToTop();
+    initHomeProductCatalog();
     initProductPage();
     initSupplierPage();
     initDiscoverSuppliersPage();
@@ -267,6 +269,362 @@ function initSharedNavigation() {
 
 
 /* =========================================================
+   HOME PAGE AUTHENTICATION & ROLE-BASED PROFILE STATE
+========================================================= */
+
+function initHomePageAuthState() {
+    var profileModal = document.getElementById("userProfileModal");
+    var closeProfileModalBtn = document.getElementById("closeUserProfileModalBtn");
+    var homeProfileSec = document.getElementById("homeUserProfileSection");
+
+    var staticAuthNav = document.getElementById("staticAuthNavigation");
+    var profileAvatarInitials = document.getElementById("profileAvatarInitials");
+    var profileFullName = document.getElementById("profileFullName");
+    var profileBusinessName = document.getElementById("profileBusinessName");
+    var profileRoleBadge = document.getElementById("profileRoleBadge");
+    var profileVerifiedBadge = document.getElementById("profileVerifiedBadge");
+    var profileEmail = document.getElementById("profileEmail");
+    var profilePhone = document.getElementById("profilePhone");
+    var profileRoleText = document.getElementById("profileRoleText");
+    var profileVerificationText = document.getElementById("profileVerificationText");
+    var profileDashboardBtn = document.getElementById("profileDashboardBtn");
+    var profileDashboardBtnText = document.getElementById("profileDashboardBtnText");
+
+    var profileViewBtn = document.getElementById("profileViewBtn");
+    var profileEditBtn = document.getElementById("profileEditBtn");
+    var profileLogoutBtn = document.getElementById("profileLogoutBtn");
+
+    var viewModal = document.getElementById("viewProfileModal");
+    var editModal = document.getElementById("editProfileModal");
+    var closeViewBtn = document.getElementById("closeViewProfileBtn");
+    var closeViewFooter = document.getElementById("closeViewProfileBtnFooter");
+    var openEditFromView = document.getElementById("openEditFromViewBtn");
+    var closeEditBtn = document.getElementById("closeEditProfileBtn");
+    var cancelEditBtn = document.getElementById("cancelEditProfileBtn");
+    var editForm = document.getElementById("homeEditProfileForm");
+
+    function getLoggedInUser() {
+        try {
+            var raw = localStorage.getItem("tradenestCurrentUser");
+            if (!raw) return null;
+            var u = JSON.parse(raw);
+            if (u && typeof u === "object" && (u.email || u.fullName || u.role)) {
+                return u;
+            }
+        } catch (e) {
+            console.warn("Error parsing user:", e);
+        }
+        return null;
+    }
+
+    function getInitials(name) {
+        if (!name) return "TN";
+        var parts = name.trim().split(/\s+/);
+        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function openProfileCardModal() {
+        var user = getLoggedInUser();
+        if (!user) {
+            window.location.href = "auth/login.html";
+            return;
+        }
+        if (typeof window.ensureUserProfileModal === "function") {
+            window.ensureUserProfileModal();
+        }
+        var modal = document.getElementById("userProfileModal");
+        renderAuthState();
+        if (modal) {
+            modal.style.display = "flex";
+        }
+    }
+
+    function closeProfileCardModal() {
+        var modal = document.getElementById("userProfileModal");
+        if (modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    window.openUserProfileModal = openProfileCardModal;
+    window.closeUserProfileModal = closeProfileCardModal;
+
+    function renderAuthState() {
+        var user = getLoggedInUser();
+
+        if (user) {
+            if (homeProfileSec) homeProfileSec.style.display = "block";
+            if (staticAuthNav) staticAuthNav.style.display = "none";
+
+            var fullName = user.fullName || user.name || "TradeNest User";
+            var businessName = user.businessName || (user.business && user.business.name) || "TradeNest Enterprise";
+            var email = user.email || "user@tradenest.com";
+            var phone = user.phone || user.phoneNumber || "+91 98765 43210";
+            var role = (user.role || user.accountType || "buyer").toLowerCase();
+            var verificationStatus = user.verificationStatus || "Verified";
+
+            if (profileAvatarInitials) profileAvatarInitials.textContent = getInitials(fullName);
+            if (profileFullName) profileFullName.textContent = fullName;
+            if (profileBusinessName) {
+                profileBusinessName.innerHTML = '<span class="profile-business-icon">🏢</span> ' + businessName;
+            }
+            if (profileEmail) profileEmail.textContent = email;
+            if (profilePhone) profilePhone.textContent = phone;
+
+            // Configure Role and Role-Based Dashboard option
+            if (role === "supplier") {
+                if (profileRoleBadge) {
+                    profileRoleBadge.className = "tn-badge-role role-supplier";
+                    profileRoleBadge.textContent = "Supplier";
+                }
+                if (profileRoleText) profileRoleText.textContent = "Supplier";
+                if (profileDashboardBtnText) profileDashboardBtnText.textContent = "My Supplier Dashboard";
+                if (profileDashboardBtn) {
+                    profileDashboardBtn.href = "supplier-dashboard.html";
+                    profileDashboardBtn.setAttribute("aria-label", "Open My Supplier Dashboard");
+                }
+            } else if (role === "admin") {
+                if (profileRoleBadge) {
+                    profileRoleBadge.className = "tn-badge-role role-admin";
+                    profileRoleBadge.textContent = "Administrator";
+                }
+                if (profileRoleText) profileRoleText.textContent = "Administrator";
+                if (profileDashboardBtnText) profileDashboardBtnText.textContent = "Admin Governance Console";
+                if (profileDashboardBtn) {
+                    profileDashboardBtn.href = "pages/admin/dashboard.html";
+                    profileDashboardBtn.setAttribute("aria-label", "Open Admin Governance Console");
+                }
+            } else {
+                // Buyer role
+                if (profileRoleBadge) {
+                    profileRoleBadge.className = "tn-badge-role role-buyer";
+                    profileRoleBadge.textContent = "Buyer";
+                }
+                if (profileRoleText) profileRoleText.textContent = "Buyer";
+                if (profileDashboardBtnText) profileDashboardBtnText.textContent = "My Buyer Dashboard";
+                if (profileDashboardBtn) {
+                    profileDashboardBtn.href = "buyer-dashboard.html";
+                    profileDashboardBtn.setAttribute("aria-label", "Open My Buyer Dashboard");
+                }
+            }
+
+            // Verification status
+            var isVerified = verificationStatus.toLowerCase().includes("verif");
+            if (profileVerifiedBadge) {
+                profileVerifiedBadge.innerHTML = isVerified
+                    ? '<span class="check-icon">✓</span> Profile Verified'
+                    : '<span class="check-icon">⏳</span> Pending Verification';
+                profileVerifiedBadge.style.color = isVerified ? "#15803d" : "#b45309";
+                profileVerifiedBadge.style.background = isVerified ? "#f0fdf4" : "#fffbeb";
+                profileVerifiedBadge.style.borderColor = isVerified ? "#bbf7d0" : "#fde68a";
+            }
+            if (profileVerificationText) {
+                profileVerificationText.textContent = isVerified ? "Profile Verified" : "Pending Verification";
+            }
+        } else {
+            // Not logged in: close modal and hide home profile section
+            closeProfileCardModal();
+            if (homeProfileSec) homeProfileSec.style.display = "none";
+            if (staticAuthNav) staticAuthNav.style.display = "flex";
+        }
+    }
+
+    // Attach to window so shared-nav or login can trigger update
+    window.renderHomePageAuthState = renderAuthState;
+
+    // Initial render
+    renderAuthState();
+
+    // Check query params if ?profile=1 or hash #profile
+    if (window.location.search.includes("profile") || window.location.hash.includes("profile")) {
+        setTimeout(openProfileCardModal, 150);
+    }
+
+    // Close profile popup modal listeners
+    if (closeProfileModalBtn) {
+        closeProfileModalBtn.addEventListener("click", closeProfileCardModal);
+    }
+
+    if (profileModal) {
+        profileModal.addEventListener("click", function (e) {
+            if (e.target === profileModal) {
+                closeProfileCardModal();
+            }
+        });
+    }
+
+    // Escape key closes profile popup
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && profileModal && profileModal.style.display === "flex") {
+            closeProfileCardModal();
+        }
+    });
+
+    // Attach logout click listener
+    if (profileLogoutBtn) {
+        profileLogoutBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            closeProfileCardModal();
+            if (typeof window.logoutTradeNestUser === "function") {
+                window.logoutTradeNestUser();
+            } else {
+                localStorage.removeItem("tradenestCurrentUser");
+                sessionStorage.clear();
+                renderAuthState();
+                if (typeof window.renderTradeNestNav === "function") window.renderTradeNestNav();
+            }
+        });
+    }
+
+    // View Profile Modal
+    function openViewModal() {
+        var user = getLoggedInUser();
+        if (!user || !viewModal) return;
+
+        var elFull = document.getElementById("viewModalFullName");
+        var elRole = document.getElementById("viewModalRole");
+        var elBiz = document.getElementById("viewModalBusiness");
+        var elVer = document.getElementById("viewModalVerification");
+        var elEmail = document.getElementById("viewModalEmail");
+        var elPhone = document.getElementById("viewModalPhone");
+        var elCategory = document.getElementById("viewModalCategory");
+        var elStatus = document.getElementById("viewModalStatus");
+
+        var roleStr = (user.role || "buyer").toUpperCase();
+        if (elFull) elFull.textContent = user.fullName || "TradeNest User";
+        if (elRole) elRole.textContent = roleStr;
+        if (elBiz) elBiz.textContent = user.businessName || (user.business && user.business.name) || "TradeNest Enterprise";
+        if (elVer) elVer.textContent = "✓ " + (user.verificationStatus || "Verified");
+        if (elEmail) elEmail.textContent = user.email || "-";
+        if (elPhone) elPhone.textContent = user.phone || "+91 98765 43210";
+        if (elCategory) elCategory.textContent = (user.business && user.business.category) || "B2B Wholesale & Procurement";
+        if (elStatus) elStatus.textContent = (user.status || "Active").toUpperCase();
+
+        viewModal.style.display = "flex";
+    }
+
+    function closeViewModal() {
+        if (viewModal) viewModal.style.display = "none";
+    }
+
+    if (profileViewBtn) profileViewBtn.addEventListener("click", function () {
+        openViewModal();
+    });
+    if (closeViewBtn) closeViewBtn.addEventListener("click", closeViewModal);
+    if (closeViewFooter) closeViewFooter.addEventListener("click", closeViewModal);
+    if (openEditFromView) {
+        openEditFromView.addEventListener("click", function () {
+            closeViewModal();
+            openEditModal();
+        });
+    }
+
+    // Edit Profile Modal
+    function openEditModal() {
+        var user = getLoggedInUser();
+        if (!user || !editModal) return;
+
+        var inputName = document.getElementById("editProfileName");
+        var inputBiz = document.getElementById("editProfileBusiness");
+        var inputPhone = document.getElementById("editProfilePhone");
+        var inputEmail = document.getElementById("editProfileEmail");
+
+        if (inputName) inputName.value = user.fullName || "";
+        if (inputBiz) inputBiz.value = user.businessName || (user.business && user.business.name) || "";
+        if (inputPhone) inputPhone.value = user.phone || "";
+        if (inputEmail) inputEmail.value = user.email || "";
+
+        editModal.style.display = "flex";
+        if (inputName) inputName.focus();
+    }
+
+    function closeEditModal() {
+        if (editModal) editModal.style.display = "none";
+    }
+
+    if (profileEditBtn) profileEditBtn.addEventListener("click", function () {
+        openEditModal();
+    });
+    if (closeEditBtn) closeEditBtn.addEventListener("click", closeEditModal);
+    if (cancelEditBtn) cancelEditBtn.addEventListener("click", closeEditModal);
+
+    // Save Profile Form Submission
+    if (editForm) {
+        editForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var user = getLoggedInUser();
+            if (!user) return;
+
+            var inputName = document.getElementById("editProfileName");
+            var inputBiz = document.getElementById("editProfileBusiness");
+            var inputPhone = document.getElementById("editProfilePhone");
+
+            var newName = inputName ? inputName.value.trim() : user.fullName;
+            var newBiz = inputBiz ? inputBiz.value.trim() : user.businessName;
+            var newPhone = inputPhone ? inputPhone.value.trim() : user.phone;
+
+            if (!newName) {
+                alert("Please enter a valid full name.");
+                return;
+            }
+
+            user.fullName = newName;
+            user.businessName = newBiz;
+            if (user.business) user.business.name = newBiz;
+            user.phone = newPhone;
+
+            // Save updated user in tradenestCurrentUser
+            localStorage.setItem("tradenestCurrentUser", JSON.stringify(user));
+
+            // Also update in tradenestUsers if present
+            try {
+                var storedUsers = JSON.parse(localStorage.getItem("tradenestUsers") || "[]");
+                if (Array.isArray(storedUsers)) {
+                    var idx = storedUsers.findIndex(function (u) {
+                        return u && u.email && u.email.toLowerCase() === user.email.toLowerCase();
+                    });
+                    if (idx !== -1) {
+                        storedUsers[idx].fullName = newName;
+                        storedUsers[idx].businessName = newBiz;
+                        if (storedUsers[idx].business) storedUsers[idx].business.name = newBiz;
+                        storedUsers[idx].phone = newPhone;
+                        localStorage.setItem("tradenestUsers", JSON.stringify(storedUsers));
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not sync tradenestUsers:", err);
+            }
+
+            closeEditModal();
+            renderAuthState();
+            if (typeof window.renderTradeNestNav === "function") window.renderTradeNestNav();
+            showToast("Profile details updated successfully!", "success");
+        });
+    }
+
+    // Close modals on backdrop click or ESC
+    [viewModal, editModal].forEach(function (modal) {
+        if (modal) {
+            modal.addEventListener("click", function (e) {
+                if (e.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            closeProfileCardModal();
+            closeViewModal();
+            closeEditModal();
+        }
+    });
+}
+
+
+/* =========================================================
    SMOOTH SCROLLING
 ========================================================= */
 
@@ -365,56 +723,304 @@ function initBackToTop() {
 
 
 /* =========================================================
+   HOME PAGE PRODUCT CATALOG
+   Connects to TradeNestProductService to display live products
+========================================================= */
+
+function initHomeProductCatalog() {
+    var grid = document.getElementById("homeProductsGrid");
+    if (!grid) {
+        return;
+    }
+
+    var searchInput = document.getElementById("homeProductSearch") || document.getElementById("homeProductSearchInput");
+    var categorySelect = document.getElementById("homeCategoryFilter") || document.getElementById("homeCategorySelect");
+    var sortSelect = document.getElementById("homeSortFilter") || document.getElementById("homeSortSelect");
+    var countEl = document.getElementById("homeProductsCount");
+    var categoryPills = Array.from(document.querySelectorAll(".cat-pill, .b2b-category-card"));
+
+    var currentCategory = "";
+
+    function renderProducts() {
+        var query = (searchInput && searchInput.value ? searchInput.value.toLowerCase().trim() : "");
+        var selectedCat = (categorySelect && categorySelect.value ? categorySelect.value.toLowerCase().trim() : currentCategory);
+        var sortBy = (sortSelect && sortSelect.value ? sortSelect.value : "featured");
+
+        var products = [];
+        if (window.TradeNestProductService) {
+            products = window.TradeNestProductService.getProductsSync({ onlyActive: true });
+        } else {
+            try {
+                var raw = localStorage.getItem("tradenest_shared_products_v2") || localStorage.getItem("tradenest_supplier_products");
+                if (raw) {
+                    products = JSON.parse(raw).filter(function(p) { return p.status === "active"; });
+                }
+            } catch (e) {}
+        }
+
+        // Filter
+        var filtered = products.filter(function (p) {
+            var name = (p.name || "").toLowerCase();
+            var desc = (p.description || "").toLowerCase();
+            var cat = (p.category || "").toLowerCase();
+            var supplier = (p.supplierName || "").toLowerCase();
+
+            var matchesQuery = !query || name.indexOf(query) !== -1 || desc.indexOf(query) !== -1 || cat.indexOf(query) !== -1 || supplier.indexOf(query) !== -1;
+            var matchesCategory = !selectedCat || cat.indexOf(selectedCat) !== -1;
+
+            return matchesQuery && matchesCategory;
+        });
+
+        // Sort
+        filtered.sort(function (a, b) {
+            var priceA = a.price || (a.unitPrice ? a.unitPrice * 80 : 0);
+            var priceB = b.price || (b.unitPrice ? b.unitPrice * 80 : 0);
+            var ratingA = a.rating || 4.5;
+            var ratingB = b.rating || 4.5;
+
+            if (sortBy === "price-low") return priceA - priceB;
+            if (sortBy === "price-high") return priceB - priceA;
+            if (sortBy === "rating") return ratingB - ratingA;
+            if (sortBy === "moq-low") return (a.moq || 1) - (b.moq || 1);
+            if (sortBy === "newest") return String(b.id || "").localeCompare(String(a.id || ""));
+            return 0;
+        });
+
+        if (countEl) {
+            countEl.textContent = "Showing " + filtered.length + " active wholesale products";
+        }
+
+        if (!filtered.length) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 48px 24px; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border-color, #e2e8f0);">
+                    <div style="font-size: 2.5rem; margin-bottom: 12px;">🔍</div>
+                    <h3 style="font-size: 1.15rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">No matching wholesale products found</h3>
+                    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 16px;">Try adjusting your search query or selecting a different category filter.</p>
+                    <button type="button" id="btnResetHomeFilters" class="btn btn-outline btn-sm">Reset All Filters</button>
+                </div>
+            `;
+            var btnReset = document.getElementById("btnResetHomeFilters");
+            if (btnReset) {
+                btnReset.addEventListener("click", function () {
+                    if (searchInput) searchInput.value = "";
+                    if (categorySelect) categorySelect.value = "";
+                    currentCategory = "";
+                    categoryPills.forEach(function (pill) {
+                        pill.classList.remove("active");
+                        if (!pill.getAttribute("data-category")) pill.classList.add("active");
+                    });
+                    renderProducts();
+                });
+            }
+            return;
+        }
+
+        grid.innerHTML = filtered.map(function (p) {
+            var img = p.image || "images/products/industrial-safety-gloves.webp";
+            if (img.startsWith("../../")) {
+                img = img.replace("../../", "");
+            } else if (img.startsWith("../")) {
+                img = img.replace("../", "");
+            }
+
+            var priceFormatted = "₹" + Math.round(p.price || (p.unitPrice ? p.unitPrice * 80 : 390)).toLocaleString();
+            var uom = p.uom || "units";
+            var moq = p.moq || 50;
+            var supplier = p.supplierName || "TradeNest Verified Partner";
+            var delivery = p.deliveryInfo || "3-5 business days";
+            var stock = p.availableStock !== undefined ? p.availableStock : (p.stock || 100);
+
+            return `
+                <article class="product-card" data-product-id="${p.id}" style="display: flex; flex-direction: column; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s;">
+                    <div class="product-image-container" style="position: relative; height: 180px; background: #f8fafc; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img src="${img}" alt="${p.name}" class="product-image" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='images/products/industrial-safety-gloves.webp'" />
+                        <span class="badge badge-stock" style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: ${stock > 0 ? '#10b981' : '#ef4444'}; color: #ffffff;">
+                            ${stock > 0 ? "In Stock (" + stock + ")" : "Out of Stock"}
+                        </span>
+                    </div>
+                    <div class="product-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1;">
+                        <span class="product-category" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #2563eb; letter-spacing: 0.05em; margin-bottom: 4px;">
+                            ${p.category || "General"}
+                        </span>
+                        <h3 class="product-title" style="font-size: 1.05rem; font-weight: 600; color: #0f172a; margin-bottom: 6px; line-height: 1.3;">
+                            ${p.name}
+                        </h3>
+                        <p class="product-description" style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${p.description || "High quality wholesale supplies with verified manufacturing specifications."}
+                        </p>
+                        <div class="product-pricing-info" style="margin-top: auto; padding-top: 10px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                            <span class="product-price" style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">
+                                ${priceFormatted} <small style="font-size: 0.75rem; color: #64748b; font-weight: 400;">/ ${uom}</small>
+                            </span>
+                            <span class="product-moq" style="font-size: 0.8rem; font-weight: 500; color: #475569;">
+                                MOQ: ${moq} ${uom}
+                            </span>
+                        </div>
+                        <div class="product-supplier-info" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 0.8rem; color: #475569;">
+                            <span class="supplier-name" style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 65%;">
+                                🏢 ${supplier}
+                            </span>
+                            <span class="verification-badge status-verified" style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.7rem; font-weight: 600; color: #059669; background: #ecfdf5; padding: 2px 6px; border-radius: 4px;">
+                                ✓ Verified
+                            </span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">
+                            <span>🚚</span> <span>${delivery}</span>
+                        </div>
+                        <div class="product-card-actions" style="display: flex; gap: 8px; margin-top: 4px;">
+                            <a href="pages/product-details.html?id=${encodeURIComponent(p.id)}" class="btn btn-primary btn-sm" style="flex: 1; text-align: center; text-decoration: none; padding: 7px 10px; font-size: 0.8rem; border-radius: 6px;">
+                                View Details
+                            </a>
+                            <a href="pages/buyer/rfqs.html?productId=${encodeURIComponent(p.id)}" class="btn btn-outline btn-sm" style="flex: 1; text-align: center; text-decoration: none; padding: 7px 10px; font-size: 0.8rem; border-radius: 6px;">
+                                Request RFQ
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join("");
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("input", renderProducts);
+    }
+    if (categorySelect) {
+        categorySelect.addEventListener("change", function () {
+            currentCategory = categorySelect.value.toLowerCase().trim();
+            categoryPills.forEach(function (pill) {
+                var pillCat = (pill.getAttribute("data-category") || "").toLowerCase().trim();
+                pill.classList.toggle("active", pillCat === currentCategory);
+            });
+            renderProducts();
+        });
+    }
+    if (sortSelect) {
+        sortSelect.addEventListener("change", renderProducts);
+    }
+
+    categoryPills.forEach(function (pill) {
+        pill.addEventListener("click", function () {
+            var cat = (pill.getAttribute("data-category") || "").toLowerCase().trim();
+            currentCategory = cat;
+            if (categorySelect) {
+                categorySelect.value = cat;
+            }
+            categoryPills.forEach(function (p) { p.classList.remove("active"); });
+            pill.classList.add("active");
+            renderProducts();
+        });
+    });
+
+    window.addEventListener("tradenest:products-changed", renderProducts);
+    window.addEventListener("storage", function (e) {
+        if (e.key === "tradenest_shared_products_v2" || e.key === "tradenest_supplier_products") {
+            renderProducts();
+        }
+    });
+
+    renderProducts();
+}
+
+
+/* =========================================================
    PRODUCT PAGE
 ========================================================= */
 
 function initProductPage() {
-    // Dynamic injection of supplier products from Supplier Workspace
-    try {
-        var grid = $(".products-grid");
-        var rawSupplierProducts = localStorage.getItem("tradenest_supplier_products");
-        if (grid && rawSupplierProducts) {
-            var sProducts = JSON.parse(rawSupplierProducts);
-            sProducts.forEach(function (sp) {
-                if (sp.status === "active" && !$('[data-product-id="' + sp.id + '"]', grid)) {
-                    var card = document.createElement("article");
-                    card.className = "product-card";
-                    card.setAttribute("data-product-id", sp.id);
-                    var imgPath = sp.image ? sp.image.replace(/^\.\.\/\.\.\//, "../") : "../images/products/industrial-safety-gloves.webp";
-                    card.innerHTML = `
+    function populateDynamicProducts() {
+        var grid = $(".products-listing-section .products-grid") || $(".products-grid");
+        if (!grid || !window.TradeNestProductService) {
+            return;
+        }
+        var activeProds = window.TradeNestProductService.getProductsSync({ onlyActive: true });
+        if (activeProds && activeProds.length) {
+            grid.innerHTML = activeProds.map(function(sp) {
+                var imgPath = sp.image || "../images/products/industrial-safety-gloves.webp";
+                if (imgPath.startsWith("../../")) {
+                    imgPath = imgPath.replace("../../", "../");
+                }
+                var stock = sp.availableStock !== undefined ? sp.availableStock : (sp.stock || 0);
+                var priceINR = Math.round(sp.price || (sp.unitPrice ? sp.unitPrice * 80 : 390));
+                var uom = sp.uom || "units";
+                var moq = sp.moq || 50;
+                var supplier = sp.supplierName || "TradeNest Verified Partner";
+                var delivery = sp.deliveryInfo || "3-5 business days";
+                var categorySlug = (sp.category || "General").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                var rating = sp.rating || 4.8;
+                var trust = sp.trustScore || 96;
+
+                return `
+                    <article class="product-card" data-product-id="${sp.id}" data-category="${categorySlug}">
                         <div class="product-image-container">
-                            <img src="${imgPath}" alt="${sp.name}" class="product-image" />
-                            <span class="badge badge-stock">${sp.availableStock > 0 ? "In Stock" : "Out of Stock"}</span>
+                            <img src="${imgPath}" alt="${sp.name}" class="product-image" onerror="this.src='../images/products/industrial-safety-gloves.webp'" />
+                            <span class="badge badge-stock">${stock > 0 ? "In Stock (" + stock + ")" : "Out of Stock"}</span>
                         </div>
                         <div class="product-content">
-                            <span class="product-category">${sp.category}</span>
+                            <span class="product-category">${sp.category || "General"}</span>
                             <h3 class="product-title">${sp.name}</h3>
-                            <p class="product-description">${sp.description}</p>
+                            <p class="product-description">${sp.description || "Certified wholesale commercial quality specifications."}</p>
                             <div class="product-pricing-info">
-                                <span class="product-price">INR ${Math.round(sp.unitPrice * 80)} <small>/ ${sp.uom}</small></span>
-                                <span class="product-moq">MOQ: ${sp.moq} ${sp.uom}</span>
+                                <span class="product-price">INR ${priceINR} <small>/ ${uom}</small></span>
+                                <span class="product-moq">MOQ: ${moq} ${uom}</span>
                             </div>
                             <div class="product-supplier-info">
-                                <span class="supplier-name">TradeNest Supplies Pvt. Ltd.</span>
+                                <span class="supplier-name">${supplier}</span>
                                 <span class="verification-badge status-verified">Verified Supplier</span>
                             </div>
                             <div class="product-metrics">
-                                <span class="trust-score">Trust Score: <strong>96/100</strong></span>
-                                <span class="rating-stars" aria-label="Rating: 5 out of 5 stars"><small>5.0 / 5</small></span>
+                                <span class="trust-score">Trust Score: <strong>${trust}/100</strong></span>
+                                <span class="rating-stars" aria-label="Rating: ${rating} out of 5 stars"><small>${rating} / 5</small></span>
+                            </div>
+                            <div class="product-delivery-info" style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">
+                                <span>🚚 Lead Time: <strong>${delivery}</strong></span>
                             </div>
                             <div class="product-card-actions">
-                                <a href="product-details.html?id=${sp.id}" class="btn btn-primary btn-sm">View Product</a>
-                                <a href="supplier-details.html" class="btn btn-outline btn-sm">View Supplier</a>
+                                <a href="product-details.html?id=${encodeURIComponent(sp.id)}" class="btn btn-primary btn-sm">View Details</a>
+                                <a href="buyer/rfqs.html?productId=${encodeURIComponent(sp.id)}" class="btn btn-outline btn-sm">Request RFQ</a>
                             </div>
                         </div>
-                    `;
-                    grid.prepend(card);
-                }
-            });
+                    </article>
+                `;
+            }).join("");
         }
-    } catch (e) {
-        console.warn("Could not inject supplier products into catalogue:", e);
     }
+
+    populateDynamicProducts();
+
+    // Category cards click navigation
+    $$(".category-card").forEach(function(card) {
+        card.style.cursor = "pointer";
+        card.addEventListener("click", function() {
+            var catTitle = $("h3, .category-title", card);
+            var catSelect = $("#filter-category");
+            if (catTitle && catSelect) {
+                var text = catTitle.textContent.trim().toLowerCase();
+                for (var i = 0; i < catSelect.options.length; i++) {
+                    var optText = catSelect.options[i].text.toLowerCase();
+                    var optVal = catSelect.options[i].value.toLowerCase();
+                    if (optText.indexOf(text) !== -1 || text.indexOf(optText) !== -1 || optVal.indexOf(text) !== -1) {
+                        catSelect.value = catSelect.options[i].value;
+                        break;
+                    }
+                }
+                applyProductFilters();
+                var listing = $(".products-listing-section");
+                if (listing) {
+                    listing.scrollIntoView({ behavior: "smooth" });
+                }
+            }
+        });
+    });
+
+    $$(".category-link").forEach(function(link) {
+        link.addEventListener("click", function(e) {
+            e.preventDefault();
+            var parent = link.closest(".category-card");
+            if (parent) {
+                parent.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+            }
+        });
+    });
     var productCards = $$(".product-card");
 
     if (!productCards.length) {
@@ -821,6 +1427,22 @@ function initProductPage() {
 
     applyProductFilters();
     sortProducts();
+
+    window.addEventListener("tradenest:products-changed", function () {
+        populateDynamicProducts();
+        productCards = $$(".product-card");
+        applyProductFilters();
+        sortProducts();
+    });
+
+    window.addEventListener("storage", function (e) {
+        if (e.key === "tradenest_shared_products_v2" || e.key === "tradenest_supplier_products") {
+            populateDynamicProducts();
+            productCards = $$(".product-card");
+            applyProductFilters();
+            sortProducts();
+        }
+    });
 }
 
 
@@ -2077,35 +2699,79 @@ function initFAQ() {
 
 
 /* =========================================================
-   BUTTONS AND DEMO ACTIONS
+/* =========================================================
+   BUTTONS AND MARKETPLACE ACTIONS
 ========================================================= */
 
 function initButtonsAndLinks() {
 
-    $$("a[href='#']").forEach(
-        function (link) {
-            link.addEventListener(
-                "click",
-                function (event) {
-                    event.preventDefault();
+    // Global Payment Action Modal / Setup Handler
+    function handlePaymentAction(button, amount, orderId) {
+        var existingModal = document.getElementById("tradenest-payment-modal");
+        if (existingModal) existingModal.remove();
 
-                    var label =
-                        link.textContent.trim() ||
-                        link.getAttribute(
-                            "aria-label"
-                        ) ||
-                        "This action";
+        var amtText = amount ? "₹" + Number(amount).toLocaleString("en-IN") : "₹24,500";
+        var ordText = orderId ? "#" + orderId : "#ORD-98231";
 
-                    showToast(
-                        label +
-                        " is a frontend demo action.",
-                        "success"
-                    );
-                }
-            );
-        }
-    );
+        var modal = document.createElement("div");
+        modal.id = "tradenest-payment-modal";
+        modal.style.cssText = "position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;";
+        modal.innerHTML = `
+            <div style="background: #ffffff; border-radius: 14px; max-width: 480px; width: 100%; padding: 28px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; font-family: inherit;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">💳</div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #0f172a;">TradeNest Secure Escrow Payment</h3>
+                        <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Order Reference: ${ordText}</p>
+                    </div>
+                </div>
+                <div style="background: #f8fafc; border-radius: 8px; padding: 14px; margin-bottom: 16px; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem;">
+                        <span style="color: #64748b;">Payable Amount:</span>
+                        <strong style="color: #0f172a; font-size: 1.05rem;">${amtText}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #64748b;">
+                        <span>Escrow Release:</span>
+                        <span style="color: #059669; font-weight: 600;">On Goods Verified Delivery</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px; font-size: 0.825rem; color: #475569; line-height: 1.5; background: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px 12px; border-radius: 0 6px 6px 0;">
+                    <strong>Gateway Configuration Notice:</strong>
+                    Live payment gateway (Razorpay / Stripe B2B Escrow API key) is pending backend environment variable binding. You can proceed with a simulated test settlement to verify the order fulfillment workflow.
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" id="btnCancelPaymentModal" class="btn btn-outline" style="padding: 9px 16px; border-radius: 6px; cursor: pointer;">Cancel</button>
+                    <button type="button" id="btnSimulateEscrowPay" class="btn btn-primary" style="padding: 9px 16px; border-radius: 6px; cursor: pointer; background: #2563eb; color: #fff; border: none; font-weight: 600;">Simulate Test Escrow Deposit</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
 
+        document.getElementById("btnCancelPaymentModal").addEventListener("click", function() {
+            modal.remove();
+        });
+
+        document.getElementById("btnSimulateEscrowPay").addEventListener("click", function() {
+            modal.remove();
+            showToast("Payment simulation successful. Funds held in TradeNest B2B Escrow.", "success");
+            if (button) {
+                button.textContent = "Paid (In Escrow)";
+                button.disabled = true;
+                button.style.background = "#10b981";
+                button.style.color = "#ffffff";
+            }
+        });
+    }
+
+    // Attach payment buttons
+    $$("[data-action='pay'], button.btn-pay, .btn-make-payment").forEach(function(btn) {
+        btn.addEventListener("click", function(e) {
+            e.preventDefault();
+            var amt = btn.getAttribute("data-amount") || 24500;
+            var ord = btn.getAttribute("data-order-id") || "ORD-98231";
+            handlePaymentAction(btn, amt, ord);
+        });
+    });
 
     $$(
         'a[href*="register.html"], ' +
@@ -2136,10 +2802,9 @@ function initButtonsAndLinks() {
         btnContactSupp.addEventListener("click", function(e) {
             var user = null;
             try { user = JSON.parse(localStorage.getItem("tradenestCurrentUser")); } catch(err) {}
-            if (user) {
-                e.preventDefault();
-                window.location.href = "buyer/messages.html?supplier=Example%20Manufacturing%20Co.";
-            }
+            e.preventDefault();
+            var target = user ? "buyer/messages.html?supplier=Example%20Manufacturing%20Co." : "../auth/login.html";
+            window.location.href = target;
         });
     }
     var btnReqQuote = document.getElementById("btnRequestQuoteDetails");
@@ -2147,51 +2812,31 @@ function initButtonsAndLinks() {
         btnReqQuote.addEventListener("click", function(e) {
             var user = null;
             try { user = JSON.parse(localStorage.getItem("tradenestCurrentUser")); } catch(err) {}
-            if (user) {
-                e.preventDefault();
-                window.location.href = "buyer/rfqs.html?supplier=Example%20Manufacturing%20Co.";
-            }
+            e.preventDefault();
+            var target = user ? "buyer/rfqs.html?supplier=Example%20Manufacturing%20Co." : "../auth/login.html";
+            window.location.href = target;
         });
     }
 
+    $$(".product-card .btn, .supplier-card .btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            var label = button.textContent.trim();
+            var lowerLabel = label.toLowerCase();
 
-    $$(".product-card .btn, .supplier-card .btn")
-        .forEach(function (button) {
-            button.addEventListener(
-                "click",
-                function () {
-                    var label =
-                        button.textContent.trim();
-
-                    var lowerLabel =
-                        label.toLowerCase();
-
-                    if (
-                        lowerLabel.indexOf(
-                            "quote"
-                        ) !== -1 ||
-                        lowerLabel.indexOf(
-                            "sample"
-                        ) !== -1 ||
-                        lowerLabel.indexOf(
-                            "contact"
-                        ) !== -1 ||
-                        lowerLabel.indexOf(
-                            "compare"
-                        ) !== -1
-                    ) {
-                        try {
-                            sessionStorage.setItem(
-                                "tradenest_last_action",
-                                label
-                            );
-                        } catch (error) {
-                            // Optional.
-                        }
-                    }
+            if (
+                lowerLabel.indexOf("quote") !== -1 ||
+                lowerLabel.indexOf("sample") !== -1 ||
+                lowerLabel.indexOf("contact") !== -1 ||
+                lowerLabel.indexOf("compare") !== -1
+            ) {
+                try {
+                    sessionStorage.setItem("tradenest_last_action", label);
+                } catch (error) {
+                    // Optional.
                 }
-            );
+            }
         });
+    });
 }
 
 

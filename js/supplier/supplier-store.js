@@ -872,6 +872,34 @@
     // MODULE 17 & 18: Products & Inventory
     // ==========================================
     function getProducts() {
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.getProductsSync === "function") {
+            const shared = window.TradeNestProductService.getProductsSync({ includeAllStatuses: true });
+            if (Array.isArray(shared) && shared.length > 0) {
+                return shared.map(p => ({
+                    id: p.id,
+                    sku: p.sku || `SKU-${p.id}`,
+                    name: p.name,
+                    category: p.category,
+                    description: p.description,
+                    image: p.image,
+                    uom: p.unit || "units",
+                    unitPrice: p.price ? Math.round(p.price / 80 * 100) / 100 : 5.0,
+                    priceINR: p.price,
+                    moq: p.moq,
+                    availableStock: p.stock,
+                    reservedStock: 0,
+                    minThreshold: p.minThreshold || Math.max(10, Math.floor(p.stock * 0.15)),
+                    status: (p.status || "Active").toLowerCase() === "active" ? "active" : ((p.status || "").toLowerCase() === "out of stock" ? "unavailable" : "inactive"),
+                    rawStatus: p.status || "Active",
+                    deliveryInfo: p.deliveryInfo || "3-5 business days",
+                    supplierId: p.supplierId,
+                    supplierName: p.supplierName,
+                    specs: p.specs || {},
+                    createdAt: p.createdAt,
+                    updatedAt: p.updatedAt
+                }));
+            }
+        }
         return readStorage(KEYS.PRODUCTS, SEED_DATA.products);
     }
 
@@ -881,6 +909,37 @@
     }
 
     function saveProduct(productData) {
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.saveProductSync === "function") {
+            try {
+                const user = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function") 
+                    ? window.TradeNestStore.getCurrentUser() 
+                    : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier", businessName: "ABC Trade" });
+                
+                const normalized = {
+                    id: productData.id || undefined,
+                    name: productData.name,
+                    sku: productData.sku,
+                    category: productData.category,
+                    description: productData.description,
+                    price: productData.priceINR || (productData.unitPrice ? Math.round(productData.unitPrice * 80) : 400),
+                    unit: productData.uom || productData.unit || "units",
+                    moq: productData.moq,
+                    stock: productData.availableStock !== undefined ? productData.availableStock : productData.stock,
+                    deliveryInfo: productData.deliveryInfo || "3-5 business days across India",
+                    status: productData.status || (Number(productData.availableStock) === 0 ? "Out of Stock" : "Active"),
+                    image: productData.image,
+                    specs: productData.specs || {}
+                };
+                window.TradeNestProductService.saveProductSync(normalized, user);
+                logActivity("📦", `Product "${productData.name}" saved and synced to shared catalogue`, "products");
+                notifyChange("products");
+                return true;
+            } catch (err) {
+                console.error("[SupplierStore] saveProduct error via TradeNestProductService:", err);
+                throw err;
+            }
+        }
+
         const products = getProducts();
         const existingIdx = products.findIndex(p => p.id === productData.id);
 
@@ -905,6 +964,21 @@
     }
 
     function deleteProduct(id) {
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.deleteProductSync === "function") {
+            try {
+                const user = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
+                    ? window.TradeNestStore.getCurrentUser()
+                    : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier" });
+                window.TradeNestProductService.deleteProductSync(id, user);
+                logActivity("🗑️", `Product removed from catalogue`, "products");
+                notifyChange("products");
+                return true;
+            } catch (err) {
+                console.error("[SupplierStore] deleteProduct error:", err);
+                throw err;
+            }
+        }
+
         let products = getProducts();
         const prod = products.find(p => p.id === id);
         if (prod) {
@@ -918,6 +992,20 @@
     }
 
     function toggleProductStatus(id) {
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.toggleProductStatusSync === "function") {
+            try {
+                const user = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
+                    ? window.TradeNestStore.getCurrentUser()
+                    : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier" });
+                const newStatus = window.TradeNestProductService.toggleProductStatusSync(id, user);
+                logActivity("🔄", `Product status updated to ${newStatus}`, "products");
+                notifyChange("products");
+                return newStatus;
+            } catch (err) {
+                console.error("[SupplierStore] toggleProductStatus error:", err);
+            }
+        }
+
         const products = getProducts();
         const prod = products.find(p => p.id === id);
         if (prod) {
@@ -931,6 +1019,20 @@
     }
 
     function updateStock(id, newAvailableStock, newMinThreshold) {
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.updateStockSync === "function") {
+            try {
+                const user = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
+                    ? window.TradeNestStore.getCurrentUser()
+                    : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier" });
+                window.TradeNestProductService.updateStockSync(id, newAvailableStock, newMinThreshold, user);
+                logActivity("📑", `Stock updated to ${newAvailableStock}`, "inventory");
+                notifyChange("inventory");
+                return true;
+            } catch (err) {
+                console.error("[SupplierStore] updateStock error:", err);
+            }
+        }
+
         const products = getProducts();
         const prod = products.find(p => p.id === id);
         if (prod) {

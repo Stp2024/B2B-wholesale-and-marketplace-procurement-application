@@ -17,6 +17,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const store = window.SupplierStore;
 
+    // Helper: Normalize relative asset paths based on folder depth
+    function resolveImagePath(path) {
+        if (!path) return "images/TradeNest.webp";
+        if (path.startsWith("data:") || path.startsWith("http://") || path.startsWith("https://")) {
+            return path;
+        }
+        const isRoot = !window.location.pathname.includes("/pages/");
+        if (isRoot) {
+            return path.replace(/^(\.\.\/)+/, "");
+        } else {
+            if (!path.startsWith("../")) {
+                return "../../" + path;
+            }
+        }
+        return path;
+    }
+
     // ==========================================================================
     // 1. DOM REFERENCES
     // ==========================================================================
@@ -130,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
         settings: "Preferences & Settings"
     };
 
-    function switchView(viewName) {
+    function switchView(viewName, filterVal) {
         if (!viewName || !VIEW_TITLES[viewName]) {
             viewName = "overview";
         }
@@ -157,22 +174,9 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSectionTitle.textContent = VIEW_TITLES[viewName];
         }
 
-        // Update top back button (hidden on overview, shown on other module views)
-        const supplierBackBtn = document.getElementById("supplierTopBackButton");
-        if (supplierBackBtn) {
-            if (viewName === "overview") {
-                supplierBackBtn.style.display = "none";
-            } else {
-                supplierBackBtn.style.display = "inline-flex";
-                supplierBackBtn.onclick = function () {
-                    if (window.history.length > 1) {
-                        window.history.back();
-                    } else {
-                        switchView("overview");
-                    }
-                };
-            }
-        }
+        // Close dropdowns if open
+        closeProfileDropdown();
+        closeNotificationDropdown();
 
         // Close mobile sidebar if open
         if (sidebar && sidebar.classList.contains("open")) {
@@ -181,6 +185,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Trigger view-specific rendering
         renderActiveView(viewName);
+
+        // Apply specific filter if requested
+        if (filterVal) {
+            if (viewName === "products") {
+                const productStatusFilter = document.getElementById("productStatusFilter");
+                if (productStatusFilter) {
+                    productStatusFilter.value = filterVal;
+                    renderProducts();
+                }
+            } else if (viewName === "inventory") {
+                const inventoryStockFilter = document.getElementById("inventoryStockFilter");
+                if (inventoryStockFilter) {
+                    inventoryStockFilter.value = filterVal;
+                    renderInventory();
+                }
+            } else if (viewName === "rfqs") {
+                activeRFQFilter = filterVal;
+                const rfqTabs = document.getElementById("rfqStatusTabs");
+                if (rfqTabs) {
+                    rfqTabs.querySelectorAll(".tab-btn").forEach(b => {
+                        b.classList.toggle("active", b.getAttribute("data-status") === filterVal);
+                    });
+                }
+                renderRFQs();
+            } else if (viewName === "quotations") {
+                const quoteStatusFilter = document.getElementById("quoteStatusFilter");
+                if (quoteStatusFilter) {
+                    quoteStatusFilter.value = filterVal;
+                    renderQuotations();
+                }
+            } else if (viewName === "orders") {
+                activeOrderFilter = filterVal;
+                const orderTabs = document.getElementById("orderStatusTabs");
+                if (orderTabs) {
+                    orderTabs.querySelectorAll(".tab-btn").forEach(b => {
+                        b.classList.toggle("active", b.getAttribute("data-status") === filterVal);
+                    });
+                }
+                renderOrders();
+            }
+        }
 
         // Update URL hash without jumping
         if (window.location.hash !== `#${viewName}`) {
@@ -201,7 +246,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (target) {
             event.preventDefault();
             const viewName = target.getAttribute("data-view");
-            switchView(viewName);
+            const filterVal = target.getAttribute("data-filter");
+            switchView(viewName, filterVal);
+        }
+    });
+
+    // Keyboard activation (Enter / Space) for interactive stats and quick action cards
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            const target = event.target.closest("[data-view], .clickable-stat, .quick-action-card");
+            if (target && !["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(target.tagName)) {
+                event.preventDefault();
+                target.click();
+            }
         }
     });
 
@@ -335,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     const btnReviewStockFromAlert = document.getElementById("btnReviewStockFromAlert");
     if (btnReviewStockFromAlert) {
-        btnReviewStockFromAlert.addEventListener("click", () => switchView("inventory"));
+        btnReviewStockFromAlert.addEventListener("click", () => switchView("inventory", "low"));
     }
 
     // ==========================================================================
@@ -552,29 +609,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
         productsMgmtGrid.innerHTML = products.map(prod => {
             const isLowStock = prod.availableStock <= prod.minThreshold;
-            const isOutOfStock = prod.availableStock === 0;
-            const statusBadge = isOutOfStock
-                ? '<span class="badge-pill badge-outofstock">Out of Stock</span>'
-                : (prod.status === "active" ? '<span class="badge-pill badge-active">Active</span>' : '<span class="badge-pill badge-unavailable">Unavailable</span>');
+            const isOutOfStock = prod.availableStock === 0 || prod.status === "unavailable" || (prod.rawStatus === "Out of Stock");
+            const isInactive = prod.status === "inactive" || (prod.rawStatus === "Inactive");
+
+            let statusBadge = '<span class="badge-pill badge-active">Active</span>';
+            if (isInactive) {
+                statusBadge = '<span class="badge-pill badge-unavailable">Inactive</span>';
+            } else if (isOutOfStock) {
+                statusBadge = '<span class="badge-pill badge-outofstock">Out of Stock</span>';
+            }
+
+            const currentUser = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
+                ? window.TradeNestStore.getCurrentUser()
+                : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || {});
+            const canManage = window.TradeNestProductService 
+                ? window.TradeNestProductService.canUserManageProduct(currentUser, prod)
+                : true;
 
             const specsList = prod.specs ? Object.entries(prod.specs).slice(0, 2).map(([k, v]) => `<strong>${escapeHtml(k)}:</strong> ${escapeHtml(v)}`).join(" • ") : "";
 
+            const isRoot = !window.location.pathname.includes("/pages/");
+            const publicUrl = (isRoot ? "pages/" : "../") + "product-details.html?id=" + encodeURIComponent(prod.id);
+
             return `
-                <article class="prod-mgmt-card">
+                <article class="prod-mgmt-card" data-product-id="${prod.id}">
                     <div class="prod-img-wrap">
-                        <img src="${prod.image || '../../images/products/safety-gloves.webp'}" alt="${escapeHtml(prod.name)}" loading="lazy" />
+                        <a href="${publicUrl}" target="_blank" title="View live listing on public marketplace" style="display: block;">
+                            <img src="${resolveImagePath(prod.image || 'images/products/safety-gloves.webp')}" alt="${escapeHtml(prod.name)}" loading="lazy" onerror="this.onerror=null; this.src='images/TradeNest.webp';" />
+                        </a>
                         <div class="prod-badge-overlay">${statusBadge}</div>
                         <div class="prod-sku-overlay">${escapeHtml(prod.sku)}</div>
                     </div>
                     <div class="prod-body">
-                        <span class="prod-category-tag">${escapeHtml(prod.category)}</span>
-                        <h3 class="prod-name">${escapeHtml(prod.name)}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span class="prod-category-tag">${escapeHtml(prod.category)}</span>
+                            ${canManage ? '<span style="font-size: 0.72rem; color: var(--success); font-weight: 600;">✓ My Product</span>' : `<span style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(prod.supplierName || 'Other Supplier')}</span>`}
+                        </div>
+                        <h3 class="prod-name">
+                            <a href="${publicUrl}" target="_blank" title="View live listing on public marketplace" style="color: inherit; text-decoration: none;">
+                                ${escapeHtml(prod.name)} <span style="font-size: 0.75em; opacity: 0.7; vertical-align: middle;">↗</span>
+                            </a>
+                        </h3>
                         <p class="prod-desc-snippet">${escapeHtml(prod.description)}</p>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">
+                            <span>🚚 <strong>Delivery:</strong> ${escapeHtml(prod.deliveryInfo || '3-5 business days across India')}</span>
+                        </div>
                         ${specsList ? `<p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">${specsList}</p>` : ""}
 
                         <div class="prod-pricing-row">
                             <div>
-                                <span class="prod-price-main">$${(prod.unitPrice || 0).toFixed(2)}</span>
+                                <span class="prod-price-main">₹${prod.priceINR || Math.round((prod.unitPrice || 0) * 80)}</span>
                                 <span style="font-size: 0.8rem; color: var(--text-muted);">/ ${escapeHtml(prod.uom)}</span>
                             </div>
                             <span class="prod-moq-label">MOQ: ${prod.moq} ${escapeHtml(prod.uom)}</span>
@@ -588,15 +672,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
 
                         <div class="prod-actions-bar">
-                            <button type="button" class="btn btn-sm btn-secondary btn-full btn-edit-product" data-id="${prod.id}">
-                                ✏️ Edit
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline btn-full btn-toggle-status" data-id="${prod.id}">
-                                ${prod.status === "active" ? "Mark Unavailable" : "Publish Active"}
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline btn-delete-product" data-id="${prod.id}" title="Delete Product" style="color: var(--danger); border-color: rgba(167,93,88,0.3);">
-                                🗑️
-                            </button>
+                            <a href="${publicUrl}" target="_blank" class="btn btn-sm btn-outline btn-full btn-view-public" style="color: var(--primary-dark); border-color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+                                <span>🌐</span> View on Public Site ↗
+                            </a>
+                            ${canManage ? `
+                            <div style="display: flex; gap: 6px; width: 100%;">
+                                <button type="button" class="btn btn-sm btn-secondary btn-full btn-edit-product" data-id="${prod.id}">
+                                    ✏️ Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline btn-full btn-toggle-status" data-id="${prod.id}">
+                                    ${prod.status === "active" ? "Deactivate" : "Publish"}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline btn-delete-product" data-id="${prod.id}" title="Delete Product" style="color: var(--danger); border-color: rgba(167,93,88,0.3);">
+                                    🗑️
+                                </button>
+                            </div>
+                            ` : `
+                            <div style="padding: 6px 0; text-align: center; font-size: 0.8rem; color: var(--text-muted); background: var(--surface-alt); border-radius: 4px;">
+                                Managed by ${escapeHtml(prod.supplierName || 'another supplier')}
+                            </div>
+                            `}
                         </div>
                     </div>
                 </article>
@@ -622,23 +717,36 @@ document.addEventListener("DOMContentLoaded", function () {
         const prodFormStock = document.getElementById("prodFormStock");
         const prodFormThreshold = document.getElementById("prodFormThreshold");
         const prodFormImage = document.getElementById("prodFormImage");
+        const prodFormDeliveryInfo = document.getElementById("prodFormDeliveryInfo");
+        const prodFormStatus = document.getElementById("prodFormStatus");
         const prodFormSpecs = document.getElementById("prodFormSpecs");
 
         if (prodId) {
             const prod = store.getProductById(prodId);
             if (!prod) return;
+
+            const currentUser = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
+                ? window.TradeNestStore.getCurrentUser()
+                : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || {});
+            if (window.TradeNestProductService && !window.TradeNestProductService.canUserManageProduct(currentUser, prod)) {
+                showToast("You can only edit products belonging to your supplier account.", "warning");
+                return;
+            }
+
             productModalTitle.textContent = "Edit Product";
             prodFormId.value = prod.id;
             prodFormName.value = prod.name;
             prodFormSku.value = prod.sku;
             prodFormCategory.value = prod.category;
-            prodFormUom.value = prod.uom;
+            prodFormUom.value = prod.uom || "units";
             prodFormDescription.value = prod.description;
-            prodFormUnitPrice.value = prod.unitPrice;
+            prodFormUnitPrice.value = prod.unitPrice || (prod.priceINR ? (prod.priceINR / 80).toFixed(2) : "15.00");
             prodFormMoq.value = prod.moq;
             prodFormStock.value = prod.availableStock;
-            prodFormThreshold.value = prod.minThreshold;
-            prodFormImage.value = prod.image || "../../images/products/safety-gloves.webp";
+            prodFormThreshold.value = prod.minThreshold || 100;
+            prodFormImage.value = resolveImagePath(prod.image || "images/products/safety-gloves.webp");
+            if (prodFormDeliveryInfo) prodFormDeliveryInfo.value = prod.deliveryInfo || "2-5 business days across India";
+            if (prodFormStatus) prodFormStatus.value = prod.rawStatus || (prod.status === "active" ? "Active" : (prod.status === "unavailable" ? "Out of Stock" : "Inactive"));
             prodFormSpecs.value = prod.specs ? Object.entries(prod.specs).map(([k, v]) => `${k}: ${v}`).join("\n") : "";
         } else {
             productModalTitle.textContent = "Add New Product";
@@ -652,7 +760,9 @@ document.addEventListener("DOMContentLoaded", function () {
             prodFormMoq.value = "50";
             prodFormStock.value = "500";
             prodFormThreshold.value = "100";
-            prodFormImage.value = "../../images/products/safety-gloves.webp";
+            prodFormImage.value = "images/products/safety-gloves.webp";
+            if (prodFormDeliveryInfo) prodFormDeliveryInfo.value = "3-5 business days across India";
+            if (prodFormStatus) prodFormStatus.value = "Active";
             prodFormSpecs.value = "Material: High-Grade Industrial\nGrade: Certified Standard\nOrigin: India";
         }
 
@@ -682,7 +792,41 @@ document.addEventListener("DOMContentLoaded", function () {
             const moq = parseInt(document.getElementById("prodFormMoq").value, 10) || 1;
             const availableStock = parseInt(document.getElementById("prodFormStock").value, 10) || 0;
             const minThreshold = parseInt(document.getElementById("prodFormThreshold").value, 10) || 0;
-            const image = document.getElementById("prodFormImage").value.trim() || "../../images/products/safety-gloves.webp";
+            const image = document.getElementById("prodFormImage").value.trim() || "images/products/safety-gloves.webp";
+            const prodFormDeliveryInfo = document.getElementById("prodFormDeliveryInfo");
+            const prodFormStatus = document.getElementById("prodFormStatus");
+            const deliveryInfo = prodFormDeliveryInfo ? prodFormDeliveryInfo.value.trim() : "3-5 business days";
+            const status = prodFormStatus ? prodFormStatus.value : "Active";
+
+            // Required field validations
+            if (!name || name.length < 3) {
+                showToast("Product name must be at least 3 characters.", "warning");
+                return;
+            }
+            if (!category) {
+                showToast("Please select a product category.", "warning");
+                return;
+            }
+            if (!description || description.length < 10) {
+                showToast("Please enter a detailed description (minimum 10 characters).", "warning");
+                return;
+            }
+            if (unitPrice <= 0) {
+                showToast("Unit price must be greater than 0.", "warning");
+                return;
+            }
+            if (moq < 1) {
+                showToast("Minimum Order Quantity (MOQ) must be at least 1.", "warning");
+                return;
+            }
+            if (availableStock < 0) {
+                showToast("Stock quantity cannot be negative.", "warning");
+                return;
+            }
+            if (!deliveryInfo) {
+                showToast("Delivery information is required.", "warning");
+                return;
+            }
 
             // Parse specs
             const specsText = document.getElementById("prodFormSpecs").value;
@@ -702,17 +846,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 uom,
                 description,
                 unitPrice,
+                priceINR: Math.round(unitPrice * 80),
                 moq,
                 availableStock,
                 minThreshold,
                 image,
+                deliveryInfo,
+                status,
                 specs
             };
 
-            store.saveProduct(productData);
-            productModal.hidden = true;
-            renderProducts();
-            showToast(`Product "${name}" saved and synced to buyer catalogue!`, "success");
+            try {
+                store.saveProduct(productData);
+                productModal.hidden = true;
+                renderProducts();
+                showToast(`Product "${name}" saved and synchronized with Marketplace & Buyer catalogue!`, "success");
+            } catch (err) {
+                showToast(err.message || "Failed to save product.", "danger");
+            }
         });
     }
 
@@ -731,7 +882,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const prodId = toggleBtn.getAttribute("data-id");
                 const newStatus = store.toggleProductStatus(prodId);
                 renderProducts();
-                showToast(`Product status changed to: ${newStatus}`, "info");
+                showToast(`Product status updated to: ${newStatus}`, "info");
                 return;
             }
 
@@ -739,13 +890,23 @@ document.addEventListener("DOMContentLoaded", function () {
             if (deleteBtn) {
                 const prodId = deleteBtn.getAttribute("data-id");
                 if (confirm("Are you sure you want to delete this product listing from the catalogue?")) {
-                    store.deleteProduct(prodId);
-                    renderProducts();
-                    showToast("Product listing removed.", "warning");
+                    try {
+                        store.deleteProduct(prodId);
+                        renderProducts();
+                        showToast("Product listing removed successfully from all catalogues.", "warning");
+                    } catch (err) {
+                        showToast(err.message || "Could not delete product.", "danger");
+                    }
                 }
             }
         });
     }
+
+    window.addEventListener("tradenest:products-changed", function () {
+        renderProducts();
+        if (typeof renderInventory === "function") renderInventory();
+        if (typeof renderOverviewStats === "function") renderOverviewStats();
+    });
 
     // ==========================================================================
     // 7. MODULE 18: INVENTORY MANAGEMENT
@@ -1905,7 +2066,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="invoice-paper">
                 <div class="invoice-header-row">
                     <div class="invoice-logo-group">
-                        <img src="../../images/TradeNest.webp" alt="TradeNest" />
+                        <img src="${resolveImagePath('../../images/TradeNest.webp')}" alt="TradeNest" onerror="this.onerror=null; this.src='images/TradeNest.webp';" />
                         <div style="font-weight: 700; font-size: 1.1rem; color: var(--primary-dark);">${escapeHtml(biz.businessName)}</div>
                         <div style="font-size: 0.8rem; color: var(--text-light); max-width: 320px;">${escapeHtml(biz.registeredAddress)}</div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">GSTIN: <strong>${biz.gstin}</strong> | PAN: <strong>${biz.pan}</strong></div>
@@ -2241,6 +2402,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (setMarketingAlerts) setMarketingAlerts.checked = !!set.marketingUpdates;
         if (setCurrency) setCurrency.value = set.currency || "USD ($)";
         if (setTimezone) setTimezone.value = set.timezone || "GMT+5:30 (India Standard Time)";
+        const setTwoFactor = document.getElementById("setTwoFactor");
+        if (setTwoFactor) setTwoFactor.value = set.twoFactor || "disabled";
     }
 
     const notificationSettingsForm = document.getElementById("notificationSettingsForm");
@@ -2263,7 +2426,8 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
             store.saveSettings({
                 currency: document.getElementById("setCurrency").value,
-                timezone: document.getElementById("setTimezone").value
+                timezone: document.getElementById("setTimezone").value,
+                twoFactor: document.getElementById("setTwoFactor") ? document.getElementById("setTwoFactor").value : "disabled"
             });
             showToast("Operational settings saved successfully!", "success");
         });
@@ -2490,6 +2654,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // View Marketplace Profile from dropdown
+    const headerViewMarketplaceProfile = document.getElementById("headerViewMarketplaceProfile");
+    if (headerViewMarketplaceProfile) {
+        headerViewMarketplaceProfile.addEventListener("click", function () {
+            closeProfileDropdown();
+        });
+    }
+
     // Navbar search global filter & live search
     if (navbarSearch) {
         navbarSearch.addEventListener("input", function () {
@@ -2527,11 +2699,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Logout
     function handleLogout(e) {
         if (e) e.preventDefault();
-        if (confirm("Are you sure you want to log out of the Supplier Workspace?")) {
-            localStorage.removeItem("tradenestCurrentUser");
-            sessionStorage.clear();
-            window.location.href = "../../auth/login.html";
-        }
+        localStorage.removeItem("tradenestCurrentUser");
+        sessionStorage.clear();
+        const inPages = window.location.pathname.replace(/\\/g, "/").includes("/pages/");
+        window.location.href = inPages ? "../../index.html" : "index.html";
     }
 
     if (sidebarLogoutButton) sidebarLogoutButton.addEventListener("click", handleLogout);

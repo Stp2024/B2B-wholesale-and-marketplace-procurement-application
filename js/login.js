@@ -446,13 +446,8 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        if (userRole === "admin") {
-          window.location.href = "../pages/admin/dashboard.html";
-        } else if (userRole === "supplier") {
-          window.location.href = "../pages/supplier/dashboard.html";
-        } else {
-          window.location.href = "../pages/buyer/dashboard.html";
-        }
+        // Directly redirect to TradeNest Home Page
+        window.location.href = "../index.html";
       }, 500);
     });
   }
