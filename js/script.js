@@ -56,6 +56,15 @@ function normalizeText(value) {
         .trim();
 }
 
+function escapeCatalogueText(value) {
+    return String(value === null || value === undefined ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function getNumber(value) {
     if (value === null || value === undefined) {
         return 0;
@@ -369,10 +378,29 @@ function initBackToTop() {
 ========================================================= */
 
 function initProductPage() {
+    if (!window.productCatalogueStorageSyncBound) {
+        window.productCatalogueStorageSyncBound = true;
+        window.addEventListener("storage", function (event) {
+            if (event.key === "tradenest_supplier_products" || event.key === "tradenest_custom_products" || event.key === "tradenest_supplier_business_profile") {
+                window.location.reload();
+            }
+        });
+    }
     // Dynamic injection of supplier products from Supplier Workspace
     try {
         var grid = $(".products-grid");
         var rawSupplierProducts = localStorage.getItem("tradenest_supplier_products");
+        var supplierBusinessName = "TradeNest Supplies Pvt. Ltd.";
+        var supplierIsVerified = true;
+        try {
+            var supplierProfile = JSON.parse(localStorage.getItem("tradenest_supplier_business_profile") || "{}");
+            supplierBusinessName = supplierProfile.businessName || supplierBusinessName;
+            if (supplierProfile.verificationStatus) {
+                supplierIsVerified = supplierProfile.verificationStatus.toLowerCase().includes("verified");
+            }
+        } catch (profileError) {
+            // Keep the catalogue usable if saved profile data is malformed.
+        }
         if (grid && rawSupplierProducts) {
             var sProducts = JSON.parse(rawSupplierProducts);
             sProducts.forEach(function (sp) {
@@ -391,12 +419,12 @@ function initProductPage() {
                             <h3 class="product-title">${sp.name}</h3>
                             <p class="product-description">${sp.description}</p>
                             <div class="product-pricing-info">
-                                <span class="product-price">INR ${Math.round(sp.unitPrice * 80)} <small>/ ${sp.uom}</small></span>
+                                <span class="product-price">₹${Math.round(sp.unitPrice * 80)} <small>/ ${sp.uom}</small></span>
                                 <span class="product-moq">MOQ: ${sp.moq} ${sp.uom}</span>
                             </div>
                             <div class="product-supplier-info">
-                                <span class="supplier-name">TradeNest Supplies Pvt. Ltd.</span>
-                                <span class="verification-badge status-verified">Verified Supplier</span>
+                                <span class="supplier-name">${supplierBusinessName}</span>
+                                <span class="verification-badge ${supplierIsVerified ? "status-verified" : ""}">${supplierIsVerified ? "Verified Supplier" : "Verification Pending"}</span>
                             </div>
                             <div class="product-metrics">
                                 <span class="trust-score">Trust Score: <strong>96/100</strong></span>
@@ -415,6 +443,48 @@ function initProductPage() {
     } catch (e) {
         console.warn("Could not inject supplier products into catalogue:", e);
     }
+    // The catalogue store owns both public product grids; HTML seed cards are
+    // replaced here so edits, status changes, and deletions stay authoritative.
+    if (window.TradeNestStore) {
+        try {
+            var sharedCatalogue = window.TradeNestStore.getStore();
+            var productGrid = $(".products-listing-section .products-grid");
+            var featuredProductGrid = $(".featured-products-section .featured-grid");
+            var visibleProducts = sharedCatalogue.products.filter(function (product) {
+                return product.availability !== "Unavailable";
+            });
+            var safeText = function (value) {
+                return String(value === null || value === undefined ? "" : value)
+                    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    .replace(/\"/g, "&quot;").replace(/'/g, "&#039;");
+            };
+            var cardMarkup = function (product, isFeatured) {
+                var supplier = sharedCatalogue.supplierProfiles.find(function (item) { return item.id === product.supplierId; }) || {};
+                var rating = Number(product.rating) || 0;
+                var stockBadge = Number(product.stock) <= 0 ? "Out of Stock" : (product.availability || "In Stock");
+                var image = product.image || "../images/products/industrial-safety-gloves.webp";
+                if (!/^https?:/i.test(image)) image = image.replace(/^\.\.\/\.\.\//, "../");
+                return `<article class="product-card${isFeatured ? " featured-card" : ""}" data-product-id="${safeText(product.id)}">
+                    <div class="product-image-container"><img src="${safeText(image)}" alt="${safeText(product.name)}" class="product-image" loading="lazy" />
+                    <span class="badge ${isFeatured ? "badge-featured" : "badge-stock"}">${isFeatured ? "Featured" : safeText(stockBadge)}</span></div>
+                    <div class="product-content"><span class="product-category">${safeText(product.category)}</span><h3 class="product-title">${safeText(product.name)}</h3>
+                    <p class="product-description">${safeText(product.description)}</p><div class="product-pricing-info">
+                    <span class="product-price">${safeText(window.TradeNestStore.formatCurrency(product.price))} <small>/ ${safeText(product.unit)}</small></span>
+                    <span class="product-moq">MOQ: ${safeText(product.moq)} ${safeText(product.unit)}</span></div>
+                    <div class="product-supplier-info"><span class="supplier-name">${safeText(supplier.businessName || product.supplierName)}</span>
+                    <span class="supplier-location" hidden>${safeText(supplier.location || "")}</span><span class="verification-badge ${supplier.verificationStatus === "Verified" ? "status-verified" : ""}">${supplier.verificationStatus === "Verified" ? "Verified Supplier" : "Verification Pending"}</span></div>
+                    <div class="product-metrics"><span class="trust-score">Trust Score: <strong>${Number(supplier.trustScore) || 0}/100</strong></span>
+                    <span class="rating-stars" aria-label="Rating: ${rating ? rating.toFixed(1) + " out of 5" : "Not yet rated"}"><small>${rating ? rating.toFixed(1) + " / 5" : "New"}</small></span></div>
+                    <div class="product-card-actions"><a href="product-details.html?id=${encodeURIComponent(product.id)}" class="btn btn-primary btn-sm">View Product</a>
+                    <a href="supplier-details.html?id=${encodeURIComponent(supplier.id || "")}" class="btn btn-outline btn-sm">View Supplier</a></div></div></article>`;
+            };
+            if (productGrid) productGrid.innerHTML = visibleProducts.map(function (product) { return cardMarkup(product, false); }).join("");
+            if (featuredProductGrid) featuredProductGrid.innerHTML = visibleProducts.slice(0, 3).map(function (product) { return cardMarkup(product, true); }).join("");
+        } catch (catalogueError) {
+            console.warn("Could not render shared product catalogue:", catalogueError);
+        }
+    }
+
     var productCards = $$(".product-card");
 
     if (!productCards.length) {
@@ -431,7 +501,20 @@ function initProductPage() {
     var deliveryTime = $("#filter-delivery-time");
     var moq = $("#filter-moq");
     var rating = $("#filter-rating");
+    var minPriceInput = $("#filter-price-min");
+    var maxPriceInput = $("#filter-price-max");
     var sortSelect = $("#sort-products");
+
+    if (window.TradeNestStore && catalogueState) {
+        if (category) {
+            var categories = Array.from(new Set(catalogueState.products.map(function (product) { return product.category; }).filter(Boolean))).sort();
+            category.innerHTML = '<option value="">All Categories</option>' + categories.map(function (value) { return `<option value="${escapeCatalogueText(value)}">${escapeCatalogueText(value)}</option>`; }).join("");
+        }
+        if (location) {
+            var locations = Array.from(new Set(catalogueState.supplierProfiles.map(function (supplier) { return supplier.location; }).filter(Boolean))).sort();
+            location.innerHTML = '<option value="">All Locations</option>' + locations.map(function (value) { return `<option value="${escapeCatalogueText(value)}">${escapeCatalogueText(value)}</option>`; }).join("");
+        }
+    }
 
     if (!searchForm && !searchInput && !sortSelect) {
         return;
@@ -567,6 +650,8 @@ function initProductPage() {
         var selectedRating = rating
             ? getNumber(rating.value)
             : 0;
+        var selectedMinPrice = minPriceInput ? getNumber(minPriceInput.value) : 0;
+        var selectedMaxPrice = maxPriceInput ? getNumber(maxPriceInput.value) : 0;
 
         var visibleCards = [];
 
@@ -598,9 +683,12 @@ function initProductPage() {
                     selectedVerification
                 ) !== -1 ||
                 (
-                    selectedVerification === "verified" &&
+                    selectedVerification.indexOf("verified") !== -1 &&
                     data.text.indexOf("verified") !== -1
                 );
+
+            var matchesPrice = (!selectedMinPrice || data.price >= selectedMinPrice) &&
+                (!selectedMaxPrice || data.price <= selectedMaxPrice);
 
             var matchesTrust =
                 !selectedTrust ||
@@ -613,8 +701,8 @@ function initProductPage() {
 
             var matchesDelivery =
                 !selectedDelivery ||
+                !data.delivery ||
                 (
-                    data.delivery > 0 &&
                     data.delivery <=
                         selectedDelivery
                 );
@@ -628,8 +716,8 @@ function initProductPage() {
 
             var matchesRating =
                 !selectedRating ||
+                !data.rating ||
                 (
-                    data.rating > 0 &&
                     data.rating >= selectedRating
                 );
 
@@ -638,6 +726,7 @@ function initProductPage() {
                 matchesCategory &&
                 matchesLocation &&
                 matchesVerification &&
+                matchesPrice &&
                 matchesTrust &&
                 matchesAvailability &&
                 matchesDelivery &&
@@ -790,7 +879,9 @@ function initProductPage() {
         availability,
         deliveryTime,
         moq,
-        rating
+        rating,
+        minPriceInput,
+        maxPriceInput
     ].forEach(function (field) {
         if (!field) {
             return;

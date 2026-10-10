@@ -16,11 +16,11 @@
 
   const links = [
     ["Home", "index.html"],
+    ["About", "pages/about.html"],
     ["Products", "pages/products.html"],
     ["Suppliers", "pages/suppliers.html"],
     ["Discover", "pages/discover-suppliers.html"],
     ["Supplier network", "pages/join-supplier-network.html"],
-    ["About", "pages/about.html"],
     ["Contact", "pages/contact.html"]
   ];
 

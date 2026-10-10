@@ -779,6 +779,52 @@
       });
       merged[collectionName] = products;
     });
+    // Supplier workspace catalogue records are shared through localStorage.
+    // Replace the managed subset each read so removals and edits stay visible
+    // in buyer pages even when the canonical store was initialized later.
+    const supplierProfile = safeParse(localStorage.getItem("tradenest_supplier_business_profile"), null);
+    const catalogueSupplier = merged.supplierProfiles.find((supplier) => supplier.id === "supplier-001");
+    if (catalogueSupplier && supplierProfile && typeof supplierProfile === "object") {
+      const addressParts = String(supplierProfile.registeredAddress || "").split(",").map((part) => part.trim()).filter(Boolean);
+      catalogueSupplier.businessName = supplierProfile.businessName || catalogueSupplier.businessName;
+      catalogueSupplier.category = supplierProfile.primaryCategory || catalogueSupplier.category;
+      catalogueSupplier.location = addressParts[Math.max(0, addressParts.length - 3)] || catalogueSupplier.location;
+      catalogueSupplier.description = supplierProfile.description || catalogueSupplier.description;
+      catalogueSupplier.verificationStatus = String(supplierProfile.verificationStatus || "").toLowerCase().includes("verified") ? "Verified" : "Unverified";
+    }
+    const supplierProducts = safeParse(localStorage.getItem("tradenest_custom_products"), []);
+    if (Array.isArray(supplierProducts)) {
+      const activeProducts = supplierProducts.filter((product) => (product.status || "active") === "active");
+      const mappedProducts = activeProducts.map((product) => {
+        const stock = Number(product.availableStock) || 0;
+        return {
+          id: product.id,
+          name: product.name || "",
+          description: product.description || "",
+          category: product.category || "Other",
+          supplierId: "supplier-001",
+          supplierName: merged.supplierProfiles.find((supplier) => supplier.id === "supplier-001")?.businessName || "TradeNest Supplies Pvt. Ltd.",
+          // Supplier workspace prices are stored in USD; catalogue prices are INR.
+          price: (Number(product.unitPrice) || 0) * 80,
+          bulkPrice: (Number(product.unitPrice) || 0) * 80,
+          moq: Number(product.moq) || 1,
+          stock,
+          unit: product.uom || "unit",
+          availability: stock <= 0 ? "Out of Stock" : (stock <= (Number(product.minThreshold) || 0) ? "Low Stock" : "In Stock"),
+          specifications: typeof product.specs === "string" ? product.specs : Object.entries(product.specs || {}).map(([key, value]) => `${key}: ${value}`).join(", "),
+          image: product.image || "",
+          supplierManaged: true
+        };
+      });
+      ["products", "inventory"].forEach((collectionName) => {
+        merged[collectionName] = [...merged[collectionName].filter((product) => !product.supplierManaged && !String(product.id).startsWith("PRD-")), ...clone(mappedProducts)];
+      });
+      const supplier = merged.supplierProfiles.find((item) => item.id === "supplier-001");
+      if (supplier) {
+        supplier.products = (supplier.products || []).filter((id) => !String(id).startsWith("PRD-"));
+        supplier.products.push(...mappedProducts.map((product) => product.id));
+      }
+    }
     return normalizeStorePaths(merged);
   }
 
@@ -786,13 +832,14 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
-        const fresh = normalizeStorePaths(defaultState());
+        const fresh = normalizeStorePaths(ensureCollections(defaultState()));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
         return clone(fresh);
       }
       const parsed = safeParse(raw, defaultState());
       const normalized = normalizeStorePaths(ensureCollections(parsed));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      const serialized = JSON.stringify(normalized);
+      if (raw !== serialized) localStorage.setItem(STORAGE_KEY, serialized);
       return normalized;
     } catch (error) {
       return clone(normalizeStorePaths(defaultState()));

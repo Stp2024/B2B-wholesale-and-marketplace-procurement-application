@@ -16,6 +16,22 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    let currentUser = null;
+    try {
+        const storedUser = localStorage.getItem("tradenestCurrentUser");
+        currentUser = storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+        console.error("Error validating buyer dashboard session:", error);
+    }
+
+    const currentRole = String(
+        currentUser && (currentUser.role || currentUser.accountType) || ""
+    ).trim().toLowerCase();
+    if (!currentUser || currentRole !== "buyer") {
+        window.location.replace("../../auth/login.html");
+        return;
+    }
+
     // ==========================================
     // 1. DEFAULT DATA
     // ==========================================
@@ -27,14 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
         company: "North Star Retail",
         businessType: "Retailer / Wholesale Buyer",
         location: "Bengaluru, Karnataka, India"
-    };
-
-
-    const buyerStats = {
-        totalOrders: 24,
-        pendingOrders: 6,
-        savedProducts: 15,
-        totalSpent: "₹48,650"
     };
 
 
@@ -1584,19 +1592,19 @@ document.addEventListener("DOMContentLoaded", function () {
         notificationButton.addEventListener(
             "click",
             function () {
-
-                alert(
-                    "You have 3 new notifications:\n\n" +
-                    "1. Your order #1024 has been shipped.\n" +
-                    "2. Quote request answered by Supplier.\n" +
-                    "3. Price drop on Saved Products."
-                );
+                const activitySection =
+                    document.getElementById("dashboard-activity");
+                if (activitySection) {
+                    activitySection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }
 
 
                 if (notificationBadge) {
 
-                    notificationBadge.style.display =
-                        "none";
+                    notificationBadge.hidden = true;
                 }
             }
         );

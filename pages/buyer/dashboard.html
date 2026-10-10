@@ -240,11 +240,11 @@
               type="button"
               class="notification-button"
               id="notificationButton"
-              aria-label="View notifications"
+              aria-label="View recent activity"
             >
               <span class="notification-icon"> 🔔 </span>
 
-              <span class="notification-badge"> 3 </span>
+              <span class="notification-badge" hidden>0</span>
             </button>
 
             <!-- =================================================
@@ -426,9 +426,9 @@
                 <span class="stat-icon icon-blue"> 📦 </span>
               </div>
 
-              <div class="stat-value" id="totalOrders">24</div>
+              <div class="stat-value" id="totalOrders">0</div>
 
-              <span class="stat-trend positive"> ↑ +12% from last month </span>
+              <span class="stat-trend neutral">Current buyer orders</span>
             </div>
 
             <!-- Active Quotes -->
@@ -439,9 +439,9 @@
                 <span class="stat-icon icon-orange"> 💬 </span>
               </div>
 
-              <div class="stat-value" id="activeQuotes">08</div>
+              <div class="stat-value" id="activeQuotes">0</div>
 
-              <span class="stat-trend neutral"> • 2 pending review </span>
+              <span class="stat-trend neutral">Awaiting a decision</span>
             </div>
 
             <!-- Pending Orders -->
@@ -452,11 +452,9 @@
                 <span class="stat-icon icon-yellow"> ⏳ </span>
               </div>
 
-              <div class="stat-value" id="pendingOrders">03</div>
+              <div class="stat-value" id="pendingOrders">0</div>
 
-              <span class="stat-trend neutral">
-                • Est. delivery this week
-              </span>
+              <span class="stat-trend neutral">Currently processing</span>
             </div>
 
             <!-- Completed Purchases -->
@@ -467,9 +465,9 @@
                 <span class="stat-icon icon-green"> ✅ </span>
               </div>
 
-              <div class="stat-value" id="completedPurchases">21</div>
+              <div class="stat-value" id="completedPurchases">0</div>
 
-              <span class="stat-trend positive"> ↑ 100% fulfillment rate </span>
+              <span class="stat-trend neutral">Delivered or completed</span>
             </div>
           </section>
 
@@ -483,16 +481,7 @@
                 <span class="stat-icon icon-blue"> 📝 </span>
               </div>
               <div class="stat-value" id="stat-total-rfqs">0</div>
-              <span class="stat-trend positive">Live from local data</span>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title"> Pending Quotations </span>
-                <span class="stat-icon icon-orange"> 💬 </span>
-              </div>
-              <div class="stat-value" id="stat-pending-quotations">0</div>
-              <span class="stat-trend neutral">Awaiting response</span>
+              <span class="stat-trend neutral">From your buyer account</span>
             </div>
 
             <div class="stat-card">
@@ -504,23 +493,6 @@
               <span class="stat-trend neutral">In review</span>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title"> Active Orders </span>
-                <span class="stat-icon icon-green"> 📦 </span>
-              </div>
-              <div class="stat-value" id="stat-active-orders">0</div>
-              <span class="stat-trend positive">Processing</span>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title"> Completed Orders </span>
-                <span class="stat-icon icon-green"> ✅ </span>
-              </div>
-              <div class="stat-value" id="stat-completed-orders">0</div>
-              <span class="stat-trend positive">Delivered</span>
-            </div>
           </section>
 
           <!-- ===================================================
@@ -576,7 +548,7 @@
             </div>
           </section>
 
-          <section class="dashboard-card" style="margin-bottom: 24px">
+          <section class="dashboard-card" id="dashboard-activity" style="margin-bottom: 24px">
             <div class="card-header">
               <h2 class="card-title">Recent Activity</h2>
             </div>
@@ -938,149 +910,6 @@
             </div>
           </section>
 
-          <!-- ===================================================
-               RECOMMENDED SUPPLIERS
-          ==================================================== -->
-          <section class="recommendations-section">
-            <div class="section-header">
-              <h2 class="section-title">Recommended Suppliers</h2>
-
-              <a href="suppliers.html" class="view-all-link">
-                View All Suppliers →
-              </a>
-            </div>
-
-            <div class="suppliers-grid">
-              <!-- Supplier 1 -->
-              <div class="supplier-card">
-                <div class="supplier-header">
-                  <div class="supplier-avatar">AG</div>
-
-                  <div class="supplier-title-area">
-                    <div class="supplier-name-wrap">
-                      <h3 class="supplier-name">Apex Gear Co.</h3>
-
-                      <span class="verified-badge" title="Verified Supplier">
-                        ✓ Verified
-                      </span>
-                    </div>
-
-                    <p class="supplier-location">📍 Bengaluru, India</p>
-                  </div>
-                </div>
-
-                <p class="supplier-desc">
-                  Manufacturer and bulk distributor of industrial safety
-                  equipment, protective gear, and workplace PPE.
-                </p>
-
-                <div class="supplier-meta">
-                  <div>
-                    <strong>Rating:</strong>
-                    4.9 ★
-                  </div>
-
-                  <div>
-                    <strong>Experience:</strong>
-                    12 Years
-                  </div>
-                </div>
-
-                <a
-                  href="supplier-details.html?id=supplier-001"
-                  class="btn btn-card-secondary"
-                >
-                  View Supplier
-                </a>
-              </div>
-
-              <!-- Supplier 2 -->
-              <div class="supplier-card">
-                <div class="supplier-header">
-                  <div class="supplier-avatar">PP</div>
-
-                  <div class="supplier-title-area">
-                    <div class="supplier-name-wrap">
-                      <h3 class="supplier-name">PaperPro Solutions</h3>
-
-                      <span class="verified-badge" title="Verified Supplier">
-                        ✓ Verified
-                      </span>
-                    </div>
-
-                    <p class="supplier-location">📍 Mumbai, India</p>
-                  </div>
-                </div>
-
-                <p class="supplier-desc">
-                  Leading B2B provider of commercial paper products, office
-                  stationery, and eco-friendly printing paper.
-                </p>
-
-                <div class="supplier-meta">
-                  <div>
-                    <strong>Rating:</strong>
-                    4.7 ★
-                  </div>
-
-                  <div>
-                    <strong>Experience:</strong>
-                    8 Years
-                  </div>
-                </div>
-
-                <a
-                  href="supplier-details.html?id=supplier-002"
-                  class="btn btn-card-secondary"
-                >
-                  View Supplier
-                </a>
-              </div>
-
-              <!-- Supplier 3 -->
-              <div class="supplier-card">
-                <div class="supplier-header">
-                  <div class="supplier-avatar">LE</div>
-
-                  <div class="supplier-title-area">
-                    <div class="supplier-name-wrap">
-                      <h3 class="supplier-name">Lumina Electric</h3>
-
-                      <span class="verified-badge" title="Verified Supplier">
-                        ✓ Verified
-                      </span>
-                    </div>
-
-                    <p class="supplier-location">📍 Delhi NCR, India</p>
-                  </div>
-                </div>
-
-                <p class="supplier-desc">
-                  High-efficiency commercial and industrial LED lighting
-                  solutions for offices, warehouses, and factories.
-                </p>
-
-                <div class="supplier-meta">
-                  <div>
-                    <strong>Rating:</strong>
-                    4.8 ★
-                  </div>
-
-                  <div>
-                    <strong>Experience:</strong>
-                    15 Years
-                  </div>
-                </div>
-
-                <a
-                  href="supplier-details.html?id=supplier-003"
-                  class="btn btn-card-secondary"
-                >
-                  View Supplier
-                </a>
-              </div>
-            </div>
-          </section>
         </main>
 
         <!-- =====================================================

@@ -1274,6 +1274,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const quoteData = {
                 id: id || undefined,
                 rfqRef,
+                productId: prodOpt ? prodOpt.value : "",
                 buyerName,
                 productName,
                 uom,
@@ -2589,6 +2590,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
         }
     }
+
+    window.addEventListener("storage", function (event) {
+        if (event.key !== "tradenest_demo_store_v1") return;
+        const hash = window.location.hash.replace("#", "") || "overview";
+        renderOverview();
+        renderActiveView(hash);
+    });
 
     // Helper: Badge classes
     function getStatusBadgeClass(status) {

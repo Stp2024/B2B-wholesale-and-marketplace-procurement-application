@@ -1542,6 +1542,11 @@ document.addEventListener("DOMContentLoaded", function () {
     updateGlobalBadges();
   });
 
+  window.addEventListener("storage", function (event) {
+    if (event.key !== "tradenest_demo_store_v1") return;
+    switchView(currentActiveView);
+  });
+
   // Initialize view from URL hash on load
   const initialHash = window.location.hash.replace("#", "") || "overview";
   switchView(initialHash);

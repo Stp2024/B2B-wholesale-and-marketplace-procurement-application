@@ -5,6 +5,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const store = window.TradeNestStore;
   const page = document.body.dataset.page;
+  if (page === "dashboard") {
+    let currentUser = null;
+    try {
+      const storedUser = localStorage.getItem(store.CURRENT_USER_KEY || "tradenestCurrentUser");
+      currentUser = storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Error validating buyer dashboard session:", error);
+    }
+
+    const currentRole = String(
+      currentUser && (currentUser.role || currentUser.accountType) || ""
+    ).trim().toLowerCase();
+    if (!currentUser || currentRole !== "buyer") {
+      window.location.replace("../../auth/login.html");
+      return;
+    }
+  }
   store.ensureDemoState();
 
   function showToast(message, type) {
@@ -588,6 +605,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const state = getState();
     const buyer = getBuyer();
     const buyerId = buyer && buyer.id ? buyer.id : "buyer-001";
+    const recommendedProductsGrid = document.querySelector(".recommendations-section .products-grid");
+    if (recommendedProductsGrid) {
+      const recommendations = state.products.filter((product) => product.availability !== "Unavailable").slice(0, 4);
+      recommendedProductsGrid.innerHTML = recommendations.map((product) => {
+        const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId) || {};
+        const verified = supplier.verificationStatus === "Verified";
+        return `
+          <article class="product-card" data-product-id="${product.id}">
+            <div class="product-image-wrap"><img src="${product.image}" alt="${product.name}" class="product-image" />
+              <span class="category-tag">${product.category}</span>
+            </div>
+            <div class="product-body"><h3 class="product-title">${product.name}</h3>
+              <p class="product-supplier">By ${supplier.businessName || product.supplierName}</p>
+              ${verified ? `<div class="supplier-trust-line"><span class="verified-label">Verified</span><span class="trust-score">Trust score <strong>${supplier.trustScore}/100</strong></span></div>` : ""}
+              <div class="product-price-info"><span class="product-price">${formatCurrency(product.price)}</span><span class="product-unit"> / ${product.unit}</span></div>
+              <p class="product-moq">MOQ: ${product.moq} ${product.unit}</p>
+              <a href="product-details.html?id=${encodeURIComponent(product.id)}" class="btn btn-card">View Product</a>
+            </div>
+          </article>`;
+      }).join("") || '<div class="empty-state">No products are currently available.</div>';
+    }
     const rfqs = (state.rfqs || []).filter((item) => item.buyerId === buyerId);
     const quotations = (state.quotations || []).filter((item) => item.buyerId === buyerId);
     const sampleRequests = (state.sampleRequests || []).filter((item) => item.buyerId === buyerId);
@@ -667,6 +705,12 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
         </li>
       `).join("") || '<li class="empty-state">No activity recorded yet.</li>';
+
+      const notificationBadge = document.querySelector(".notification-badge");
+      if (notificationBadge) {
+        notificationBadge.textContent = String(activity.length);
+        notificationBadge.hidden = activity.length === 0;
+      }
     }
 
     const recentOrderTable = document.querySelector(".recent-orders-card tbody");
@@ -1054,6 +1098,33 @@ document.addEventListener("DOMContentLoaded", function () {
             createdAt: new Date().toISOString()
           };
           state.rfqs.unshift(newRFQ);
+          if (supplier) {
+            let conversation = state.conversations.find((item) => item.buyerId === buyer.id && item.supplierId === supplierId);
+            const submittedText = `RFQ submitted for ${newRFQ.productName} (${quantity} ${newRFQ.unit}).`;
+            if (!conversation) {
+              conversation = {
+                id: `conversation-${Date.now()}`,
+                buyerId: buyer.id,
+                supplierId,
+                supplierName: supplier.businessName,
+                rfqId: newRFQ.id,
+                preview: submittedText,
+                updatedAt: new Date().toISOString()
+              };
+              state.conversations.unshift(conversation);
+            }
+            state.messages.push({
+              id: `message-${Date.now()}`,
+              conversationId: conversation.id,
+              buyerId: buyer.id,
+              supplierId,
+              sender: "buyer",
+              text: submittedText,
+              sentAt: new Date().toISOString()
+            });
+            conversation.preview = submittedText;
+            conversation.updatedAt = new Date().toISOString();
+          }
           saveState(state);
           store.addActivity("RFQ", `RFQ created for ${newRFQ.productName}`);
           form.reset();
@@ -1311,6 +1382,7 @@ document.addEventListener("DOMContentLoaded", function () {
             buyerId: buyer.id,
             productId,
             productName: product ? product.name : "Product",
+            unit: product ? product.unit : "units",
             supplierId,
             supplierName: supplier ? supplier.businessName : "Supplier",
             requestedQuantity: quantity,
@@ -1346,7 +1418,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span>Supplier</span><strong>${sample.supplierName}</strong>
           <span>Qty</span><strong>${sample.requestedQuantity}</strong>
           <span>Status</span><strong>${sample.status}</strong>
-          <span>Dispatch</span><strong>${sample.dispatchDetails}</strong>
+          <span>Dispatch</span><strong>${typeof sample.dispatchDetails === "object" && sample.dispatchDetails ? `${sample.dispatchDetails.courier || "Dispatched"} ${sample.dispatchDetails.trackingNumber ? `(${sample.dispatchDetails.trackingNumber})` : ""}` : sample.dispatchDetails}</strong>
         </div>
         <div class="button-row">
           <button class="btn btn-secondary small" type="button" data-sample-feedback="${sample.id}">Submit feedback</button>
@@ -1666,5 +1738,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (page === "orders") renderOrders();
   if (page === "payments") renderPayments();
   if (page === "delivery") renderDelivery();
+  window.addEventListener("storage", function (event) {
+    if (event.key !== "tradenest_demo_store_v1" && event.key !== "tradenest_custom_products" && event.key !== "tradenest_supplier_business_profile") return;
+    window.location.reload();
+  });
   initGlobalActions();
 });
