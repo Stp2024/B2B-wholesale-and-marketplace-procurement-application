@@ -80,7 +80,6 @@
 
     if (isLoggedIn) {
       navListHtml += `
-        <li><a class="tn-nav-link tn-nav-dashboard-link" id="navDashboardLink" href="${dashboardUrl}">${dashboardLabel}</a></li>
         <li><a class="tn-nav-link tn-nav-profile-link" id="navProfileLink" href="${relativeRoot}index.html#user-profile">Profile</a></li>
       `;
     }
@@ -91,7 +90,7 @@
       actionsHtml = `
         <div class="tn-nav-actions tn-nav-logged-in" id="navLoggedInActions">
           <span class="tn-nav-user-greeting">Hi, <strong>${displayName}</strong></span>
-          <a class="tn-nav-dash-pill" id="navDashPillBtn" href="${dashboardUrl}">${dashboardShort}</a>
+          <a class="tn-nav-dash-pill tn-nav-dashboard-link" id="navDashboardLink" data-id="navDashPillBtn" href="${dashboardUrl}">${dashboardShort}</a>
           <button type="button" class="tn-nav-logout-btn btn btn-outline" id="navLogoutBtn" aria-label="Log out of TradeNest">Logout</button>
         </div>
       `;

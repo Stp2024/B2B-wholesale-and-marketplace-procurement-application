@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initSharedNavigation();
     initHomePageAuthState();
     initSmoothScrolling();
-    initBackToTop();
     initHomeProductCatalog();
     initProductPage();
     initSupplierPage();
@@ -673,61 +672,10 @@ function initSmoothScrolling() {
 ========================================================= */
 
 function initBackToTop() {
-    var button = document.createElement("button");
-
-    button.type = "button";
-    button.id = "tradenest-back-to-top";
-    button.setAttribute("aria-label", "Back to top");
-    button.textContent = "↑";
-
-    Object.assign(button.style, {
-        position: "fixed",
-        right: "24px",
-        bottom: "24px",
-        width: "44px",
-        height: "44px",
-        border: "0",
-        borderRadius: "50%",
-        background: "#5b4b63",
-        color: "#ffffff",
-        fontSize: "20px",
-        cursor: "pointer",
-        zIndex: "9998",
-        opacity: "0",
-        visibility: "hidden",
-        transform: "translateY(10px)",
-        transition:
-            "opacity .25s ease, transform .25s ease, visibility .25s ease"
-    });
-
-    document.body.appendChild(button);
-
-    function updateButton() {
-        if (window.scrollY > 450) {
-            button.style.opacity = "1";
-            button.style.visibility = "visible";
-            button.style.transform = "translateY(0)";
-        } else {
-            button.style.opacity = "0";
-            button.style.visibility = "hidden";
-            button.style.transform = "translateY(10px)";
-        }
+    var existing = document.getElementById("tradenest-back-to-top");
+    if (existing) {
+        existing.remove();
     }
-
-    window.addEventListener(
-        "scroll",
-        updateButton,
-        { passive: true }
-    );
-
-    button.addEventListener("click", function () {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    });
-
-    updateButton();
 }
 
 
