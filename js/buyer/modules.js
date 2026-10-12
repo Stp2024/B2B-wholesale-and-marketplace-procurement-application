@@ -203,12 +203,12 @@ document.addEventListener("DOMContentLoaded", function () {
       ...getBuyerProfileDefaults(),
       ...stored,
       ...current,
-      businessName: stored.businessName || current.businessName || current.company || getBuyerProfileDefaults().businessName,
-      fullName: stored.fullName || current.fullName || getBuyerProfileDefaults().fullName,
-      email: stored.email || current.email || getBuyerProfileDefaults().email,
-      phone: stored.phone || current.phone || getBuyerProfileDefaults().phone,
-      city: stored.city || current.city || getBuyerProfileDefaults().city,
-      state: stored.state || current.state || getBuyerProfileDefaults().state
+      businessName: current.businessName || current.company || stored.businessName || getBuyerProfileDefaults().businessName,
+      fullName: current.fullName || stored.fullName || getBuyerProfileDefaults().fullName,
+      email: current.email || stored.email || getBuyerProfileDefaults().email,
+      phone: current.phone || stored.phone || getBuyerProfileDefaults().phone,
+      city: current.city || stored.city || getBuyerProfileDefaults().city,
+      state: current.state || stored.state || getBuyerProfileDefaults().state
     };
   }
 

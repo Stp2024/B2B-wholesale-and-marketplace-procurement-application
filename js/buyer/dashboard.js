@@ -246,8 +246,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     ) {
 
                         const mergedProfile = normalizeStoredBuyerProfile({
-                            ...loggedInProfile,
-                            ...parsedProfile
+                            ...parsedProfile,
+                            ...loggedInProfile
                         });
 
                         saveBuyerProfileToStorage(mergedProfile);

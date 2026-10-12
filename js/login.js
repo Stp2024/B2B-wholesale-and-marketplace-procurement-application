@@ -328,7 +328,12 @@ document.addEventListener("DOMContentLoaded", function () {
           email: "aisha.patel@tradenest.com",
           password: "Buyer@123",
           role: "buyer",
-          businessName: "North Star Retail Pvt. Ltd.",
+          businessName: "North Star Retail",
+          phone: "+91 98765 43210",
+          businessType: "Wholesale Buyer",
+          city: "Bengaluru",
+          state: "Karnataka",
+          country: "India",
           verificationStatus: "Verified",
           accountStatus: "Active"
         },
@@ -366,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Find user by email
-      const targetUser = allUsers.find(function (user) {
+      let targetUser = allUsers.find(function (user) {
         if (!user) return false;
         return String(user.email || "").trim().toLowerCase() === email;
       });
@@ -379,12 +384,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
+      const defaultDemo = builtInAccounts.find(function (demo) {
+        return demo.email.toLowerCase() === email;
+      });
+      if (defaultDemo && defaultDemo.role === "buyer") {
+        targetUser = {
+          ...targetUser,
+          ...defaultDemo,
+          password: targetUser.password
+        };
+      }
+
       // Verify password
       const userPassword = String(targetUser.password || "");
-      const defaultDemo = builtInAccounts.find(function (d) {
-        return d.email.toLowerCase() === email;
-      });
-
       const isPasswordValid =
         password === userPassword ||
         (defaultDemo && password === defaultDemo.password);
