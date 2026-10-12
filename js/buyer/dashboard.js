@@ -631,7 +631,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (welcomeUserName) {
 
             welcomeUserName.textContent =
-                `Welcome back, ${profile.fullName}!`;
+                profile.fullName;
         }
 
 

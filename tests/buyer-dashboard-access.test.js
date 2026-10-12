@@ -61,3 +61,25 @@ for (const script of dashboardScripts) {
     }
   });
 }
+
+test("buyer dashboard explains the buyer toolkit and links to its procurement features", () => {
+  const dashboard = fs.readFileSync(
+    path.join(root, "pages/buyer/dashboard.html"),
+    "utf8"
+  );
+
+  for (const destination of [
+    "products.html",
+    "suppliers.html",
+    "request-quote.html",
+    "compare-quotes.html"
+  ]) {
+    assert.match(dashboard, new RegExp(`href="${destination}"`));
+  }
+
+  assert.match(dashboard, /Why source with TradeNest\?/);
+  assert.match(dashboard, /request samples before a larger order/);
+  assert.match(dashboard, /follow orders, payments\s+and deliveries/);
+  assert.match(dashboard, /id="totalOrders"/);
+  assert.match(dashboard, /id="activeQuotes"/);
+});

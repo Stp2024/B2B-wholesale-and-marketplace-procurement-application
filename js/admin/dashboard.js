@@ -18,12 +18,35 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", function () {
+  let currentUser = null;
+  try {
+    const storedUser = localStorage.getItem("tradenestCurrentUser");
+    currentUser = storedUser ? JSON.parse(storedUser) : null;
+  } catch (error) {
+    console.error("Error validating admin dashboard session:", error);
+  }
+
+  const currentRole = String(
+    currentUser && (currentUser.role || currentUser.accountType) || ""
+  ).trim().toLowerCase();
+  if (!currentUser || currentRole !== "admin") {
+    window.location.href = "../../auth/admin-login.html";
+    return;
+  }
+
   if (!window.AdminStore) {
     console.error("AdminStore is missing! Ensure admin-store.js is loaded first.");
     return;
   }
 
   const store = window.AdminStore;
+  const logoutButton = document.getElementById("adminLogoutBtn");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", function () {
+      localStorage.removeItem("tradenestCurrentUser");
+      window.location.href = "../../auth/admin-login.html";
+    });
+  }
 
   // DOM Elements
   const menuToggle = document.getElementById("menuToggle");
@@ -212,21 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Admin global back button handler
-  const adminGlobalBackBtn = document.getElementById("adminGlobalBackBtn");
-  if (adminGlobalBackBtn) {
-    adminGlobalBackBtn.addEventListener("click", function () {
-      const currentHash = window.location.hash.replace("#", "") || "overview";
-      if (currentHash !== "overview") {
-        // Return to overview if inside any subview
-        switchView("overview");
-      } else if (window.history.length > 1 && document.referrer && !document.referrer.endsWith("/dashboard.html")) {
-        window.history.back();
-      } else {
-        window.location.href = "../../index.html";
-      }
-    });
-  }
+
 
   // Hash change listener
   window.addEventListener("hashchange", function () {

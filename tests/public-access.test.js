@@ -50,3 +50,13 @@ test("public pages do not expose the admin console", () => {
     assert.doesNotMatch(html, /Admin Console|admin\/dashboard\.html/i);
   }
 });
+test("public footer links do not use dead placeholders or missing privacy pages", () => {
+  for (const relativePath of [...publicPages, "auth/login.html"]) {
+    const html = fs.readFileSync(path.join(root, relativePath), "utf8");
+    assert.doesNotMatch(
+      html,
+      /href=["']#["']|privacy-policy\.html/i,
+      `${relativePath} should not contain dead placeholder links`
+    );
+  }
+});

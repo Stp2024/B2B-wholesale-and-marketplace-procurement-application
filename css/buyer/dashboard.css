@@ -1087,10 +1087,23 @@ table {
   gap: 1rem;
 }
 
+.quick-actions-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
 .section-title {
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
+}
+
+.buyer-toolkit-intro {
+  max-width: 480px;
+  font-size: 0.875rem;
+  color: var(--text-light);
 }
 
 .quick-actions-grid {
@@ -1106,7 +1119,8 @@ table {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  align-items: flex-start;
+  gap: 0.55rem;
   box-shadow: var(--shadow);
   transition: all var(--transition-smooth);
 }
@@ -1119,19 +1133,46 @@ table {
 
 .quick-action-icon {
   font-size: 1.5rem;
-  margin-bottom: 0.25rem;
+}
+
+.quick-action-kicker {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--accent);
 }
 
 .quick-action-title {
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--text);
+  line-height: 1.35;
 }
 
 .quick-action-desc {
   font-size: 0.78125rem;
   color: var(--text-light);
-  line-height: 1.35;
+  line-height: 1.5;
+}
+
+.quick-action-link {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.quick-action-card:hover .quick-action-link {
+  color: var(--accent);
+}
+
+@media (max-width: 992px) {
+  .quick-actions-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
 /* --------------------------------------------------------------------------
