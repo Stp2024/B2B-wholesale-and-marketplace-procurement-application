@@ -1,0 +1,1798 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout — TradeNest</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+    <style>
+/* ============================================================
+   TRADENEST CHECKOUT — MULTI-STEP
+   ============================================================ */
+:root {
+  --green:        #10b981;
+  --green-dark:   #059669;
+  --green-deeper: #047857;
+  --green-light:  #ecfdf5;
+  --green-border: #a7f3d0;
+  --navy:         #1e2a3a;
+  --navy-mid:     #2d3f55;
+  --orange:       #d97745;
+  --bg:           #f4f6fb;
+  --surface:      #ffffff;
+  --border:       #e2e8f0;
+  --border-focus: #10b981;
+  --text:         #0f172a;
+  --text-sub:     #334155;
+  --text-muted:   #64748b;
+  --radius:       16px;
+  --radius-sm:    10px;
+  --radius-xs:    7px;
+  --shadow:       0 4px 24px rgba(15,23,42,0.09);
+  --shadow-lg:    0 12px 40px rgba(15,23,42,0.14);
+  --red:          #ef4444;
+  --red-light:    #fef2f2;
+  --red-border:   #fecaca;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:"Segoe UI","Plus Jakarta Sans",system-ui,sans-serif;color:var(--text);min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* ---- Top Bar ---- */
+.co-topbar{
+  background:var(--navy);
+  height:58px;
+  padding:0 2rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+}
+.co-topbar-brand{display:flex;align-items:center;gap:10px}
+.co-topbar-brand img{height:32px;object-fit:contain}
+.co-topbar-brand span{color:#94a3b8;font-size:0.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.co-back{color:#94a3b8;font-size:0.82rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:color .15s}
+.co-back:hover{color:#e2e8f0}
+
+/* ---- Progress Bar ---- */
+.co-progress{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:.85rem 2rem;
+}
+.co-steps{
+  display:flex;
+  align-items:center;
+  gap:0;
+  max-width:900px;
+  margin:0 auto;
+}
+.co-step{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:1;
+  position:relative;
+  cursor:default;
+}
+.co-step:not(:last-child)::after{
+  content:"";
+  flex:1;
+  height:2px;
+  background:var(--border);
+  margin:0 8px;
+  transition:background .3s;
+}
+.co-step.done:not(:last-child)::after,
+.co-step.active:not(:last-child)::after{background:var(--green)}
+.co-step-num{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:var(--border);
+  color:var(--text-muted);
+  font-size:.82rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:all .25s;
+}
+.co-step.active .co-step-num{background:var(--navy);color:#fff;box-shadow:0 0 0 4px rgba(30,42,58,.15)}
+.co-step.done .co-step-num{background:var(--green);color:#fff}
+.co-step-label{font-size:.78rem;font-weight:700;color:var(--text-muted);white-space:nowrap;transition:color .25s}
+.co-step.active .co-step-label{color:var(--navy)}
+.co-step.done  .co-step-label{color:var(--green-dark)}
+
+/* ---- Layout ---- */
+.co-body{
+  max-width:1080px;
+  margin:2rem auto;
+  padding:0 1.5rem 5rem;
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:2rem;
+  align-items:start;
+}
+
+/* ---- Panels (steps) ---- */
+.co-panel{display:none}
+.co-panel.active{display:block}
+
+/* ---- Card ---- */
+.co-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  margin-bottom:1.5rem;
+}
+.co-card-head{
+  padding:1rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#f8fafc,#f1f5f9);
+}
+.co-card-head h2{font-size:.98rem;font-weight:800;color:var(--text)}
+.step-dot{
+  width:28px;height:28px;
+  background:var(--navy);color:#fff;
+  border-radius:50%;font-size:.75rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.co-card-body{padding:1.5rem}
+
+/* ---- Product Summary ---- */
+.prod-row{display:flex;gap:1rem;align-items:flex-start}
+.prod-img{
+  width:96px;height:96px;
+  object-fit:cover;border-radius:var(--radius-sm);
+  background:#f1f5f9;flex-shrink:0;
+}
+.prod-info h3{font-size:1.05rem;font-weight:800;margin-bottom:3px}
+.prod-supplier{font-size:.8rem;color:var(--text-muted);margin-bottom:.6rem}
+.prod-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:.72rem;font-weight:700;
+  background:#f1f5f9;border:1px solid var(--border);color:var(--text-sub);
+}
+.chip.green{background:var(--green-light);border-color:var(--green-border);color:var(--green-deeper)}
+
+/* ---- Quantity ---- */
+.qty-section{margin-top:1.5rem}
+.qty-label{font-size:.85rem;font-weight:700;display:block;margin-bottom:4px}
+.qty-moq{font-size:.78rem;color:var(--text-muted);margin-bottom:.75rem}
+.qty-moq strong{color:var(--orange)}
+.qty-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.qty-ctrl{
+  display:flex;align-items:center;
+  border:2px solid var(--border);border-radius:var(--radius-sm);
+  overflow:hidden;transition:border-color .15s;
+}
+.qty-ctrl:focus-within{border-color:var(--green)}
+.qty-btn{
+  width:46px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;font-weight:400;
+  color:var(--text-sub);
+  background:#f8fafc;border:none;
+  cursor:pointer;transition:all .12s;user-select:none;
+}
+.qty-btn:hover{background:var(--green-light);color:var(--green-dark)}
+.qty-btn:disabled{opacity:.3;cursor:not-allowed}
+.qty-num{
+  width:82px;height:48px;
+  text-align:center;font-size:1.1rem;font-weight:800;
+  border:none;border-left:2px solid var(--border);border-right:2px solid var(--border);
+  background:var(--surface);outline:none;
+  -moz-appearance:textfield;appearance:textfield;
+}
+.qty-num::-webkit-outer-spin-button,.qty-num::-webkit-inner-spin-button{-webkit-appearance:none}
+.qty-breakdown{
+  background:#f8fafc;border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 16px;
+  flex:1;min-width:200px;
+}
+.qty-br-row{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-muted);margin-bottom:5px}
+.qty-br-row.total{
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--border);
+  font-size:1rem;font-weight:800;color:var(--text);
+}
+.qty-br-row.total span:last-child{color:var(--green-dark);font-size:1.1rem}
+
+/* ---- Step navigation ---- */
+.step-nav{display:flex;justify-content:flex-end;margin-top:1.5rem;gap:.75rem}
+.btn-next{
+  padding:.75rem 2rem;
+  background:var(--navy);color:#fff;
+  border:none;border-radius:var(--radius-sm);
+  font-size:.92rem;font-weight:700;
+  cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-next:hover{background:var(--navy-mid);transform:translateY(-1px)}
+.btn-back-step{
+  padding:.75rem 1.5rem;
+  background:var(--surface);color:var(--text-sub);
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .15s;
+}
+.btn-back-step:hover{border-color:#94a3b8}
+
+/* ---- Address form ---- */
+.field-grid{display:flex;flex-direction:column;gap:1rem}
+.field-row-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:.8rem;font-weight:700;color:var(--text-sub)}
+.field input,.field textarea,.field select{
+  padding:.62rem .85rem;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:.88rem;color:var(--text);
+  background:var(--surface);
+  transition:border-color .15s,box-shadow .15s;
+  resize:vertical;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none;border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(16,185,129,.12);
+}
+.field input.err,.field textarea.err,.field select.err{
+  border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.1);
+}
+.field select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.5rem;
+}
+.ferr{font-size:.73rem;color:var(--red);display:none;margin-top:2px}
+.ferr.show{display:block}
+
+/* ---- Address saved cards ---- */
+.addr-cards{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.25rem}
+.addr-card{
+  border:2px solid var(--border);border-radius:var(--radius-sm);
+  padding:.9rem 1rem;cursor:pointer;transition:all .15s;
+  display:flex;align-items:flex-start;gap:.75rem;
+  background:var(--surface);
+}
+.addr-card:hover{border-color:var(--green);background:var(--green-light)}
+.addr-card.selected{border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(16,185,129,.1)}
+.addr-card input[type=radio]{accent-color:var(--green);margin-top:3px;flex-shrink:0}
+.addr-card-body strong{font-size:.88rem;font-weight:700;display:block}
+.addr-card-body span{font-size:.8rem;color:var(--text-muted)}
+.addr-add-btn{
+  width:100%;
+  padding:.7rem;
+  border:2px dashed var(--border);
+  border-radius:var(--radius-sm);
+  background:none;
+  font-size:.85rem;font-weight:600;
+  color:var(--text-muted);cursor:pointer;
+  transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.addr-add-btn:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-light)}
+.location-btn{
+  width:100%;
+  padding:.7rem;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--surface);
+  font-size:.85rem;font-weight:600;
+  color:var(--text-sub);cursor:pointer;
+  transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-bottom:1rem;
+}
+.location-btn:hover{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+.new-addr-form{display:none;margin-top:1rem}
+.new-addr-form.open{display:block}
+
+/* ---- Payment ---- */
+.pay-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1.5rem}
+.pay-tab{
+  border:2px solid var(--border);border-radius:var(--radius-sm);
+  padding:.7rem .5rem;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;background:var(--surface);
+  transition:all .15s;
+}
+.pay-tab:hover{border-color:var(--green);background:var(--green-light)}
+.pay-tab.active{border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.pay-tab-logo{height:28px;display:flex;align-items:center;justify-content:center;width:auto;max-width:56px}
+.pay-tab-logo svg{height:28px;width:auto;max-width:56px;display:block}
+.pay-tab-label{font-size:.72rem;font-weight:700;color:var(--text-sub)}
+.pay-tab.active .pay-tab-label{color:var(--green-deep)}
+.pay-panel{display:none}
+.pay-panel.active{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* UPI */
+.upi-apps{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
+.upi-app-btn{
+  border:2px solid var(--border);border-radius:var(--radius-sm);
+  padding:.65rem .75rem;
+  display:flex;align-items:center;gap:.6rem;
+  cursor:pointer;background:var(--surface);transition:all .15s;
+}
+.upi-app-btn:hover{border-color:var(--green);background:var(--green-light)}
+.upi-app-btn.selected{border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(16,185,129,.1)}
+.upi-app-btn input[type=radio]{accent-color:var(--green)}
+.upi-app-logo{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;flex-shrink:0}
+.upi-app-logo svg{width:auto;height:22px;display:block}
+.upi-app-btn label{font-size:.83rem;font-weight:600;cursor:pointer}
+
+/* Card */
+.card-types{display:flex;gap:.5rem;margin-bottom:1rem}
+.card-type-btn{
+  padding:.42rem 1rem;
+  border:1.5px solid var(--border);border-radius:999px;
+  font-size:.78rem;font-weight:700;
+  cursor:pointer;background:var(--surface);color:var(--text-sub);transition:all .12s;
+}
+.card-type-btn.active{border-color:var(--navy);background:var(--navy);color:#fff}
+.card-networks{display:flex;gap:.4rem;align-items:center;margin-bottom:1rem}
+.card-net-btn{
+  border:1.5px solid var(--border);border-radius:var(--radius-xs);
+  padding:4px 8px;cursor:pointer;background:var(--surface);transition:all .12s;
+  display:flex;align-items:center;
+}
+.card-net-btn svg{height:20px;width:auto;display:block}
+.card-net-btn.active{border-color:var(--navy);box-shadow:0 0 0 2px rgba(30,42,58,.15)}
+.card-input-wrap{position:relative}
+.card-input-wrap input{padding-right:2.8rem}
+.card-net-icon{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  height:20px;pointer-events:none;
+  display:flex;align-items:center;
+}
+.card-net-icon svg{height:18px;width:auto;display:block}
+.card-row-2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+/* EMI */
+.emi-note{font-size:.8rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5}
+.emi-list{display:flex;flex-direction:column;gap:.6rem}
+.emi-opt{
+  border:2px solid var(--border);border-radius:var(--radius-sm);
+  padding:.8rem 1rem;
+  display:flex;align-items:center;gap:.75rem;
+  cursor:pointer;transition:all .12px;background:var(--surface);
+}
+.emi-opt:hover{border-color:var(--green);background:var(--green-light)}
+.emi-opt.selected{border-color:var(--green);background:var(--green-light)}
+.emi-opt input[type=radio]{accent-color:var(--green);flex-shrink:0}
+.emi-info{flex:1}
+.emi-info strong{font-size:.88rem;display:block}
+.emi-info small{font-size:.75rem;color:var(--text-muted)}
+.emi-mo{font-size:.95rem;font-weight:800;color:var(--green-dark);white-space:nowrap}
+.emi-banks{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem}
+.emi-bank-chip{
+  padding:3px 10px;border-radius:999px;
+  font-size:.72rem;font-weight:700;
+  background:#f1f5f9;border:1px solid var(--border);color:var(--text-sub);
+}
+
+/* Bank */
+.bank-details{
+  background:#f8fafc;border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1rem;
+}
+.bank-row{display:flex;justify-content:space-between;align-items:center;font-size:.83rem;margin-bottom:6px}
+.bank-row:last-child{margin-bottom:0}
+.bank-row span:first-child{color:var(--text-muted)}
+.bank-row span:last-child{font-weight:700;display:flex;align-items:center;gap:6px}
+.copy-btn{
+  padding:2px 8px;border:1px solid var(--border);border-radius:999px;
+  font-size:.68rem;font-weight:700;cursor:pointer;
+  background:var(--surface);color:var(--text-muted);transition:all .12s;
+}
+.copy-btn:hover{background:var(--green-light);color:var(--green-dark);border-color:var(--green-border)}
+
+/* ---- Order Summary sidebar ---- */
+.sum-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:sticky;top:80px;
+}
+.sum-head{
+  background:var(--navy);
+  padding:1.1rem 1.4rem;color:#fff;
+}
+.sum-head h2{font-size:.98rem;font-weight:800}
+.sum-head p{font-size:.75rem;color:#94a3b8;margin-top:2px}
+.sum-body{padding:1.25rem 1.4rem}
+.sum-prod-name{font-size:.95rem;font-weight:800;margin-bottom:3px}
+.sum-supplier{font-size:.78rem;color:var(--text-muted);margin-bottom:1.1rem}
+.sum-line{display:flex;justify-content:space-between;font-size:.83rem;color:var(--text-sub);margin-bottom:7px}
+.sum-line.total{
+  margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);
+  font-size:1.05rem;font-weight:800;color:var(--text);
+}
+.sum-line.total span:last-child{color:var(--green-dark);font-size:1.15rem}
+.sum-savings{
+  background:var(--green-light);border:1px solid var(--green-border);
+  border-radius:var(--radius-xs);padding:7px 10px;
+  font-size:.78rem;font-weight:700;color:var(--green-deeper);
+  display:none;align-items:center;gap:5px;margin:1rem 0;
+}
+.place-btn{
+  width:100%;padding:.9rem;
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:#fff;border:none;border-radius:var(--radius-sm);
+  font-size:.95rem;font-weight:800;cursor:pointer;
+  transition:all .15s;box-shadow:0 4px 14px rgba(5,150,105,.28);
+  margin-top:1rem;
+}
+.place-btn:hover{background:linear-gradient(135deg,#059669,#047857);transform:translateY(-1px);box-shadow:0 6px 20px rgba(5,150,105,.38)}
+.place-btn:active{transform:translateY(0)}
+.place-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.secure-note{display:flex;align-items:center;justify-content:center;gap:5px;font-size:.73rem;color:var(--text-muted);margin-top:.6rem}
+
+/* ---- Order Created ---- */
+#success-screen{display:none;max-width:600px;margin:4rem auto;padding:0 1.5rem;text-align:center}
+.success-anim{
+  width:82px;height:82px;
+  background:var(--green-light);border:3px solid var(--green-border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin:0 auto 1.5rem;
+  animation:popIn .4s cubic-bezier(.16,1,.3,1);
+}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+#success-screen h1{font-size:1.75rem;font-weight:800;margin-bottom:.4rem}
+#success-screen p{color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem}
+.success-order-box{
+  background:#f8fafc;border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:.85rem 1.25rem;
+  display:inline-block;margin-bottom:1.5rem;
+}
+.success-order-box strong{font-size:1rem;display:block;margin-bottom:3px}
+.success-order-box span{font-size:.78rem;color:var(--text-muted)}
+.success-tracking{
+  background:var(--green-light);border:1px solid var(--green-border);
+  border-radius:var(--radius-sm);padding:1rem 1.25rem;
+  margin-bottom:1.5rem;text-align:left;
+}
+.success-tracking h3{font-size:.88rem;font-weight:800;color:var(--green-deeper);margin-bottom:.75rem}
+.track-timeline{display:flex;flex-direction:column;gap:.5rem}
+.track-step{display:flex;align-items:center;gap:.65rem}
+.track-dot{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;
+}
+.track-dot.done{background:var(--green);color:#fff}
+.track-dot.current{background:var(--navy);color:#fff;box-shadow:0 0 0 3px rgba(30,42,58,.15)}
+.track-dot.pending{background:var(--border);color:var(--text-muted)}
+.track-step span{font-size:.82rem;font-weight:600;color:var(--text-sub)}
+.track-step.current-step span{color:var(--navy);font-weight:800}
+.success-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.btn-go{
+  padding:.7rem 1.5rem;border-radius:var(--radius-sm);
+  font-size:.88rem;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;transition:all .15s;
+}
+.btn-go.primary{background:var(--navy);color:#fff;border:none}
+.btn-go.primary:hover{background:var(--navy-mid)}
+.btn-go.secondary{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-go.secondary:hover{border-color:#94a3b8}
+
+/* ---- Toast ---- */
+#co-toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  padding:.8rem 1.2rem;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  font-size:.85rem;font-weight:600;color:var(--text);
+  box-shadow:var(--shadow-lg);z-index:9999;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .25s,transform .25s;pointer-events:none;
+  max-width:320px;
+}
+#co-toast.show{opacity:1;transform:translateY(0)}
+#co-toast.success{border-left:4px solid var(--green)}
+#co-toast.error{border-left:4px solid var(--red)}
+#co-toast.info{border-left:4px solid #3b82f6}
+
+/* ---- Responsive ---- */
+@media(max-width:860px){
+  .co-body{grid-template-columns:1fr}
+  .sum-card{position:static}
+  .pay-tabs{grid-template-columns:repeat(2,1fr)}
+  .field-row-2{grid-template-columns:1fr}
+  .upi-apps{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .pay-tabs{grid-template-columns:repeat(2,1fr)}
+  .co-step-label{display:none}
+}
+    </style>
+  </head>
+  <body>
+
+    <!-- =====================================================
+         TOP BAR
+    ===================================================== -->
+    <div class="co-topbar">
+      <div class="co-topbar-brand">
+        <img src="../../images/TradeNest.webp" alt="TradeNest" />
+        <span>Secure Checkout</span>
+      </div>
+      <a href="javascript:history.back()" class="co-back">&#8592; Back</a>
+    </div>
+
+    <!-- =====================================================
+         PROGRESS STEPS
+    ===================================================== -->
+    <div class="co-progress">
+      <div class="co-steps">
+        <div class="co-step active" id="step-ind-1">
+          <span class="co-step-num" id="step-num-1">1</span>
+          <span class="co-step-label">Product &amp; Qty</span>
+        </div>
+        <div class="co-step" id="step-ind-2">
+          <span class="co-step-num" id="step-num-2">2</span>
+          <span class="co-step-label">Delivery</span>
+        </div>
+        <div class="co-step" id="step-ind-3">
+          <span class="co-step-num" id="step-num-3">3</span>
+          <span class="co-step-label">Payment</span>
+        </div>
+        <div class="co-step" id="step-ind-4">
+          <span class="co-step-num" id="step-num-4">4</span>
+          <span class="co-step-label">Review</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MAIN BODY
+    ===================================================== -->
+    <div id="checkout-area">
+      <div class="co-body">
+
+        <!-- LEFT -->
+        <div class="co-left">
+
+          <!-- =========================================
+               STEP 1 — PRODUCT & QUANTITY
+          ========================================= -->
+          <div class="co-panel active" id="panel-1">
+            <div class="co-card">
+              <div class="co-card-head">
+                <span class="step-dot">1</span>
+                <h2>Product &amp; Quantity</h2>
+              </div>
+              <div class="co-card-body">
+                <div class="prod-row">
+                  <img id="co-img" class="prod-img" src="" alt="Product" />
+                  <div class="prod-info">
+                    <h3 id="co-name">Loading&#8230;</h3>
+                    <p class="prod-supplier" id="co-supplier">&#8212;</p>
+                    <div class="prod-chips">
+                      <span class="chip" id="co-cat">&#8212;</span>
+                      <span class="chip" id="co-uprice">&#8212;</span>
+                      <span class="chip green" id="co-avail">In Stock</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="qty-section">
+                  <label class="qty-label" for="co-qty">Adjust Quantity</label>
+                  <p class="qty-moq">Minimum order quantity (MOQ): <strong id="co-moq">1</strong></p>
+                  <div class="qty-row">
+                    <div class="qty-ctrl">
+                      <button class="qty-btn" id="qty-minus" type="button">&#8722;</button>
+                      <input class="qty-num" id="co-qty" type="number" value="1" min="1" />
+                      <button class="qty-btn" id="qty-plus"  type="button">+</button>
+                    </div>
+                    <div class="qty-breakdown">
+                      <div class="qty-br-row"><span>Unit price</span><span id="br-unit">&#8377;0</span></div>
+                      <div class="qty-br-row"><span>Quantity</span><span id="br-qty">0</span></div>
+                      <div class="qty-br-row"><span>GST (18%)</span><span id="br-gst">&#8377;0</span></div>
+                      <div class="qty-br-row total"><span>Total</span><span id="br-total">&#8377;0</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-next" id="next-1">Continue to Delivery &#8594;</button>
+            </div>
+          </div>
+
+          <!-- =========================================
+               STEP 2 — DELIVERY ADDRESS
+          ========================================= -->
+          <div class="co-panel" id="panel-2">
+            <div class="co-card">
+              <div class="co-card-head">
+                <span class="step-dot">2</span>
+                <h2>Delivery Address</h2>
+              </div>
+              <div class="co-card-body">
+
+                <!-- Saved addresses -->
+                <div class="addr-cards" id="saved-addr-list"></div>
+
+                <!-- Share location -->
+                <button class="location-btn" id="share-location-btn" type="button">
+                  &#128205; Use My Current Location
+                </button>
+
+                <!-- Add new address toggle -->
+                <button class="addr-add-btn" id="add-addr-btn" type="button">
+                  + Add New Delivery Address
+                </button>
+
+                <!-- New address form -->
+                <div class="new-addr-form" id="new-addr-form">
+                  <div style="height:.75rem"></div>
+                  <div class="field-grid">
+                    <div class="field-row-2">
+                      <div class="field">
+                        <label for="co-fname">Full Name *</label>
+                        <input id="co-fname" type="text" placeholder="Aisha Patel" />
+                        <span class="ferr" id="e-fname">Full name is required.</span>
+                      </div>
+                      <div class="field">
+                        <label for="co-phone">Phone *</label>
+                        <input id="co-phone" type="tel" placeholder="+91 98765 43210" />
+                        <span class="ferr" id="e-phone">Enter a valid phone number (min 7 digits).</span>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="co-company">Company / Business</label>
+                      <input id="co-company" type="text" placeholder="North Star Retail Pvt. Ltd." />
+                    </div>
+                    <div class="field">
+                      <label for="co-addr">Street Address *</label>
+                      <input id="co-addr" type="text" placeholder="18th Cross Road, HSR Layout" />
+                      <span class="ferr" id="e-addr">Street address is required.</span>
+                    </div>
+                    <div class="field-row-2">
+                      <div class="field">
+                        <label for="co-city">City *</label>
+                        <input id="co-city" type="text" placeholder="Bengaluru" />
+                        <span class="ferr" id="e-city">City is required.</span>
+                      </div>
+                      <div class="field">
+                        <label for="co-state">State *</label>
+                        <select id="co-state">
+                          <option value="">Select state</option>
+                          <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
+                          <option>Chhattisgarh</option><option>Delhi</option><option>Goa</option>
+                          <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+                          <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+                          <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option>
+                          <option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option>
+                          <option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+                          <option>West Bengal</option>
+                        </select>
+                        <span class="ferr" id="e-state">Please select a state.</span>
+                      </div>
+                    </div>
+                    <div class="field-row-2">
+                      <div class="field">
+                        <label for="co-pin">Pincode *</label>
+                        <input id="co-pin" type="text" maxlength="6" placeholder="560001" />
+                        <span class="ferr" id="e-pin">Enter a valid 6-digit pincode.</span>
+                      </div>
+                      <div class="field">
+                        <label for="co-gstin">GSTIN <span style="font-weight:400;color:#94a3b8">(optional)</span></label>
+                        <input id="co-gstin" type="text" maxlength="15" placeholder="29ABCDE1234F1Z5" style="text-transform:uppercase" />
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="co-notes-del">Delivery Instructions <span style="font-weight:400;color:#94a3b8">(optional)</span></label>
+                      <textarea id="co-notes-del" rows="2" placeholder="Gate code, landmark, preferred delivery time&#8230;"></textarea>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end">
+                      <button class="btn-next" type="button" id="save-new-addr-btn" style="padding:.65rem 1.4rem;font-size:.85rem">Save Address</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-step" id="back-2" type="button">&#8592; Back</button>
+              <button class="btn-next" id="next-2" type="button">Continue to Payment &#8594;</button>
+            </div>
+          </div>
+
+          <!-- =========================================
+               STEP 3 — PAYMENT
+          ========================================= -->
+          <div class="co-panel" id="panel-3">
+            <div class="co-card">
+              <div class="co-card-head">
+                <span class="step-dot">3</span>
+                <h2>Payment Method</h2>
+              </div>
+              <div class="co-card-body">
+
+                <!-- Payment tabs with inline SVG logos -->
+                <div class="pay-tabs" role="tablist">
+                  <button class="pay-tab active" data-tab="upi" type="button">
+                    <span class="pay-tab-logo">
+                      <svg width="56" height="22" viewBox="0 0 56 22" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="56" height="22" rx="4" fill="#FF6B00"/>
+                        <text x="28" y="15.5" font-family="Arial,sans-serif" font-size="11" font-weight="900" fill="white" text-anchor="middle">UPI</text>
+                      </svg>
+                    </span>
+                    <span class="pay-tab-label">UPI</span>
+                  </button>
+                  <button class="pay-tab" data-tab="card" type="button">
+                    <span class="pay-tab-logo">
+                      <svg width="36" height="22" viewBox="0 0 36 22" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="13" cy="11" r="10" fill="#EB001B"/>
+                        <circle cx="23" cy="11" r="10" fill="#F79E1B"/>
+                        <ellipse cx="18" cy="11" rx="5" ry="10" fill="#FF5F00"/>
+                      </svg>
+                    </span>
+                    <span class="pay-tab-label">Card</span>
+                  </button>
+                  <button class="pay-tab" data-tab="emi" type="button">
+                    <span style="font-size:1.5rem">&#128197;</span>
+                    <span class="pay-tab-label">EMI</span>
+                  </button>
+                  <button class="pay-tab" data-tab="bank" type="button">
+                    <span style="font-size:1.5rem">&#127970;</span>
+                    <span class="pay-tab-label">Net Banking</span>
+                  </button>
+                </div>
+
+                <!-- -------- UPI -------- -->
+                <div class="pay-panel active" id="pay-upi">
+                  <div class="upi-apps">
+                    <label class="upi-app-btn selected" id="upi-gpay-lbl">
+                      <input type="radio" name="upi-app" value="gpay" checked />
+                      <span class="upi-app-logo">
+                        <svg width="48" height="22" viewBox="0 0 48 22" xmlns="http://www.w3.org/2000/svg">
+                          <text x="2" y="16" font-family="Arial,sans-serif" font-size="13" font-weight="700">
+                            <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">o</tspan><tspan fill="#FBBC05">o</tspan><tspan fill="#4285F4">g</tspan><tspan fill="#34A853">l</tspan><tspan fill="#EA4335">e</tspan>
+                            <tspan fill="#5F6368" dx="2">Pay</tspan>
+                          </text>
+                        </svg>
+                      </span>
+                      <label>Google Pay</label>
+                    </label>
+                    <label class="upi-app-btn" id="upi-phonepe-lbl">
+                      <input type="radio" name="upi-app" value="phonepe" />
+                      <span class="upi-app-logo">
+                        <svg width="52" height="22" viewBox="0 0 52 22" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="52" height="22" rx="4" fill="#5F259F"/>
+                          <text x="26" y="15.5" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="white" text-anchor="middle">PhonePe</text>
+                        </svg>
+                      </span>
+                      <label>PhonePe</label>
+                    </label>
+                    <label class="upi-app-btn" id="upi-paytm-lbl">
+                      <input type="radio" name="upi-app" value="paytm" />
+                      <span class="upi-app-logo">
+                        <svg width="48" height="22" viewBox="0 0 48 22" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="48" height="22" rx="4" fill="#00BAF2"/>
+                          <text x="24" y="15.5" font-family="Arial,sans-serif" font-size="10" font-weight="900" fill="white" text-anchor="middle">Paytm</text>
+                        </svg>
+                      </span>
+                      <label>Paytm</label>
+                    </label>
+                    <label class="upi-app-btn" id="upi-bhim-lbl">
+                      <input type="radio" name="upi-app" value="bhim" />
+                      <span class="upi-app-logo">
+                        <svg width="48" height="22" viewBox="0 0 48 22" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="48" height="22" rx="4" fill="#FF6B00"/>
+                          <text x="24" y="15.5" font-family="Arial,sans-serif" font-size="10" font-weight="900" fill="white" text-anchor="middle">BHIM</text>
+                        </svg>
+                      </span>
+                      <label>BHIM UPI</label>
+                    </label>
+                  </div>
+                  <div class="field">
+                    <label for="co-upi-id">UPI ID</label>
+                    <input id="co-upi-id" type="text" placeholder="yourname@upi" />
+                    <span class="ferr" id="e-upi">Enter a valid UPI ID (e.g. name@okicici).</span>
+                  </div>
+                  <p style="font-size:.75rem;color:var(--text-muted);margin-top:.6rem">
+                    &#128161; You will receive a payment request on your selected UPI app. Approve it to complete the order.
+                  </p>
+                </div>
+
+                <!-- -------- Card -------- -->
+                <div class="pay-panel" id="pay-card">
+                  <div class="card-types">
+                    <button class="card-type-btn active" data-ctype="credit" type="button">Credit Card</button>
+                    <button class="card-type-btn" data-ctype="debit" type="button">Debit Card</button>
+                  </div>
+                  <div class="card-networks">
+                    <button class="card-net-btn active" data-net="visa" type="button">
+                      <svg width="44" height="20" viewBox="0 0 44 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="44" height="20" rx="3" fill="#1A1F71"/>
+                        <text x="22" y="14" font-family="Arial,sans-serif" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">VISA</text>
+                      </svg>
+                    </button>
+                    <button class="card-net-btn" data-net="mastercard" type="button">
+                      <svg width="36" height="22" viewBox="0 0 36 22" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="13" cy="11" r="10" fill="#EB001B"/>
+                        <circle cx="23" cy="11" r="10" fill="#F79E1B"/>
+                        <ellipse cx="18" cy="11" rx="5" ry="10" fill="#FF5F00"/>
+                      </svg>
+                    </button>
+                    <button class="card-net-btn" data-net="rupay" type="button">
+                      <svg width="46" height="20" viewBox="0 0 46 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="46" height="20" rx="3" fill="#1A3A8F"/>
+                        <text x="23" y="14" font-family="Arial,sans-serif" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle">RuPay</text>
+                      </svg>
+                    </button>
+                    <button class="card-net-btn" data-net="amex" type="button">
+                      <svg width="44" height="20" viewBox="0 0 44 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="44" height="20" rx="3" fill="#016FD0"/>
+                        <text x="22" y="14" font-family="Arial,sans-serif" font-size="9" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">AMEX</text>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="field-grid" style="gap:.85rem">
+                    <div class="field card-input-wrap">
+                      <label for="co-cnum">Card Number *</label>
+                      <input id="co-cnum" type="text" placeholder="1234  5678  9012  3456" maxlength="19" autocomplete="cc-number" />
+                      <span id="card-net-icon" class="card-net-icon">
+                        <svg width="44" height="20" viewBox="0 0 44 20" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="44" height="20" rx="3" fill="#1A1F71"/>
+                          <text x="22" y="14" font-family="Arial,sans-serif" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">VISA</text>
+                        </svg>
+                      </span>
+                      <span class="ferr" id="e-cnum">Valid 16-digit card number required.</span>
+                    </div>
+                    <div class="field">
+                      <label for="co-cname">Name on Card *</label>
+                      <input id="co-cname" type="text" placeholder="AISHA PATEL" autocomplete="cc-name" style="text-transform:uppercase" />
+                      <span class="ferr" id="e-cname">Cardholder name required.</span>
+                    </div>
+                    <div class="card-row-2">
+                      <div class="field">
+                        <label for="co-cexp">Expiry (MM / YY) *</label>
+                        <input id="co-cexp" type="text" placeholder="08 / 27" maxlength="7" autocomplete="cc-exp" />
+                        <span class="ferr" id="e-cexp">Valid expiry required.</span>
+                      </div>
+                      <div class="field">
+                        <label for="co-ccvv">CVV *</label>
+                        <input id="co-ccvv" type="password" placeholder="&#8226;&#8226;&#8226;" maxlength="4" autocomplete="cc-csc" />
+                        <span class="ferr" id="e-ccvv">CVV required.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p style="font-size:.75rem;color:var(--text-muted);margin-top:.75rem">
+                    &#128272; Your card details are encrypted and never stored. You&#8217;ll be redirected to 3D Secure verification.
+                  </p>
+                </div>
+
+                <!-- -------- EMI -------- -->
+                <div class="pay-panel" id="pay-emi">
+                  <p class="emi-note">Choose an EMI plan. Interest-free options are available for 3 &amp; 6 months. EMI is calculated on your final order total including GST.</p>
+                  <div class="emi-list" id="emi-list">
+                    <!-- rendered dynamically -->
+                  </div>
+                  <span class="ferr" id="e-emi" style="margin-top:8px">Please select an EMI plan.</span>
+                  <div class="emi-banks">
+                    <span class="emi-bank-chip">HDFC Bank</span>
+                    <span class="emi-bank-chip">ICICI Bank</span>
+                    <span class="emi-bank-chip">SBI</span>
+                    <span class="emi-bank-chip">Axis Bank</span>
+                    <span class="emi-bank-chip">Kotak</span>
+                    <span class="emi-bank-chip">Yes Bank</span>
+                  </div>
+                </div>
+
+                <!-- -------- Net Banking -------- -->
+                <div class="pay-panel" id="pay-bank">
+                  <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">
+                    Transfer the exact amount to our escrow account. Your order will be confirmed within 1&#8211;2 business hours after payment verification.
+                  </p>
+                  <div class="bank-details">
+                    <div class="bank-row"><span>Bank</span><span>HDFC Bank</span></div>
+                    <div class="bank-row"><span>Account Name</span><span>TradeNest Escrow Services Pvt. Ltd.</span></div>
+                    <div class="bank-row">
+                      <span>Account No.</span>
+                      <span>50100 12345 67890 <button class="copy-btn" onclick="copyText('50100123456789','Account number')">Copy</button></span>
+                    </div>
+                    <div class="bank-row">
+                      <span>IFSC</span>
+                      <span>HDFC0001234 <button class="copy-btn" onclick="copyText('HDFC0001234','IFSC code')">Copy</button></span>
+                    </div>
+                    <div class="bank-row"><span>Account Type</span><span>Current Account</span></div>
+                    <div class="bank-row"><span>Amount</span><span id="bank-amt" style="color:var(--green-dark)">&#8377;0</span></div>
+                  </div>
+                  <div class="field-grid" style="gap:.85rem">
+                    <div class="field">
+                      <label for="co-utr">UTR / Transaction Reference *</label>
+                      <input id="co-utr" type="text" placeholder="Enter UTR number after transfer" />
+                      <span class="ferr" id="e-utr">UTR / reference number required.</span>
+                    </div>
+                    <div class="field">
+                      <label for="co-tdate">Transfer Date *</label>
+                      <input id="co-tdate" type="date" />
+                      <span class="ferr" id="e-tdate">Transfer date required.</span>
+                    </div>
+                    <div class="field">
+                      <label for="co-bank-name">Your Bank Name</label>
+                      <input id="co-bank-name" type="text" placeholder="e.g. SBI, ICICI, Axis&#8230;" />
+                    </div>
+                  </div>
+                </div>
+
+                <span class="ferr" id="e-pay" style="margin-top:8px;font-size:.8rem">Please complete the payment details above.</span>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-step" id="back-3" type="button">&#8592; Back</button>
+              <button class="btn-next" id="next-3" type="button">Review Order &#8594;</button>
+            </div>
+          </div>
+
+          <!-- =========================================
+               STEP 4 — REVIEW & PLACE
+          ========================================= -->
+          <div class="co-panel" id="panel-4">
+            <div class="co-card">
+              <div class="co-card-head">
+                <span class="step-dot">4</span>
+                <h2>Review Your Order</h2>
+              </div>
+              <div class="co-card-body">
+
+                <div id="review-product" style="margin-bottom:1.25rem">
+                  <p style="font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Product</p>
+                  <div id="review-prod-row" style="display:flex;gap:.75rem;align-items:center">
+                    <img id="rv-img" style="width:56px;height:56px;object-fit:cover;border-radius:8px;background:#f1f5f9;flex-shrink:0" src="" alt="" />
+                    <div>
+                      <strong id="rv-name" style="font-size:.95rem;display:block"></strong>
+                      <span id="rv-supplier" style="font-size:.78rem;color:var(--text-muted)"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+                  <div>
+                    <p style="font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Quantity &amp; Total</p>
+                    <p style="font-size:.88rem"><span id="rv-qty"></span> &#215; <span id="rv-uprice"></span></p>
+                    <p style="font-size:1rem;font-weight:800;color:var(--green-dark)" id="rv-total"></p>
+                  </div>
+                  <div>
+                    <p style="font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Payment</p>
+                    <p style="font-size:.88rem;font-weight:700" id="rv-payment"></p>
+                  </div>
+                </div>
+
+                <div>
+                  <p style="font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Delivery To</p>
+                  <p style="font-size:.88rem;line-height:1.6" id="rv-address"></p>
+                </div>
+
+                <div class="field" style="margin-top:1.25rem">
+                  <label for="co-order-notes">Order Notes <span style="font-weight:400;color:#94a3b8">(optional)</span></label>
+                  <textarea id="co-order-notes" rows="2" placeholder="Special packing, labelling, or handling requirements&#8230;"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-step" id="back-4" type="button">&#8592; Back</button>
+              <button class="btn-next" id="place-order-btn" type="button" style="background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 14px rgba(5,150,105,.3)">
+                &#128274; Place Order
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <!-- end co-left -->
+
+        <!-- RIGHT — Summary -->
+        <div class="co-right">
+          <div class="sum-card">
+            <div class="sum-head">
+              <h2>Order Summary</h2>
+              <p>Review before you confirm</p>
+            </div>
+            <div class="sum-body">
+              <p class="sum-prod-name" id="sum-name">&#8212;</p>
+              <p class="sum-supplier" id="sum-supp">&#8212;</p>
+              <div class="sum-line"><span>Unit price</span><span id="sum-up">&#8377;0</span></div>
+              <div class="sum-line"><span>Quantity</span><span id="sum-qty">0</span></div>
+              <div class="sum-line"><span>Subtotal</span><span id="sum-sub">&#8377;0</span></div>
+              <div class="sum-line"><span>GST (18%)</span><span id="sum-gst">&#8377;0</span></div>
+              <div class="sum-line"><span>Shipping</span><span style="color:var(--green);font-weight:700">Free</span></div>
+              <div class="sum-line total"><span>Total</span><span id="sum-total">&#8377;0</span></div>
+              <div class="sum-savings" id="sum-savings">&#127881; You save <strong id="sum-save">&#8377;0</strong> on bulk pricing!</div>
+              <div class="secure-note">&#128272; 100% Secure &amp; Encrypted</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- end checkout-area -->
+
+    <!-- =====================================================
+         SUCCESS / ORDER CREATED SCREEN
+    ===================================================== -->
+    <div id="success-screen">
+      <div class="success-anim">&#9989;</div>
+      <h1>Order Confirmed!</h1>
+      <p>Your order has been placed and sent to the supplier. Track the status below or in your Orders page.</p>
+
+      <div class="success-order-box">
+        <strong id="sc-order-id">#ORD-000000</strong>
+        <span id="sc-placed-at">Placed just now</span>
+      </div>
+
+      <div class="success-tracking">
+        <h3>&#128230; Delivery Tracking</h3>
+        <div class="track-timeline" id="track-timeline">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <div class="success-actions">
+        <a href="orders.html" class="btn-go primary">&#128230; View My Orders</a>
+        <a href="delivery.html" class="btn-go secondary">&#128666; Track Delivery</a>
+        <a href="dashboard.html" class="btn-go secondary">&#127968; Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="co-toast"></div>
+
+    <script src="../../js/tradenest-store.js"></script>
+    <script>
+    (function () {
+      "use strict";
+
+      /* ==========================================================
+         CHECKOUT — MULTI-STEP LOGIC
+         pageshow-based re-init fixes stale params on second visit
+      ========================================================== */
+
+      var store = window.TradeNestStore;
+
+      // --------------------------------------------------------
+      // Module-level mutable state (re-assigned by initCheckout)
+      // --------------------------------------------------------
+      var product        = null;
+      var MOQ            = 1;
+      var currentStep    = 1;
+      var selectedAddrId = null;
+      var activePayTab   = "upi";
+
+      // --------------------------------------------------------
+      // Helpers
+      // --------------------------------------------------------
+      function fmt(n){ return "\u20B9" + Number(n).toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:2}); }
+      function el(id){ return document.getElementById(id); }
+      function setText(id, v){ var e = el(id); if(e) e.textContent = v; }
+      function setVal(id, v){ var e = el(id); if(e) e.value = v; }
+
+      function fixImg(src){
+        if(!src) return "../../images/products/industrial-safety-gloves.webp";
+        if(src.startsWith("data:")) return src;
+        if(src.startsWith("../../")) return src;
+        if(src.startsWith("../../../")) return src.replace("../../../","../../");
+        if(src.startsWith("http://") || src.startsWith("https://")) return "../../images/products/industrial-safety-gloves.webp";
+        return "../../" + src.replace(/^\/+/,"");
+      }
+
+      function showToast(msg, type){
+        var t = el("co-toast");
+        if(!t) return;
+        t.textContent = msg;
+        t.className = "show " + (type||"info");
+        clearTimeout(t._h);
+        t._h = setTimeout(function(){ t.classList.remove("show"); }, 3200);
+      }
+
+      function showErr(id, msg){
+        var e = el(id);
+        if(!e) return;
+        if(msg) e.textContent = msg;
+        e.classList.add("show");
+        var input = e.previousElementSibling;
+        if(input && input.tagName !== "DIV") input.classList.add("err");
+      }
+      function hideErr(id){
+        var e = el(id);
+        if(!e) return;
+        e.classList.remove("show");
+        var input = e.previousElementSibling;
+        if(input) input.classList.remove("err");
+      }
+
+      // --------------------------------------------------------
+      // Step navigation
+      // --------------------------------------------------------
+      function goTo(step){
+        for(var i=1;i<=4;i++){
+          var panel = el("panel-"+i);
+          var ind   = el("step-ind-"+i);
+          var num   = el("step-num-"+i);
+          if(!panel||!ind||!num) continue;
+          panel.classList.toggle("active", i===step);
+          ind.classList.remove("active","done");
+          if(i < step){ ind.classList.add("done"); num.textContent = "\u2713"; }
+          else if(i===step){ ind.classList.add("active"); num.textContent = i; }
+          else{ num.textContent = i; }
+        }
+        currentStep = step;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // --------------------------------------------------------
+      // Quantity recalc — uses module-level product/MOQ
+      // --------------------------------------------------------
+      function getQtyInput(){ return el("co-qty"); }
+      function getQty(){
+        var inp = getQtyInput();
+        return Math.max(MOQ, parseInt(inp ? inp.value : MOQ, 10) || MOQ);
+      }
+
+      function recalc(){
+        var qty      = getQty();
+        var subtotal = qty * product.price;
+        var gst      = Math.round(subtotal * 0.18);
+        var total    = subtotal + gst;
+
+        setText("br-unit",  fmt(product.price));
+        setText("br-qty",   qty);
+        setText("br-gst",   fmt(gst));
+        setText("br-total", fmt(total));
+
+        setText("sum-qty",   qty);
+        setText("sum-sub",   fmt(subtotal));
+        setText("sum-gst",   fmt(gst));
+        setText("sum-total", fmt(total));
+        setText("bank-amt",  fmt(total));
+
+        var savEl = el("sum-savings");
+        if(savEl){
+          if(qty >= MOQ * 2){
+            var s = Math.round(subtotal * 0.05);
+            setText("sum-save", fmt(s));
+            savEl.style.display = "flex";
+          } else {
+            savEl.style.display = "none";
+          }
+        }
+
+        var qtyMinus = el("qty-minus");
+        if(qtyMinus) qtyMinus.disabled = qty <= MOQ;
+
+        renderEmi(total);
+      }
+
+      // --------------------------------------------------------
+      // Address helpers
+      // --------------------------------------------------------
+      var ADDR_KEY = "tradenest_saved_addresses";
+      function getSavedAddresses(){ try{ return JSON.parse(localStorage.getItem(ADDR_KEY)||"[]"); }catch(e){ return []; } }
+      function saveAddresses(list){ localStorage.setItem(ADDR_KEY, JSON.stringify(list)); }
+
+      function renderSavedAddresses(){
+        var list  = el("saved-addr-list");
+        if(!list) return;
+        var saved = getSavedAddresses();
+        if(!saved.length){ list.innerHTML=""; return; }
+        list.innerHTML = saved.map(function(a){
+          var sel = selectedAddrId ? a.id===selectedAddrId : a.default;
+          if(sel && !selectedAddrId) selectedAddrId = a.id;
+          return '<div class="addr-card'+(sel?" selected":"")+'" onclick="selectAddr(\''+a.id+'\')">'+
+            '<input type="radio" name="sel-addr" value="'+a.id+'" '+(sel?"checked":"")+' />'+
+            '<div class="addr-card-body">'+
+            '<strong>'+(a.name||"—")+(a.phone?" &middot; "+a.phone:"")+'</strong>'+
+            '<span>'+[a.company,a.addr,a.city,a.state,a.pin].filter(Boolean).join(", ")+'</span>'+
+            '</div></div>';
+        }).join("");
+      }
+
+      window.selectAddr = function(id){
+        selectedAddrId = id;
+        renderSavedAddresses();
+      };
+
+      // --------------------------------------------------------
+      // Delivery validation (Bug 2 fix)
+      // --------------------------------------------------------
+      function validateDelivery(){
+        var saved  = getSavedAddresses();
+        var form   = el("new-addr-form");
+        var formOpen = form && form.classList.contains("open");
+
+        // Case 1: saved address exists and one is selected
+        if(saved.length && selectedAddrId) return true;
+
+        // Case 2: new address form is open — validate it
+        if(formOpen){
+          return validateNewAddrFields();
+        }
+
+        // Case 3: no saved address and form is not open — open it
+        if(!saved.length){
+          el("new-addr-form").classList.add("open");
+          el("add-addr-btn").textContent = "\u2212 Cancel";
+          showToast("Please fill in a delivery address to continue.", "info");
+          el("new-addr-form").scrollIntoView({ behavior: "smooth", block: "start" });
+          return false;
+        }
+
+        // Case 4: saved addresses exist but none selected — auto-select first
+        if(saved.length && !selectedAddrId){
+          selectedAddrId = saved[0].id;
+          renderSavedAddresses();
+          return true;
+        }
+
+        showToast("Please select or add a delivery address.", "error");
+        return false;
+      }
+
+      function validateNewAddrFields(){
+        var ok    = true;
+        var fname = (el("co-fname")||{}).value||"";
+        var phone = (el("co-phone")||{}).value||"";
+        var addr  = (el("co-addr") ||{}).value||"";
+        var city  = (el("co-city") ||{}).value||"";
+        var state = (el("co-state")||{}).value||"";
+        var pin   = (el("co-pin")  ||{}).value||"";
+        if(!fname.trim()){showErr("e-fname","Full name is required.");ok=false;}else hideErr("e-fname");
+        if(!phone.trim()||!/^[0-9+\s\-()]{7,}$/.test(phone)){showErr("e-phone","Enter a valid phone number (min 7 digits).");ok=false;}else hideErr("e-phone");
+        if(!addr.trim()){showErr("e-addr","Street address is required.");ok=false;}else hideErr("e-addr");
+        if(!city.trim()){showErr("e-city","City is required.");ok=false;}else hideErr("e-city");
+        if(!state){showErr("e-state","Please select a state.");ok=false;}else hideErr("e-state");
+        if(!pin.trim()||!/^\d{6}$/.test(pin)){showErr("e-pin","Enter a valid 6-digit pincode.");ok=false;}else hideErr("e-pin");
+        return ok;
+      }
+
+      // --------------------------------------------------------
+      // Payment validation
+      // --------------------------------------------------------
+      function validatePayment(){
+        hideErr("e-pay");
+        if(activePayTab==="upi"){
+          var uid = (el("co-upi-id")||{}).value||"";
+          if(!uid.trim()||!uid.includes("@")){ showErr("e-upi","Enter a valid UPI ID (e.g. name@okicici)."); var u=el("co-upi-id"); if(u) u.focus(); return false; }
+          hideErr("e-upi"); return true;
+        }
+        if(activePayTab==="card"){
+          var okc   = true;
+          var cnum  = ((el("co-cnum")||{}).value||"").replace(/\s/g,"");
+          var cname = ((el("co-cname")||{}).value||"").trim();
+          var cexp  = ((el("co-cexp")||{}).value||"").trim();
+          var ccvv  = ((el("co-ccvv")||{}).value||"").trim();
+          if(!/^\d{16}$/.test(cnum)){showErr("e-cnum","Valid 16-digit card number required.");okc=false;}else hideErr("e-cnum");
+          if(!cname){showErr("e-cname","Cardholder name required.");okc=false;}else hideErr("e-cname");
+          if(!cexp||cexp.length<7){showErr("e-cexp","Valid expiry required.");okc=false;}else hideErr("e-cexp");
+          if(!ccvv||ccvv.length<3){showErr("e-ccvv","CVV required.");okc=false;}else hideErr("e-ccvv");
+          return okc;
+        }
+        if(activePayTab==="emi"){
+          var sel = document.querySelector('input[name="emi-plan"]:checked');
+          if(!sel){ showErr("e-emi","Please select an EMI plan."); return false; }
+          hideErr("e-emi"); return true;
+        }
+        if(activePayTab==="bank"){
+          var okb  = true;
+          var utr  = ((el("co-utr")||{}).value||"").trim();
+          var date = ((el("co-tdate")||{}).value||"").trim();
+          if(!utr){showErr("e-utr","UTR / reference number required.");okb=false;}else hideErr("e-utr");
+          if(!date){showErr("e-tdate","Transfer date required.");okb=false;}else hideErr("e-tdate");
+          return okb;
+        }
+        return true;
+      }
+
+      // --------------------------------------------------------
+      // EMI render
+      // --------------------------------------------------------
+      function renderEmi(total){
+        var list = el("emi-list");
+        if(!list) return;
+        var plans = [
+          {m:3,  rate:0,    tag:"Interest-Free \u2728"},
+          {m:6,  rate:0,    tag:"Interest-Free \u2728"},
+          {m:9,  rate:1.5,  tag:"1.5% p.m."},
+          {m:12, rate:1.25, tag:"1.25% p.m."},
+          {m:18, rate:1.1,  tag:"1.1% p.m."},
+          {m:24, rate:1.0,  tag:"1.0% p.m."}
+        ];
+        var prev = (document.querySelector('input[name="emi-plan"]:checked')||{}).value;
+        list.innerHTML = plans.map(function(p,i){
+          var interest = total*(p.rate/100)*p.m;
+          var perMonth = Math.ceil((total+interest)/p.m);
+          var checked  = prev ? String(p.m)===prev : i===0;
+          return '<label class="emi-opt'+(checked?" selected":"")+'" onclick="highlightEmi(this)">'+
+            '<input type="radio" name="emi-plan" value="'+p.m+'" '+(checked?"checked":"")+' />'+
+            '<div class="emi-info">'+
+            '<strong>'+p.m+' Months</strong>'+
+            '<small>'+p.tag+(p.rate>0?' \u00B7 Total: '+fmt(Math.ceil(total+interest)):"")+
+            '</small></div>'+
+            '<div class="emi-mo">'+fmt(perMonth)+'/mo</div>'+
+            '</label>';
+        }).join("");
+      }
+
+      window.highlightEmi = function(label){
+        document.querySelectorAll(".emi-opt").forEach(function(e){ e.classList.remove("selected"); });
+        label.classList.add("selected");
+        hideErr("e-emi");
+      };
+
+      // --------------------------------------------------------
+      // Review population
+      // --------------------------------------------------------
+      function getSelectedAddress(){
+        var saved = getSavedAddresses();
+        return saved.find(function(a){ return a.id===selectedAddrId; }) || saved[0] || null;
+      }
+
+      function getPaymentLabel(){
+        if(activePayTab==="upi"){
+          var app  = (document.querySelector('input[name="upi-app"]:checked')||{}).value||"";
+          var uid  = (el("co-upi-id")||{}).value||"";
+          var names = {gpay:"Google Pay",phonepe:"PhonePe",paytm:"Paytm",bhim:"BHIM UPI"};
+          return "UPI \u00B7 " + (names[app]||app) + (uid?" \u00B7 "+uid:"");
+        }
+        if(activePayTab==="card"){
+          var ctype = (document.querySelector(".card-type-btn.active")||{}).dataset.ctype||"credit";
+          var cnet  = (document.querySelector(".card-net-btn.active")||{}).dataset.net||"";
+          var cnum  = ((el("co-cnum")||{}).value||"").replace(/\s/g,"");
+          var last4 = cnum.length>=4?cnum.slice(-4):"****";
+          return (ctype==="credit"?"Credit":"Debit")+" Card \u00B7 "+cnet.toUpperCase()+" \u00B7\u00B7\u00B7\u00B7 "+last4;
+        }
+        if(activePayTab==="emi"){
+          var months = ((document.querySelector('input[name="emi-plan"]:checked')||{}).value)||"3";
+          return "EMI \u00B7 "+months+" Months";
+        }
+        if(activePayTab==="bank"){
+          var bank = (el("co-bank-name")||{}).value||"Net Banking";
+          return "Bank Transfer \u00B7 "+bank;
+        }
+        return "\u2014";
+      }
+
+      function populateReview(){
+        var addr = getSelectedAddress();
+        var qty  = getQty();
+        var sub  = qty * product.price;
+        var gst  = Math.round(sub*0.18);
+        var tot  = sub+gst;
+
+        var rvImg = el("rv-img");
+        if(rvImg){ rvImg.src = fixImg(product.image); rvImg.alt = product.name; }
+        setText("rv-name",    product.name);
+        setText("rv-supplier","By " + product.supplierName);
+        setText("rv-qty",     qty);
+        setText("rv-uprice",  fmt(product.price) + " / " + product.unit);
+        setText("rv-total",   fmt(tot) + " (incl. 18% GST)");
+        setText("rv-payment", getPaymentLabel());
+        setText("rv-address", addr ? [addr.name, addr.addr, addr.city, addr.state, addr.pin].filter(Boolean).join(", ") : "\u2014");
+      }
+
+      // --------------------------------------------------------
+      // Copy to clipboard
+      // --------------------------------------------------------
+      window.copyText = function(text, label){
+        navigator.clipboard.writeText(text)
+          .then(function(){ showToast((label||"Text")+" copied!","success"); })
+          .catch(function(){ showToast("Copy failed.","error"); });
+      };
+
+      // --------------------------------------------------------
+      // Place order
+      // --------------------------------------------------------
+      function placeOrder(){
+        var btn = el("place-order-btn");
+        if(btn){ btn.disabled=true; btn.textContent="Placing order\u2026"; }
+
+        var addr   = getSelectedAddress();
+        var qty    = getQty();
+        var sub    = qty * product.price;
+        var gst    = Math.round(sub*0.18);
+        var total  = sub + gst;
+        var now    = new Date();
+
+        var user = {};
+        try{ user = JSON.parse(localStorage.getItem("tradenestCurrentUser")||"{}"); }catch(e){}
+
+        var payLabel = getPaymentLabel();
+        var isBank   = activePayTab==="bank";
+
+        var order = {
+          id:              "ORD-" + Date.now(),
+          buyerId:         user.id || "buyer-001",
+          buyerName:       addr ? addr.name : (user.fullName||"Buyer"),
+          productId:       product.id,
+          productName:     product.name,
+          supplierId:      product.supplierId || "",
+          supplierName:    product.supplierName,
+          quantity:        qty,
+          unit:            product.unit,
+          unitPrice:       product.price,
+          subtotal:        sub,
+          gst:             gst,
+          totalAmount:     total,
+          amount:          total,
+          paymentMethod:   payLabel,
+          paymentStatus:   isBank ? "Awaiting Verification" : "Paid",
+          deliveryAddress: addr ? [addr.addr, addr.city, addr.state, addr.pin].filter(Boolean).join(", ") : "",
+          buyerAddress:    addr || null,
+          notes:           (el("co-order-notes")||{}).value||"",
+          status:          isBank ? "Pending Payment Confirmation" : "Placed",
+          expectedDate:    new Date(now.getTime() + 7*24*60*60*1000).toISOString(),
+          createdAt:       now.toISOString(),
+          updatedAt:       now.toISOString(),
+          orderType:       "direct"
+        };
+
+        var shipment = {
+          id:                "SHIP-" + Date.now(),
+          orderId:           order.id,
+          shipmentReference: "SHP-" + order.id,
+          courierName:       "TradeNest Logistics",
+          trackingNumber:    "TN" + Date.now().toString().slice(-8),
+          status:            "Processing",
+          deliveryAddress:   order.deliveryAddress,
+          expectedDate:      order.expectedDate,
+          timeline: [
+            { status:"Order Placed",  date: now.toISOString() },
+            { status:"Processing",    date: now.toISOString() }
+          ]
+        };
+
+        try{
+          if(store && store.updateCollection){
+            store.updateCollection("orders",    function(list){ return [order].concat(list); });
+            store.updateCollection("shipments", function(list){ return [shipment].concat(list); });
+            if(store.addActivity) store.addActivity("order","Direct order: "+product.name+" \u00D7 "+qty);
+          } else {
+            var ords = JSON.parse(localStorage.getItem("tradenestOrders")||"[]");
+            ords.unshift(order);
+            localStorage.setItem("tradenestOrders", JSON.stringify(ords));
+          }
+        }catch(err){ console.error(err); }
+
+        el("checkout-area").style.display  = "none";
+        el("success-screen").style.display = "block";
+        el("sc-order-id").textContent      = "#" + order.id;
+        el("sc-placed-at").textContent     = "Placed " + now.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) + " \u00B7 " + now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+
+        var statuses   = ["Order Placed","Processing","Dispatched","In Transit","Out for Delivery","Delivered"];
+        var currentIdx = 1;
+        var timeline   = el("track-timeline");
+        if(timeline){
+          timeline.innerHTML = statuses.map(function(s,i){
+            var cls  = "pending";
+            if(i < currentIdx) cls = "done";
+            else if(i===currentIdx) cls = "current";
+            var icon = cls==="done"?"\u2713": cls==="current"?"\u25CF":"\u25CB";
+            return '<div class="track-step'+(cls==="current"?" current-step":"")+'">'+
+              '<span class="track-dot '+cls+'">'+icon+'</span>'+
+              '<span>'+s+(cls==="current"?" (Current)":"")+
+              '</span></div>';
+          }).join("");
+        }
+
+        window.scrollTo({ top:0, behavior:"smooth" });
+      }
+
+      // --------------------------------------------------------
+      // initCheckout — re-reads URL params fresh every pageshow
+      // --------------------------------------------------------
+      function initCheckout(){
+        // 1. Read URL params fresh
+        var params = new URLSearchParams(window.location.search);
+        var state  = store ? store.getStore() : { products: [], supplierProfiles: [] };
+
+        // 2. Load product
+        var pid = params.get("id") || "";
+        product = pid ? ((state.products || []).find(function(p){ return p.id === pid; }) || null) : null;
+        if(!product){
+          product = {
+            id:           pid || "custom",
+            name:         params.get("name")     || "Product",
+            price:        parseFloat(params.get("price")) || 0,
+            unit:         params.get("unit")     || "unit",
+            moq:          parseInt(params.get("moq"), 10) || 1,
+            supplierName: params.get("supplier") || "Supplier",
+            image:        params.get("img")      || "../../images/products/industrial-safety-gloves.webp",
+            category:     params.get("category") || "General",
+            availability: "In Stock",
+            stock:        999
+          };
+        }
+        MOQ = product.moq || 1;
+
+        // 3. Reset UI state
+        currentStep    = 1;
+        selectedAddrId = null;
+        activePayTab   = "upi";
+        goTo(1);
+
+        // 4. Populate product display
+        document.title = "Checkout \u2014 " + product.name;
+        var imgEl = el("co-img");
+        if(imgEl){ imgEl.src = fixImg(product.image); imgEl.alt = product.name; imgEl.onerror=function(){ this.src="../../images/products/industrial-safety-gloves.webp"; }; }
+        setText("co-name",     product.name);
+        setText("co-supplier", "By " + product.supplierName);
+        setText("co-cat",      product.category || "General");
+        setText("co-uprice",   fmt(product.price) + " / " + product.unit);
+        setText("co-avail",    product.availability || "In Stock");
+        setText("co-moq",      MOQ + " " + product.unit + (MOQ > 1 ? "s" : ""));
+        setText("sum-name",    product.name);
+        setText("sum-supp",    "By " + product.supplierName);
+        setText("sum-up",      fmt(product.price));
+
+        // 5. Reset quantity inputs (clone nodes to remove old listeners)
+        var oldMinus = el("qty-minus");
+        var oldPlus  = el("qty-plus");
+        var oldInp   = el("co-qty");
+        if(oldMinus){
+          var nm = oldMinus.cloneNode(true);
+          oldMinus.parentNode.replaceChild(nm, oldMinus);
+          nm.addEventListener("click", function(){ var inp=el("co-qty"); if(getQty()>MOQ){ inp.value=getQty()-1; recalc(); }});
+        }
+        if(oldPlus){
+          var np = oldPlus.cloneNode(true);
+          oldPlus.parentNode.replaceChild(np, oldPlus);
+          np.addEventListener("click", function(){ var inp=el("co-qty"); inp.value=getQty()+1; recalc(); });
+        }
+        if(oldInp){
+          var ni = oldInp.cloneNode(true);
+          ni.value = MOQ;
+          ni.min   = MOQ;
+          oldInp.parentNode.replaceChild(ni, oldInp);
+          ni.addEventListener("input", function(){ var v=parseInt(ni.value,10); if(isNaN(v)||v<MOQ){v=MOQ;ni.value=v;} recalc(); });
+        }
+
+        // 6. Reset payment fields
+        setVal("co-upi-id", "");
+        setVal("co-cnum",   "");
+        setVal("co-cname",  "");
+        setVal("co-cexp",   "");
+        setVal("co-ccvv",   "");
+        setVal("co-utr",    "");
+        setVal("co-tdate",  "");
+        setVal("co-bank-name", "");
+
+        // Reset payment tabs to UPI
+        document.querySelectorAll(".pay-tab").forEach(function(t){ t.classList.remove("active"); });
+        document.querySelectorAll(".pay-panel").forEach(function(p){ p.classList.remove("active"); });
+        var upiTab   = document.querySelector('.pay-tab[data-tab="upi"]');
+        var upiPanel = el("pay-upi");
+        if(upiTab)   upiTab.classList.add("active");
+        if(upiPanel) upiPanel.classList.add("active");
+
+        // Reset UPI app to gpay
+        document.querySelectorAll(".upi-app-btn").forEach(function(b){ b.classList.remove("selected"); });
+        var gpayLbl = el("upi-gpay-lbl");
+        if(gpayLbl) gpayLbl.classList.add("selected");
+        var gpayRadio = document.querySelector('input[name="upi-app"][value="gpay"]');
+        if(gpayRadio) gpayRadio.checked = true;
+
+        // 7. Make checkout area visible (in case success screen was showing)
+        var checkoutArea  = el("checkout-area");
+        var successScreen = el("success-screen");
+        if(checkoutArea)  checkoutArea.style.display  = "";
+        if(successScreen) successScreen.style.display = "none";
+
+        // 8. Init saved addresses
+        (function(){
+          var saved = getSavedAddresses();
+          if(!saved.length){
+            try{
+              var profile = JSON.parse(localStorage.getItem("tradenestBuyerProfile")||"{}");
+              var user    = JSON.parse(localStorage.getItem("tradenestCurrentUser")||"{}");
+              var name    = profile.fullName || user.fullName || "";
+              var phone   = profile.phone   || user.phone    || "";
+              var addr2   = profile.address || "";
+              var city    = profile.city    || user.city     || "";
+              var st      = profile.state   || user.state    || "";
+              var pin     = profile.pincode || user.pincode  || "";
+              var comp    = profile.company || user.company  || profile.businessName || "";
+              if(addr2 && city){
+                saved = [{ id:"addr-default", label:"Default Address", name:name, phone:phone, company:comp, addr:addr2, city:city, state:st, pin:pin, "default":true }];
+                saveAddresses(saved);
+              }
+            }catch(e2){}
+          }
+          renderSavedAddresses();
+        })();
+
+        // 9. Recalc (initial render)
+        recalc();
+      }
+
+      // --------------------------------------------------------
+      // Wire one-time event listeners (stable, use module-level vars)
+      // --------------------------------------------------------
+      (function wireListeners(){
+        // Step nav
+        el("next-1").addEventListener("click", function(){ goTo(2); });
+        el("back-2").addEventListener("click", function(){ goTo(1); });
+        el("next-2").addEventListener("click", function(){ if(validateDelivery()) goTo(3); });
+        el("back-3").addEventListener("click", function(){ goTo(2); });
+        el("next-3").addEventListener("click", function(){ if(validatePayment()){ populateReview(); goTo(4); } });
+        el("back-4").addEventListener("click", function(){ goTo(3); });
+        el("place-order-btn").addEventListener("click", placeOrder);
+
+        // Add new address toggle
+        el("add-addr-btn").addEventListener("click", function(){
+          var form = el("new-addr-form");
+          form.classList.toggle("open");
+          el("add-addr-btn").textContent = form.classList.contains("open") ? "\u2212 Cancel" : "+ Add New Delivery Address";
+        });
+
+        // Save new address
+        el("save-new-addr-btn").addEventListener("click", function(){
+          if(!validateNewAddrFields()) return;
+          var a = {
+            id:      "addr-" + Date.now(),
+            label:   "Address " + (getSavedAddresses().length+1),
+            name:    (el("co-fname")||{}).value||"",
+            phone:   (el("co-phone")||{}).value||"",
+            company: (el("co-company")||{}).value||"",
+            addr:    (el("co-addr")||{}).value||"",
+            city:    (el("co-city")||{}).value||"",
+            state:   (el("co-state")||{}).value||"",
+            pin:     (el("co-pin")||{}).value||"",
+            gstin:   (el("co-gstin")||{}).value||"",
+            notes:   (el("co-notes-del")||{}).value||"",
+            "default": !getSavedAddresses().length
+          };
+          var list = getSavedAddresses();
+          list.push(a);
+          saveAddresses(list);
+          selectedAddrId = a.id;
+          renderSavedAddresses();
+          el("new-addr-form").classList.remove("open");
+          el("add-addr-btn").textContent = "+ Add New Delivery Address";
+          showToast("Address saved!", "success");
+        });
+
+        // Share location
+        el("share-location-btn").addEventListener("click", function(){
+          var btn = el("share-location-btn");
+          if(!navigator.geolocation){ showToast("Geolocation is not supported by your browser.","error"); return; }
+          btn.textContent = "\uD83D\uDCCD Detecting location\u2026";
+          btn.disabled = true;
+          navigator.geolocation.getCurrentPosition(
+            function(pos){
+              fetch("https://nominatim.openstreetmap.org/reverse?format=json&lat="+pos.coords.latitude+"&lon="+pos.coords.longitude)
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                  var a    = data.address || {};
+                  var road    = a.road || a.pedestrian || a.neighbourhood || "";
+                  var suburb  = a.suburb || a.village || "";
+                  var city    = a.city || a.town || a.county || "";
+                  var state   = a.state || "";
+                  var pin     = a.postcode || "";
+                  var addr2   = [road, suburb].filter(Boolean).join(", ");
+                  el("new-addr-form").classList.add("open");
+                  el("add-addr-btn").textContent = "\u2212 Cancel";
+                  setVal("co-addr", addr2);
+                  setVal("co-city", city);
+                  setVal("co-pin",  pin);
+                  var stateEl = el("co-state");
+                  if(stateEl){
+                    for(var i=0;i<stateEl.options.length;i++){
+                      if(stateEl.options[i].text.toLowerCase()===state.toLowerCase()){ stateEl.selectedIndex=i; break; }
+                    }
+                  }
+                  showToast("Location detected! Please verify and fill remaining details.", "success");
+                })
+                .catch(function(){ showToast("Could not fetch address. Please enter manually.","error"); })
+                .finally(function(){ btn.textContent="\uD83D\uDCCD Use My Current Location"; btn.disabled=false; });
+            },
+            function(){
+              btn.textContent = "\uD83D\uDCCD Use My Current Location";
+              btn.disabled = false;
+              showToast("Location access denied. Please enter address manually.","error");
+            }
+          );
+        });
+
+        // Payment tabs
+        document.querySelectorAll(".pay-tab").forEach(function(tab){
+          tab.addEventListener("click", function(){
+            document.querySelectorAll(".pay-tab").forEach(function(t){ t.classList.remove("active"); });
+            document.querySelectorAll(".pay-panel").forEach(function(p){ p.classList.remove("active"); });
+            tab.classList.add("active");
+            activePayTab = tab.dataset.tab;
+            el("pay-"+activePayTab).classList.add("active");
+            hideErr("e-pay");
+          });
+        });
+
+        // UPI app selection
+        document.querySelectorAll('.upi-app-btn input[type=radio]').forEach(function(radio){
+          radio.addEventListener("change", function(){
+            document.querySelectorAll(".upi-app-btn").forEach(function(b){ b.classList.remove("selected"); });
+            var lbl = radio.closest ? radio.closest(".upi-app-btn") : radio.parentElement;
+            if(lbl) lbl.classList.add("selected");
+          });
+        });
+
+        // Card type
+        document.querySelectorAll(".card-type-btn").forEach(function(b){
+          b.addEventListener("click", function(){
+            document.querySelectorAll(".card-type-btn").forEach(function(x){ x.classList.remove("active"); });
+            b.classList.add("active");
+          });
+        });
+
+        // Card network — swaps SVG icon into the floating span
+        document.querySelectorAll(".card-net-btn").forEach(function(b){
+          b.addEventListener("click", function(){
+            document.querySelectorAll(".card-net-btn").forEach(function(x){ x.classList.remove("active"); });
+            b.classList.add("active");
+            var icon = el("card-net-icon");
+            var svg  = b.querySelector("svg");
+            if(icon && svg) icon.innerHTML = svg.outerHTML;
+          });
+        });
+
+        // Card number format
+        var cnumEl = el("co-cnum");
+        if(cnumEl) cnumEl.addEventListener("input",function(){
+          var v = cnumEl.value.replace(/\D/g,"").substring(0,16);
+          cnumEl.value = v.replace(/(.{4})/g,"$1  ").trim();
+          hideErr("e-cnum");
+        });
+
+        // Card expiry format
+        var cexpEl = el("co-cexp");
+        if(cexpEl) cexpEl.addEventListener("input",function(){
+          var v = cexpEl.value.replace(/\D/g,"").substring(0,4);
+          if(v.length >= 3) v = v.substring(0,2) + " / " + v.substring(2);
+          cexpEl.value = v;
+          hideErr("e-cexp");
+        });
+
+        // Live error clearing — payment fields
+        ["co-upi-id","co-cnum","co-cname","co-cexp","co-ccvv","co-utr","co-tdate"].forEach(function(id){
+          var e = el(id);
+          if(e) e.addEventListener("input", function(){
+            var ferr = e.parentElement.querySelector(".ferr");
+            if(ferr){ ferr.classList.remove("show"); e.classList.remove("err"); }
+          });
+        });
+
+        // Live error clearing — address fields (Bug 2 enhancement)
+        ["co-fname","co-phone","co-addr","co-city","co-pin"].forEach(function(id){
+          var e = el(id);
+          if(e) e.addEventListener("input", function(){
+            var ferr = e.parentElement.querySelector(".ferr");
+            if(ferr){ ferr.classList.remove("show"); e.classList.remove("err"); }
+          });
+        });
+        var stateEl = el("co-state");
+        if(stateEl) stateEl.addEventListener("change", function(){
+          var ferr = stateEl.parentElement.querySelector(".ferr");
+          if(ferr){ ferr.classList.remove("show"); stateEl.classList.remove("err"); }
+        });
+
+      })(); // end wireListeners (runs once)
+
+      // --------------------------------------------------------
+      // pageshow — fires on fresh load AND bfcache restore
+      // Bug 3 fix: re-reads URLSearchParams fresh every time
+      // --------------------------------------------------------
+      window.addEventListener("pageshow", function(){
+        initCheckout();
+      });
+
+    })();
+    </script>
+  </body>
+</html>
