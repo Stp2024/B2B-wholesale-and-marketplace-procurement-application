@@ -9,6 +9,7 @@
     <!-- Buyer Dashboard Stylesheet -->
     <link rel="stylesheet" href="css/buyer/dashboard.css" />
     <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/buyer/sidebar.css" />
   </head>
 
   <body data-page="dashboard">
@@ -19,7 +20,7 @@
       <!-- =======================================================
            SIDEBAR NAVIGATION
       ======================================================== -->
-      <aside class="sidebar" id="sidebar">
+      <aside class="sidebar buyer-sidebar" id="sidebar">
         <!-- Brand Section -->
         <div class="sidebar-brand">
           <a href="buyer-dashboard.html" class="brand-logo" aria-label="Buyer dashboard home">
@@ -78,7 +79,7 @@
 
               <!-- Purchase History -->
               <li>
-                <a href="pages/buyer/orders.html" class="nav-link">
+                <a href="pages/buyer/purchase-history.html" class="nav-link">
                   <span class="nav-icon">📜</span>
                   <span class="nav-label">Purchase History</span>
                 </a>
@@ -91,6 +92,14 @@
             <span class="nav-section-title"> Quotes </span>
 
             <ul class="nav-list">
+              <!-- RFQs -->
+              <li>
+                <a href="pages/buyer/rfqs.html" class="nav-link">
+                  <span class="nav-icon">📝</span>
+                  <span class="nav-label">RFQs</span>
+                </a>
+              </li>
+
               <!-- Request Quote -->
               <li>
                 <a href="pages/buyer/request-quote.html" class="nav-link">
@@ -803,9 +812,14 @@
 
                   <p class="product-moq">MOQ: 500 pairs</p>
 
-                  <a href="pages/buyer/product-details.html?id=product-001" class="btn btn-card">
-                    View Product
-                  </a>
+                  <div class="product-card-actions">
+                    <a href="pages/buyer/product-details.html?id=product-001" class="btn btn-card">
+                      View Product
+                    </a>
+                    <a href="pages/buyer/checkout.html?id=product-001&name=Industrial+Safety+Gloves&price=180&unit=pair&moq=500&supplier=Apex+Gear+Co.&img=images/products/industrial-safety-gloves.webp&category=Industrial+Equipment&from=dashboard" class="btn btn-buy-now">
+                      🛒 Buy Now
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -813,7 +827,7 @@
               <div class="product-card">
                 <div class="product-image-wrap">
                   <img
-                    src="images/products/office-paper.webp"
+                    src="images/products/a4-premium-copy-paper.webp"
                     alt="A4 Premium Copy Paper"
                     class="product-image"
                   />
@@ -840,9 +854,14 @@
 
                   <p class="product-moq">MOQ: 100 reams</p>
 
-                  <a href="pages/buyer/product-details.html?id=product-003" class="btn btn-card">
-                    View Product
-                  </a>
+                  <div class="product-card-actions">
+                    <a href="pages/buyer/product-details.html?id=product-003" class="btn btn-card">
+                      View Product
+                    </a>
+                    <a href="pages/buyer/checkout.html?id=product-003&name=A4+Premium+Copy+Paper&price=420&unit=ream&moq=100&supplier=PaperPro+Solutions&img=images/products/a4-premium-copy-paper.webp&category=Office+Supplies&from=dashboard" class="btn btn-buy-now">
+                      🛒 Buy Now
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -850,7 +869,7 @@
               <div class="product-card">
                 <div class="product-image-wrap">
                   <img
-                    src="images/products/led-bulbs.webp"
+                    src="images/products/commercial-led-panel-lights.webp"
                     alt="Commercial LED Panel Lights"
                     class="product-image"
                   />
@@ -877,9 +896,14 @@
 
                   <p class="product-moq">MOQ: 30 pieces</p>
 
-                  <a href="pages/buyer/product-details.html?id=product-005" class="btn btn-card">
-                    View Product
-                  </a>
+                  <div class="product-card-actions">
+                    <a href="pages/buyer/product-details.html?id=product-005" class="btn btn-card">
+                      View Product
+                    </a>
+                    <a href="pages/buyer/checkout.html?id=product-005&name=Commercial+LED+Panel+Lights&price=1650&unit=piece&moq=30&supplier=Lumina+Electric&img=images/products/commercial-led-panel-lights.webp&category=Electrical&from=dashboard" class="btn btn-buy-now">
+                      🛒 Buy Now
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -887,7 +911,7 @@
               <div class="product-card">
                 <div class="product-image-wrap">
                   <img
-                    src="images/products/packaging-boxes.webp"
+                    src="images/products/corrugated-packaging-boxes.webp"
                     alt="Corrugated Packaging Boxes"
                     class="product-image"
                   />
@@ -914,9 +938,14 @@
 
                   <p class="product-moq">MOQ: 1000 boxes</p>
 
-                  <a href="pages/buyer/product-details.html?id=product-006" class="btn btn-card">
-                    View Product
-                  </a>
+                  <div class="product-card-actions">
+                    <a href="pages/buyer/product-details.html?id=product-006" class="btn btn-card">
+                      View Product
+                    </a>
+                    <a href="pages/buyer/checkout.html?id=product-006&name=Corrugated+Packaging+Boxes&price=55&unit=box&moq=1000&supplier=PackRight+Corp.&img=images/products/corrugated-packaging-boxes.webp&category=Packaging&from=dashboard" class="btn btn-buy-now">
+                      🛒 Buy Now
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1221,5 +1250,4 @@
     <script src="js/buyer/modules.js"></script>
   </body>
 </html>
-
 

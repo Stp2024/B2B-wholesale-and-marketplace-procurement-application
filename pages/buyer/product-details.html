@@ -155,6 +155,7 @@
               <div class="detail-price" id="detail-price">₹0</div>
               <div class="detail-actions">
                 <button id="save-product-btn" class="btn btn-secondary" type="button">Save Product</button>
+                <button id="buy-now-btn" class="btn btn-primary" type="button" style="background:linear-gradient(135deg,#10b981,#059669);border:none;color:#fff;box-shadow:0 4px 14px rgba(5,150,105,0.3);">🛒 Buy Now</button>
               </div>
             </div>
           </div>
@@ -205,6 +206,24 @@
             localStorage.setItem("tradenest_saved_products", JSON.stringify(list));
             saveBtn.textContent = "Saved";
           });
+
+          const buyNowBtn = document.getElementById("buy-now-btn");
+          if (buyNowBtn) {
+            buyNowBtn.addEventListener("click", function () {
+              const params = new URLSearchParams({
+                id:       product.id,
+                name:     product.name,
+                price:    product.price,
+                unit:     product.unit || "unit",
+                moq:      product.moq  || 1,
+                supplier: product.supplierName || "Supplier",
+                img:      product.image || "",
+                category: product.category || "General",
+                from:     "product-details"
+              });
+              window.location.href = "checkout.html?" + params.toString();
+            });
+          }
         }
       });
     </script>

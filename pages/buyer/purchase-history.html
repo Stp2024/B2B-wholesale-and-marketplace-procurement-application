@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Purchase History — TradeNest</title>
+    <link rel="stylesheet" href="../../css/buyer/modules.css" />
+    <style>
+      /* ---- Purchase History extras ---- */
+      .ph-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .75rem;
+        margin-bottom: 1.25rem;
+        align-items: flex-end;
+      }
+      .ph-filters .field { min-width: 160px; flex: 1; }
+      .ph-filters .field label { font-size: .78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px; }
+      .ph-filters .field input,
+      .ph-filters .field select {
+        width: 100%; padding: .5rem .75rem;
+        border: 1.5px solid #e2e8f0; border-radius: 8px;
+        font-size: .85rem; background: #fff;
+      }
+      .ph-summary-strip {
+        display: flex; flex-wrap: wrap; gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .ph-sum-card {
+        background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+        padding: .85rem 1.25rem; flex: 1; min-width: 140px;
+        box-shadow: 0 2px 8px rgba(15,23,42,.05);
+      }
+      .ph-sum-card .label { font-size: .72rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .05em; }
+      .ph-sum-card .value { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-top: 4px; }
+      .ph-sum-card.green .value { color: #059669; }
+      .ph-sum-card.blue  .value { color: #1d4ed8; }
+
+      .ph-empty { text-align: center; padding: 3rem 1rem; color: #94a3b8; }
+      .ph-empty p { font-size: .95rem; margin-top: .5rem; }
+
+      /* override record-card for purchase history style */
+      .ph-card {
+        background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+        padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(15,23,42,.05);
+        transition: box-shadow .15s;
+      }
+      .ph-card:hover { box-shadow: 0 6px 20px rgba(15,23,42,.09); }
+      .ph-card-top {
+        display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+        margin-bottom: .75rem;
+      }
+      .ph-card-top h3 { font-size: .98rem; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+      .ph-order-id { font-size: .75rem; color: #64748b; font-weight: 600; }
+      .ph-status {
+        padding: 3px 10px; border-radius: 999px;
+        font-size: .72rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+      }
+      .ph-status.delivered  { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+      .ph-status.completed  { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+      .ph-status.placed     { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+      .ph-status.processing { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+      .ph-status.shipped    { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+      .ph-status.cancelled  { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+      .ph-status.pending    { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+      .ph-meta {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: .5rem .75rem; font-size: .82rem;
+      }
+      .ph-meta-item { display: flex; flex-direction: column; gap: 2px; }
+      .ph-meta-item span { color: #64748b; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+      .ph-meta-item strong { color: #0f172a; }
+      .ph-pay-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        margin-top: .6rem;
+        font-size: .75rem; font-weight: 700; color: #475569;
+        background: #f1f5f9; padding: 3px 10px; border-radius: 999px;
+        border: 1px solid #e2e8f0;
+      }
+      .ph-reorder-btn {
+        margin-top: .75rem;
+        padding: .5rem 1.1rem;
+        background: #1e2a3a; color: #fff; border: none;
+        border-radius: 8px; font-size: .82rem; font-weight: 700;
+        cursor: pointer; transition: all .15s;
+      }
+      .ph-reorder-btn:hover { background: #2d3f55; transform: translateY(-1px); }
+    </style>
+  </head>
+  <body data-page="purchase-history">
+    <div class="module-shell">
+      <aside class="module-sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+          </div>
+          <div class="brand-text">
+            <h2>TradeNest</h2>
+            <span>Buyer Workspace</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Buyer navigation">
+          <a href="dashboard.html">📊 Dashboard</a>
+          <a href="products.html">🛍️ Products</a>
+          <a href="suppliers.html">🏢 Suppliers</a>
+          <a href="rfqs.html">📝 RFQs</a>
+          <a href="quotations.html">💬 Quotations</a>
+          <a href="compare-quotes.html">⚖️ Compare</a>
+          <a href="samples.html">🧪 Samples</a>
+          <a href="collaboration.html">🤝 Collaboration</a>
+          <a href="messages.html">📨 Messages</a>
+          <a href="orders.html">📦 Orders</a>
+          <a href="purchase-history.html" class="active">📜 Purchase History</a>
+          <a href="payments.html">💳 Payments</a>
+          <a href="delivery.html">🚚 Delivery</a>
+        </nav>
+      </aside>
+
+      <main class="module-main">
+        <header class="module-header">
+          <div class="module-header-title">
+            <h1>Purchase History</h1>
+          </div>
+        </header>
+
+        <!-- Summary strip -->
+        <section class="page-panel">
+          <div class="ph-summary-strip">
+            <div class="ph-sum-card green">
+              <div class="label">Total Spent</div>
+              <div class="value" id="ph-total-spent">₹0</div>
+            </div>
+            <div class="ph-sum-card blue">
+              <div class="label">Total Orders</div>
+              <div class="value" id="ph-total-orders">0</div>
+            </div>
+            <div class="ph-sum-card">
+              <div class="label">Delivered</div>
+              <div class="value" id="ph-delivered">0</div>
+            </div>
+            <div class="ph-sum-card">
+              <div class="label">Avg. Order Value</div>
+              <div class="value" id="ph-avg-value">₹0</div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="ph-filters">
+            <div class="field">
+              <label for="ph-search">Search</label>
+              <input id="ph-search" type="search" placeholder="Product, supplier, order ID…" />
+            </div>
+            <div class="field">
+              <label for="ph-status-filter">Status</label>
+              <select id="ph-status-filter">
+                <option value="">All statuses</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Completed">Completed</option>
+                <option value="Placed">Placed</option>
+                <option value="Processing">Processing</option>
+                <option value="Shipped">Shipped</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ph-sort">Sort by</label>
+              <select id="ph-sort">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="highest">Highest value</option>
+                <option value="lowest">Lowest value</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- List -->
+          <div id="ph-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../js/tradenest-store.js"></script>
+    <script>
+    (function () {
+      const store = window.TradeNestStore;
+      if (!store) return;
+
+      store.ensureDemoState();
+
+      function fmt(n) {
+        return store.formatCurrency ? store.formatCurrency(n)
+          : "₹" + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      }
+
+      function fmtDate(v) {
+        if (!v) return "—";
+        const d = new Date(v);
+        if (isNaN(d.getTime())) return v;
+        return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+      }
+
+      function getBuyer() {
+        try { return JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}"); } catch (e) { return {}; }
+      }
+
+      function render() {
+        const state   = store.getStore();
+        const buyer   = getBuyer();
+        const search  = (document.getElementById("ph-search")        || {}).value || "";
+        const status  = (document.getElementById("ph-status-filter") || {}).value || "";
+        const sort    = (document.getElementById("ph-sort")          || {}).value || "newest";
+        const list    = document.getElementById("ph-list");
+        if (!list) return;
+
+        let orders = (state.orders || []).filter(function (o) {
+          return o.buyerId === buyer.id || o.buyerId === "buyer-001";
+        });
+
+        // Apply search
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          orders = orders.filter(function (o) {
+            return (o.productName || "").toLowerCase().includes(q)
+              || (o.supplierName || "").toLowerCase().includes(q)
+              || (o.id || "").toLowerCase().includes(q);
+          });
+        }
+
+        // Apply status filter
+        if (status) {
+          orders = orders.filter(function (o) { return o.status === status; });
+        }
+
+        // Sort
+        orders = orders.slice().sort(function (a, b) {
+          if (sort === "oldest")  return new Date(a.createdAt) - new Date(b.createdAt);
+          if (sort === "highest") return (b.totalAmount || b.amount || 0) - (a.totalAmount || a.amount || 0);
+          if (sort === "lowest")  return (a.totalAmount || a.amount || 0) - (b.totalAmount || b.amount || 0);
+          return new Date(b.createdAt) - new Date(a.createdAt); // newest
+        });
+
+        // Summary stats (from all buyer orders, unfiltered)
+        const allOrders = (state.orders || []).filter(function (o) {
+          return o.buyerId === buyer.id || o.buyerId === "buyer-001";
+        });
+        const totalSpent   = allOrders.reduce(function (s, o) { return s + (Number(o.totalAmount || o.amount) || 0); }, 0);
+        const deliveredCnt = allOrders.filter(function (o) { return ["Delivered","Completed"].includes(o.status); }).length;
+        const avgVal       = allOrders.length ? Math.round(totalSpent / allOrders.length) : 0;
+
+        const sumSpentEl   = document.getElementById("ph-total-spent");
+        const sumOrdersEl  = document.getElementById("ph-total-orders");
+        const sumDelivEl   = document.getElementById("ph-delivered");
+        const sumAvgEl     = document.getElementById("ph-avg-value");
+        if (sumSpentEl)  sumSpentEl.textContent  = fmt(totalSpent);
+        if (sumOrdersEl) sumOrdersEl.textContent = allOrders.length;
+        if (sumDelivEl)  sumDelivEl.textContent  = deliveredCnt;
+        if (sumAvgEl)    sumAvgEl.textContent     = fmt(avgVal);
+
+        if (!orders.length) {
+          list.innerHTML = '<div class="ph-empty"><div style="font-size:2.5rem">📜</div><p>No purchase history yet.</p></div>';
+          return;
+        }
+
+        list.innerHTML = orders.map(function (o) {
+          const amount      = Number(o.totalAmount || o.amount) || 0;
+          const statusClass = (o.status || "pending").toLowerCase().replace(/\s+/g, "-");
+          const payBadge    = o.paymentMethod ? "💳 " + o.paymentMethod : "";
+          const orderType   = o.orderType === "direct" ? "🛒 Direct" : "📝 Via Quote";
+          const checkoutParams = new URLSearchParams({
+            id:       o.productId   || "",
+            name:     o.productName || "",
+            price:    o.unitPrice   || 0,
+            unit:     o.unit        || "unit",
+            moq:      o.quantity    || 1,
+            supplier: o.supplierName|| "",
+            from:     "purchase-history"
+          }).toString();
+
+          return `<div class="ph-card">
+            <div class="ph-card-top">
+              <div>
+                <h3>${o.productName || "—"}</h3>
+                <span class="ph-order-id">#${o.id} · ${fmtDate(o.createdAt)}</span>
+              </div>
+              <span class="ph-status ${statusClass}">${o.status || "Unknown"}</span>
+            </div>
+            <div class="ph-meta">
+              <div class="ph-meta-item"><span>Supplier</span><strong>${o.supplierName || "—"}</strong></div>
+              <div class="ph-meta-item"><span>Quantity</span><strong>${o.quantity || 0} ${o.unit || "units"}</strong></div>
+              <div class="ph-meta-item"><span>Unit Price</span><strong>${o.unitPrice ? fmt(o.unitPrice) : "—"}</strong></div>
+              <div class="ph-meta-item"><span>Total Paid</span><strong style="color:#059669">${fmt(amount)}</strong></div>
+              <div class="ph-meta-item"><span>Type</span><strong>${orderType}</strong></div>
+              <div class="ph-meta-item"><span>Expected</span><strong>${fmtDate(o.expectedDate)}</strong></div>
+              ${o.deliveryAddress ? `<div class="ph-meta-item" style="grid-column:1/-1"><span>Delivered to</span><strong>${o.deliveryAddress}</strong></div>` : ""}
+            </div>
+            ${payBadge ? `<span class="ph-pay-badge">${payBadge}</span>` : ""}
+            <div>
+              <a href="checkout.html?${checkoutParams}" class="ph-reorder-btn">🔁 Reorder</a>
+              <a href="orders.html" class="ph-reorder-btn" style="background:#f1f5f9;color:#0f172a;margin-left:.5rem">📦 View in Orders</a>
+            </div>
+          </div>`;
+        }).join("");
+      }
+
+      // Bind filters
+      ["ph-search","ph-status-filter","ph-sort"].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input",  render);
+        if (el) el.addEventListener("change", render);
+      });
+
+      // Listen for store changes (e.g. new order placed in another tab)
+      window.addEventListener("storage", function (e) {
+        if (e.key === "tradenest_demo_store_v1") render();
+      });
+
+      render();
+    })();
+    </script>
+  </body>
+</html>

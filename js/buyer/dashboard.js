@@ -96,6 +96,15 @@ document.addEventListener("DOMContentLoaded", function () {
             return { ...defaultBuyerProfile };
         }
 
+        const business =
+            user.business && typeof user.business === "object"
+                ? user.business
+                : {};
+
+        const address =
+            user.address && typeof user.address === "object"
+                ? user.address
+                : {};
 
         /*
          * Different registration forms may use
@@ -124,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const company =
+            business.name ||
             user.businessName ||
             user.company ||
             user.companyName ||
@@ -131,6 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const businessType =
+            business.type ||
             user.businessType ||
             user.typeOfBusiness ||
             defaultBuyerProfile.businessType;
@@ -138,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let location =
             user.location ||
+            address.location ||
             "";
 
 
@@ -150,16 +162,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const locationParts = [];
 
-            if (user.city) {
-                locationParts.push(user.city);
+            if (user.city || address.city) {
+                locationParts.push(user.city || address.city);
             }
 
-            if (user.state) {
-                locationParts.push(user.state);
+            if (user.state || address.state) {
+                locationParts.push(user.state || address.state);
             }
 
-            if (user.country) {
-                locationParts.push(user.country);
+            if (user.country || address.country) {
+                locationParts.push(user.country || address.country);
             }
 
             if (locationParts.length > 0) {
@@ -392,6 +404,14 @@ document.addEventListener("DOMContentLoaded", function () {
             currentUser.businessType =
                 profile.businessType;
 
+            currentUser.business = {
+                ...(currentUser.business && typeof currentUser.business === "object"
+                    ? currentUser.business
+                    : {}),
+                name: profile.company,
+                type: profile.businessType
+            };
+
             currentUser.location =
                 profile.location;
 
@@ -446,6 +466,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             businessName: profile.company,
                             company: profile.company,
                             businessType: profile.businessType,
+                            business: {
+                                ...(user.business && typeof user.business === "object"
+                                    ? user.business
+                                    : {}),
+                                name: profile.company,
+                                type: profile.businessType
+                            },
                             location: profile.location
                         };
                     }
@@ -1903,5 +1930,13 @@ document.addEventListener("DOMContentLoaded", function () {
     updateDashboardStats();
 
     syncWithSupplierWorkspace();
+
+
+    // ==========================================
+    // 25. BUY NOW — redirect to checkout page
+    // ==========================================
+    // The modal approach has been replaced by a dedicated checkout page.
+    // .btn-buy-now elements are now <a> tags with href pointing to checkout.html.
+    // No JS needed here — the links work natively.
 
 });

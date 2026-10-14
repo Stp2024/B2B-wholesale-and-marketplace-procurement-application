@@ -69,8 +69,10 @@ test("buyer dashboard explains the buyer toolkit and links to its procurement fe
   );
 
   for (const destination of [
+    "rfqs.html",
     "products.html",
     "suppliers.html",
+    "purchase-history.html",
     "request-quote.html",
     "compare-quotes.html"
   ]) {
@@ -82,4 +84,87 @@ test("buyer dashboard explains the buyer toolkit and links to its procurement fe
   assert.match(dashboard, /follow orders, payments\s+and deliveries/);
   assert.match(dashboard, /id="totalOrders"/);
   assert.match(dashboard, /id="activeQuotes"/);
+});
+
+test("buyer profile page displays registration details saved in nested fields", () => {
+  let readyHandler;
+  const account = {
+    id: "buyer-registered-01",
+    role: "buyer",
+    fullName: "Maya Rao",
+    email: "maya@example.com",
+    phone: "9876543210",
+    business: {
+      name: "Rao Wholesale",
+      type: "Distributor",
+      category: "Office Supplies",
+      gst: "29ABCDE1234F1Z5"
+    },
+    address: {
+      address: "12 Market Road",
+      city: "Mysuru",
+      state: "Karnataka",
+      pincode: "570001"
+    }
+  };
+  const container = { innerHTML: "" };
+  const form = {
+    dataset: {},
+    addEventListener() {},
+    fullName: { value: "" },
+    email: { value: "" },
+    phone: { value: "" },
+    businessName: { value: "" },
+    businessType: { value: "" },
+    businessCategory: { value: "" },
+    gstin: { value: "" },
+    address: { value: "" },
+    city: { value: "" },
+    state: { value: "" },
+    pincode: { value: "" }
+  };
+  const context = vm.createContext({
+    console,
+    localStorage: {
+      getItem() {
+        return null;
+      },
+      setItem() {}
+    },
+    document: {
+      body: { dataset: { page: "profile" } },
+      addEventListener(event, handler) {
+        if (event === "DOMContentLoaded") readyHandler = handler;
+      },
+      getElementById(id) {
+        if (id === "buyer-profile-card") return container;
+        if (id === "buyer-profile-form") return form;
+        return null;
+      }
+    },
+    TradeNestStore: {
+      ensureDemoState() {},
+      getCurrentUser() {
+        return account;
+      }
+    }
+  });
+  context.window = context;
+  context.addEventListener = function () {};
+
+  const source = fs.readFileSync(
+    path.join(root, "js/buyer/modules.js"),
+    "utf8"
+  );
+  vm.runInContext(source, context, { filename: "js/buyer/modules.js" });
+  readyHandler();
+
+  assert.match(container.innerHTML, /Maya Rao/);
+  assert.match(container.innerHTML, /Rao Wholesale/);
+  assert.match(container.innerHTML, /maya@example\.com/);
+  assert.match(container.innerHTML, /29ABCDE1234F1Z5/);
+  assert.match(container.innerHTML, /12 Market Road/);
+  assert.match(container.innerHTML, /Mysuru, Karnataka - 570001/);
+  assert.equal(form.businessName.value, "Rao Wholesale");
+  assert.equal(form.businessType.value, "Distributor");
 });

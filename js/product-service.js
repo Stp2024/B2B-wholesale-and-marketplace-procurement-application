@@ -80,7 +80,7 @@
       name: "A4 Premium Copy Paper",
       category: "Office Supplies",
       description: "High-whiteness premium 80 GSM copy paper engineered for jam-free high-speed laser and inkjet printing.",
-      image: "images/products/office-paper.webp",
+      image: "images/products/a4-premium-copy-paper.webp",
       price: 420,
       bulkPrice: 390,
       moq: 50,
@@ -109,7 +109,7 @@
       name: "Executive Desk Organiser",
       category: "Office Supplies",
       description: "Modular steel office desk organizer designed for high-density corporate workspaces and documents.",
-      image: "images/products/office-paper.webp",
+      image: "images/products/executive-desk-organizer.webp",
       price: 1180,
       bulkPrice: 1090,
       moq: 20,
@@ -138,7 +138,7 @@
       name: "Commercial LED Panel Lights",
       category: "Electrical",
       description: "Energy-efficient 40W commercial edge-lit LED panels 600x600mm, flicker-free driver, 4000 lumens, 50,000h lifespan.",
-      image: "images/products/led-bulbs.webp",
+      image: "images/products/commercial-led-panel-lights.webp",
       price: 1650,
       bulkPrice: 1520,
       moq: 20,
@@ -167,7 +167,7 @@
       name: "Corrugated Packaging Boxes",
       category: "Packaging",
       description: "Heavy-duty triple-wall corrugated shipping boxes engineered for industrial export and freight protection.",
-      image: "images/products/packaging-boxes.webp",
+      image: "images/products/corrugated-packaging-boxes.webp",
       price: 55,
       bulkPrice: 48,
       moq: 500,
@@ -196,7 +196,7 @@
       name: "Protective Foam Inserts",
       category: "Packaging",
       description: "Custom die-cut polyethylene anti-static foam inserts for electronics, instrumentation, and fragile logistics.",
-      image: "images/products/packaging-boxes.webp",
+      image: "images/products/protective-foam-inserts.webp",
       price: 230,
       bulkPrice: 210,
       moq: 150,
@@ -336,6 +336,25 @@
       }
       saveSharedProducts(list, false);
     }
+
+    const canonicalImages = {
+      "industrial safety helmets": "images/products/industrial-safety-helmets.webp",
+      "a4 premium copy paper": "images/products/a4-premium-copy-paper.webp",
+      "a4 copy paper premium 80 gsm": "images/products/a4-premium-copy-paper.webp",
+      "executive desk organizer": "images/products/executive-desk-organizer.webp",
+      "executive desk organiser": "images/products/executive-desk-organizer.webp",
+      "commercial led panel lights": "images/products/commercial-led-panel-lights.webp",
+      "corrugated packaging boxes": "images/products/corrugated-packaging-boxes.webp",
+      "protective foam inserts": "images/products/protective-foam-inserts.webp"
+    };
+    let correctedImage = false;
+    list = list.map((product) => {
+      const image = canonicalImages[String(product.name || "").trim().toLowerCase()];
+      if (!image || product.image === image) return product;
+      correctedImage = true;
+      return { ...product, image };
+    });
+    if (correctedImage) saveSharedProducts(list, false);
 
     return list;
   }

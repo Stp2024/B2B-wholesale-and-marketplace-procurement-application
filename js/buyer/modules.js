@@ -78,6 +78,39 @@ document.addEventListener("DOMContentLoaded", function () {
     return store.getCurrentUser();
   }
 
+  function uniqueSupplierProducts(products) {
+    const seen = new Set();
+    const seenIds = new Set();
+    const canonicalImages = {
+      "industrial safety helmets": "industrial-safety-helmets.webp",
+      "a4 premium copy paper": "a4-premium-copy-paper.webp",
+      "a4 copy paper premium 80 gsm": "a4-premium-copy-paper.webp",
+      "executive desk organizer": "executive-desk-organizer.webp",
+      "executive desk organiser": "executive-desk-organizer.webp",
+      "commercial led panel lights": "commercial-led-panel-lights.webp",
+      "corrugated packaging boxes": "corrugated-packaging-boxes.webp",
+      "protective foam inserts": "protective-foam-inserts.webp"
+    };
+    return (products || []).filter((product) => {
+      const supplier = String(product.supplierId || product.supplierName || "").trim().toLowerCase();
+      const name = String(product.name || "").trim().toLowerCase().replace(/\s+/g, " ");
+      const id = String(product.id || "").trim().toLowerCase();
+      if (id && seenIds.has(id)) return false;
+      if (id) seenIds.add(id);
+      if (!name) return true;
+      const key = `${supplier}::${name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      const filename = canonicalImages[name];
+      if (filename && product.image) {
+        const image = String(product.image);
+        const separator = image.lastIndexOf("/");
+        product.image = separator >= 0 ? `${image.slice(0, separator + 1)}${filename}` : `../../images/products/${filename}`;
+      }
+      return true;
+    });
+  }
+
   function readJsonStorage(key, fallback) {
     try {
       const raw = localStorage.getItem(key);
@@ -180,35 +213,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function getBuyerProfileDefaults() {
     const buyer = getBuyer();
+    const business = buyer.business && typeof buyer.business === "object" ? buyer.business : {};
+    const address = buyer.address && typeof buyer.address === "object" ? buyer.address : {};
     return {
       fullName: buyer.fullName || "Aisha Patel",
       email: buyer.email || "aisha.patel@tradenest.com",
-      phone: buyer.phone || "+91 98765 43210",
-      businessName: buyer.businessName || buyer.company || "North Star Retail",
-      businessType: buyer.businessType || "Wholesale Buyer",
-      businessCategory: buyer.businessCategory || "Retail & Distribution",
-      gstin: buyer.gstin || "29ABCDE1234F1Z5",
-      address: buyer.address || "18th Cross Road",
-      city: buyer.city || "Bengaluru",
-      state: buyer.state || "Karnataka",
-      pincode: buyer.pincode || "560001",
+      phone: buyer.phone || buyer.mobile || buyer.phoneNumber || "+91 98765 43210",
+      businessName: business.name || buyer.businessName || buyer.company || buyer.companyName || "North Star Retail",
+      businessType: business.type || buyer.businessType || buyer.typeOfBusiness || "Wholesale Buyer",
+      businessCategory: business.category || buyer.businessCategory || buyer.category || "Retail & Distribution",
+      gstin: business.gst || buyer.gstin || buyer.gst || "29ABCDE1234F1Z5",
+      address: typeof buyer.address === "string" ? buyer.address : address.address || "18th Cross Road",
+      city: address.city || buyer.city || "Bengaluru",
+      state: address.state || buyer.state || "Karnataka",
+      pincode: address.pincode || buyer.pincode || "560001",
       profileImage: buyer.profileImage || "AP"
     };
   }
 
   function getBuyerProfile() {
     const current = getBuyer();
+    const business = current.business && typeof current.business === "object" ? current.business : {};
+    const address = current.address && typeof current.address === "object" ? current.address : {};
     const stored = readJsonStorage("tradenestBuyerProfile", {});
     return {
       ...getBuyerProfileDefaults(),
       ...stored,
       ...current,
-      businessName: current.businessName || current.company || stored.businessName || getBuyerProfileDefaults().businessName,
+      businessName: business.name || current.businessName || current.company || current.companyName || stored.businessName || stored.company || getBuyerProfileDefaults().businessName,
       fullName: current.fullName || stored.fullName || getBuyerProfileDefaults().fullName,
       email: current.email || stored.email || getBuyerProfileDefaults().email,
-      phone: current.phone || stored.phone || getBuyerProfileDefaults().phone,
-      city: current.city || stored.city || getBuyerProfileDefaults().city,
-      state: current.state || stored.state || getBuyerProfileDefaults().state
+      phone: current.phone || current.mobile || current.phoneNumber || stored.phone || getBuyerProfileDefaults().phone,
+      businessType: business.type || current.businessType || current.typeOfBusiness || stored.businessType || getBuyerProfileDefaults().businessType,
+      businessCategory: business.category || current.businessCategory || current.category || stored.businessCategory || getBuyerProfileDefaults().businessCategory,
+      gstin: business.gst || current.gstin || current.gst || stored.gstin || getBuyerProfileDefaults().gstin,
+      address: address.address || (typeof current.address === "string" ? current.address : "") || stored.address || getBuyerProfileDefaults().address,
+      city: address.city || current.city || stored.city || getBuyerProfileDefaults().city,
+      state: address.state || current.state || stored.state || getBuyerProfileDefaults().state,
+      pincode: address.pincode || current.pincode || stored.pincode || getBuyerProfileDefaults().pincode
     };
   }
 
@@ -225,6 +267,20 @@ document.addEventListener("DOMContentLoaded", function () {
       ...normalized,
       businessName: normalized.businessName,
       company: normalized.businessName,
+      business: {
+        ...(user.business && typeof user.business === "object" ? user.business : {}),
+        name: normalized.businessName,
+        type: normalized.businessType,
+        category: normalized.businessCategory,
+        gst: normalized.gstin
+      },
+      address: {
+        ...(user.address && typeof user.address === "object" ? user.address : {}),
+        address: normalized.address,
+        city: normalized.city,
+        state: normalized.state,
+        pincode: normalized.pincode
+      },
       city: normalized.city,
       state: normalized.state,
       country: user.country || "India"
@@ -607,13 +663,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const buyerId = buyer && buyer.id ? buyer.id : "buyer-001";
     const recommendedProductsGrid = document.querySelector(".recommendations-section .products-grid");
     if (recommendedProductsGrid) {
-      const recommendations = state.products.filter((product) => product.availability !== "Unavailable").slice(0, 4);
+      const recommendations = uniqueSupplierProducts(state.products.filter((product) => product.availability !== "Unavailable")).slice(0, 4);
       recommendedProductsGrid.innerHTML = recommendations.map((product) => {
         const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId) || {};
         const verified = supplier.verificationStatus === "Verified";
+        // Fix image path — store paths start with /images/, dashboard is at root
+        let imgSrc = product.image || "";
+        if (imgSrc.startsWith("/")) imgSrc = imgSrc.slice(1); // remove leading slash
+        const checkoutUrl = "pages/buyer/checkout.html?" + new URLSearchParams({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          unit: product.unit || "unit",
+          moq: product.moq || 1,
+          supplier: supplier.businessName || product.supplierName || "Supplier",
+          img: imgSrc,
+          category: product.category || "General",
+          from: "dashboard"
+        }).toString();
         return `
           <article class="product-card" data-product-id="${product.id}">
-            <div class="product-image-wrap"><img src="${product.image}" alt="${product.name}" class="product-image" />
+            <div class="product-image-wrap"><img src="${imgSrc}" alt="${product.name}" class="product-image" onerror="this.src='images/products/industrial-safety-gloves.webp'" />
               <span class="category-tag">${product.category}</span>
             </div>
             <div class="product-body"><h3 class="product-title">${product.name}</h3>
@@ -621,7 +691,10 @@ document.addEventListener("DOMContentLoaded", function () {
               ${verified ? `<div class="supplier-trust-line"><span class="verified-label">Verified</span><span class="trust-score">Trust score <strong>${supplier.trustScore}/100</strong></span></div>` : ""}
               <div class="product-price-info"><span class="product-price">${formatCurrency(product.price)}</span><span class="product-unit"> / ${product.unit}</span></div>
               <p class="product-moq">MOQ: ${product.moq} ${product.unit}</p>
-              <a href="product-details.html?id=${encodeURIComponent(product.id)}" class="btn btn-card">View Product</a>
+              <div class="product-card-actions">
+                <a href="pages/buyer/product-details.html?id=${encodeURIComponent(product.id)}" class="btn btn-card">View Product</a>
+                <a href="${checkoutUrl}" class="btn btn-buy-now">🛒 Buy Now</a>
+              </div>
             </div>
           </article>`;
       }).join("") || '<div class="empty-state">No products are currently available.</div>';
@@ -818,7 +891,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let productsList = [];
     if (window.TradeNestProductService && typeof window.TradeNestProductService.getAllProducts === "function") {
       const rawProducts = window.TradeNestProductService.getAllProducts();
-      productsList = rawProducts.map((p) => {
+      productsList = uniqueSupplierProducts(rawProducts.map((p) => {
         const calculatedPrice = p.price !== undefined ? p.price : (p.unitPrice && p.moq ? Math.round(p.unitPrice * p.moq) : (p.unitPrice || 0));
         return {
           id: p.id,
@@ -836,9 +909,9 @@ document.addEventListener("DOMContentLoaded", function () {
           image: p.image || "../../images/products/industrial-safety-gloves.webp",
           deliveryInfo: p.deliveryInfo || "3-5 business days"
         };
-      });
+      }));
     } else {
-      productsList = state.products || [];
+      productsList = uniqueSupplierProducts(state.products || []);
     }
 
     if (supplierSelect) {
@@ -920,6 +993,13 @@ document.addEventListener("DOMContentLoaded", function () {
               <div class="button-row" style="margin-top: 10px;">
                 <button class="btn btn-primary small" type="button" data-open-product="${product.id}">Open details</button>
                 <button class="btn btn-secondary small" type="button" data-save-product="${product.id}">${getSavedProducts().some((item) => item.id === product.id) ? "Saved" : "Save Product"}</button>
+                <button class="btn btn-buy-now-inline small" type="button"
+                  data-buy-product-id="${product.id}"
+                  data-buy-product-name="${product.name}"
+                  data-buy-product-price="${product.price}"
+                  data-buy-product-unit="${product.unit}"
+                  data-buy-product-moq="${product.moq}"
+                  data-buy-product-supplier="${product.supplierName}">🛒 Buy Now</button>
               </div>
             </div>
           </article>
@@ -957,6 +1037,23 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             showToast("This product is already saved.", "info");
           }
+          return;
+        }
+
+        // Buy Now — redirect to checkout
+        const buyNowButton = event.target.closest("[data-buy-product-id]");
+        if (buyNowButton) {
+          const p = {
+            id:       buyNowButton.dataset.buyProductId,
+            name:     buyNowButton.dataset.buyProductName,
+            price:    buyNowButton.dataset.buyProductPrice,
+            unit:     buyNowButton.dataset.buyProductUnit,
+            moq:      buyNowButton.dataset.buyProductMoq,
+            supplier: buyNowButton.dataset.buyProductSupplier,
+            from:     "products"
+          };
+          const qs = new URLSearchParams(p).toString();
+          window.location.href = "checkout.html?" + qs;
           return;
         }
 
@@ -1110,6 +1207,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const supplierSelect = document.getElementById("rfq-supplier");
       if (productSelect) {
         productSelect.innerHTML = '<option value="">Select product</option>' + state.products.map((product) => `<option value="${product.id}">${product.name}</option>`).join("");
+
+        // Auto-fill actual price and unit when product changes
+        if (productSelect.dataset.priceBound !== "true") {
+          productSelect.dataset.priceBound = "true";
+          productSelect.addEventListener("change", function () {
+            const selectedProduct = state.products.find((p) => p.id === productSelect.value);
+            const actualPriceInput = document.getElementById("rfq-actual-price");
+            const unitInput = document.getElementById("rfq-unit");
+            if (selectedProduct) {
+              if (actualPriceInput) {
+                actualPriceInput.value = formatCurrency(selectedProduct.price) + " / " + (selectedProduct.unit || "unit");
+                actualPriceInput.dataset.rawPrice = selectedProduct.price;
+                actualPriceInput.dataset.rawUnit  = selectedProduct.unit || "units";
+              }
+              if (unitInput) unitInput.value = selectedProduct.unit || "units";
+            } else {
+              if (actualPriceInput) { actualPriceInput.value = ""; delete actualPriceInput.dataset.rawPrice; }
+            }
+          });
+        }
       }
       if (supplierSelect) {
         supplierSelect.innerHTML = '<option value="">Select supplier</option>' + state.supplierProfiles.map((supplier) => `<option value="${supplier.id}">${supplier.businessName}</option>`).join("");

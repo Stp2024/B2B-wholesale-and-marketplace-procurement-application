@@ -9,6 +9,7 @@
     <!-- Buyer Dashboard Stylesheet -->
     <link rel="stylesheet" href="../../css/buyer/dashboard.css" />
     <link rel="stylesheet" href="../../css/shared.css" />
+    <link rel="stylesheet" href="../../css/buyer/sidebar.css" />
   </head>
 
   <body data-page="dashboard">
@@ -19,7 +20,7 @@
       <!-- =======================================================
            SIDEBAR NAVIGATION
       ======================================================== -->
-      <aside class="sidebar" id="sidebar">
+      <aside class="sidebar buyer-sidebar" id="sidebar">
         <!-- Brand Section -->
         <div class="sidebar-brand">
           <a href="dashboard.html" class="brand-logo" aria-label="Buyer dashboard home">
@@ -78,7 +79,7 @@
 
               <!-- Purchase History -->
               <li>
-                <a href="orders.html" class="nav-link">
+                <a href="purchase-history.html" class="nav-link">
                   <span class="nav-icon">📜</span>
                   <span class="nav-label">Purchase History</span>
                 </a>
@@ -91,6 +92,14 @@
             <span class="nav-section-title"> Quotes </span>
 
             <ul class="nav-list">
+              <!-- RFQs -->
+              <li>
+                <a href="rfqs.html" class="nav-link">
+                  <span class="nav-icon">📝</span>
+                  <span class="nav-label">RFQs</span>
+                </a>
+              </li>
+
               <!-- Request Quote -->
               <li>
                 <a href="request-quote.html" class="nav-link">
@@ -892,7 +901,7 @@
               <div class="product-card">
                 <div class="product-image-wrap">
                   <img
-                    src="../../images/products/packaging-boxes.webp"
+                    src="../../images/products/corrugated-packaging-boxes.webp"
                     alt="Corrugated Packaging Boxes"
                     class="product-image"
                   />

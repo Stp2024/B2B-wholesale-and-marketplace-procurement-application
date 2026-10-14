@@ -59,6 +59,22 @@
                 <select id="rfq-product" name="productId" required></select>
               </div>
               <div class="field">
+                <label for="rfq-actual-price">
+                  Actual Price
+                  <span style="font-size:0.75rem;font-weight:400;color:#64748b;margin-left:4px">(auto-filled, not editable)</span>
+                </label>
+                <div style="position:relative">
+                  <input
+                    id="rfq-actual-price"
+                    type="text"
+                    readonly
+                    placeholder="Select a product first"
+                    style="background:#f1f5f9;cursor:not-allowed;color:#334155;font-weight:600;padding-right:2.5rem;"
+                  />
+                  <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0.78rem;color:#94a3b8;pointer-events:none">🔒</span>
+                </div>
+              </div>
+              <div class="field">
                 <label for="rfq-supplier">Supplier</label>
                 <select id="rfq-supplier" name="supplierId" required></select>
               </div>

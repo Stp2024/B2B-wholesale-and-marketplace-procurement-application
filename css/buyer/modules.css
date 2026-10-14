@@ -1,17 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+
 :root {
-  --tn-navy: #123a57;
-  --tn-dark: #f2f7fb;
-  --tn-orange: #d87543;
-  --tn-orange-deep: #bf5e2a;
-  --tn-bg: #f7fafc;
+  --tn-navy: #1e2a3a;
+  --tn-dark: #172231;
+  --tn-orange: #d97745;
+  --tn-orange-deep: #c46433;
+  --tn-bg: #f7f5f2;
   --tn-card: #ffffff;
-  --tn-border: #dfeaf3;
-  --tn-text: #18314a;
-  --tn-muted: #5e7286;
+  --tn-border: #e2e8f0;
+  --tn-text: #0f172a;
+  --tn-muted: #64748b;
   --tn-success: #2f7d5a;
   --tn-warning: #d29b2d;
   --tn-danger: #c25252;
-  --tn-shadow: 0 12px 30px rgba(18, 49, 74, 0.08);
+  --tn-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
 }
 
 * {
@@ -19,7 +21,7 @@
 }
 body {
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Plus Jakarta Sans", "DM Sans", "Segoe UI", sans-serif;
   background: var(--tn-bg);
   color: var(--tn-text);
 }
@@ -44,10 +46,11 @@ textarea {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #e9e4d8;
+  background: #ffffff;
   color: var(--tn-text);
   padding: 0;
   border-right: 1px solid var(--tn-border);
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03);
 }
 
 .module-sidebar .brand {
@@ -82,10 +85,10 @@ textarea {
 }
 
 .module-sidebar .brand-text span {
-  color: var(--tn-muted);
+  color: var(--tn-orange);
   font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 750;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-top: 2px;
 }
@@ -136,12 +139,16 @@ textarea {
 
 .module-sidebar .sidebar-nav a:hover,
 .module-sidebar .sidebar-nav a.active {
-  background: rgba(216, 117, 67, 0.1);
-  color: var(--tn-navy);
+  background: linear-gradient(135deg, var(--tn-navy) 0%, #173b64 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 40, 71, 0.18);
 }
 
 .module-main {
-  padding: 32px;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 32px 40px;
+  background: var(--tn-bg);
 }
 
 .module-header {
@@ -149,7 +156,16 @@ textarea {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  min-height: 72px;
+  margin: -32px -40px 30px;
+  padding: 12px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--tn-border);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  backdrop-filter: blur(16px);
 }
 
 .module-header-title {
@@ -161,13 +177,15 @@ textarea {
 
 .module-header h1 {
   margin: 0;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  color: var(--tn-text);
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+  font-weight: 750;
 }
 
 .page-panel {
   background: var(--tn-card);
   border: 1px solid var(--tn-border);
-  border-radius: 18px;
+  border-radius: 16px;
   box-shadow: var(--tn-shadow);
   padding: 24px;
   margin-bottom: 24px;
@@ -781,6 +799,12 @@ textarea {
   .module-main {
     padding: 18px;
   }
+
+  .module-header {
+    min-height: 64px;
+    margin: -18px -18px 24px;
+    padding: 10px 18px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -847,4 +871,20 @@ textarea {
 .tn-back-button:focus-visible {
   outline: 3px solid rgba(216, 117, 67, 0.4);
   outline-offset: 2px;
+}
+
+/* ---- Buy Now Button — Products Listing ---- */
+.btn-buy-now-inline {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.28);
+}
+.btn-buy-now-inline:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.38) !important;
 }
