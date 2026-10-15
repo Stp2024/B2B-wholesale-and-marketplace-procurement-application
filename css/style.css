@@ -320,6 +320,23 @@ section {
   transform: scaleX(1);
 }
 
+/* Home Page Header Exclusive CTA Group */
+.header-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.header-cta-group .btn {
+  min-height: 38px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
 .auth-navigation {
   display: flex;
   align-items: center;

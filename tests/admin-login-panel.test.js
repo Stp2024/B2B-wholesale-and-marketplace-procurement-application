@@ -20,9 +20,9 @@ test("admin sign-in has a dedicated entry point and fixed admin role", () => {
   assert.match(loginScript, /if\s*\(!forcedRole\s*&&\s*redirectParam/);
 });
 
-test("regular login only offers buyer and supplier roles", () => {
+test("login page offers admin, buyer and supplier roles", () => {
   const login = read("auth/login.html");
   assert.match(login, /data-role="buyer"/);
   assert.match(login, /data-role="supplier"/);
-  assert.doesNotMatch(login, /data-role="admin"/);
+  assert.match(login, /data-role="admin"/);
 });

@@ -401,12 +401,18 @@
       relatedOrderId: "ORD-2026-042",
       relatedRfqId: "rfq-202",
       severity: "High",
+      disputedAmount: 54000,
       subject: "Inconsistent warranty certificate on commercial high-bay units",
       description: "We procured 60 units of commercial high bay lights based on the 5-year replacement guarantee clearly detailed in the catalog. The dispatch box included a 2-year warranty card with limited component coverage.",
       submissionDate: "2026-10-03",
       status: "In Review",
       adminNotes: "Supplier has agreed to issue an official 5-year comprehensive service letter for the specific serial numbers.",
-      settlementAction: "Pending Supplier Addendum"
+      settlementAction: "Pending Supplier Addendum",
+      timeline: [
+        { date: "2026-10-03 10:14", actor: "Aisha Patel (Buyer)", event: "Complaint Ticket filed with photos of warranty cards." },
+        { date: "2026-10-03 14:30", actor: "System Mediator", event: "Automated escalation to supplier account manager." },
+        { date: "2026-10-04 11:20", actor: "Admin Vikram Sengupta", event: "Notice served to Lumina Electric requesting warranty endorsement letter." }
+      ]
     },
     {
       id: "CMP-2026-082",
@@ -419,12 +425,18 @@
       relatedOrderId: "ORD-2026-039",
       relatedRfqId: "rfq-204",
       severity: "Medium",
+      disputedAmount: 18400,
       subject: "Water seepage in corrugated boxes pallet batch",
       description: "Batch #4 of 5-ply cartons arrived with water staining along the base pallets due to unsealed tarp on the logistics vehicle.",
       submissionDate: "2026-09-29",
       status: "Resolved",
       adminNotes: "Supplier refunded ₹18,400 for damaged 500 units and logistics partner penalised. Buyer satisfied.",
-      settlementAction: "Partial Escrow Refund Issued"
+      settlementAction: "Partial Escrow Refund Issued",
+      timeline: [
+        { date: "2026-09-29 09:20", actor: "Vikramaditya Rao (Buyer)", event: "Dispute lodged with delivery gate photos." },
+        { date: "2026-09-30 15:40", actor: "PackRight Corp.", event: "Agreed to credit note for water-damaged cartons." },
+        { date: "2026-10-01 12:00", actor: "Admin Mediator", event: "Resolved: ₹18,400 escrow partial release to buyer." }
+      ]
     },
     {
       id: "CMP-2026-083",
@@ -437,12 +449,17 @@
       relatedOrderId: "SMP-2026-112",
       relatedRfqId: "rfq-201",
       severity: "Low",
+      disputedAmount: 8000,
       subject: "Physical sample holding for 24 days without feedback",
       description: "High-grade kevlar gloves samples worth ₹8,000 sent via express courier. Buyer confirmed receipt but has not provided lab test results or quote feedback.",
       submissionDate: "2026-10-01",
       status: "Open",
       adminNotes: "Administrative reminder sent to buyer procurement desk.",
-      settlementAction: "Automated Reminder Triggered"
+      settlementAction: "Automated Reminder Triggered",
+      timeline: [
+        { date: "2026-10-01 16:30", actor: "Rajesh Kulkarni (Supplier)", event: "Sample SLA delay grievance filed." },
+        { date: "2026-10-02 10:00", actor: "Automated SLA Watchdog", event: "72-hour feedback warning sent to Metro Buildtech." }
+      ]
     },
     {
       id: "CMP-2026-084",
@@ -455,12 +472,64 @@
       relatedOrderId: "ORD-2026-031",
       relatedRfqId: "rfq-205",
       severity: "Medium",
+      disputedAmount: 24000,
       subject: "Delivery delayed by 9 business days beyond promised SLA",
       description: "Hydraulic floor jacks were critical for new fulfillment center commissioning. Delay caused warehouse operations downtime.",
       submissionDate: "2026-09-26",
       status: "Resolved",
       adminNotes: "Supplier offered 4% credit memo on subsequent consumable purchase. Buyer agreed to close.",
-      settlementAction: "Credit Note Agreed"
+      settlementAction: "Credit Note Agreed",
+      timeline: [
+        { date: "2026-09-26 11:15", actor: "Sunil Grover (Buyer)", event: "Late delivery compensation ticket opened." },
+        { date: "2026-09-27 18:20", actor: "SteelCraft Ltd.", event: "Issued ₹24,000 credit adjustment voucher." },
+        { date: "2026-09-28 14:00", actor: "Admin Desk", event: "Dispute closed as mutually settled." }
+      ]
+    },
+    {
+      id: "CMP-2026-085",
+      complainantName: "Kavita Singhal",
+      complainantBusiness: "Horizon Hospitality Infra",
+      complainantRole: "buyer",
+      reportedPartyName: "Zenith Ceramics",
+      reportedPartyRole: "supplier",
+      category: "Transit Moisture Damage",
+      relatedOrderId: "ORD-2026-048",
+      relatedRfqId: "rfq-206",
+      severity: "High",
+      disputedAmount: 72000,
+      subject: "Shattered vitrified floor tiles across 12 delivered crates",
+      description: "Consignment of 40 crates arrived; 12 crates show severe impact breakage due to inadequate corner cushioning during interstate transport.",
+      submissionDate: "2026-10-07",
+      status: "Open",
+      adminNotes: "Unloading bay video footage submitted. Full escrow freeze active on transit batch.",
+      settlementAction: "Escrow Hold Active",
+      timeline: [
+        { date: "2026-10-07 15:45", actor: "Kavita Singhal (Buyer)", event: "Transit damage ticket filed with unloading video clip." },
+        { date: "2026-10-07 16:10", actor: "Admin Desk", event: "₹72,000 escrow hold placed on order ORD-2026-048." }
+      ]
+    },
+    {
+      id: "CMP-2026-086",
+      complainantName: "Deepak Mehra",
+      complainantBusiness: "SteelCraft Ltd.",
+      complainantRole: "supplier",
+      reportedPartyName: "Urban Infra Projects",
+      reportedPartyRole: "buyer",
+      category: "Escrow & Pricing",
+      relatedOrderId: "ORD-2026-052",
+      relatedRfqId: "rfq-207",
+      severity: "Medium",
+      disputedAmount: 185000,
+      subject: "Buyer delaying OTP release confirmation despite signed delivery gate slip",
+      description: "Consignment of structural steel girders delivered on Oct 4 with physical weighbridge and gate receipt signed. Buyer procurement desk has not entered OTP for escrow disbursement.",
+      submissionDate: "2026-10-08",
+      status: "In Review",
+      adminNotes: "Delivery docket verified. 48-hour auto-disbursement warning timer triggered to buyer.",
+      settlementAction: "48-Hour Auto-Release Clock Triggered",
+      timeline: [
+        { date: "2026-10-08 09:30", actor: "Deepak Mehra (Supplier)", event: "Escrow non-release dispute raised." },
+        { date: "2026-10-08 14:00", actor: "Admin Sengupta", event: "Physical weighbridge stamp verified against transport docket." }
+      ]
     }
   ];
 
@@ -659,9 +728,32 @@
     return JSON.parse(JSON.stringify(obj));
   }
 
+  function getDynamicAdminUser() {
+    try {
+      const curRaw = localStorage.getItem(ADMIN_CURRENT_USER_KEY) || localStorage.getItem("tradenestCurrentUser");
+      if (curRaw) {
+        const u = JSON.parse(curRaw);
+        if (u && (u.role === "admin" || u.accountType === "admin")) {
+          const name = u.fullName || u.name || "Administrator";
+          return {
+            id: u.id || "admin-001",
+            role: "admin",
+            fullName: name,
+            email: u.email || "admin@tradenest.com",
+            designation: u.designation || "Head of Marketplace Governance & Operations",
+            department: "Risk, Trust & Safety",
+            avatar: name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() || "AD",
+            lastLogin: u.lastLogin || new Date().toISOString()
+          };
+        }
+      }
+    } catch (e) {}
+    return defaultAdmin;
+  }
+
   function getBaseAdminState() {
     return {
-      adminUser: defaultAdmin,
+      adminUser: getDynamicAdminUser(),
       verifications: seedVerifications,
       productModerations: seedProductModeration,
       riskRecords: seedRiskRecords,
@@ -686,6 +778,9 @@
         return clone(fresh);
       }
       const parsed = JSON.parse(raw);
+      // Ensure dynamic admin identity stays aligned with active session
+      parsed.adminUser = getDynamicAdminUser();
+
       // Ensure all arrays exist
       const fallback = getBaseAdminState();
       Object.keys(fallback).forEach((k) => {
@@ -693,6 +788,43 @@
           parsed[k] = fallback[k];
         }
       });
+
+      // Seamless migration for complaints: ensure disputed amounts, timelines, and sample items
+      if (Array.isArray(parsed.complaints)) {
+        fallback.complaints.forEach((seedC) => {
+          if (!parsed.complaints.some((c) => c.id === seedC.id)) {
+            parsed.complaints.push(clone(seedC));
+          }
+        });
+
+        parsed.complaints.forEach((c, idx) => {
+          if (c.disputedAmount === undefined || c.disputedAmount === null) {
+            c.disputedAmount = [54000, 18400, 8000, 24000, 72000, 185000][idx % 6];
+          }
+          if (!Array.isArray(c.timeline) || c.timeline.length === 0) {
+            c.timeline = [
+              {
+                date: (c.submissionDate || "2026-10-01") + " 10:15",
+                actor: `${c.complainantName} (${c.complainantRole || "Complainant"})`,
+                event: `Complaint filed: "${c.subject}"`
+              },
+              {
+                date: (c.submissionDate || "2026-10-01") + " 14:30",
+                actor: "Mediation Engine",
+                event: `Notice served to ${c.reportedPartyName}. Escrow hold evaluation initiated.`
+              }
+            ];
+            if (c.status === "Resolved") {
+              c.timeline.unshift({
+                date: "2026-10-04 16:30",
+                actor: "Admin Desk",
+                event: `Dispute closed with settlement: ${c.settlementAction || "Mutual resolution recorded."}`
+              });
+            }
+          }
+        });
+      }
+
       return parsed;
     } catch (e) {
       console.warn("[AdminStore] Corrupted storage. Resetting to defaults.", e);
@@ -722,10 +854,37 @@
 
   // Cross-Store Data Aggregation (Synthesizes live Buyer, Supplier, and User accounts)
   function getUnifiedUsers() {
-    const adminState = getAdminStore();
     const result = [];
+    const seenEmails = new Set();
 
-    // 1. Check registered accounts from tradenestUsers
+    // 1. Check live session user from tradenestCurrentUser if not admin
+    try {
+      const curRaw = localStorage.getItem("tradenestCurrentUser");
+      if (curRaw) {
+        const cur = JSON.parse(curRaw);
+        if (cur && cur.email && cur.role !== "admin") {
+          const emailLower = cur.email.toLowerCase();
+          seenEmails.add(emailLower);
+          result.push({
+            id: cur.id || `user-session-${Date.now()}`,
+            name: cur.fullName || cur.name || "Active Session User",
+            businessName: cur.businessName || cur.company || "Enterprise Procurement Hub",
+            role: cur.role || "buyer",
+            email: cur.email,
+            phone: cur.phone || "+91 98765 00000",
+            category: cur.category || "Procurement Operations",
+            registrationDate: cur.registeredAt || new Date().toISOString().split("T")[0],
+            accountStatus: cur.accountStatus || "Active",
+            verificationStatus: cur.verificationStatus || "Verified",
+            city: cur.city || "Bengaluru",
+            state: cur.state || "Karnataka",
+            gstin: cur.gst || cur.gstin || "29AABCS1100K1Z9"
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 2. Check registered accounts from tradenestUsers
     try {
       const regRaw = localStorage.getItem("tradenestUsers");
       if (regRaw) {
@@ -733,30 +892,61 @@
         if (Array.isArray(regUsers)) {
           regUsers.forEach((u) => {
             if (u && u.email) {
-              result.push({
-                id: u.id || `user-${Math.abs(u.email.split("").reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0))}`,
-                name: u.fullName || u.name || "Enterprise User",
-                businessName: u.businessName || u.company || "Independent Enterprise",
-                role: u.role || "buyer",
-                email: u.email,
-                phone: u.phone || "+91 98000 00000",
-                category: u.category || "General Commerce",
-                registrationDate: u.registeredAt || "2026-09-20",
-                accountStatus: u.accountStatus || "Active",
-                verificationStatus: u.verificationStatus || (u.role === "admin" ? "Verified" : "Pending"),
-                city: u.city || "Bengaluru",
-                state: u.state || "Karnataka",
-                gstin: u.gst || u.gstin || "29AAAAA0000A1Z5"
-              });
+              const emailLower = u.email.toLowerCase();
+              if (!seenEmails.has(emailLower)) {
+                seenEmails.add(emailLower);
+                result.push({
+                  id: u.id || `user-${Math.abs(u.email.split("").reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0))}`,
+                  name: u.fullName || u.name || "Enterprise User",
+                  businessName: u.businessName || u.company || "Independent Enterprise",
+                  role: u.role || "buyer",
+                  email: u.email,
+                  phone: u.phone || "+91 98000 00000",
+                  category: u.category || "General Commerce",
+                  registrationDate: u.registeredAt || u.registrationDate || "2026-09-20",
+                  accountStatus: u.accountStatus || "Active",
+                  verificationStatus: u.verificationStatus || (u.role === "admin" ? "Verified" : "Pending"),
+                  city: u.city || "Bengaluru",
+                  state: u.state || "Karnataka",
+                  gstin: u.gst || u.gstin || "29AAAAA0000A1Z5"
+                });
+              }
             }
           });
         }
       }
     } catch (e) {}
 
-    // 2. Add Standard Demo Buyer
+    // 3. Check registered supplier profile in tradenest_supplier_biz_profile
+    try {
+      const supRaw = localStorage.getItem("tradenest_supplier_biz_profile");
+      if (supRaw) {
+        const sProf = JSON.parse(supRaw);
+        if (sProf && sProf.email && !seenEmails.has(sProf.email.toLowerCase())) {
+          seenEmails.add(sProf.email.toLowerCase());
+          result.push({
+            id: "supplier-profile-001",
+            name: sProf.contactPerson || sProf.companyName || "Supplier Admin",
+            businessName: sProf.companyName || "Verified Manufacturer Co.",
+            role: "supplier",
+            email: sProf.email,
+            phone: sProf.phone || "+91 98200 11223",
+            category: sProf.category || "Manufacturing",
+            registrationDate: "2026-08-10",
+            accountStatus: "Active",
+            verificationStatus: sProf.verificationStatus || "Verified",
+            city: sProf.city || "Mumbai",
+            state: sProf.state || "Maharashtra",
+            gstin: sProf.gstin || "27AABCM9988Q1Z4"
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 4. Add Standard Demo Buyer
     const existingBuyer = result.find((u) => u.email === "aisha.patel@tradenest.com");
-    if (!existingBuyer) {
+    if (!existingBuyer && !seenEmails.has("aisha.patel@tradenest.com")) {
+      seenEmails.add("aisha.patel@tradenest.com");
       result.unshift({
         id: "buyer-001",
         name: "Aisha Patel",
@@ -774,7 +964,7 @@
       });
     }
 
-    // 3. Add Standard Demo Suppliers from TradeNestStore
+    // 5. Add Standard Demo Suppliers
     const demoSuppliers = [
       { id: "supplier-001", name: "Rajesh Kulkarni", businessName: "Apex Gear Co.", role: "supplier", email: "rajesh@apexgear.com", phone: "+91 98450 12345", category: "Industrial Equipment", registrationDate: "2026-07-10", accountStatus: "Active", verificationStatus: "Verified", city: "Bengaluru", state: "Karnataka", gstin: "29AABCU9603R1ZM" },
       { id: "supplier-002", name: "Neha Sharma", businessName: "PaperPro Solutions", role: "supplier", email: "neha@paperpro.com", phone: "+91 98200 98765", category: "Office Supplies", registrationDate: "2026-08-01", accountStatus: "Active", verificationStatus: "Verified", city: "Mumbai", state: "Maharashtra", gstin: "27AABCP4412Q1ZX" },
@@ -786,7 +976,9 @@
     ];
 
     demoSuppliers.forEach((s) => {
-      if (!result.some((u) => u.email === s.email)) {
+      const emailLower = s.email.toLowerCase();
+      if (!seenEmails.has(emailLower)) {
+        seenEmails.add(emailLower);
         result.push(s);
       }
     });
@@ -794,31 +986,174 @@
     return result;
   }
 
+  // Add a new enterprise account to the live user registry
+  function addUserAccount(userData) {
+    try {
+      let users = [];
+      const raw = localStorage.getItem("tradenestUsers");
+      if (raw) {
+        users = JSON.parse(raw);
+        if (!Array.isArray(users)) users = [];
+      }
+
+      const newUser = {
+        id: userData.id || `user-ent-${Date.now()}`,
+        fullName: userData.fullName || userData.name || "Enterprise User",
+        businessName: userData.businessName || userData.company || "Independent Enterprise",
+        company: userData.businessName || userData.company || "Independent Enterprise",
+        email: (userData.email || "").trim(),
+        phone: userData.phone || "+91 98000 00000",
+        role: userData.role || "buyer",
+        accountType: userData.role || "buyer",
+        category: userData.category || "General Commerce",
+        registeredAt: new Date().toISOString().split("T")[0],
+        registrationDate: new Date().toISOString().split("T")[0],
+        accountStatus: "Active",
+        verificationStatus: userData.verificationStatus || "Verified",
+        city: userData.city || "Mumbai",
+        state: userData.state || "Maharashtra",
+        gstin: userData.gstin || "27AABCT0000P1Z9",
+        password: userData.password || "password123"
+      };
+
+      const existingIdx = users.findIndex(u => u && u.email && u.email.toLowerCase() === newUser.email.toLowerCase());
+      if (existingIdx >= 0) {
+        users[existingIdx] = { ...users[existingIdx], ...newUser };
+      } else {
+        users.unshift(newUser);
+      }
+
+      localStorage.setItem("tradenestUsers", JSON.stringify(users));
+
+      logAdminActivity(
+        "user",
+        `New Enterprise Account Added`,
+        `Account created for ${newUser.fullName} (${newUser.businessName}) as ${newUser.role.toUpperCase()}.`
+      );
+
+      notifySubscribers();
+      return newUser;
+    } catch (e) {
+      console.error("[AdminStore] Error adding user:", e);
+      return null;
+    }
+  }
+
+  // Queue a new business verification entry
+  function addBusinessVerification(verifData) {
+    const state = getAdminStore();
+    const newVerif = {
+      id: verifData.id || `VRF-2026-${Math.floor(100 + Math.random() * 900)}`,
+      businessName: verifData.businessName || "New Enterprise Corp",
+      userRole: verifData.userRole || "supplier",
+      category: verifData.category || "Industrial Equipment",
+      gstin: verifData.gstin || "29AABCU0000R1ZX",
+      pan: verifData.pan || (verifData.gstin ? verifData.gstin.substring(2, 12) : "AABCU0000R"),
+      cin: verifData.cin || `U29100KA202${Math.floor(Math.random() * 5)}PTC${Math.floor(100000 + Math.random() * 900000)}`,
+      address: verifData.address || "Industrial Estate, Phase 1",
+      city: verifData.city || "Bengaluru",
+      state: verifData.state || "Karnataka",
+      pincode: verifData.pincode || "560001",
+      contactPerson: verifData.contactPerson || "Operations Lead",
+      email: verifData.email || "compliance@enterprise.com",
+      phone: verifData.phone || "+91 98450 00000",
+      submissionDate: new Date().toISOString().split("T")[0],
+      status: "Pending Review",
+      reviewedBy: null,
+      reviewedDate: null,
+      reviewNotes: verifData.notes || "Awaiting administrative review of uploaded proofs.",
+      documents: verifData.documents || [
+        { name: "GST Registration Certificate (REG-06)", docNo: verifData.gstin || "29AABCU0000R1ZX", verified: false, type: "pdf", size: "1.2 MB" },
+        { name: "Permanent Account Number (PAN)", docNo: verifData.pan || "AABCU0000R", verified: false, type: "pdf", size: "820 KB" },
+        { name: "Certificate of Incorporation", docNo: "CIN-VALIDATED-PROOF", verified: false, type: "pdf", size: "1.9 MB" }
+      ]
+    };
+
+    state.verifications.unshift(newVerif);
+    saveAdminStore(state);
+
+    logAdminActivity(
+      "verification",
+      `New Verification Queued: ${newVerif.businessName}`,
+      `Verification application ${newVerif.id} queued for ${newVerif.category} sector review.`
+    );
+
+    return newVerif;
+  }
+
   // Cross-Store Unified Orders
   function getUnifiedOrders() {
     let orders = [];
+    const seenIds = new Set();
+
+    // 1. Check TradeNestStore
     if (window.TradeNestStore && typeof window.TradeNestStore.getStore === "function") {
       const tnStore = window.TradeNestStore.getStore();
       if (Array.isArray(tnStore.orders) && tnStore.orders.length > 0) {
-        orders = clone(tnStore.orders);
+        tnStore.orders.forEach((o) => {
+          if (o && o.id && !seenIds.has(o.id)) {
+            seenIds.add(o.id);
+            orders.push(clone(o));
+          }
+        });
       }
     }
 
-    if (orders.length === 0) {
-      try {
-        const raw = localStorage.getItem("tradenest_demo_store_v1");
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed.orders) && parsed.orders.length > 0) {
-            orders = clone(parsed.orders);
-          }
+    // 2. Check tradenest_supplier_orders
+    try {
+      const supOrdersRaw = localStorage.getItem("tradenest_supplier_orders");
+      if (supOrdersRaw) {
+        const supOrders = JSON.parse(supOrdersRaw);
+        if (Array.isArray(supOrders)) {
+          supOrders.forEach((o) => {
+            if (o && o.id && !seenIds.has(o.id)) {
+              seenIds.add(o.id);
+              orders.push({
+                id: o.id,
+                buyerId: o.buyerId || "buyer-ext",
+                buyerName: o.buyerName || "Enterprise Buyer",
+                buyerBusiness: o.deliveryAddress || o.buyerName || "Registered Enterprise",
+                supplierId: o.supplierId || "supplier-001",
+                supplierName: o.supplierName || "Apex Gear Co.",
+                productName: o.productName || "Industrial Equipment",
+                quantity: o.orderedQty || o.quantity || 100,
+                unit: o.uom || o.unit || "units",
+                unitPrice: o.unitPrice || 100,
+                totalAmount: o.totalAmount || (o.orderedQty ? o.orderedQty * (o.unitPrice || 0) : 10000),
+                orderStatus: o.status || o.orderStatus || "In Production",
+                paymentStatus: o.paymentStatus || "Escrow Protected",
+                shipmentStatus: o.shipmentRef ? "In Transit" : "Pending Dispatch",
+                courier: "BlueDart Express",
+                trackingNo: o.shipmentRef || "BD-882190",
+                createdAt: o.orderDate || o.createdAt || new Date().toISOString().split("T")[0],
+                deliveredAt: o.status === "Delivered" ? (o.expectedDeliveryDate || "2026-10-01") : null,
+                escrowTransactionId: `ESC-${o.id.replace(/[^0-9]/g, "") || "99210"}-TN`
+              });
+            }
+          });
         }
-      } catch (e) {}
-    }
+      }
+    } catch (e) {}
 
-    // Comprehensive Fallback / Seed Orders
+    // 3. Check tradenest_demo_store_v1
+    try {
+      const raw = localStorage.getItem("tradenest_demo_store_v1");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed.orders)) {
+          parsed.orders.forEach((o) => {
+            if (o && o.id && !seenIds.has(o.id)) {
+              seenIds.add(o.id);
+              orders.push(clone(o));
+            }
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 4. Fallback Seed Orders
     if (orders.length === 0) {
-      orders = [
+      const seedOrders = [
         {
           id: "ORD-2026-101",
           buyerId: "buyer-001",
@@ -925,8 +1260,154 @@
           escrowTransactionId: "ESC-88177-TN"
         }
       ];
+      seedOrders.forEach(o => orders.push(o));
     }
+
     return orders;
+  }
+
+  // Update order status & mediate escrow state in live storage
+  function updateOrderStatus(orderId, orderStatus, paymentStatus, adminNotes) {
+    let updated = false;
+
+    // 1. Update in tradenest_supplier_orders
+    try {
+      const raw = localStorage.getItem("tradenest_supplier_orders");
+      if (raw) {
+        const supOrders = JSON.parse(raw);
+        if (Array.isArray(supOrders)) {
+          supOrders.forEach((o) => {
+            if (o && o.id === orderId) {
+              if (orderStatus) o.status = orderStatus;
+              if (paymentStatus) o.paymentStatus = paymentStatus;
+              if (adminNotes) o.adminNotes = adminNotes;
+              updated = true;
+            }
+          });
+          if (updated) {
+            localStorage.setItem("tradenest_supplier_orders", JSON.stringify(supOrders));
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 2. Update in tradenest_demo_store_v1
+    try {
+      const raw = localStorage.getItem("tradenest_demo_store_v1");
+      if (raw) {
+        const demoStore = JSON.parse(raw);
+        if (Array.isArray(demoStore.orders)) {
+          demoStore.orders.forEach((o) => {
+            if (o && o.id === orderId) {
+              if (orderStatus) o.orderStatus = orderStatus;
+              if (paymentStatus) o.paymentStatus = paymentStatus;
+              if (adminNotes) o.adminNotes = adminNotes;
+              updated = true;
+            }
+          });
+          if (updated) {
+            localStorage.setItem("tradenest_demo_store_v1", JSON.stringify(demoStore));
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 3. Update in window.TradeNestStore if active
+    if (window.TradeNestStore && typeof window.TradeNestStore.updateOrderStatus === "function") {
+      try {
+        window.TradeNestStore.updateOrderStatus(orderId, orderStatus, paymentStatus);
+        updated = true;
+      } catch (e) {}
+    }
+
+    const state = getAdminStore();
+    logAdminActivity(
+      "order",
+      `Escrow Mediated: ${paymentStatus || orderStatus}`,
+      `Order ${orderId} escrow updated to '${paymentStatus}' (${orderStatus}) by ${state.adminUser.fullName}.`
+    );
+
+    notifySubscribers();
+    return true;
+  }
+
+  // Simulate a new procurement order in the live ledger
+  function simulateProcurementOrder(orderData) {
+    const qty = parseInt(orderData.quantity, 10) || 500;
+    const price = parseFloat(orderData.unitPrice) || 180;
+    const total = qty * price;
+    const newId = `ORD-2026-${Math.floor(100 + Math.random() * 900)}`;
+
+    const newOrder = {
+      id: newId,
+      buyerId: orderData.buyerId || "buyer-001",
+      buyerName: orderData.buyerName || "Aisha Patel",
+      buyerBusiness: orderData.buyerBusiness || "North Star Retail Pvt. Ltd.",
+      supplierId: orderData.supplierId || "supplier-001",
+      supplierName: orderData.supplierName || "Apex Gear Co.",
+      productName: orderData.productName || "Industrial Safety Gloves (EN388 Level 5)",
+      quantity: qty,
+      unit: orderData.unit || "pairs",
+      unitPrice: price,
+      totalAmount: total,
+      orderStatus: orderData.orderStatus || "In Production",
+      paymentStatus: orderData.paymentStatus || "Escrow Funded",
+      shipmentStatus: "Pending Dispatch",
+      courier: orderData.courier || "BlueDart Express",
+      trackingNo: `BD-${Math.floor(10000000 + Math.random() * 90000000)}`,
+      createdAt: new Date().toISOString().split("T")[0],
+      deliveredAt: null,
+      escrowTransactionId: `ESC-${Math.floor(10000 + Math.random() * 90000)}-TN`
+    };
+
+    // Save to tradenest_demo_store_v1
+    try {
+      let demoStore = { orders: [] };
+      const raw = localStorage.getItem("tradenest_demo_store_v1");
+      if (raw) {
+        demoStore = JSON.parse(raw);
+        if (!Array.isArray(demoStore.orders)) demoStore.orders = [];
+      }
+      demoStore.orders.unshift(newOrder);
+      localStorage.setItem("tradenest_demo_store_v1", JSON.stringify(demoStore));
+    } catch (e) {}
+
+    // Save to tradenest_supplier_orders
+    try {
+      let supOrders = [];
+      const raw = localStorage.getItem("tradenest_supplier_orders");
+      if (raw) {
+        supOrders = JSON.parse(raw);
+        if (!Array.isArray(supOrders)) supOrders = [];
+      }
+      supOrders.unshift({
+        id: newOrder.id,
+        buyerName: newOrder.buyerName,
+        buyerContact: "aisha.patel@tradenest.com",
+        deliveryAddress: newOrder.buyerBusiness,
+        productName: newOrder.productName,
+        productSku: "SKU-LIVE-01",
+        orderedQty: newOrder.quantity,
+        uom: newOrder.unit,
+        unitPrice: newOrder.unitPrice,
+        totalAmount: newOrder.totalAmount,
+        orderDate: newOrder.createdAt,
+        expectedDeliveryDate: "2026-10-30",
+        status: newOrder.orderStatus,
+        paymentStatus: newOrder.paymentStatus
+      });
+      localStorage.setItem("tradenest_supplier_orders", JSON.stringify(supOrders));
+    } catch (e) {}
+
+    const state = getAdminStore();
+    logAdminActivity(
+      "order",
+      `New Procurement Order: ${newOrder.id}`,
+      `Order ${newOrder.id} simulated for ${formatCurrency(total)} between ${newOrder.buyerName} and ${newOrder.supplierName}.`
+    );
+
+    notifySubscribers();
+    return newOrder;
   }
 
   // Unified RFQs
@@ -960,22 +1441,85 @@
     return rfqs;
   }
 
-  // Unified Products
+  // Unified Products (Synthesized across Central ProductService, Shared Products, and Supplier Workspace)
   function getUnifiedProducts() {
     let products = [];
+    const seenIds = new Set();
+
+    // 1. Check Centralized TradeNestProductService
+    if (window.TradeNestProductService && typeof window.TradeNestProductService.getProducts === "function") {
+      try {
+        const sProds = window.TradeNestProductService.getProducts();
+        if (Array.isArray(sProds) && sProds.length > 0) {
+          sProds.forEach((p) => {
+            if (p && p.id && !seenIds.has(p.id)) {
+              seenIds.add(p.id);
+              products.push(clone(p));
+            }
+          });
+        }
+      } catch (e) {}
+    }
+
+    // 2. Check localStorage tradenest_shared_products_v2
+    try {
+      const rawShared = localStorage.getItem("tradenest_shared_products_v2");
+      if (rawShared) {
+        const parsed = JSON.parse(rawShared);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((p) => {
+            if (p && p.id && !seenIds.has(p.id)) {
+              seenIds.add(p.id);
+              products.push(clone(p));
+            }
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 3. Check localStorage tradenest_supplier_products
+    try {
+      const rawSup = localStorage.getItem("tradenest_supplier_products");
+      if (rawSup) {
+        const parsed = JSON.parse(rawSup);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((p) => {
+            if (p && p.id && !seenIds.has(p.id)) {
+              seenIds.add(p.id);
+              products.push(clone(p));
+            }
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 4. Check TradeNestStore
     if (window.TradeNestStore && typeof window.TradeNestStore.getStore === "function") {
       const tnStore = window.TradeNestStore.getStore();
       if (Array.isArray(tnStore.products) && tnStore.products.length > 0) {
-        products = clone(tnStore.products);
+        tnStore.products.forEach((p) => {
+          if (p && p.id && !seenIds.has(p.id)) {
+            seenIds.add(p.id);
+            products.push(clone(p));
+          }
+        });
       }
     }
 
+    // 5. Fallback demo store
     if (products.length === 0) {
       try {
         const raw = localStorage.getItem("tradenest_demo_store_v1");
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed.products)) products = clone(parsed.products);
+          if (Array.isArray(parsed.products)) {
+            parsed.products.forEach((p) => {
+              if (p && p.id && !seenIds.has(p.id)) {
+                seenIds.add(p.id);
+                products.push(clone(p));
+              }
+            });
+          }
         }
       } catch (e) {}
     }
@@ -987,22 +1531,34 @@
       moderationMap[item.id] = item;
     });
 
-    const result = (products.length ? products : seedProductModeration).map((prod) => {
+    const baseList = products.length ? products : seedProductModeration;
+    const result = baseList.map((prod) => {
       const mod = moderationMap[prod.id] || {};
+      let calculatedStatus = mod.moderationStatus;
+      if (!calculatedStatus) {
+        if (prod.status === "Delisted" || prod.status === "Inactive") {
+          calculatedStatus = "Delisted";
+        } else if (prod.status === "Under Review" || prod.status === "Pending") {
+          calculatedStatus = "Pending Moderation";
+        } else {
+          calculatedStatus = "Approved";
+        }
+      }
+
       return {
         id: prod.id,
         name: prod.name,
-        category: prod.category,
+        category: prod.category || "General Equipment",
         supplierName: prod.supplierName || mod.supplierName || "Verified Supplier",
         supplierId: prod.supplierId || mod.supplierId || "supplier-001",
-        price: prod.price || mod.price || 0,
+        price: prod.price || prod.unitPrice || mod.price || 0,
         moq: prod.moq || mod.moq || 100,
-        stock: prod.stock || mod.stock || 500,
+        stock: prod.stock || prod.availableStock || mod.stock || 500,
         image: prod.image || "../../images/products/industrial-safety-gloves.webp",
-        moderationStatus: mod.moderationStatus || "Approved",
+        moderationStatus: calculatedStatus,
         reportedCount: mod.reportedCount || 0,
         lastReportReason: mod.lastReportReason || null,
-        complianceScore: mod.complianceScore || 90,
+        complianceScore: mod.complianceScore || 92,
         reviewNotes: mod.reviewNotes || "Complies with listing standards"
       };
     });
@@ -1186,13 +1742,86 @@
       if (newStatus === "Approved") mod.reportedCount = 0;
     }
 
+    // Map admin moderation status to marketplace product status
+    const targetStatus = newStatus === "Approved" ? "Active" : (newStatus === "Delisted" ? "Delisted" : "Under Review");
+
+    // 1. Cross-update in tradenest_shared_products_v2
+    try {
+      const rawShared = localStorage.getItem("tradenest_shared_products_v2");
+      if (rawShared) {
+        const sharedProds = JSON.parse(rawShared);
+        if (Array.isArray(sharedProds)) {
+          let found = false;
+          sharedProds.forEach((p) => {
+            if (p && p.id === productId) {
+              p.status = targetStatus;
+              p.moderationStatus = newStatus;
+              found = true;
+            }
+          });
+          if (found) {
+            localStorage.setItem("tradenest_shared_products_v2", JSON.stringify(sharedProds));
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 2. Cross-update in tradenest_supplier_products
+    try {
+      const rawSup = localStorage.getItem("tradenest_supplier_products");
+      if (rawSup) {
+        const supProds = JSON.parse(rawSup);
+        if (Array.isArray(supProds)) {
+          let found = false;
+          supProds.forEach((p) => {
+            if (p && p.id === productId) {
+              p.status = targetStatus.toLowerCase();
+              p.moderationStatus = newStatus;
+              found = true;
+            }
+          });
+          if (found) {
+            localStorage.setItem("tradenest_supplier_products", JSON.stringify(supProds));
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 3. Cross-update in tradenest_demo_store_v1
+    try {
+      const rawDemo = localStorage.getItem("tradenest_demo_store_v1");
+      if (rawDemo) {
+        const demoStore = JSON.parse(rawDemo);
+        if (Array.isArray(demoStore.products)) {
+          let found = false;
+          demoStore.products.forEach((p) => {
+            if (p && p.id === productId) {
+              p.status = targetStatus;
+              p.moderationStatus = newStatus;
+              found = true;
+            }
+          });
+          if (found) {
+            localStorage.setItem("tradenest_demo_store_v1", JSON.stringify(demoStore));
+          }
+        }
+      }
+    } catch (e) {}
+
     logAdminActivity(
       "moderation",
       `Product Moderation: ${newStatus}`,
-      `Product [${productId}] moderation status set to '${newStatus}'.`
+      `Product [${productId}] moderation status set to '${newStatus}' (${targetStatus} across catalog).`
     );
 
     saveAdminStore(state);
+
+    try {
+      window.dispatchEvent(new CustomEvent("tradenest:product-moderated", {
+        detail: { productId, newStatus, targetStatus }
+      }));
+    } catch (e) {}
+
     return true;
   }
 
@@ -1216,7 +1845,51 @@
     return true;
   }
 
-  function updateComplaintStatus(complaintId, newStatus, notes, settlementAction) {
+  function addComplaint(complaintData) {
+    const state = getAdminStore();
+    const nextNum = state.complaints.length + 81;
+    const newId = complaintData.id || `CMP-2026-${String(nextNum).padStart(3, "0")}`;
+
+    const newComplaint = {
+      id: newId,
+      complainantName: complaintData.complainantName || "Administrative Operations Desk",
+      complainantBusiness: complaintData.complainantBusiness || "TradeNest Governance Operations",
+      complainantRole: complaintData.complainantRole || "buyer",
+      reportedPartyName: complaintData.reportedPartyName || "Unspecified Counterparty",
+      reportedPartyRole: complaintData.reportedPartyRole || "supplier",
+      category: complaintData.category || "Warranty & Specification Misrepresentation",
+      relatedOrderId: complaintData.relatedOrderId || "ORD-2026-042",
+      relatedRfqId: complaintData.relatedRfqId || "rfq-202",
+      severity: complaintData.severity || "Medium",
+      disputedAmount: Number(complaintData.disputedAmount) || 25000,
+      subject: complaintData.subject || "Dispute inquiry filed by administrator",
+      description: complaintData.description || "Administrative dispute ticket created for arbitration and escrow review.",
+      submissionDate: complaintData.submissionDate || new Date().toISOString().split("T")[0],
+      status: complaintData.status || "Open",
+      adminNotes: complaintData.adminNotes || "Ticket logged directly by administrator.",
+      settlementAction: complaintData.settlementAction || "Under Administrative Review",
+      timeline: [
+        {
+          date: new Date().toISOString().replace("T", " ").substring(0, 16),
+          actor: state.adminUser.fullName || "Admin Desk",
+          event: "Dispute ticket logged and formal mediation session initiated."
+        }
+      ]
+    };
+
+    state.complaints.unshift(newComplaint);
+
+    logAdminActivity(
+      "complaint",
+      `Filed Dispute ${newComplaint.id}`,
+      `Dispute ticket logged: ${newComplaint.subject} (disputed ₹${newComplaint.disputedAmount})`
+    );
+
+    saveAdminStore(state);
+    return newComplaint;
+  }
+
+  function updateComplaintStatus(complaintId, newStatus, notes, settlementAction, orderAction) {
     const state = getAdminStore();
     const item = state.complaints.find((c) => c.id === complaintId);
     if (!item) return false;
@@ -1225,10 +1898,28 @@
     if (notes) item.adminNotes = notes;
     if (settlementAction) item.settlementAction = settlementAction;
 
+    if (!Array.isArray(item.timeline)) item.timeline = [];
+    item.timeline.unshift({
+      date: new Date().toISOString().replace("T", " ").substring(0, 16),
+      actor: `${state.adminUser.fullName || "Admin Mediator"}`,
+      event: `Status changed to '${newStatus}'. Settlement: ${settlementAction || notes || "Case updated"}`
+    });
+
+    // If orderAction is requested (e.g. 'refund_buyer' or 'release_supplier'), synchronize with order ledger
+    if (orderAction && item.relatedOrderId) {
+      if (orderAction === "refund_buyer") {
+        updateOrderStatus(item.relatedOrderId, "Cancelled", "Refunded to Buyer", `Arbitration on ${item.id}: 100% Escrow refunded to buyer.`);
+      } else if (orderAction === "release_supplier") {
+        updateOrderStatus(item.relatedOrderId, "Delivered", "Released to Supplier", `Arbitration on ${item.id}: Escrow released to supplier.`);
+      } else if (orderAction === "partial_refund") {
+        updateOrderStatus(item.relatedOrderId, "Delivered", "Partially Refunded", `Arbitration on ${item.id}: Partial credit settlement.`);
+      }
+    }
+
     logAdminActivity(
       "complaint",
       `Dispute ${item.id} ${newStatus}`,
-      `Complaint between ${item.complainantName} & ${item.reportedPartyName} set to '${newStatus}'.`
+      `Dispute ticket ${item.id} set to '${newStatus}'. Terms: ${item.settlementAction || "Standard arbitration"}`
     );
 
     saveAdminStore(state);
@@ -1261,6 +1952,18 @@
       (c) => c.status === "Open" || c.status === "In Review"
     ).length;
 
+    const highSeverityComplaints = adminState.complaints.filter(
+      (c) => c.severity === "High" && c.status !== "Resolved" && c.status !== "Dismissed"
+    ).length;
+
+    const disputedEscrowAmount = adminState.complaints
+      .filter((c) => c.status === "Open" || c.status === "In Review")
+      .reduce((sum, c) => sum + (Number(c.disputedAmount) || 0), 0);
+
+    const totalComplaints = adminState.complaints.length;
+    const resolvedComplaints = adminState.complaints.filter((c) => c.status === "Resolved").length;
+    const complaintResolutionRate = totalComplaints > 0 ? Math.round((resolvedComplaints / totalComplaints) * 100) : 100;
+
     const totalGMV = orders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
     const completedOrders = orders.filter((o) => o.orderStatus === "Delivered").length;
     const pendingOrders = orders.filter((o) => o.orderStatus !== "Delivered" && o.orderStatus !== "Cancelled").length;
@@ -1278,6 +1981,10 @@
       flaggedProducts,
       highRiskItems,
       openComplaints,
+      highSeverityComplaints,
+      disputedEscrowAmount,
+      formattedDisputedEscrow: formatCurrency(disputedEscrowAmount),
+      complaintResolutionRate,
       totalGMV,
       formattedGMV: formatCurrency(totalGMV)
     };
@@ -1295,10 +2002,15 @@
     getUnifiedRFQs,
     getUnifiedProducts,
     calculateAdminStats,
+    addUserAccount,
+    addBusinessVerification,
+    updateOrderStatus,
+    simulateProcurementOrder,
     updateVerificationStatus,
     updateUserAccountStatus,
     updateProductModeration,
     updateRiskStatus,
+    addComplaint,
     updateComplaintStatus,
     logAdminActivity,
     subscribe,

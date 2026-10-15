@@ -143,6 +143,15 @@
 
               <a href="register.html">Create Account</a>
             </div>
+            <button
+              type="button"
+              class="admin-quick-switch-btn"
+              id="adminQuickSwitchBtn"
+              style="background: #0f172a; color: #f8fafc; border: 1px solid #334155; padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
+              title="Switch to Administrator Login"
+            >
+              <span>🛡️</span> Admin Portal
+            </button>
           </div>
 
           <!-- Login Header -->
@@ -187,6 +196,22 @@
                   <span class="role-tab-text">
                     <strong class="role-tab-name">Supplier</strong>
                     <small class="role-tab-hint">Merchant</small>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  class="role-tab"
+                  data-role="admin"
+                  id="roleTabAdmin"
+                  role="tab"
+                  aria-selected="false"
+                  aria-label="Login as Admin"
+                >
+                  <span class="role-tab-icon">🛡️</span>
+                  <span class="role-tab-text">
+                    <strong class="role-tab-name">Admin</strong>
+                    <small class="role-tab-hint">Governance</small>
                   </span>
                 </button>
               </div>
@@ -286,6 +311,19 @@
                 Login as Buyer
                 <span>→</span>
               </button>
+
+              <!-- Instant Admin Direct Access Button -->
+              <div class="admin-instant-access-container" style="margin-top: 12px; text-align: center;">
+                <button
+                  type="button"
+                  id="instantAdminLoginBtn"
+                  class="instant-admin-login-btn"
+                  style="width: 100%; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; padding: 10px 14px; border-radius: 10px; font-size: 0.86rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);"
+                  title="One-click access directly into TradeNest Admin Governance Dashboard"
+                >
+                  <span>🛡️</span> Instant Admin Login (1-Click Access)
+                </button>
+              </div>
             </form>
 
             <!-- =================================================

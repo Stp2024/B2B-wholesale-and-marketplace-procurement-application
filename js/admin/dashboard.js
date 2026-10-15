@@ -228,14 +228,379 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.key === "Escape") closeModal();
   });
 
+  // Administrator Profile Modal
+  function openAdminProfileModal() {
+    const adminUser = store.getAdminStore().adminUser || store.defaultAdmin;
+    const bodyHtml = `
+      <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+        <div class="admin-avatar" style="width: 58px; height: 58px; font-size: 1.35rem; background: linear-gradient(135deg, #d87543, #f59e0b);">${adminUser.avatar}</div>
+        <div>
+          <h3 style="font-size: 1.25rem; color: #0f172a; margin: 0 0 4px 0;">${adminUser.fullName}</h3>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 0;">${adminUser.designation} • <span class="status-pill status-approved" style="font-size:0.7rem; padding: 2px 7px;">Clearance Level 4</span></p>
+        </div>
+      </div>
+
+      <div class="verif-meta-list" style="margin-bottom: 20px;">
+        <div><span class="meta-field-label">Official Email</span><div class="meta-field-val">${adminUser.email}</div></div>
+        <div><span class="meta-field-label">Department</span><div class="meta-field-val">${adminUser.department || "Risk, Trust & Safety"}</div></div>
+        <div><span class="meta-field-label">Platform Node ID</span><div class="meta-field-val">NODE-IN-BLR-01 (₹ Core)</div></div>
+        <div><span class="meta-field-label">Session Encryption</span><div class="meta-field-val"><span style="color:#10b981; font-weight:700;">● Active Encrypted Session</span></div></div>
+        <div><span class="meta-field-label">Governance Scope</span><div class="meta-field-val">Full Marketplace Arbitration & Catalog Moderation</div></div>
+        <div><span class="meta-field-label">Active Time</span><div class="meta-field-val">Current Browser Session</div></div>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+        <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Arbitration Capabilities</div>
+        <p style="font-size: 0.84rem; color: #475569; margin: 0; line-height: 1.5;">This administrator profile holds live authority to arbitrate order escrow disbursements, delist non-compliant products, review corporate GST credentials, and suspend high-risk enterprise accounts.</p>
+      </div>
+    `;
+
+    const footerHtml = `
+      <button class="btn btn-secondary" onclick="window.closeAdminModal()">Close</button>
+      <button class="btn btn-danger" onclick="localStorage.removeItem('tradenestCurrentUser'); window.location.href='../../auth/admin-login.html';">Logout Session</button>
+    `;
+
+    openModal("Administrator Security Clearance & Session", bodyHtml, footerHtml);
+  }
+
+  // Modal: Add Enterprise Account
+  function openAddUserModal() {
+    const bodyHtml = `
+      <form id="adminAddUserForm" onsubmit="return false;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Full Name *</label>
+            <input type="text" id="newUserName" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. Rahul Sharma" required />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Business / Entity Name *</label>
+            <input type="text" id="newUserBiz" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. Apex Industrial Supplies Pvt Ltd" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Account Role *</label>
+            <select id="newUserRole" class="select-filter" style="width:100%;">
+              <option value="buyer">Procurement Buyer</option>
+              <option value="supplier">Verified Supplier</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Official Email *</label>
+            <input type="email" id="newUserEmail" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. rahul@apexsupplies.com" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Phone Number</label>
+            <input type="text" id="newUserPhone" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="+91 98450 12345" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Industry Sector</label>
+            <input type="text" id="newUserCategory" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. Industrial Equipment" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">City</label>
+            <input type="text" id="newUserCity" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="Bengaluru" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">State</label>
+            <input type="text" id="newUserState" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="Karnataka" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">GSTIN</label>
+            <input type="text" id="newUserGst" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="29AABCU9603R1ZM" />
+          </div>
+        </div>
+      </form>
+    `;
+
+    const footerHtml = `
+      <button class="btn btn-secondary" onclick="window.closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="window.submitAdminAddUser()">Create Account</button>
+    `;
+
+    openModal("Add Enterprise Account", bodyHtml, footerHtml);
+  }
+
+  window.submitAdminAddUser = function () {
+    const name = document.getElementById("newUserName")?.value.trim();
+    const biz = document.getElementById("newUserBiz")?.value.trim();
+    const email = document.getElementById("newUserEmail")?.value.trim();
+    const role = document.getElementById("newUserRole")?.value || "buyer";
+    const phone = document.getElementById("newUserPhone")?.value.trim() || "+91 98000 00000";
+    const category = document.getElementById("newUserCategory")?.value.trim() || "General Commerce";
+    const city = document.getElementById("newUserCity")?.value.trim() || "Bengaluru";
+    const state = document.getElementById("newUserState")?.value.trim() || "Karnataka";
+    const gstin = document.getElementById("newUserGst")?.value.trim() || "29AAAAA0000A1Z5";
+
+    if (!name || !biz || !email) {
+      showToast("Please provide name, business name, and official email.", "warning");
+      return;
+    }
+
+    store.addUserAccount({
+      fullName: name,
+      businessName: biz,
+      email,
+      role,
+      phone,
+      category,
+      city,
+      state,
+      gstin,
+      verificationStatus: "Verified"
+    });
+
+    showToast(`Enterprise account created for ${name} (${role.toUpperCase()}).`);
+    closeModal();
+    renderUsers();
+    renderOverview();
+  };
+
+  // Modal: Queue Business Verification
+  function openAddVerifModal() {
+    const bodyHtml = `
+      <form id="adminAddVerifForm" onsubmit="return false;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Enterprise Legal Name *</label>
+            <input type="text" id="newVerifBiz" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. Apex Global Solutions" required />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Entity Role *</label>
+            <select id="newVerifRole" class="select-filter" style="width:100%;">
+              <option value="supplier">Supplier / Manufacturer</option>
+              <option value="buyer">Procurement Enterprise</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Industry Sector *</label>
+            <input type="text" id="newVerifCat" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. Industrial Equipment" required />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">GSTIN *</label>
+            <input type="text" id="newVerifGst" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. 29AABCU9603R1ZM" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Principal Contact Person</label>
+            <input type="text" id="newVerifPerson" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. S. Ramanathan" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Official Email</label>
+            <input type="email" id="newVerifEmail" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="e.g. contact@enterprise.com" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">City & State</label>
+            <input type="text" id="newVerifCity" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="Bengaluru, Karnataka" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Compliance Notes</label>
+            <input type="text" id="newVerifNotes" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" placeholder="Incorporation proof attached" />
+          </div>
+        </div>
+      </form>
+    `;
+
+    const footerHtml = `
+      <button class="btn btn-secondary" onclick="window.closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="window.submitAdminAddVerif()">Queue Application</button>
+    `;
+
+    openModal("Queue Verification Proof", bodyHtml, footerHtml);
+  }
+
+  window.submitAdminAddVerif = function () {
+    const biz = document.getElementById("newVerifBiz")?.value.trim();
+    const role = document.getElementById("newVerifRole")?.value || "supplier";
+    const cat = document.getElementById("newVerifCat")?.value.trim() || "Industrial Equipment";
+    const gstin = document.getElementById("newVerifGst")?.value.trim() || "29AABCU9603R1ZM";
+    const person = document.getElementById("newVerifPerson")?.value.trim() || "Compliance Officer";
+    const email = document.getElementById("newVerifEmail")?.value.trim() || "legal@enterprise.com";
+    const cityState = document.getElementById("newVerifCity")?.value.trim() || "Bengaluru, Karnataka";
+    const notes = document.getElementById("newVerifNotes")?.value.trim() || "Proof documents uploaded.";
+
+    if (!biz || !gstin) {
+      showToast("Enterprise Name and GSTIN are required.", "warning");
+      return;
+    }
+
+    const parts = cityState.split(",");
+    const city = (parts[0] || "Bengaluru").trim();
+    const state = (parts[1] || "Karnataka").trim();
+
+    store.addBusinessVerification({
+      businessName: biz,
+      userRole: role,
+      category: cat,
+      gstin,
+      contactPerson: person,
+      email,
+      city,
+      state,
+      notes
+    });
+
+    showToast(`Verification proof queued for ${biz}.`);
+    closeModal();
+    renderVerification();
+    renderOverview();
+  };
+
+  // Modal: Simulate Procurement Order
+  function openSimulateOrderModal() {
+    const products = store.getUnifiedProducts();
+    const prodOptions = products.map(p => `<option value="${p.name}|${p.price}|${p.supplierName}">${p.name} (Supplier: ${p.supplierName} - ${store.formatCurrency(p.price)})</option>`).join("");
+
+    const bodyHtml = `
+      <form id="adminSimulateOrderForm" onsubmit="return false;">
+        <div style="margin-bottom: 14px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Select Wholesale Product *</label>
+          <select id="simOrderProd" class="select-filter" style="width:100%;" onchange="window.updateSimOrderPrice(this)">
+            ${prodOptions}
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Buyer Enterprise *</label>
+            <input type="text" id="simOrderBuyer" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" value="North Star Retail Pvt. Ltd." />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Buyer Contact Name</label>
+            <input type="text" id="simOrderBuyerName" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" value="Aisha Patel" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Order Quantity *</label>
+            <input type="number" id="simOrderQty" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" value="500" min="1" oninput="window.calcSimOrderTotal()" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px; color:#0f172a;">Unit Price (₹) *</label>
+            <input type="number" id="simOrderPrice" class="search-input" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px;" value="180" oninput="window.calcSimOrderTotal()" />
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.88rem; font-weight: 700; color: #475569;">Total Procurement Escrow Value:</span>
+          <span id="simOrderTotalDisplay" style="font-size: 1.15rem; font-weight: 800; color: #d87543;">₹90,000</span>
+        </div>
+      </form>
+    `;
+
+    const footerHtml = `
+      <button class="btn btn-secondary" onclick="window.closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="window.submitAdminSimulateOrder()">Execute Order</button>
+    `;
+
+    openModal("Simulate Procurement Order", bodyHtml, footerHtml);
+  }
+
+  window.updateSimOrderPrice = function (sel) {
+    const parts = (sel.value || "").split("|");
+    if (parts.length >= 2) {
+      const priceInput = document.getElementById("simOrderPrice");
+      if (priceInput) {
+        priceInput.value = parts[1];
+        window.calcSimOrderTotal();
+      }
+    }
+  };
+
+  window.calcSimOrderTotal = function () {
+    const qty = parseInt(document.getElementById("simOrderQty")?.value, 10) || 0;
+    const price = parseFloat(document.getElementById("simOrderPrice")?.value) || 0;
+    const totalEl = document.getElementById("simOrderTotalDisplay");
+    if (totalEl) {
+      totalEl.textContent = store.formatCurrency(qty * price);
+    }
+  };
+
+  window.submitAdminSimulateOrder = function () {
+    const sel = document.getElementById("simOrderProd");
+    const parts = (sel?.value || "").split("|");
+    const prodName = parts[0] || "Wholesale Merchandise";
+    const supplierName = parts[2] || "Apex Gear Co.";
+    const buyerBiz = document.getElementById("simOrderBuyer")?.value.trim() || "North Star Retail Pvt. Ltd.";
+    const buyerName = document.getElementById("simOrderBuyerName")?.value.trim() || "Aisha Patel";
+    const qty = parseInt(document.getElementById("simOrderQty")?.value, 10) || 100;
+    const price = parseFloat(document.getElementById("simOrderPrice")?.value) || 100;
+
+    const order = store.simulateProcurementOrder({
+      buyerName,
+      buyerBusiness: buyerBiz,
+      supplierName,
+      productName: prodName,
+      quantity: qty,
+      unitPrice: price,
+      orderStatus: "In Production",
+      paymentStatus: "Escrow Funded"
+    });
+
+    showToast(`Order ${order.id} executed for ${store.formatCurrency(order.totalAmount)}.`);
+    closeModal();
+    renderOrders();
+    renderOverview();
+  };
+
+  function initAdminIdentity() {
+    const adminUser = store.getAdminStore().adminUser || store.defaultAdmin;
+
+    // Sidebar
+    const sName = document.getElementById("sidebarAdminName");
+    const sRole = document.getElementById("sidebarAdminRole");
+    const sAvatar = document.getElementById("sidebarAdminAvatar");
+    const sCard = document.getElementById("sidebarAdminCard");
+
+    if (sName) sName.textContent = adminUser.fullName;
+    if (sRole) sRole.textContent = adminUser.designation || "Governance Head";
+    if (sAvatar) sAvatar.textContent = adminUser.avatar;
+    if (sCard) sCard.addEventListener("click", openAdminProfileModal);
+
+    // Topbar
+    const tName = document.getElementById("topbarAdminName");
+    const tEmail = document.getElementById("topbarAdminEmail");
+    const tAvatar = document.getElementById("topbarAdminAvatar");
+    const tChip = document.getElementById("topbarAdminChip");
+
+    if (tName) tName.textContent = adminUser.fullName;
+    if (tEmail) tEmail.textContent = adminUser.email;
+    if (tAvatar) tAvatar.textContent = adminUser.avatar;
+    if (tChip) tChip.addEventListener("click", openAdminProfileModal);
+
+    // Header buttons
+    const btnAddUser = document.getElementById("btnAdminAddUser");
+    if (btnAddUser) btnAddUser.addEventListener("click", openAddUserModal);
+
+    const btnAddVerif = document.getElementById("btnAdminAddVerif");
+    if (btnAddVerif) btnAddVerif.addEventListener("click", openAddVerifModal);
+
+    const btnSimOrder = document.getElementById("btnAdminSimulateOrder");
+    if (btnSimOrder) btnSimOrder.addEventListener("click", openSimulateOrderModal);
+  }
+
   // Mobile menu toggle
   if (menuToggle && sidebar) {
     menuToggle.addEventListener("click", function () {
       sidebar.classList.toggle("open");
     });
   }
-
-
 
   // Hash change listener
   window.addEventListener("hashchange", function () {
@@ -378,50 +743,84 @@ document.addEventListener("DOMContentLoaded", function () {
     const chartEl = document.getElementById("overviewGmvChart");
     if (!chartEl) return;
 
-    // Monthly GMV Demonstration Vector Chart
+    const orders = store.getUnifiedOrders();
+    const months = ["May", "Jun", "Jul", "Aug", "Sep", "Oct"];
+    const baseCurve = [120000, 240000, 390000, 480000, 680000];
+    const totalOrderGMV = orders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+    const liveOctGMV = Math.max(totalOrderGMV, 520000);
+    const projectedGMV = Math.round(liveOctGMV * 1.32);
+
+    const values = [...baseCurve, liveOctGMV, projectedGMV];
+    const maxVal = Math.max(...values, 1200000);
+
+    const width = 650;
+    const height = 220;
+    const paddingLeft = 56;
+    const paddingRight = 30;
+    const paddingTop = 26;
+    const paddingBottom = 40;
+    const plotWidth = width - paddingLeft - paddingRight;
+    const plotHeight = height - paddingTop - paddingBottom;
+
+    const points = values.map((val, idx) => {
+      const x = paddingLeft + (idx / (values.length - 1)) * plotWidth;
+      const y = paddingTop + plotHeight - (val / maxVal) * plotHeight;
+      return { x: Math.round(x), y: Math.round(y), val };
+    });
+
+    const polylinePoints = points.map((p) => `${p.x},${p.y}`).join(" ");
+    const polygonPoints = `${points[0].x},${paddingTop + plotHeight} ${polylinePoints} ${points[points.length - 1].x},${paddingTop + plotHeight}`;
+
+    const labels = [...months, "Proj"];
+    const yGridSteps = [
+      { ratio: 0, label: maxVal >= 100000 ? `₹${(maxVal / 100000).toFixed(1)}L` : `₹${Math.round(maxVal / 1000)}k` },
+      { ratio: 0.33, label: maxVal >= 100000 ? `₹${((maxVal * 0.67) / 100000).toFixed(1)}L` : `₹${Math.round((maxVal * 0.67) / 1000)}k` },
+      { ratio: 0.67, label: maxVal >= 100000 ? `₹${((maxVal * 0.33) / 100000).toFixed(1)}L` : `₹${Math.round((maxVal * 0.33) / 1000)}k` },
+      { ratio: 1, label: "₹0" }
+    ];
+
     chartEl.innerHTML = `
       <svg class="chart-svg" viewBox="0 0 650 220" preserveAspectRatio="none">
         <defs>
           <linearGradient id="gmvAreaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#d87543" stop-opacity="0.35" />
+            <stop offset="0%" stop-color="#d87543" stop-opacity="0.38" />
             <stop offset="100%" stop-color="#d87543" stop-opacity="0.0" />
           </linearGradient>
         </defs>
-        <!-- Horizontal Grid Lines -->
-        <line x1="40" y1="30" x2="630" y2="30" stroke="#f1f5f9" stroke-width="1" />
-        <line x1="40" y1="80" x2="630" y2="80" stroke="#f1f5f9" stroke-width="1" />
-        <line x1="40" y1="130" x2="630" y2="130" stroke="#f1f5f9" stroke-width="1" />
-        <line x1="40" y1="180" x2="630" y2="180" stroke="#e2e8f0" stroke-width="1" />
 
-        <!-- Area Fill -->
-        <polygon points="50,180 50,150 150,130 250,95 350,110 450,60 550,45 620,35 620,180" fill="url(#gmvAreaGrad)" />
+        <!-- Dynamic Grid Lines -->
+        ${yGridSteps.map((step) => {
+          const y = paddingTop + step.ratio * plotHeight;
+          return `
+            <line x1="${paddingLeft}" y1="${Math.round(y)}" x2="${width - paddingRight}" y2="${Math.round(y)}" stroke="${step.ratio === 1 ? '#cbd5e1' : '#f1f5f9'}" stroke-width="1" />
+            <text x="${paddingLeft - 10}" y="${Math.round(y + 4)}" font-size="10" fill="#94a3b8" text-anchor="end">${step.label}</text>
+          `;
+        }).join("")}
 
-        <!-- Line Path -->
-        <polyline points="50,150 150,130 250,95 350,110 450,60 550,45 620,35" fill="none" stroke="#d87543" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <!-- Dynamic Area Fill -->
+        <polygon points="${polygonPoints}" fill="url(#gmvAreaGrad)" />
+
+        <!-- Dynamic Line Path -->
+        <polyline points="${polylinePoints}" fill="none" stroke="#d87543" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
 
         <!-- Data Point Nodes -->
-        <circle cx="50" cy="150" r="4.5" fill="#ffffff" stroke="#d87543" stroke-width="3" />
-        <circle cx="150" cy="130" r="4.5" fill="#ffffff" stroke="#d87543" stroke-width="3" />
-        <circle cx="250" cy="95" r="4.5" fill="#ffffff" stroke="#d87543" stroke-width="3" />
-        <circle cx="350" cy="110" r="4.5" fill="#ffffff" stroke="#d87543" stroke-width="3" />
-        <circle cx="450" cy="60" r="4.5" fill="#ffffff" stroke="#d87543" stroke-width="3" />
-        <circle cx="550" cy="45" r="4.5" fill="#ffffff" stroke="#d87543" stroke-width="3" />
-        <circle cx="620" cy="35" r="5" fill="#d87543" stroke="#ffffff" stroke-width="2" />
+        ${points.map((p, idx) => {
+          const isProj = idx === points.length - 1;
+          const formatted = store.formatCurrency(p.val);
+          return `
+            <circle cx="${p.x}" cy="${p.y}" r="${isProj ? 5.5 : 4.5}" fill="${isProj ? '#d87543' : '#ffffff'}" stroke="#d87543" stroke-width="${isProj ? 2 : 3}">
+              <title>${labels[idx]}: ${formatted}</title>
+            </circle>
+          `;
+        }).join("")}
 
         <!-- Axis Labels -->
-        <text x="50" y="202" font-size="11" fill="#94a3b8" text-anchor="middle">May</text>
-        <text x="150" y="202" font-size="11" fill="#94a3b8" text-anchor="middle">Jun</text>
-        <text x="250" y="202" font-size="11" fill="#94a3b8" text-anchor="middle">Jul</text>
-        <text x="350" y="202" font-size="11" fill="#94a3b8" text-anchor="middle">Aug</text>
-        <text x="450" y="202" font-size="11" fill="#94a3b8" text-anchor="middle">Sep</text>
-        <text x="550" y="202" font-size="11" fill="#94a3b8" text-anchor="middle">Oct (MTD)</text>
-        <text x="620" y="202" font-size="11" fill="#d87543" font-weight="700" text-anchor="middle">Proj</text>
-
-        <!-- Y Axis Markers -->
-        <text x="32" y="34" font-size="10" fill="#94a3b8" text-anchor="end">₹15L</text>
-        <text x="32" y="84" font-size="10" fill="#94a3b8" text-anchor="end">₹10L</text>
-        <text x="32" y="134" font-size="10" fill="#94a3b8" text-anchor="end">₹5L</text>
-        <text x="32" y="184" font-size="10" fill="#94a3b8" text-anchor="end">₹0</text>
+        ${points.map((p, idx) => {
+          const isProj = idx === points.length - 1;
+          return `
+            <text x="${p.x}" y="204" font-size="11" fill="${isProj ? '#d87543' : '#94a3b8'}" font-weight="${isProj ? '700' : '500'}" text-anchor="middle">${labels[idx]}</text>
+          `;
+        }).join("")}
       </svg>
     `;
   }
@@ -430,28 +829,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const donutEl = document.getElementById("overviewCategoryDonut");
     if (!donutEl) return;
 
+    const products = store.getUnifiedProducts();
+    const catCounts = {};
+    products.forEach((p) => {
+      const cat = p.category || "General Equipment";
+      catCounts[cat] = (catCounts[cat] || 0) + 1;
+    });
+
+    const categories = Object.keys(catCounts).map((k) => ({ name: k, count: catCounts[k] }));
+    categories.sort((a, b) => b.count - a.count);
+
+    const topCategories = categories.slice(0, 4);
+    const totalCount = products.length || 1;
+    const colors = ["#0f172a", "#d87543", "#10b981", "#3b82f6"];
+
+    const circumference = 2 * Math.PI * 38; // approx 238.76
+    let offset = 0;
+
+    const segments = topCategories.map((c, idx) => {
+      const pct = Math.round((c.count / totalCount) * 100);
+      const dash = (c.count / totalCount) * circumference;
+      const currentOffset = offset;
+      offset += dash;
+      return {
+        name: c.name,
+        count: c.count,
+        pct,
+        dash: dash.toFixed(1),
+        rem: (circumference - dash).toFixed(1),
+        offset: (-currentOffset).toFixed(1),
+        color: colors[idx % colors.length]
+      };
+    });
+
     donutEl.innerHTML = `
       <div class="donut-wrap">
         <svg width="190" height="190" viewBox="0 0 100 100">
-          <!-- Industrial 35% -->
-          <circle cx="50" cy="50" r="38" fill="transparent" stroke="#0f172a" stroke-width="14" stroke-dasharray="83.5 155" stroke-dashoffset="0" />
-          <!-- Electrical 25% -->
-          <circle cx="50" cy="50" r="38" fill="transparent" stroke="#d87543" stroke-width="14" stroke-dasharray="59.6 179" stroke-dashoffset="-83.5" />
-          <!-- Packaging 20% -->
-          <circle cx="50" cy="50" r="38" fill="transparent" stroke="#10b981" stroke-width="14" stroke-dasharray="47.7 191" stroke-dashoffset="-143.1" />
-          <!-- Office Supplies 20% -->
-          <circle cx="50" cy="50" r="38" fill="transparent" stroke="#3b82f6" stroke-width="14" stroke-dasharray="47.7 191" stroke-dashoffset="-190.8" />
+          ${segments.map((s) => `
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="${s.color}" stroke-width="14" stroke-dasharray="${s.dash} ${s.rem}" stroke-dashoffset="${s.offset}" />
+          `).join("")}
         </svg>
         <div class="donut-center-label">
-          <div class="donut-big-val">4</div>
+          <div class="donut-big-val">${topCategories.length}</div>
           <div class="donut-sub-text">Top Sectors</div>
         </div>
       </div>
       <div class="chart-legend">
-        <div class="legend-item"><div class="legend-color" style="background:#0f172a;"></div>Industrial (35%)</div>
-        <div class="legend-item"><div class="legend-color" style="background:#d87543;"></div>Electrical (25%)</div>
-        <div class="legend-item"><div class="legend-color" style="background:#10b981;"></div>Packaging (20%)</div>
-        <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div>Office (20%)</div>
+        ${segments.map((s) => `
+          <div class="legend-item"><div class="legend-color" style="background:${s.color};"></div>${s.name} (${s.pct}%)</div>
+        `).join("")}
       </div>
     `;
   }
@@ -1130,8 +1556,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const bodyHtml = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0;">
         <div>
-          <h3 style="font-size: 1.25rem; color: #0f172a;">Order: ${o.id}</h3>
-          <p style="color: #64748b; font-size: 0.88rem;">Created ${store.formatDate(o.createdAt)}</p>
+          <h3 style="font-size: 1.25rem; color: #0f172a; margin: 0 0 4px 0;">Order: ${o.id}</h3>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 0;">Created ${store.formatDate(o.createdAt)}</p>
         </div>
         <div style="text-align: right;">
           <div style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">${store.formatCurrency(o.totalAmount)}</div>
@@ -1153,14 +1579,36 @@ document.addEventListener("DOMContentLoaded", function () {
           <span>${o.quantity} ${o.unit} @ ${store.formatCurrency(o.unitPrice)}</span>
         </div>
       </div>
+
+      <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+        <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 4px;">Administrative Mediation Controls</div>
+        <p style="font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.45;">As platform arbitrator, you have live authority to disburse escrow funds to supplier upon delivery verification, freeze payouts during dispute, or remit refunds to buyer.</p>
+      </div>
     `;
 
     const footerHtml = `
       <button class="btn btn-secondary" onclick="window.closeAdminModal()">Close</button>
-      <button class="btn btn-primary" onclick="showToast('Order manifest downloaded.'); window.closeAdminModal();">Print Manifest</button>
+      <button class="btn btn-warning" onclick="window.adminMediateEscrow('${o.id}', 'Escrow On Hold')">Place On Hold</button>
+      <button class="btn btn-danger" onclick="window.adminMediateEscrow('${o.id}', 'Refunded to Buyer')">Refund to Buyer</button>
+      <button class="btn btn-success" onclick="window.adminMediateEscrow('${o.id}', 'Released to Supplier')">Release to Supplier</button>
     `;
 
-    openModal(`Order Detail: ${o.id}`, bodyHtml, footerHtml);
+    openModal(`Order Detail & Escrow Mediation: ${o.id}`, bodyHtml, footerHtml);
+  };
+
+  window.adminMediateEscrow = function (orderId, targetPaymentStatus) {
+    let orderStatus = "In Production";
+    if (targetPaymentStatus === "Released to Supplier") {
+      orderStatus = "Delivered";
+    } else if (targetPaymentStatus === "Refunded to Buyer") {
+      orderStatus = "Cancelled";
+    }
+
+    store.updateOrderStatus(orderId, orderStatus, targetPaymentStatus, `Escrow arbitrated by Admin: ${targetPaymentStatus}`);
+    showToast(`Escrow status updated: '${targetPaymentStatus}'.`);
+    closeModal();
+    renderOrders();
+    renderOverview();
   };
 
   const orderSearch = document.getElementById("orderSearchInput");
@@ -1183,37 +1631,139 @@ document.addEventListener("DOMContentLoaded", function () {
   // 10. MODULE 35: COMPLAINTS & REPORTS
   // ==========================================================================
   let complaintTab = "all";
+  let complaintSearchQuery = "";
+  let complaintCategoryFilter = "all";
+  let complaintSeverityFilter = "all";
+
+  function renderDisputeKpis() {
+    const kpiEl = document.getElementById("disputeKpiGrid");
+    if (!kpiEl) return;
+    const stats = store.calculateAdminStats();
+    kpiEl.innerHTML = `
+      <div class="kpi-card kpi-primary">
+        <div class="kpi-header"><span class="kpi-title">Active Inquiries</span><div class="kpi-icon-wrap">⚖️</div></div>
+        <div class="kpi-value">${stats.openComplaints}</div>
+        <div class="kpi-footer"><span>Under active arbitration</span></div>
+      </div>
+      <div class="kpi-card kpi-danger">
+        <div class="kpi-header"><span class="kpi-title">High Severity</span><div class="kpi-icon-wrap">🚨</div></div>
+        <div class="kpi-value">${stats.highSeverityComplaints || 0}</div>
+        <div class="kpi-footer"><span style="color:#ef4444; font-weight:700;">Critical escalation holds</span></div>
+      </div>
+      <div class="kpi-card kpi-warning">
+        <div class="kpi-header"><span class="kpi-title">Disputed Escrow</span><div class="kpi-icon-wrap">🛡️</div></div>
+        <div class="kpi-value">${stats.formattedDisputedEscrow || "₹0"}</div>
+        <div class="kpi-footer"><span>Protected platform funds</span></div>
+      </div>
+      <div class="kpi-card kpi-success">
+        <div class="kpi-header"><span class="kpi-title">Resolution Rate</span><div class="kpi-icon-wrap">✅</div></div>
+        <div class="kpi-value">${stats.complaintResolutionRate || 100}%</div>
+        <div class="kpi-footer"><span>Historical mediation closure</span></div>
+      </div>
+    `;
+  }
 
   function renderComplaints() {
+    renderDisputeKpis();
     const adminState = store.getAdminStore();
     const tbody = document.getElementById("complaintsTableBody");
+    const countEl = document.getElementById("complaintsTotalCount");
     if (!tbody) return;
 
     const filtered = adminState.complaints.filter((c) => {
-      if (complaintTab === "all") return true;
-      if (complaintTab === "open") return c.status === "Open" || c.status === "In Review";
-      if (complaintTab === "resolved") return c.status === "Resolved";
+      // Tab pill filter
+      if (complaintTab === "open" && !(c.status === "Open" || c.status === "In Review")) return false;
+      if (complaintTab === "resolved" && !(c.status === "Resolved" || c.status === "Dismissed")) return false;
+      if (complaintTab === "high" && c.severity !== "High") return false;
+
+      // Category filter
+      if (complaintCategoryFilter !== "all") {
+        const cat = (c.category || "").toLowerCase();
+        if (complaintCategoryFilter === "specification" && !cat.includes("specification") && !cat.includes("warranty")) return false;
+        if (complaintCategoryFilter === "damage" && !cat.includes("damage") && !cat.includes("moisture")) return false;
+        if (complaintCategoryFilter === "delay" && !cat.includes("delay") && !cat.includes("sla") && !cat.includes("dispatch")) return false;
+        if (complaintCategoryFilter === "sample" && !cat.includes("sample")) return false;
+        if (complaintCategoryFilter === "escrow" && !cat.includes("escrow") && !cat.includes("pricing")) return false;
+      }
+
+      // Severity filter
+      if (complaintSeverityFilter !== "all") {
+        if (c.severity.toLowerCase() !== complaintSeverityFilter.toLowerCase()) return false;
+      }
+
+      // Search query
+      if (complaintSearchQuery) {
+        const q = complaintSearchQuery.toLowerCase();
+        const hay = [
+          c.id,
+          c.complainantName,
+          c.complainantBusiness,
+          c.reportedPartyName,
+          c.subject,
+          c.description,
+          c.relatedOrderId,
+          c.category
+        ].filter(Boolean).join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+
       return true;
     });
 
+    if (countEl) {
+      countEl.textContent = `Showing ${filtered.length} of ${adminState.complaints.length} tickets`;
+    }
+
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: #64748b;">No complaints in this queue.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 36px; color: #64748b;">No disputes match the current filters.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = filtered.map((c) => {
       const sevClass = `status-${c.severity.toLowerCase()}`;
       const statClass = `status-${c.status.toLowerCase().replace(/[^a-z]/g, "")}`;
+      const isResolved = c.status === "Resolved" || c.status === "Dismissed";
+      const escrowBadge = isResolved
+        ? `<span class="badge-pill" style="font-size:0.7rem; background:#dcfce7; color:#15803d; font-weight:700;">Settled</span>`
+        : `<span class="badge-pill" style="font-size:0.7rem; background:#fee2e2; color:#b91c1c; font-weight:700;">Escrow Held</span>`;
+
+      const roleBadge = c.complainantRole === "buyer" 
+        ? `<span class="role-badge role-buyer" style="font-size:0.68rem;">Buyer</span>`
+        : `<span class="role-badge role-supplier" style="font-size:0.68rem;">Supplier</span>`;
+
+      const counterBadge = c.reportedPartyRole === "supplier"
+        ? `<span class="role-badge role-supplier" style="font-size:0.68rem;">Supplier</span>`
+        : `<span class="role-badge role-buyer" style="font-size:0.68rem;">Buyer</span>`;
 
       return `
         <tr>
-          <td><strong>${c.id}</strong><div style="font-size: 0.76rem; color: #64748b;">${store.formatDate(c.submissionDate)}</div></td>
           <td>
-            <div style="font-weight: 700; color: #0f172a;">${c.complainantName}</div>
-            <div style="font-size: 0.76rem; color: #64748b;">${c.complainantBusiness}</div>
+            <strong>${c.id}</strong>
+            <div style="font-size: 0.74rem; color: #64748b;">${store.formatDate(c.submissionDate)}</div>
           </td>
-          <td><div style="font-weight: 700; color: #0f172a;">${c.reportedPartyName}</div></td>
-          <td><span class="role-badge role-supplier">${c.category}</span></td>
+          <td>
+            <div style="font-weight: 700; color: #0f172a; display:flex; align-items:center; gap:6px;">
+              ${c.complainantName} ${roleBadge}
+            </div>
+            <div style="font-size: 0.76rem; color: #64748b;">${c.complainantBusiness || ""}</div>
+          </td>
+          <td>
+            <div style="font-weight: 700; color: #0f172a; display:flex; align-items:center; gap:6px;">
+              ${c.reportedPartyName} ${counterBadge}
+            </div>
+          </td>
+          <td>
+            <span class="role-badge role-supplier" style="font-size: 0.74rem; max-width: 170px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${c.category}">
+              ${c.category}
+            </span>
+            <div style="font-size: 0.74rem; color: #475569; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;" title="${c.subject}">
+              ${c.subject}
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 700; color: #0f172a; font-size: 0.88rem;">${store.formatCurrency(c.disputedAmount || 25000)}</div>
+            ${escrowBadge}
+          </td>
           <td><span class="status-pill ${sevClass}">${c.severity}</span></td>
           <td><span class="status-pill ${statClass}">${c.status}</span></td>
           <td>
@@ -1229,50 +1779,257 @@ document.addEventListener("DOMContentLoaded", function () {
     const c = adminState.complaints.find((item) => item.id === complaintId);
     if (!c) return;
 
+    const timeline = c.timeline || [];
+    const timelineHtml = timeline.length > 0
+      ? timeline.map((t) => `
+          <div style="display: flex; gap: 12px; margin-bottom: 10px; font-size: 0.82rem;">
+            <div style="min-width: 110px; color: #64748b; font-weight: 600;">${t.date}</div>
+            <div style="background: #e2e8f0; width: 2px; position: relative;">
+              <span style="position: absolute; left: -4px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: #0f172a;"></span>
+            </div>
+            <div style="flex: 1; padding-left: 6px;">
+              <strong style="color: #0f172a;">${t.actor}:</strong> <span style="color: #334155;">${t.event}</span>
+            </div>
+          </div>
+        `).join("")
+      : `<div style="color: #64748b; font-size: 0.82rem;">No timeline events recorded yet.</div>`;
+
     const bodyHtml = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
         <div>
-          <h3 style="font-size: 1.15rem; color: #0f172a;">Dispute ${c.id}: ${c.subject}</h3>
-          <p style="color: #64748b; font-size: 0.85rem;">Related Reference: <strong>${c.relatedOrderId || "Standard RFQ"}</strong></p>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span class="status-pill status-${c.status.toLowerCase().replace(/[^a-z]/g, "")}">${c.status}</span>
+            <span class="status-pill status-${c.severity.toLowerCase()}">Severity: ${c.severity}</span>
+            <span style="font-size: 0.78rem; color: #64748b;">Filed ${store.formatDate(c.submissionDate)}</span>
+          </div>
+          <h3 style="font-size: 1.15rem; color: #0f172a; margin: 0;">Dispute ${c.id}: ${c.subject}</h3>
         </div>
-        <span class="status-pill status-${c.severity.toLowerCase()}">Severity: ${c.severity}</span>
+        <div style="text-align: right;">
+          <div style="font-size: 0.74rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Disputed Value</div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #0f172a;">${store.formatCurrency(c.disputedAmount || 25000)}</div>
+        </div>
       </div>
 
       <div class="verif-meta-list" style="margin-bottom: 16px;">
-        <div><span class="meta-field-label">Complainant</span><div class="meta-field-val">${c.complainantName} (${c.complainantRole})</div></div>
-        <div><span class="meta-field-label">Reported Party</span><div class="meta-field-val">${c.reportedPartyName} (${c.reportedPartyRole})</div></div>
+        <div>
+          <span class="meta-field-label">Complainant (${(c.complainantRole || "buyer").toUpperCase()})</span>
+          <div class="meta-field-val" style="font-weight: 700;">${c.complainantName}</div>
+          <div style="font-size: 0.76rem; color: #64748b;">${c.complainantBusiness || ""}</div>
+        </div>
+        <div>
+          <span class="meta-field-label">Respondent (${(c.reportedPartyRole || "supplier").toUpperCase()})</span>
+          <div class="meta-field-val" style="font-weight: 700;">${c.reportedPartyName}</div>
+        </div>
+        <div>
+          <span class="meta-field-label">Procurement Reference</span>
+          <div class="meta-field-val">${c.relatedOrderId || "Direct Order"}</div>
+          <div style="font-size: 0.76rem; color: #64748b;">RFQ: ${c.relatedRfqId || "Standard Contract"}</div>
+        </div>
+        <div>
+          <span class="meta-field-label">Arbitration Category</span>
+          <div class="meta-field-val">${c.category}</div>
+        </div>
       </div>
 
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Complainant Narrative</div>
-        <p style="font-size: 0.86rem; color: #334155; line-height: 1.5;">${c.description}</p>
+        <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Complainant Grievance Statement</div>
+        <p style="font-size: 0.86rem; color: #334155; line-height: 1.5; margin: 0;">${c.description}</p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 10px;">Arbitration Activity &amp; Audit Trail</div>
+        <div style="max-height: 140px; overflow-y: auto; padding-right: 6px;">
+          ${timelineHtml}
+        </div>
       </div>
 
       <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 0.84rem; font-weight: 700; margin-bottom: 6px; color: #0f172a;">Mediator Resolution Notes:</label>
-        <textarea id="modalComplaintNotes" style="width: 100%; height: 75px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.86rem;" placeholder="Record dispute findings and settlement terms...">${c.adminNotes || ""}</textarea>
+        <label style="display: block; font-size: 0.84rem; font-weight: 700; margin-bottom: 6px; color: #0f172a;">
+          Mediator Findings &amp; Resolution Order:
+        </label>
+        <textarea id="modalComplaintNotes" style="width: 100%; height: 70px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.86rem;" placeholder="Record binding resolution terms, escrow distribution, or corrective action...">${c.adminNotes || ""}</textarea>
+      </div>
+
+      <div style="background: #f1f5f9; border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #475569;">
+        <strong>Escrow Settlement Protocol:</strong> Executing a refund or escrow release automatically synchronizes with the order ledger, modifying escrow state and buyer/supplier account balances.
       </div>
     `;
 
     const footerHtml = `
-      <button class="btn btn-secondary" onclick="window.closeAdminModal()">Close</button>
-      <button class="btn btn-warning" onclick="window.adminSubmitComplaintAction('${c.id}', 'In Review')">Mark In Review</button>
-      <button class="btn btn-danger" onclick="window.adminSubmitComplaintAction('${c.id}', 'Dismissed')">Dismiss Complaint</button>
-      <button class="btn btn-success" onclick="window.adminSubmitComplaintAction('${c.id}', 'Resolved')">Resolve Dispute</button>
+      <div style="display: flex; gap: 8px; width: 100%; justify-content: flex-end; flex-wrap: wrap;">
+        <button class="btn btn-secondary" onclick="window.closeAdminModal()">Close</button>
+        <button class="btn btn-warning" onclick="window.adminSubmitComplaintAction('${c.id}', 'In Review', 'Investigation active; notices served to counterparty.', null)">Set In Review</button>
+        <button class="btn btn-danger" onclick="window.adminSubmitComplaintAction('${c.id}', 'Dismissed', 'Claim dismissed as unsubstantiated.', null)">Dismiss</button>
+        <button class="btn btn-info" style="background: #8b5cf6; color: white;" onclick="window.adminSubmitComplaintAction('${c.id}', 'Resolved', 'Partial credit voucher settlement agreed.', 'partial_refund')">Partial Credit Note</button>
+        <button class="btn btn-primary" onclick="window.adminSubmitComplaintAction('${c.id}', 'Resolved', 'Escrow released to supplier upon specification validation.', 'release_supplier')">Release to Supplier</button>
+        <button class="btn btn-success" onclick="window.adminSubmitComplaintAction('${c.id}', 'Resolved', '100% Escrow refunded to buyer account.', 'refund_buyer')">Full Refund to Buyer</button>
+      </div>
     `;
 
     openModal(`Dispute Resolution: ${c.id}`, bodyHtml, footerHtml);
   };
 
-  window.adminSubmitComplaintAction = function (complaintId, status) {
+  window.adminSubmitComplaintAction = function (complaintId, status, defaultNotes, orderAction) {
     const notesEl = document.getElementById("modalComplaintNotes");
-    const notes = notesEl ? notesEl.value.trim() : "";
-    store.updateComplaintStatus(complaintId, status, notes);
-    showToast(`Dispute ticket set to '${status}'.`);
+    const notes = notesEl && notesEl.value.trim() ? notesEl.value.trim() : (defaultNotes || "");
+    const settlementAction = defaultNotes || (status === "Resolved" ? "Dispute Resolved by Mediator" : status);
+
+    store.updateComplaintStatus(complaintId, status, notes, settlementAction, orderAction);
+    showToast(`Dispute ticket ${complaintId} updated to '${status}'.`);
+    closeModal();
+    renderComplaints();
+    renderOverview();
+    if (currentActiveView === "reports") {
+      renderReports();
+    }
+  };
+
+  function openAddDisputeModal() {
+    const orders = store.getUnifiedOrders();
+    const orderOptions = orders.slice(0, 10).map((o) => `
+      <option value="${o.id}">${o.id} - ${o.productName} (₹${Number(o.totalAmount || 0).toLocaleString("en-IN")})</option>
+    `).join("");
+
+    const bodyHtml = `
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Complainant Business / Name *</label>
+            <input type="text" id="addDisputeComplainantName" class="search-input" style="width: 100%; border: 1px solid #cbd5e1;" placeholder="e.g. Kaveri Engineering Works" required />
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Complainant Role *</label>
+            <select id="addDisputeComplainantRole" class="select-filter" style="width: 100%;">
+              <option value="buyer">Buyer</option>
+              <option value="supplier">Supplier</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Reported Counterparty *</label>
+            <input type="text" id="addDisputeReportedParty" class="search-input" style="width: 100%; border: 1px solid #cbd5e1;" placeholder="e.g. PackRight Corp." required />
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Dispute Category *</label>
+            <select id="addDisputeCategory" class="select-filter" style="width: 100%;">
+              <option value="Warranty & Specification Misrepresentation">Warranty &amp; Specification Misrepresentation</option>
+              <option value="Transit Moisture Damage">Transit Moisture Damage</option>
+              <option value="Late Dispatch Penalty Inquiry">Late Dispatch Penalty Inquiry</option>
+              <option value="Unreasonable Sample Evaluation Delay">Unreasonable Sample Evaluation Delay</option>
+              <option value="Escrow & Pricing">Escrow &amp; Pricing</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Related Order Reference</label>
+            <select id="addDisputeOrderRef" class="select-filter" style="width: 100%;">
+              ${orderOptions}
+              <option value="ORD-DIRECT">Direct Purchase Order</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Severity Level *</label>
+            <select id="addDisputeSeverity" class="select-filter" style="width: 100%;">
+              <option value="Medium">Medium Severity</option>
+              <option value="High">High Severity</option>
+              <option value="Low">Low Severity</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Disputed Escrow (₹) *</label>
+            <input type="number" id="addDisputeAmount" class="search-input" style="width: 100%; border: 1px solid #cbd5e1;" placeholder="45000" value="35000" min="100" />
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Dispute Subject / Headline *</label>
+          <input type="text" id="addDisputeSubject" class="search-input" style="width: 100%; border: 1px solid #cbd5e1;" placeholder="e.g. Specification mismatch on safety helmet impact rating" required />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #0f172a;">Detailed Grievance Narrative *</label>
+          <textarea id="addDisputeDesc" style="width: 100%; height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.86rem;" placeholder="Detail the timeline, breach of agreement, delivery defects, or monetary claims..." required></textarea>
+        </div>
+      </div>
+    `;
+
+    const footerHtml = `
+      <button class="btn btn-secondary" onclick="window.closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="window.submitAdminAddDispute()">Submit Dispute Ticket</button>
+    `;
+
+    openModal("File Formal Dispute Ticket", bodyHtml, footerHtml);
+  }
+
+  window.submitAdminAddDispute = function () {
+    const compName = document.getElementById("addDisputeComplainantName")?.value.trim();
+    const compRole = document.getElementById("addDisputeComplainantRole")?.value || "buyer";
+    const repParty = document.getElementById("addDisputeReportedParty")?.value.trim();
+    const category = document.getElementById("addDisputeCategory")?.value;
+    const orderRef = document.getElementById("addDisputeOrderRef")?.value;
+    const severity = document.getElementById("addDisputeSeverity")?.value || "Medium";
+    const amount = Number(document.getElementById("addDisputeAmount")?.value) || 25000;
+    const subject = document.getElementById("addDisputeSubject")?.value.trim();
+    const desc = document.getElementById("addDisputeDesc")?.value.trim();
+
+    if (!compName || !repParty || !subject || !desc) {
+      showToast("Please complete all required fields.", "warning");
+      return;
+    }
+
+    const created = store.addComplaint({
+      complainantName: compName,
+      complainantBusiness: compName,
+      complainantRole: compRole,
+      reportedPartyName: repParty,
+      reportedPartyRole: compRole === "buyer" ? "supplier" : "buyer",
+      category,
+      relatedOrderId: orderRef,
+      severity,
+      disputedAmount: amount,
+      subject,
+      description: desc,
+      status: "Open"
+    });
+
+    showToast(`Dispute ticket ${created.id} created successfully.`);
     closeModal();
     renderComplaints();
     renderOverview();
   };
+
+  const btnAddDispute = document.getElementById("btnAdminAddDispute");
+  if (btnAddDispute) {
+    btnAddDispute.addEventListener("click", openAddDisputeModal);
+  }
+
+  const complaintSearchInput = document.getElementById("complaintSearchInput");
+  if (complaintSearchInput) {
+    complaintSearchInput.addEventListener("input", function () {
+      complaintSearchQuery = this.value.trim();
+      renderComplaints();
+    });
+  }
+
+  const complaintCatSelect = document.getElementById("complaintCategorySelect");
+  if (complaintCatSelect) {
+    complaintCatSelect.addEventListener("change", function () {
+      complaintCategoryFilter = this.value;
+      renderComplaints();
+    });
+  }
+
+  const complaintSevSelect = document.getElementById("complaintSeveritySelect");
+  if (complaintSevSelect) {
+    complaintSevSelect.addEventListener("change", function () {
+      complaintSeverityFilter = this.value;
+      renderComplaints();
+    });
+  }
 
   const complaintTabs = document.querySelectorAll("#complaintTabPills .tab-pill");
   complaintTabs.forEach((tab) => {
@@ -1404,70 +2161,367 @@ document.addEventListener("DOMContentLoaded", function () {
   // 12. MODULE 37: REPORTS & ANALYTICS
   // ==========================================================================
   let reportDateRange = "30days";
-  let reportCategoryFilter = "all";
+  let reportAuditTab = "financial";
+
+  const dateRangeConfig = {
+    "30days": { factor: 1.0, label: "Last 30 Days (MTD)", userDelta: 18, orderDelta: 0 },
+    "quarter": { factor: 2.6, label: "Current Quarter (Q3 2026)", userDelta: 47, orderDelta: 14 },
+    "90days": { factor: 3.4, label: "Last 90 Days", userDelta: 62, orderDelta: 22 },
+    "ytd": { factor: 5.2, label: "Year-to-Date (FY 26-27)", userDelta: 115, orderDelta: 38 }
+  };
 
   function renderReports() {
     const stats = store.calculateAdminStats();
     const metricsGrid = document.getElementById("reportsMetricsGrid");
-    if (!metricsGrid) return;
+    const cfg = dateRangeConfig[reportDateRange] || dateRangeConfig["30days"];
 
-    metricsGrid.innerHTML = `
-      <div class="kpi-card kpi-primary">
-        <div class="kpi-header"><span class="kpi-title">User Growth Index</span><div class="kpi-icon-wrap">👥</div></div>
-        <div class="kpi-value">${stats.totalUsers}</div>
-        <div class="kpi-footer"><span>${stats.totalBuyers} Buyers • ${stats.totalSuppliers} Suppliers</span></div>
-      </div>
-      <div class="kpi-card kpi-success">
-        <div class="kpi-header"><span class="kpi-title">RFQ Fulfillment Ratio</span><div class="kpi-icon-wrap">📈</div></div>
-        <div class="kpi-value">84.2%</div>
-        <div class="kpi-footer"><span>Avg 3.8 quotes per RFQ</span></div>
-      </div>
-      <div class="kpi-card kpi-info">
-        <div class="kpi-header"><span class="kpi-title">On-Time Dispatch SLA</span><div class="kpi-icon-wrap">🚚</div></div>
-        <div class="kpi-value">96.8%</div>
-        <div class="kpi-footer"><span>Logistics compliance</span></div>
-      </div>
-      <div class="kpi-card kpi-purple">
-        <div class="kpi-header"><span class="kpi-title">Verification Turnaround</span><div class="kpi-icon-wrap">⏱️</div></div>
-        <div class="kpi-value">18.4h</div>
-        <div class="kpi-footer"><span>Avg document clearance</span></div>
-      </div>
-    `;
+    const scaledGMV = Math.round(stats.totalGMV * cfg.factor);
+    const scaledOrders = Math.round(stats.totalOrders * cfg.factor) + cfg.orderDelta;
+    const formattedScaledGMV = scaledGMV >= 10000000 
+      ? `₹${(scaledGMV / 10000000).toFixed(2)} Cr`
+      : scaledGMV >= 100000 
+      ? `₹${(scaledGMV / 100000).toFixed(2)} Lakhs` 
+      : store.formatCurrency(scaledGMV);
+
+    if (metricsGrid) {
+      metricsGrid.innerHTML = `
+        <div class="kpi-card kpi-primary">
+          <div class="kpi-header"><span class="kpi-title">User Growth Index</span><div class="kpi-icon-wrap">👥</div></div>
+          <div class="kpi-value">${stats.totalUsers}</div>
+          <div class="kpi-footer"><span>+${cfg.userDelta} onboarded in ${cfg.label}</span></div>
+        </div>
+        <div class="kpi-card kpi-success">
+          <div class="kpi-header"><span class="kpi-title">Procurement GMV</span><div class="kpi-icon-wrap">📈</div></div>
+          <div class="kpi-value">${formattedScaledGMV}</div>
+          <div class="kpi-footer"><span>${scaledOrders} orders settled across network</span></div>
+        </div>
+        <div class="kpi-card kpi-info">
+          <div class="kpi-header"><span class="kpi-title">On-Time Dispatch SLA</span><div class="kpi-icon-wrap">🚚</div></div>
+          <div class="kpi-value">97.6%</div>
+          <div class="kpi-footer"><span>Avg 3.2 days transit delivery</span></div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-header"><span class="kpi-title">Arbitration Turnaround</span><div class="kpi-icon-wrap">⏱️</div></div>
+          <div class="kpi-value">22.8h</div>
+          <div class="kpi-footer"><span>${stats.complaintResolutionRate || 100}% dispute resolution closure</span></div>
+        </div>
+      `;
+    }
 
     renderCategoryVolumeBarChart();
+    renderDisputeAnalyticsChart();
+    renderReportsAuditTable();
   }
 
   function renderCategoryVolumeBarChart() {
     const barEl = document.getElementById("reportsCategoryBarChart");
     if (!barEl) return;
 
+    const cfg = dateRangeConfig[reportDateRange] || dateRangeConfig["30days"];
+    const orders = store.getUnifiedOrders();
+    const catMap = {
+      "Industrial Equipment": 0,
+      "Electrical & Electronics": 0,
+      "Packaging & Freight": 0,
+      "Office Supplies": 0
+    };
+
+    orders.forEach((o) => {
+      const pName = (o.productName || "").toLowerCase();
+      const amt = Number(o.totalAmount) || 0;
+      if (pName.includes("safety") || pName.includes("jack") || pName.includes("industrial") || pName.includes("glove")) {
+        catMap["Industrial Equipment"] += amt;
+      } else if (pName.includes("led") || pName.includes("light") || pName.includes("electric") || pName.includes("panel")) {
+        catMap["Electrical & Electronics"] += amt;
+      } else if (pName.includes("box") || pName.includes("carton") || pName.includes("pack") || pName.includes("shipping")) {
+        catMap["Packaging & Freight"] += amt;
+      } else if (pName.includes("paper") || pName.includes("office") || pName.includes("copy")) {
+        catMap["Office Supplies"] += amt;
+      } else {
+        catMap["Industrial Equipment"] += amt;
+      }
+    });
+
+    const entries = [
+      { name: "Industrial Equipment", val: Math.round((catMap["Industrial Equipment"] || 4250000) * cfg.factor), color: "#0f172a" },
+      { name: "Electrical & Solar", val: Math.round((catMap["Electrical & Electronics"] || 3120000) * cfg.factor), color: "#d87543" },
+      { name: "Machinery & Tools", val: Math.round(((catMap["Industrial Equipment"] || 4250000) * 0.65) * cfg.factor), color: "#8b5cf6" },
+      { name: "Packaging Materials", val: Math.round((catMap["Packaging & Freight"] || 1640000) * cfg.factor), color: "#10b981" }
+    ];
+
+    const maxVal = Math.max(...entries.map((e) => e.val), 100000);
+    const maxBarWidth = 430;
+
     barEl.innerHTML = `
       <svg class="chart-svg" viewBox="0 0 650 200" preserveAspectRatio="none">
         <!-- Grid lines -->
-        <line x1="120" y1="20" x2="620" y2="20" stroke="#f1f5f9" stroke-width="1" />
-        <line x1="120" y1="65" x2="620" y2="65" stroke="#f1f5f9" stroke-width="1" />
-        <line x1="120" y1="110" x2="620" y2="110" stroke="#f1f5f9" stroke-width="1" />
-        <line x1="120" y1="155" x2="620" y2="155" stroke="#f1f5f9" stroke-width="1" />
+        <line x1="150" y1="20" x2="620" y2="20" stroke="#f1f5f9" stroke-width="1" />
+        <line x1="150" y1="65" x2="620" y2="65" stroke="#f1f5f9" stroke-width="1" />
+        <line x1="150" y1="110" x2="620" y2="110" stroke="#f1f5f9" stroke-width="1" />
+        <line x1="150" y1="155" x2="620" y2="155" stroke="#f1f5f9" stroke-width="1" />
 
-        <!-- Bars -->
-        <text x="110" y="38" font-size="12" fill="#475569" font-weight="600" text-anchor="end">Industrial</text>
-        <rect x="120" y="24" width="450" height="20" rx="4" fill="#0f172a" />
-        <text x="580" y="38" font-size="11" fill="#0f172a" font-weight="700">₹42.5L</text>
-
-        <text x="110" y="83" font-size="12" fill="#475569" font-weight="600" text-anchor="end">Electrical</text>
-        <rect x="120" y="69" width="340" height="20" rx="4" fill="#d87543" />
-        <text x="470" y="83" font-size="11" fill="#d87543" font-weight="700">₹31.2L</text>
-
-        <text x="110" y="128" font-size="12" fill="#475569" font-weight="600" text-anchor="end">Machinery</text>
-        <rect x="120" y="114" width="280" height="20" rx="4" fill="#8b5cf6" />
-        <text x="410" y="128" font-size="11" fill="#8b5cf6" font-weight="700">₹25.8L</text>
-
-        <text x="110" y="173" font-size="12" fill="#475569" font-weight="600" text-anchor="end">Packaging</text>
-        <rect x="120" y="159" width="190" height="20" rx="4" fill="#10b981" />
-        <text x="320" y="173" font-size="11" fill="#10b981" font-weight="700">₹16.4L</text>
+        ${entries.map((e, idx) => {
+          const yText = 38 + idx * 45;
+          const yRect = 24 + idx * 45;
+          const barWidth = Math.max(25, Math.round((e.val / maxVal) * maxBarWidth));
+          const displayStr = e.val >= 10000000 
+            ? `₹${(e.val / 10000000).toFixed(2)} Cr`
+            : e.val >= 100000 
+            ? `₹${(e.val / 100000).toFixed(1)} Lakhs` 
+            : store.formatCurrency(e.val);
+          return `
+            <text x="140" y="${yText}" font-size="11" fill="#475569" font-weight="600" text-anchor="end">${e.name}</text>
+            <rect x="150" y="${yRect}" width="${barWidth}" height="20" rx="4" fill="${e.color}" />
+            <text x="${150 + barWidth + 10}" y="${yText}" font-size="11" fill="${e.color}" font-weight="700">${displayStr}</text>
+          `;
+        }).join("")}
       </svg>
     `;
   }
+
+  function renderDisputeAnalyticsChart() {
+    const chartEl = document.getElementById("reportsDisputeAnalyticsChart");
+    if (!chartEl) return;
+    const adminState = store.getAdminStore();
+    const complaints = adminState.complaints || [];
+
+    let refunds = 0;
+    let released = 0;
+    let credits = 0;
+    let active = 0;
+
+    complaints.forEach((c) => {
+      const act = (c.settlementAction || "").toLowerCase();
+      const st = (c.status || "").toLowerCase();
+      if (act.includes("refund") || act.includes("buyer")) {
+        refunds++;
+      } else if (act.includes("release") || act.includes("supplier")) {
+        released++;
+      } else if (act.includes("credit") || act.includes("partial") || act.includes("addendum")) {
+        credits++;
+      } else if (st === "open" || st === "in review") {
+        active++;
+      } else {
+        refunds++;
+      }
+    });
+
+    const slices = [
+      { label: "Refunded to Buyer", count: Math.max(1, refunds), color: "#ef4444" },
+      { label: "Released to Supplier", count: Math.max(1, released), color: "#10b981" },
+      { label: "Credit Note / Addendum", count: Math.max(1, credits), color: "#f59e0b" },
+      { label: "Active Arbitration", count: Math.max(1, active), color: "#3b82f6" }
+    ];
+
+    const sliceTotal = slices.reduce((s, x) => s + x.count, 0);
+
+    let currentAngle = 0;
+    const center = 75;
+    const radius = 55;
+    const strokeWidth = 22;
+    const circumference = 2 * Math.PI * radius;
+
+    const circles = slices.map((s) => {
+      const pct = s.count / sliceTotal;
+      const strokeDash = pct * circumference;
+      const strokeDashoffset = -currentAngle * circumference;
+      currentAngle += pct;
+      return `
+        <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="${s.color}" stroke-width="${strokeWidth}"
+          stroke-dasharray="${strokeDash} ${circumference - strokeDash}"
+          stroke-dashoffset="${strokeDashoffset}"
+          style="transition: all 0.4s ease;" />
+      `;
+    }).join("");
+
+    chartEl.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-around; gap: 16px; flex-wrap: wrap;">
+        <div style="position: relative; width: 150px; height: 150px;">
+          <svg width="150" height="150" viewBox="0 0 150 150" style="transform: rotate(-90deg);">
+            ${circles}
+          </svg>
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none;">
+            <span style="font-size: 1.35rem; font-weight: 800; color: #0f172a;">${complaints.length}</span>
+            <span style="font-size: 0.68rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Disputes</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; min-width: 190px;">
+          ${slices.map((s) => {
+            const pctStr = Math.round((s.count / sliceTotal) * 100);
+            return `
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: ${s.color};"></span>
+                  <span style="color: #334155; font-weight: 600;">${s.label}</span>
+                </div>
+                <span style="font-weight: 700; color: #0f172a;">${s.count} (${pctStr}%)</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReportsAuditTable() {
+    const wrap = document.getElementById("reportsAuditTableWrap");
+    if (!wrap) return;
+
+    if (reportAuditTab === "financial") {
+      const orders = store.getUnifiedOrders();
+      wrap.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order ID &amp; Date</th>
+              <th>Buyer Enterprise</th>
+              <th>Supplier Partner</th>
+              <th>Order GMV</th>
+              <th>Platform Take Rate (2%)</th>
+              <th>Net Escrow / Disbursed</th>
+              <th>Settlement State</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orders.map((o) => {
+              const amt = Number(o.totalAmount) || 0;
+              const fee = Math.round(amt * 0.02);
+              const net = amt - fee;
+              const isDelivered = o.orderStatus === "Delivered";
+              const isCancelled = o.orderStatus === "Cancelled";
+              const statusPill = isDelivered
+                ? `<span class="status-pill status-approved">Disbursed to Supplier</span>`
+                : isCancelled
+                ? `<span class="status-pill status-rejected">Refunded to Buyer</span>`
+                : `<span class="status-pill status-pending">Held in Escrow</span>`;
+
+              return `
+                <tr>
+                  <td><strong>${o.id}</strong><div style="font-size:0.74rem; color:#64748b;">${store.formatDate(o.createdAt)}</div></td>
+                  <td><div style="font-weight:700; color:#0f172a;">${o.buyerName}</div></td>
+                  <td><div style="font-weight:700; color:#0f172a;">${o.supplierName}</div></td>
+                  <td><strong style="color:#0f172a;">${store.formatCurrency(amt)}</strong></td>
+                  <td style="color:#64748b; font-weight:600;">${store.formatCurrency(fee)}</td>
+                  <td style="color:#10b981; font-weight:700;">${store.formatCurrency(net)}</td>
+                  <td>${statusPill}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    } else if (reportAuditTab === "disputes") {
+      const complaints = store.getAdminStore().complaints || [];
+      wrap.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Ticket Ref</th>
+              <th>Disputing Parties</th>
+              <th>Category</th>
+              <th>Disputed Value</th>
+              <th>Status</th>
+              <th>Settlement Terms &amp; Mediator Ruling</th>
+              <th>Filing Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${complaints.map((c) => {
+              const statClass = `status-${c.status.toLowerCase().replace(/[^a-z]/g, "")}`;
+              return `
+                <tr>
+                  <td><strong>${c.id}</strong></td>
+                  <td>
+                    <div style="font-weight:700; color:#0f172a;">${c.complainantName} (${c.complainantRole || "buyer"})</div>
+                    <div style="font-size:0.74rem; color:#64748b;">vs. ${c.reportedPartyName} (${c.reportedPartyRole || "supplier"})</div>
+                  </td>
+                  <td><span class="role-badge role-supplier">${c.category}</span></td>
+                  <td><strong>${store.formatCurrency(c.disputedAmount || 25000)}</strong></td>
+                  <td><span class="status-pill ${statClass}">${c.status}</span></td>
+                  <td>
+                    <div style="font-weight:600; color:#334155; font-size:0.82rem;">${c.settlementAction || "Under Mediation"}</div>
+                    <div style="font-size:0.74rem; color:#64748b; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.adminNotes || "Pending mediator review"}</div>
+                  </td>
+                  <td style="font-size:0.8rem; color:#64748b;">${store.formatDate(c.submissionDate)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    } else if (reportAuditTab === "logistics") {
+      const orders = store.getUnifiedOrders();
+      const carriers = ["BlueDart Surface Express", "Delhivery Heavy Cargo B2B", "V-Trans Integrated Logistics", "Gati-KWE Logistics"];
+      wrap.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Waybill Docket</th>
+              <th>Order Ref &amp; Buyer</th>
+              <th>Logistics Carrier</th>
+              <th>Dispatch Date</th>
+              <th>Delivery SLA Target</th>
+              <th>Transit Status</th>
+              <th>SLA Performance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orders.map((o, idx) => {
+              const carrier = carriers[idx % carriers.length];
+              const waybill = `TN-EXP-${88000 + idx * 137}`;
+              const isDelivered = o.orderStatus === "Delivered";
+              const isShipped = o.orderStatus === "Shipped";
+              const transitStatus = isDelivered
+                ? `<span class="status-pill status-approved">Delivered &amp; Gate-Signed</span>`
+                : isShipped
+                ? `<span class="status-pill status-pending">In Interstate Transit</span>`
+                : `<span class="status-pill status-warning">Awaiting Warehouse Pickup</span>`;
+
+              const slaBadge = isDelivered
+                ? `<span style="font-weight:700; color:#10b981; font-size:0.82rem;">✓ Met (100%)</span>`
+                : `<span style="font-weight:700; color:#3b82f6; font-size:0.82rem;">⏱️ On Track</span>`;
+
+              return `
+                <tr>
+                  <td><strong>${waybill}</strong></td>
+                  <td>
+                    <div style="font-weight:700; color:#0f172a;">${o.id}</div>
+                    <div style="font-size:0.76rem; color:#64748b;">${o.buyerName}</div>
+                  </td>
+                  <td><div style="font-weight:600; color:#0f172a;">${carrier}</div></td>
+                  <td style="font-size:0.82rem; color:#64748b;">${store.formatDate(o.createdAt)}</td>
+                  <td style="font-size:0.82rem; color:#475569; font-weight:600;">${store.formatDate(o.createdAt)} + 4 days</td>
+                  <td>${transitStatus}</td>
+                  <td>${slaBadge}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+  }
+
+  // Reports Date Range Selector & Audit Tab Listeners
+  const reportDateRangeSelect = document.getElementById("reportDateRangeSelect");
+  if (reportDateRangeSelect) {
+    reportDateRangeSelect.addEventListener("change", function () {
+      reportDateRange = this.value;
+      renderReports();
+      const cfg = dateRangeConfig[reportDateRange] || dateRangeConfig["30days"];
+      showToast(`Reports updated for: ${cfg.label}`);
+    });
+  }
+
+  const reportAuditTabs = document.querySelectorAll("#reportAuditTabPills .tab-pill");
+  reportAuditTabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      reportAuditTabs.forEach((t) => t.classList.remove("active"));
+      this.classList.add("active");
+      reportAuditTab = this.getAttribute("data-report-tab");
+      renderReportsAuditTable();
+    });
+  });
 
   // Export handlers
   const exportCsvBtn = document.getElementById("exportCsvBtn");
@@ -1540,6 +2594,7 @@ document.addEventListener("DOMContentLoaded", function () {
     resetDemoBtn.addEventListener("click", function () {
       if (confirm("Reset administrative demonstration data to factory defaults?")) {
         store.resetAdminStore();
+        initAdminIdentity();
         showToast("Demonstration data reset to initial state.");
         switchView(currentActiveView);
       }
@@ -1551,10 +2606,33 @@ document.addEventListener("DOMContentLoaded", function () {
     updateGlobalBadges();
   });
 
+  // Cross-Tab and Cross-Store Real-time Synchronization
+  const trackedSyncKeys = [
+    "tradenest_demo_store_v1",
+    "tradenest_shared_products_v2",
+    "tradenest_supplier_products",
+    "tradenest_supplier_orders",
+    "tradenestUsers",
+    "tradenestCurrentUser",
+    "tradenest_admin_store_v1"
+  ];
+
   window.addEventListener("storage", function (event) {
-    if (event.key !== "tradenest_demo_store_v1") return;
+    if (trackedSyncKeys.includes(event.key)) {
+      initAdminIdentity();
+      updateGlobalBadges();
+      switchView(currentActiveView);
+    }
+  });
+
+  // Custom event listener for product moderation updates
+  window.addEventListener("tradenest:product-moderated", function () {
+    updateGlobalBadges();
     switchView(currentActiveView);
   });
+
+  // Initialize Admin Identity & Session from tradenestCurrentUser
+  initAdminIdentity();
 
   // Initialize view from URL hash on load
   const initialHash = window.location.hash.replace("#", "") || "overview";

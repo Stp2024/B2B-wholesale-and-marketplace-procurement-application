@@ -103,6 +103,18 @@
       `;
     }
 
+    const isHomePage = (currentFile === "index.html" || currentFile === "" || currentPath.endsWith("/"));
+
+    let ctaButtonsHtml = "";
+    if (isHomePage) {
+      ctaButtonsHtml = `
+        <div class="tn-nav-cta-group" id="navHomeCtaGroup">
+          <a class="tn-nav-cta-btn tn-nav-cta-discover" id="navCtaDiscover" href="${resolvePath("pages/discover-suppliers.html")}">Discover Suppliers</a>
+          <a class="tn-nav-cta-btn tn-nav-cta-join" id="navCtaJoin" href="${resolvePath("pages/join-supplier-network.html")}">Join Network</a>
+        </div>
+      `;
+    }
+
     header.innerHTML = `
       <div class="tn-header-inner">
         <div class="tn-header-left">
@@ -117,6 +129,7 @@
           <ul class="tn-nav-list" id="tnPrimaryNavList">
             ${navListHtml}
           </ul>
+          ${ctaButtonsHtml}
           ${actionsHtml}
         </nav>
       </div>

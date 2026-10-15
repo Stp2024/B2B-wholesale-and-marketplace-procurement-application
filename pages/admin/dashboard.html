@@ -126,11 +126,11 @@
         </nav>
 
         <div class="sidebar-footer">
-          <div class="admin-profile-card">
-            <div class="admin-avatar">VS</div>
+          <div class="admin-profile-card" id="sidebarAdminCard" style="cursor: pointer;" title="View Administrator Session Profile">
+            <div class="admin-avatar" id="sidebarAdminAvatar">VS</div>
             <div class="admin-profile-info">
-              <div class="admin-profile-name">Vikram Sengupta</div>
-              <div class="admin-profile-role">Governance Head</div>
+              <div class="admin-profile-name" id="sidebarAdminName">Vikram Sengupta</div>
+              <div class="admin-profile-role" id="sidebarAdminRole">Governance Head</div>
             </div>
           </div>
         </div>
@@ -157,6 +157,16 @@
             <div class="system-status-indicator">
               <span class="pulse-dot"></span>
               <span>Platform Node Live (₹ Core)</span>
+            </div>
+
+            <!-- Active Admin Identity Profile Chip -->
+            <div class="admin-user-chip" id="topbarAdminChip" style="display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 4px 10px 4px 6px; border-radius: 999px; border: 1px solid #cbd5e1; cursor: pointer; transition: all 0.2s ease;" title="Active Administrator Session Profile">
+              <div class="admin-avatar" id="topbarAdminAvatar" style="width: 28px; height: 28px; font-size: 0.75rem; background: linear-gradient(135deg, #d87543, #f59e0b);">VS</div>
+              <div style="line-height: 1.15; text-align: left;">
+                <div id="topbarAdminName" style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">Administrator</div>
+                <div id="topbarAdminEmail" style="font-size: 0.68rem; color: #64748b;">admin@tradenest.com</div>
+              </div>
+              <span class="status-pill status-approved" style="font-size: 0.65rem; padding: 2px 7px; margin-left: 2px;">Active</span>
             </div>
 
             <div class="topbar-actions">
@@ -287,6 +297,7 @@
                 </p>
               </div>
               <div class="section-actions">
+                <button class="btn btn-primary btn-sm" id="btnAdminAddUser">+ Add Enterprise Account</button>
                 <span id="usersTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
                   Loading...
                 </span>
@@ -353,6 +364,9 @@
                 <p class="section-subtitle">
                   Review enterprise documentation, GST credentials, and corporate identity proofs.
                 </p>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-primary btn-sm" id="btnAdminAddVerif">+ Queue Verification Proof</button>
               </div>
             </div>
 
@@ -506,6 +520,9 @@
                   Supervise procurement contracts, escrow allocations, and fulfillment dispatch.
                 </p>
               </div>
+              <div class="section-actions">
+                <button class="btn btn-primary btn-sm" id="btnAdminSimulateOrder">+ Simulate Procurement Order</button>
+              </div>
             </div>
 
             <!-- Financial Metrics Bar -->
@@ -570,18 +587,60 @@
                   Formal buyer and supplier complaints, spec disputes, and escrow mediation tickets.
                 </p>
               </div>
+              <div class="section-actions">
+                <button class="btn btn-primary btn-sm" id="btnAdminAddDispute">+ File Dispute Ticket</button>
+                <span id="complaintsTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
+                  Loading...
+                </span>
+              </div>
             </div>
 
-            <div style="margin-bottom: 20px;">
-              <div class="tab-pills" id="complaintTabPills">
-                <button class="tab-pill active" data-tab="all">All Tickets</button>
-                <button class="tab-pill" data-tab="open">Active Inquiries</button>
-                <button class="tab-pill" data-tab="resolved">Resolved Cases</button>
-              </div>
+            <!-- Dispute KPI Summary Strip -->
+            <div class="kpi-grid" id="disputeKpiGrid" style="margin-bottom: 24px;">
+              <!-- Rendered by dashboard.js: Active Inquiries, High Severity, Disputed Escrow, Resolution Rate -->
             </div>
 
             <div class="admin-card">
               <div class="card-body">
+                <div class="filter-toolbar">
+                  <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input
+                      type="text"
+                      class="search-input"
+                      id="complaintSearchInput"
+                      placeholder="Search tickets by ID, complainant, counterparty, or issue..."
+                    />
+                  </div>
+
+                  <div class="filter-group">
+                    <select class="select-filter" id="complaintCategorySelect" aria-label="Filter by category">
+                      <option value="all">All Dispute Categories</option>
+                      <option value="specification">Warranty &amp; Specification</option>
+                      <option value="damage">Transit Damage</option>
+                      <option value="delay">Late Dispatch / SLA</option>
+                      <option value="sample">Sample Evaluation</option>
+                      <option value="escrow">Escrow &amp; Pricing</option>
+                    </select>
+
+                    <select class="select-filter" id="complaintSeveritySelect" aria-label="Filter by severity">
+                      <option value="all">All Severities</option>
+                      <option value="high">High Severity</option>
+                      <option value="medium">Medium Severity</option>
+                      <option value="low">Low Severity</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 18px;">
+                  <div class="tab-pills" id="complaintTabPills">
+                    <button class="tab-pill active" data-tab="all">All Tickets</button>
+                    <button class="tab-pill" data-tab="open">Active Inquiries</button>
+                    <button class="tab-pill" data-tab="resolved">Resolved Cases</button>
+                    <button class="tab-pill" data-tab="high">High Severity Flags</button>
+                  </div>
+                </div>
+
                 <div class="table-responsive">
                   <table class="admin-table">
                     <thead>
@@ -589,7 +648,8 @@
                         <th>Ticket ID</th>
                         <th>Complainant</th>
                         <th>Reported Entity</th>
-                        <th>Category</th>
+                        <th>Dispute Category</th>
+                        <th>Disputed Value</th>
                         <th>Severity</th>
                         <th>Case Status</th>
                         <th>Action</th>
@@ -660,9 +720,15 @@
                 </p>
               </div>
               <div class="section-actions">
-                <button class="btn btn-secondary" id="exportJsonBtn">Export JSON Audit</button>
-                <button class="btn btn-secondary" id="exportCsvBtn">Export CSV Ledger</button>
-                <button class="btn btn-primary" id="printReportBtn">Print Report 🖨️</button>
+                <select class="select-filter" id="reportDateRangeSelect" style="font-size: 0.82rem; padding: 6px 10px;">
+                  <option value="30days">Last 30 Days (MTD)</option>
+                  <option value="quarter">Current Quarter (Q3 2026)</option>
+                  <option value="90days">Last 90 Days</option>
+                  <option value="ytd">Year-to-Date (FY 26-27)</option>
+                </select>
+                <button class="btn btn-secondary btn-sm" id="exportJsonBtn">Export JSON Audit</button>
+                <button class="btn btn-secondary btn-sm" id="exportCsvBtn">Export CSV Ledger</button>
+                <button class="btn btn-primary btn-sm" id="printReportBtn">Print Report 🖨️</button>
               </div>
             </div>
 
@@ -670,16 +736,52 @@
               <!-- Rendered by dashboard.js -->
             </div>
 
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 24px;">
+              <div class="admin-card" style="margin-bottom: 0;">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Category Trading Volume (₹ Lakhs)</h3>
+                    <p>Aggregate procurement value distributed by product category</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div id="reportsCategoryBarChart">
+                    <!-- Vector bar chart rendered by dashboard.js -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-card" style="margin-bottom: 0;">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Dispute Resolution &amp; Arbitration Ledger</h3>
+                    <p>Resolution outcomes across filed marketplace complaints</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div id="reportsDisputeAnalyticsChart">
+                    <!-- Vector donut / breakdown rendered by dashboard.js -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detailed Executive Audit Ledgers -->
             <div class="admin-card">
               <div class="card-header">
                 <div class="card-title-group">
-                  <h3>Category Trading Volume (₹ Lakhs)</h3>
-                  <p>Aggregate procurement value distributed by product category</p>
+                  <h3>Platform Audit &amp; Settlement Breakdown</h3>
+                  <p>Comprehensive transaction, commission, and arbitration records</p>
+                </div>
+                <div class="tab-pills" id="reportAuditTabPills">
+                  <button class="tab-pill active" data-report-tab="financial">Escrow &amp; Settlements</button>
+                  <button class="tab-pill" data-report-tab="disputes">Dispute Outcomes</button>
+                  <button class="tab-pill" data-report-tab="logistics">Courier &amp; Dispatch SLAs</button>
                 </div>
               </div>
               <div class="card-body">
-                <div id="reportsCategoryBarChart">
-                  <!-- Vector bar chart rendered by dashboard.js -->
+                <div class="table-responsive" id="reportsAuditTableWrap">
+                  <!-- Dynamically rendered table by dashboard.js -->
                 </div>
               </div>
             </div>
@@ -708,6 +810,7 @@
 
     <!-- Scripts -->
     <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/product-service.js"></script>
     <script src="../../js/admin/admin-store.js"></script>
     <script src="../../js/admin/dashboard.js"></script>
   </body>
