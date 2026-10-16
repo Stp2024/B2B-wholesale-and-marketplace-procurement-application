@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="0; url=dashboard.html#rfqs" />
+    <title>Redirecting to Incoming RFQs - Supplier Workspace</title>
+    <link rel="stylesheet" href="../../css/shared.css" />
+    <link rel="stylesheet" href="../../css/supplier/dashboard.css" />
+    <script>
+      window.location.replace("dashboard.html#rfqs");
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', -apple-system, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f7f4f2;
+        color: #292625;
+        margin: 0;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .redirect-card {
+        background: #ffffff;
+        border: 1px solid #e4ddd8;
+        border-radius: 12px;
+        padding: 32px;
+        text-align: center;
+        max-width: 440px;
+        width: 100%;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      }
+      .redirect-spinner {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+      .redirect-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        color: #292625;
+      }
+      .redirect-desc {
+        font-size: 0.9rem;
+        color: #746d69;
+        margin: 0 0 20px 0;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="redirect-card">
+      <div class="redirect-spinner">⏳</div>
+      <h1 class="redirect-title">Opening Incoming RFQs</h1>
+      <p class="redirect-desc">Loading Supplier Workspace... If not redirected automatically, <a href="dashboard.html#rfqs" style="color: #7a5c52; font-weight: 600;">click here</a>.</p>
+    </div>
+  </body>
+</html>

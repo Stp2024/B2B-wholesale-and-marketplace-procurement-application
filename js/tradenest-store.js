@@ -856,6 +856,9 @@
   }
 
   function normalizeBuyer(user) {
+    if (user && (user.role === "supplier" || user.role === "admin" || user.accountType === "supplier" || user.accountType === "admin")) {
+      return user;
+    }
     const merged = { ...demoBuyer, ...(user || {}) };
     if (String(merged.email || "").includes("@tradenest.demo")) {
       merged.email = demoBuyer.email;
@@ -866,9 +869,13 @@
   function ensureDemoState() {
     const store = getStore();
     const current = safeParse(localStorage.getItem(CURRENT_USER_KEY), null);
-    const normalized = normalizeBuyer(current);
-    if (!current || JSON.stringify(current) !== JSON.stringify(normalized)) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(normalized));
+    if (!current) {
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(demoBuyer));
+    } else if (current.role === "buyer" || (!current.role && !current.accountType)) {
+      const normalized = normalizeBuyer(current);
+      if (JSON.stringify(current) !== JSON.stringify(normalized)) {
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(normalized));
+      }
     }
     return store;
   }

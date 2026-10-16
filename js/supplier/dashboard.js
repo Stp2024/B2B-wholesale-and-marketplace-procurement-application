@@ -34,6 +34,16 @@ document.addEventListener("DOMContentLoaded", function () {
         return path;
     }
 
+    function formatINR(val) {
+        if (store && typeof store.formatINR === "function") return store.formatINR(val);
+        const num = Number(val) || 0;
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 0
+        }).format(num);
+    }
+
     // ==========================================================================
     // 1. DOM REFERENCES
     // ==========================================================================
@@ -248,6 +258,21 @@ document.addEventListener("DOMContentLoaded", function () {
             const viewName = target.getAttribute("data-view");
             const filterVal = target.getAttribute("data-filter");
             switchView(viewName, filterVal);
+
+            // Trigger modal actions for quick action cards
+            const action = target.getAttribute("data-action");
+            if (action === "add-product") {
+                setTimeout(() => openProductModal(), 80);
+            } else if (action === "prepare-quote") {
+                setTimeout(() => openQuoteModal(), 80);
+            } else if (action === "dispatch-shipment") {
+                setTimeout(() => openShipmentModal(), 80);
+            } else if (action === "update-stock") {
+                const prods = store.getProducts();
+                if (prods && prods.length > 0) {
+                    setTimeout(() => openStockModal(prods[0].id), 80);
+                }
+            }
         }
     });
 
@@ -331,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <td><strong>#${ord.id}</strong></td>
                         <td>${escapeHtml(ord.buyerName)}</td>
                         <td>${escapeHtml(ord.productName)}</td>
-                        <td>$${(ord.orderAmount || 0).toFixed(2)}</td>
+                        <td>${formatINR(ord.totalAmount || ord.orderAmount || 0)}</td>
                         <td><span class="badge-pill badge-${getStatusBadgeClass(ord.status)}">${ord.status}</span></td>
                     </tr>
                 `).join("");
@@ -1129,7 +1154,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
 
                         <div class="rfq-meta-grid">
-                            <span class="rfq-meta-item">Target Budget: <strong>$${(rfq.targetBudget || 0).toLocaleString()}</strong></span>
+                            <span class="rfq-meta-item">Target Budget: <strong>${formatINR(rfq.targetBudget || 0)}</strong></span>
                             <span class="rfq-meta-item">Delivery Destination: <strong>${escapeHtml(rfq.deliveryLocation)}</strong></span>
                             <span class="rfq-meta-item">Expected Arrival: <strong>${rfq.expectedDeliveryDate}</strong></span>
                             <span class="rfq-meta-item">Contact: <strong>${escapeHtml(rfq.buyerContact)}</strong></span>
@@ -1238,7 +1263,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
                 <div class="key-value-row">
                     <span class="kv-key">Target Budget:</span>
-                    <span class="kv-val">$${(rfq.targetBudget || 0).toLocaleString()}</span>
+                    <span class="kv-val">${formatINR(rfq.targetBudget || 0)}</span>
                 </div>
                 <div class="key-value-row">
                     <span class="kv-key">Delivery Destination:</span>
@@ -1292,7 +1317,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${escapeHtml(q.buyerName)}</td>
                     <td>${escapeHtml(q.productName)}</td>
                     <td>${q.offeredQty} ${escapeHtml(q.uom || "Units")}</td>
-                    <td style="font-weight: 700; color: var(--text);">$${(q.totalAmount || q.subtotal || 0).toFixed(2)}</td>
+                    <td style="font-weight: 700; color: var(--text);">${formatINR(q.totalAmount || q.subtotal || 0)}</td>
                     <td style="font-size: 0.8rem; color: var(--text-muted);">${q.validityDate}</td>
                     <td><span class="badge-pill badge-${badgeClass}">${q.status}</span></td>
                     <td>
@@ -1332,10 +1357,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const tax = sub * 0.08; // 8% standard tax
         const total = sub + tax + delivery;
 
-        if (calcSubtotal) calcSubtotal.textContent = `$${sub.toFixed(2)}`;
-        if (calcTax) calcTax.textContent = `$${tax.toFixed(2)}`;
-        if (calcDelivery) calcDelivery.textContent = `$${delivery.toFixed(2)}`;
-        if (calcGrandTotal) calcGrandTotal.textContent = `$${total.toFixed(2)}`;
+        if (calcSubtotal) calcSubtotal.textContent = formatINR(sub);
+        if (calcTax) calcTax.textContent = formatINR(tax);
+        if (calcDelivery) calcDelivery.textContent = formatINR(delivery);
+        if (calcGrandTotal) calcGrandTotal.textContent = formatINR(total);
 
         return { sub, tax, delivery, total };
     }
@@ -1349,7 +1374,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const products = store.getProducts();
         quoteFormProductSelect.innerHTML = products.map(p => `
             <option value="${p.id}" data-name="${escapeHtml(p.name)}" data-price="${p.unitPrice}" data-uom="${escapeHtml(p.uom)}">
-                ${escapeHtml(p.name)} ($${p.unitPrice}/${p.uom})
+                ${escapeHtml(p.name)} (${formatINR(p.unitPrice)}/${p.uom})
             </option>
         `).join("");
 
@@ -1455,7 +1480,7 @@ document.addEventListener("DOMContentLoaded", function () {
             quoteModal.hidden = true;
             renderQuotations();
             renderRFQs();
-            showToast(`Quotation sent to ${buyerName} for $${calc.total.toFixed(2)}!`, "success");
+            showToast(`Quotation sent to ${buyerName} for ${formatINR(calc.total)}!`, "success");
         });
     }
 
@@ -1902,7 +1927,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </td>
                     <td>${escapeHtml(ord.productName)}</td>
                     <td>${ord.orderedQty} ${escapeHtml(ord.uom || "Units")}</td>
-                    <td style="font-weight: 700; color: var(--text);">$${(ord.totalAmount || ord.orderAmount || 0).toFixed(2)}</td>
+                    <td style="font-weight: 700; color: var(--text);">${formatINR(ord.totalAmount || ord.orderAmount || 0)}</td>
                     <td style="font-size: 0.8rem; color: var(--text-muted);">${ord.orderDate}</td>
                     <td style="font-size: 0.8rem; font-weight: 600;">${ord.expectedDeliveryDate}</td>
                     <td><span class="badge-pill badge-escrow">${escapeHtml(ord.paymentStatus || "Escrow Protected")}</span></td>
@@ -1997,7 +2022,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td><strong>${p.id}</strong></td>
                     <td><span class="rfq-ref-code">#${p.orderRef}</span></td>
                     <td>${escapeHtml(p.buyerName)}</td>
-                    <td style="font-weight: 700; color: var(--text);">$${(p.amount || 0).toFixed(2)}</td>
+                    <td style="font-weight: 700; color: var(--text);">${formatINR(p.amount || 0)}</td>
                     <td style="font-size: 0.8rem; color: var(--text-muted);">${p.date}</td>
                     <td style="font-size: 0.85rem;">${escapeHtml(p.method)}</td>
                     <td><span class="badge-pill ${isReleased ? 'badge-released' : 'badge-escrow'}">${p.status}</span></td>
@@ -2103,7 +2128,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <th>HSN Code</th>
                             <th>Qty</th>
                             <th>Unit Rate</th>
-                            <th>Total ($)</th>
+                            <th>Total (₹)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -2114,8 +2139,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             </td>
                             <td>HSN-6116</td>
                             <td>${ord.orderedQty} ${ord.uom || 'Units'}</td>
-                            <td>$${(ord.unitPrice || 4.90).toFixed(2)}</td>
-                            <td style="font-weight: 700;">$${(ord.orderAmount || 2450.00).toFixed(2)}</td>
+                            <td>${formatINR(ord.unitPrice || 390)}</td>
+                            <td style="font-weight: 700;">${formatINR(ord.orderAmount || 195000)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -2124,19 +2149,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     <table class="invoice-summary-table">
                         <tr>
                             <td>Taxable Value:</td>
-                            <td style="text-align: right; font-weight: 600;">$${(ord.orderAmount || 2450.00).toFixed(2)}</td>
+                            <td style="text-align: right; font-weight: 600;">${formatINR(ord.orderAmount || 195000)}</td>
                         </tr>
                         <tr>
                             <td>IGST / Tax (8%):</td>
-                            <td style="text-align: right; font-weight: 600;">$${(ord.taxAmount || 196.00).toFixed(2)}</td>
+                            <td style="text-align: right; font-weight: 600;">${formatINR(ord.taxAmount || 15600)}</td>
                         </tr>
                         <tr>
                             <td>Freight &amp; Handling:</td>
-                            <td style="text-align: right; font-weight: 600;">$${(ord.shippingAmount || 110.00).toFixed(2)}</td>
+                            <td style="text-align: right; font-weight: 600;">${formatINR(ord.shippingAmount || 8800)}</td>
                         </tr>
                         <tr class="grand-total">
                             <td>Total Invoice Value:</td>
-                            <td style="text-align: right;">$${(ord.totalAmount || 2756.00).toFixed(2)}</td>
+                            <td style="text-align: right;">${formatINR(ord.totalAmount || 219400)}</td>
                         </tr>
                     </table>
                 </div>
@@ -2201,28 +2226,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }).join("");
     }
 
-    if (btnCreateShipmentModal) {
-        btnCreateShipmentModal.addEventListener("click", () => {
-            const orders = store.getOrders().filter(o => o.status !== "Delivered");
-            if (orders.length === 0) {
-                showToast("All active orders have already been delivered!", "info");
-                return;
-            }
+    function openShipmentModal() {
+        if (!shipmentModal) return;
+        const orders = store.getOrders().filter(o => o.status !== "Delivered");
+        if (orders.length === 0) {
+            showToast("All active orders have already been delivered!", "info");
+            return;
+        }
 
+        if (shipmentOrderSelect) {
             shipmentOrderSelect.innerHTML = orders.map(o => `
                 <option value="${o.id}" data-buyer="${escapeHtml(o.buyerName)}" data-addr="${escapeHtml(o.deliveryAddress)}">
                     Order #${o.id} - ${escapeHtml(o.buyerName)} (${escapeHtml(o.productName)})
                 </option>
             `).join("");
+        }
 
-            document.getElementById("shipmentTrackingNo").value = "BLU-" + Math.floor(10000000 + Math.random() * 90000000);
-            const est = new Date();
-            est.setDate(est.getDate() + 7);
-            document.getElementById("shipmentExpectedDelivery").value = est.toISOString().split("T")[0];
-            document.getElementById("shipmentAddress").value = orders[0].deliveryAddress;
+        const trackingInput = document.getElementById("shipmentTrackingNo");
+        if (trackingInput) trackingInput.value = "BLU-" + Math.floor(10000000 + Math.random() * 90000000);
+        const est = new Date();
+        est.setDate(est.getDate() + 7);
+        const deliveryInput = document.getElementById("shipmentExpectedDelivery");
+        if (deliveryInput) deliveryInput.value = est.toISOString().split("T")[0];
+        const addrInput = document.getElementById("shipmentAddress");
+        if (addrInput && orders[0]) addrInput.value = orders[0].deliveryAddress || "";
 
-            shipmentModal.hidden = false;
-        });
+        shipmentModal.hidden = false;
+    }
+
+    if (btnCreateShipmentModal) {
+        btnCreateShipmentModal.addEventListener("click", openShipmentModal);
     }
 
     if (shipmentOrderSelect) {
@@ -2478,7 +2511,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let notifications = [
         {
             id: "notif-1",
-            icon: "<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>",
+            icon: `<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`,
             title: "New RFQ Received",
             desc: "Metro Retail Solutions requested quote for 2,000 units Nitrile Gloves",
             time: "10 mins ago",
@@ -2487,16 +2520,16 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         {
             id: "notif-2",
-            icon: "<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>",
+            icon: `<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
             title: "TradeShield Escrow Funded",
-            desc: "Payment of $6,284.00 funded in escrow for Order #ORD-2026-1049",
+            desc: "Payment of ₹1,85,000 funded in escrow for Order #ORD-2026-1049",
             time: "1 hour ago",
             view: "payments",
             unread: true
         },
         {
             id: "notif-3",
-            icon: "Warning",
+            icon: "⚠️",
             title: "Low Inventory Warning",
             desc: "Nitrile Industrial Gloves stock is below minimum threshold (200 units)",
             time: "3 hours ago",

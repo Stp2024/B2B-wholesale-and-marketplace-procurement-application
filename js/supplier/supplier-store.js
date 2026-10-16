@@ -46,11 +46,11 @@
                 },
                 image: "../../images/products/safety-gloves.webp",
                 uom: "Pairs",
-                unitPrice: 4.90,
+                unitPrice: 390.00,
                 bulkPricing: [
-                    { minQty: 100, maxQty: 499, price: 4.90 },
-                    { minQty: 500, maxQty: 999, price: 4.40 },
-                    { minQty: 1000, maxQty: null, price: 3.90 }
+                    { minQty: 100, maxQty: 499, price: 390.00 },
+                    { minQty: 500, maxQty: 999, price: 350.00 },
+                    { minQty: 1000, maxQty: null, price: 310.00 }
                 ],
                 moq: 100,
                 availableStock: 1250,
@@ -74,11 +74,11 @@
                 },
                 image: "../../images/products/office-paper.webp",
                 uom: "Reams",
-                unitPrice: 4.45,
+                unitPrice: 350.00,
                 bulkPricing: [
-                    { minQty: 50, maxQty: 199, price: 4.45 },
-                    { minQty: 200, maxQty: 499, price: 4.10 },
-                    { minQty: 500, maxQty: null, price: 3.75 }
+                    { minQty: 50, maxQty: 199, price: 350.00 },
+                    { minQty: 200, maxQty: 499, price: 320.00 },
+                    { minQty: 500, maxQty: null, price: 295.00 }
                 ],
                 moq: 50,
                 availableStock: 240,
@@ -102,11 +102,11 @@
                 },
                 image: "../../images/products/led-bulbs.webp",
                 uom: "Pieces",
-                unitPrice: 16.00,
+                unitPrice: 1280.00,
                 bulkPricing: [
-                    { minQty: 20, maxQty: 99, price: 16.00 },
-                    { minQty: 100, maxQty: 299, price: 14.50 },
-                    { minQty: 300, maxQty: null, price: 12.80 }
+                    { minQty: 20, maxQty: 99, price: 1280.00 },
+                    { minQty: 100, maxQty: 299, price: 1150.00 },
+                    { minQty: 300, maxQty: null, price: 1020.00 }
                 ],
                 moq: 20,
                 availableStock: 520,
@@ -130,11 +130,11 @@
                 },
                 image: "../../images/products/packaging-boxes.webp",
                 uom: "Boxes",
-                unitPrice: 3.10,
+                unitPrice: 240.00,
                 bulkPricing: [
-                    { minQty: 200, maxQty: 499, price: 3.10 },
-                    { minQty: 500, maxQty: 999, price: 2.75 },
-                    { minQty: 1000, maxQty: null, price: 2.40 }
+                    { minQty: 200, maxQty: 499, price: 240.00 },
+                    { minQty: 500, maxQty: 999, price: 220.00 },
+                    { minQty: 1000, maxQty: null, price: 190.00 }
                 ],
                 moq: 200,
                 availableStock: 45,
@@ -158,11 +158,11 @@
                 },
                 image: "../../images/products/cotton-fabric-rolls.webp",
                 uom: "Rolls",
-                unitPrice: 85.00,
+                unitPrice: 450.00,
                 bulkPricing: [
-                    { minQty: 10, maxQty: 29, price: 85.00 },
-                    { minQty: 30, maxQty: 99, price: 78.00 },
-                    { minQty: 100, maxQty: null, price: 70.00 }
+                    { minQty: 10, maxQty: 29, price: 450.00 },
+                    { minQty: 30, maxQty: 99, price: 410.00 },
+                    { minQty: 100, maxQty: null, price: 375.00 }
                 ],
                 moq: 10,
                 availableStock: 85,
@@ -186,11 +186,11 @@
                 },
                 image: "../../images/products/stainless-steel-components.webp",
                 uom: "Boxes (100 pcs)",
-                unitPrice: 28.50,
+                unitPrice: 2280.00,
                 bulkPricing: [
-                    { minQty: 25, maxQty: 99, price: 28.50 },
-                    { minQty: 100, maxQty: 499, price: 25.00 },
-                    { minQty: 500, maxQty: null, price: 22.00 }
+                    { minQty: 25, maxQty: 99, price: 2280.00 },
+                    { minQty: 100, maxQty: 499, price: 2000.00 },
+                    { minQty: 500, maxQty: null, price: 1750.00 }
                 ],
                 moq: 25,
                 availableStock: 0,
@@ -210,7 +210,7 @@
                 productName: "Industrial Safety Gloves",
                 requiredQty: 500,
                 uom: "Pairs",
-                targetBudget: 2500,
+                targetBudget: 195000,
                 deliveryLocation: "Metro Hub 4, West Loop, Chicago, IL",
                 expectedDeliveryDate: "2026-10-25",
                 responseDeadline: "2026-10-12",
@@ -226,7 +226,7 @@
                 productName: "Commercial LED Panel Lights 40W",
                 requiredQty: 100,
                 uom: "Pieces",
-                targetBudget: 1700,
+                targetBudget: 136000,
                 deliveryLocation: "BrightBuild Logistics Park, Queens, NY",
                 expectedDeliveryDate: "2026-10-30",
                 responseDeadline: "2026-10-15",
@@ -243,7 +243,7 @@
                 productName: "Heavy Corrugated Shipping Boxes",
                 requiredQty: 1000,
                 uom: "Boxes",
-                targetBudget: 3000,
+                targetBudget: 240000,
                 deliveryLocation: "Ontario Freight Terminal, Mississauga, ON",
                 expectedDeliveryDate: "2026-11-05",
                 responseDeadline: "2026-10-20",
@@ -259,7 +259,7 @@
                 productName: "Industrial Stainless Steel Fasteners",
                 requiredQty: 250,
                 uom: "Boxes",
-                targetBudget: 6000,
+                targetBudget: 570000,
                 deliveryLocation: "Apex Distribution Depot, Dallas, TX",
                 expectedDeliveryDate: "2026-10-20",
                 responseDeadline: "2026-10-01",
@@ -278,11 +278,11 @@
                 productName: "Commercial LED Panel Lights 40W",
                 offeredQty: 100,
                 uom: "Pieces",
-                unitPrice: 14.50,
-                subtotal: 1450.00,
-                deliveryCharges: 75.00,
-                taxAmount: 116.00,
-                totalAmount: 1641.00,
+                unitPrice: 1280.00,
+                subtotal: 128000.00,
+                deliveryCharges: 6000.00,
+                taxAmount: 23040.00,
+                totalAmount: 157040.00,
                 availableStock: 520,
                 deliveryTimeline: "5 to 7 business days via Express Freight",
                 paymentTerms: "30% Advance with Purchase Order, 70% against Proof of Dispatch (Escrow)",
@@ -298,11 +298,11 @@
                 productName: "A4 Copy Paper Premium 80 GSM",
                 offeredQty: 200,
                 uom: "Reams",
-                unitPrice: 4.10,
-                subtotal: 820.00,
-                deliveryCharges: 40.00,
-                taxAmount: 68.80,
-                totalAmount: 928.80,
+                unitPrice: 350.00,
+                subtotal: 70000.00,
+                deliveryCharges: 3200.00,
+                taxAmount: 8400.00,
+                totalAmount: 81600.00,
                 availableStock: 240,
                 deliveryTimeline: "3 to 4 business days",
                 paymentTerms: "Net 30 Days via Corporate Account",
@@ -318,11 +318,11 @@
                 productName: "Industrial Safety Gloves",
                 offeredQty: 500,
                 uom: "Pairs",
-                unitPrice: 4.40,
-                subtotal: 2200.00,
-                deliveryCharges: 110.00,
-                taxAmount: 184.80,
-                totalAmount: 2494.80,
+                unitPrice: 380.00,
+                subtotal: 190000.00,
+                deliveryCharges: 8800.00,
+                taxAmount: 22800.00,
+                totalAmount: 221600.00,
                 availableStock: 1250,
                 deliveryTimeline: "4 business days from PO receipt",
                 paymentTerms: "TradeShield B2B Escrow - 100% Release upon Inspection",
@@ -540,11 +540,11 @@
                 productSku: "SKU-IND-GLV-01",
                 orderedQty: 500,
                 uom: "Pairs",
-                unitPrice: 4.90,
-                orderAmount: 2450.00,
-                taxAmount: 196.00,
-                shippingAmount: 110.00,
-                totalAmount: 2756.00,
+                unitPrice: 390.00,
+                orderAmount: 195000.00,
+                taxAmount: 15600.00,
+                shippingAmount: 8800.00,
+                totalAmount: 219400.00,
                 orderDate: "2026-09-29",
                 expectedDeliveryDate: "2026-10-15",
                 status: "In Production", // Pending, Confirmed, In Production, Shipped, Delivered, Cancelled
@@ -561,11 +561,11 @@
                 productSku: "SKU-OFC-PPR-02",
                 orderedQty: 200,
                 uom: "Reams",
-                unitPrice: 4.45,
-                orderAmount: 890.00,
-                taxAmount: 71.20,
-                shippingAmount: 40.00,
-                totalAmount: 1001.20,
+                unitPrice: 350.00,
+                orderAmount: 70000.00,
+                taxAmount: 5600.00,
+                shippingAmount: 3200.00,
+                totalAmount: 78800.00,
                 orderDate: "2026-09-25",
                 expectedDeliveryDate: "2026-10-06",
                 status: "Shipped",
@@ -582,11 +582,11 @@
                 productSku: "SKU-ELE-LED-03",
                 orderedQty: 100,
                 uom: "Pieces",
-                unitPrice: 16.00,
-                orderAmount: 1600.00,
-                taxAmount: 128.00,
-                shippingAmount: 75.00,
-                totalAmount: 1803.00,
+                unitPrice: 1280.00,
+                orderAmount: 128000.00,
+                taxAmount: 10240.00,
+                shippingAmount: 6000.00,
+                totalAmount: 144240.00,
                 orderDate: "2026-09-18",
                 expectedDeliveryDate: "2026-09-28",
                 status: "Delivered",
@@ -603,11 +603,11 @@
                 productSku: "SKU-PKG-BOX-04",
                 orderedQty: 1000,
                 uom: "Boxes",
-                unitPrice: 3.10,
-                orderAmount: 3100.00,
-                taxAmount: 248.00,
-                shippingAmount: 180.00,
-                totalAmount: 3528.00,
+                unitPrice: 240.00,
+                orderAmount: 240000.00,
+                taxAmount: 19200.00,
+                shippingAmount: 14400.00,
+                totalAmount: 273600.00,
                 orderDate: "2026-10-01",
                 expectedDeliveryDate: "2026-10-22",
                 status: "Confirmed",
@@ -622,7 +622,7 @@
                 id: "TXN-88412",
                 orderRef: "ORD-98231",
                 buyerName: "Metro Retail Solutions",
-                amount: 2756.00,
+                amount: 219400.00,
                 date: "2026-09-29",
                 method: "TradeShield Escrow (Commercial Card)",
                 status: "Escrow Protected", // Escrow Protected, Released, Pending Clearance, Refunded
@@ -632,7 +632,7 @@
                 id: "TXN-88401",
                 orderRef: "ORD-98190",
                 buyerName: "OfficeHub Enterprises",
-                amount: 1001.20,
+                amount: 78800.00,
                 date: "2026-09-27",
                 method: "NEFT / Direct Corporate Wire",
                 status: "Released",
@@ -642,7 +642,7 @@
                 id: "TXN-88350",
                 orderRef: "ORD-97845",
                 buyerName: "BrightBuild Industries",
-                amount: 1803.00,
+                amount: 144240.00,
                 date: "2026-09-22",
                 method: "TradeShield Escrow (Released on Delivery)",
                 status: "Released",
@@ -652,7 +652,7 @@
                 id: "TXN-88440",
                 orderRef: "ORD-97612",
                 buyerName: "PackLine Distributors",
-                amount: 3528.00,
+                amount: 273600.00,
                 date: "2026-10-01",
                 method: "TradeShield Escrow (Letter of Credit LC)",
                 status: "Escrow Protected",
@@ -769,7 +769,7 @@
             orderStatusNotification: true,
             lowStockThresholdAlert: true,
             marketingUpdates: false,
-            currency: "USD ($)",
+            currency: "INR (₹)",
             timezone: "GMT+5:30 (India Standard Time)",
             autoAcceptRFQUnder: 0,
             twoFactorAuth: false
@@ -778,7 +778,7 @@
         activity: [
             { id: "ACT-01", icon: "RFQ", text: "New RFQ (RFQ-2026-892) received from PackLine Distributors", time: "1 hour ago", link: "rfqs" },
             { id: "ACT-02", icon: "Delivery", text: "Shipment SHP-7690 is now Out for Delivery to OfficeHub Enterprises", time: "3 hours ago", link: "shipping" },
-            { id: "ACT-03", icon: "Payment", text: "Payment of $2,756.00 for Order #ORD-98231 secured in TradeShield Escrow", time: "Yesterday", link: "payments" },
+            { id: "ACT-03", icon: "Payment", text: "Payment of ₹2,19,400 for Order #ORD-98231 secured in TradeShield Escrow", time: "Yesterday", link: "payments" },
             { id: "ACT-04", icon: "Sample", text: "Sample Request SMP-402 dispatched via BlueDart Express", time: "2 days ago", link: "samples" },
             { id: "ACT-05", icon: "Alert", text: "Low stock alert: A4 Copy Paper Premium has 240 reams remaining", time: "2 days ago", link: "inventory" }
         ]
@@ -906,8 +906,8 @@
                     description: p.description,
                     image: p.image,
                     uom: p.unit || "units",
-                    unitPrice: p.price ? Math.round(p.price / 80 * 100) / 100 : 5.0,
-                    priceINR: p.price,
+                    unitPrice: Number(p.price) || 400.0,
+                    priceINR: Number(p.price) || 400.0,
                     moq: p.moq,
                     availableStock: p.stock,
                     reservedStock: 0,
@@ -944,7 +944,7 @@
                     sku: productData.sku,
                     category: productData.category,
                     description: productData.description,
-                    price: productData.priceINR || (productData.unitPrice ? Math.round(productData.unitPrice * 80) : 400),
+                    price: Number(productData.priceINR || productData.unitPrice || productData.price) || 400,
                     unit: productData.uom || productData.unit || "units",
                     moq: productData.moq,
                     stock: productData.availableStock !== undefined ? productData.availableStock : productData.stock,
@@ -1083,7 +1083,15 @@
         const localRFQs = readStorage(KEYS.RFQS, SEED_DATA.rfqs);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localRFQs;
-        const buyerRFQs = (marketplace.rfqs || []).filter((rfq) => rfq.supplierId === "supplier-001").map((rfq) => {
+        const currentSupplierId = (function() {
+            try {
+                const u = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
+                return u.supplierId || u.id || "supplier-001";
+            } catch(e) { return "supplier-001"; }
+        })();
+        const buyerRFQs = (marketplace.rfqs || []).filter((rfq) => {
+            return !rfq.supplierId || rfq.supplierId === currentSupplierId || rfq.supplierId === "supplier-001";
+        }).map((rfq) => {
             const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === rfq.buyerId) || {};
             const product = (marketplace.products || []).find((item) => item.id === rfq.productId) || {};
             return {
@@ -1096,7 +1104,7 @@
                 productName: rfq.productName || product.name || rfq.title,
                 requiredQty: rfq.quantity,
                 uom: rfq.unit || product.unit || "units",
-                targetBudget: ((Number(rfq.targetPrice) || 0) * (Number(rfq.quantity) || 1)) / 80,
+                targetBudget: (Number(rfq.targetPrice) || 0) * (Number(rfq.quantity) || 1),
                 specifications: rfq.notes || rfq.title || "",
                 deliveryLocation: rfq.deliveryLocation || "",
                 expectedDeliveryDate: rfq.expectedDate || "",
@@ -1210,7 +1218,7 @@
                 }
             }
 
-            logActivity("Sent", `Quotation ${newId} sent to ${quoteData.buyerName} ($${quoteData.totalAmount || quoteData.subtotal})`, "quotations");
+            logActivity("Sent", `Quotation ${newId} sent to ${quoteData.buyerName} (₹${formatINR(quoteData.totalAmount || quoteData.subtotal)})`, "quotations");
         }
 
         const finalQuote = quotations.find((quote) => quote.id === quoteData.id) || quotations[0];
@@ -1228,9 +1236,9 @@
                 productId: finalQuote.productId || matchingMarketplaceRFQ.productId,
                 productName: finalQuote.productName,
                 quantity: Number(finalQuote.offeredQty) || Number(matchingMarketplaceRFQ.quantity) || 1,
-                unitPrice: (Number(finalQuote.unitPrice) || 0) * 80,
-                deliveryCharges: ((Number(finalQuote.deliveryCharges) || 0) + (Number(finalQuote.taxAmount) || 0)) * 80,
-                totalAmount: (Number(finalQuote.totalAmount) || Number(finalQuote.subtotal) || 0) * 80,
+                unitPrice: Number(finalQuote.unitPrice) || 0,
+                deliveryCharges: (Number(finalQuote.deliveryCharges) || 0) + (Number(finalQuote.taxAmount) || 0),
+                totalAmount: Number(finalQuote.totalAmount) || Number(finalQuote.subtotal) || 0,
                 deliveryTimeline: finalQuote.deliveryTimeline,
                 paymentTerms: finalQuote.paymentTerms,
                 validityDate: finalQuote.validityDate,
@@ -1494,8 +1502,8 @@
                 productName: order.productName,
                 orderedQty: order.quantity,
                 uom: order.unit || "units",
-                orderAmount: (Number(order.totalAmount) || 0) / 80,
-                totalAmount: (Number(order.totalAmount) || 0) / 80,
+                orderAmount: Number(order.totalAmount) || Number(order.subtotal) || 0,
+                totalAmount: Number(order.totalAmount) || Number(order.subtotal) || 0,
                 orderDate: order.orderDate,
                 expectedDeliveryDate: order.expectedDate,
                 deliveryAddress: shipment.deliveryAddress || `${buyer.businessName || buyer.fullName || "Buyer"}, ${buyer.city || ""}`,
@@ -1576,7 +1584,7 @@
                 id: payment.id,
                 orderRef: payment.orderId,
                 buyerName: buyer.businessName || buyer.fullName || "TradeNest Buyer",
-                amount: (Number(payment.amount) || 0) / 80,
+                amount: Number(payment.amount) || 0,
                 date: payment.paymentDate,
                 method: payment.paymentMethod,
                 status: ["Paid", "Released"].includes(payment.status) ? "Released" : "Escrow",
@@ -1829,6 +1837,15 @@
     // ==========================================
     // MODULE 15: Calculate Dashboard Statistics
     // ==========================================
+    function formatINR(value) {
+        const amount = Number(value) || 0;
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 0
+        }).format(amount);
+    }
+
     function getDashboardStatistics() {
         const products = getProducts();
         const rfqs = getRFQs();
@@ -1845,7 +1862,7 @@
         const completedOrders = orders.filter(o => o.status === "Delivered").length;
         const lowStockProducts = products.filter(p => p.availableStock <= p.minThreshold).length;
 
-        const totalRevenue = orders.reduce((sum, o) => sum + (o.orderAmount || 0), 0);
+        const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.totalAmount || o.orderAmount) || 0), 0);
 
         return {
             totalProducts,
@@ -1856,7 +1873,8 @@
             activeOrders,
             completedOrders,
             lowStockProducts,
-            totalRevenue: "$" + totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            totalRevenue: formatINR(totalRevenue),
+            totalRevenueRaw: totalRevenue
         };
     }
 
@@ -1870,6 +1888,7 @@
     // Export Store API to Window
     window.SupplierStore = {
         initStore,
+        formatINR,
         subscribe,
         notifyChange,
         logActivity,

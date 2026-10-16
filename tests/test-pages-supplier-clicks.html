@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pages Supplier Dashboard Clicks E2E Test</title>
+</head>
+<body>
+  <div id="results">RUNNING</div>
+  <iframe id="dashFrame" src="../pages/supplier/dashboard.html" style="width: 1200px; height: 800px;"></iframe>
+
+  <script>
+    var frame = document.getElementById("dashFrame");
+    frame.onload = function() {
+      setTimeout(function() {
+        var doc = frame.contentDocument || frame.contentWindow.document;
+        var win = frame.contentWindow;
+        var checks = [];
+
+        var viewsToTest = [
+          { linkId: "nav-link-overview", viewId: "view-overview", name: "Overview" },
+          { linkId: "nav-link-products", viewId: "view-products", name: "Products" },
+          { linkId: "nav-link-inventory", viewId: "view-inventory", name: "Inventory" },
+          { linkId: "nav-link-rfqs", viewId: "view-rfqs", name: "Incoming RFQs" },
+          { linkId: "nav-link-quotations", viewId: "view-quotations", name: "Quotations" },
+          { linkId: "nav-link-samples", viewId: "view-samples", name: "Samples" },
+          { linkId: "nav-link-orders", viewId: "view-orders", name: "Orders" },
+          { linkId: "nav-link-payments", viewId: "view-payments", name: "Payments" },
+          { linkId: "nav-link-collaboration", viewId: "view-collaboration", name: "Collaboration" },
+          { linkId: "nav-link-communication", viewId: "view-communication", name: "Communication" },
+          { linkId: "nav-link-performance", viewId: "view-performance", name: "Performance" },
+          { linkId: "nav-link-business-profile", viewId: "view-business-profile", name: "Business Profile" },
+          { linkId: "nav-link-settings", viewId: "view-settings", name: "Settings" }
+        ];
+
+        var passed = 0;
+        var failed = 0;
+
+        viewsToTest.forEach(function(item) {
+          var link = doc.getElementById(item.linkId);
+          if (!link) {
+            checks.push(item.name + ": LINK NOT FOUND");
+            failed++;
+            return;
+          }
+          link.click();
+          var view = doc.getElementById(item.viewId);
+          var isActive = view && view.classList.contains("active");
+          if (isActive) {
+            checks.push(item.name + ": OK");
+            passed++;
+          } else {
+            checks.push(item.name + ": FAILED (not active)");
+            failed++;
+          }
+        });
+
+        var summary = "PASSED: " + passed + " / " + viewsToTest.length + " | Details: " + checks.join(", ");
+        document.getElementById("results").textContent = summary;
+      }, 1000);
+    };
+  </script>
+</body>
+</html>

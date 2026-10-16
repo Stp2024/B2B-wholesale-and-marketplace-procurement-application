@@ -509,22 +509,22 @@
             <section class="quick-actions-section" style="margin-bottom: 24px;">
               <h3 class="section-title">Quick Actions</h3>
               <div class="quick-actions-grid">
-                <a href="#products" class="quick-action-card" data-view="products">
+                <a href="#products" class="quick-action-card" data-view="products" data-action="add-product">
                   <span class="action-icon"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
                   <h4 class="action-title">Add New Product</h4>
                   <p class="action-description">List new industrial product in buyer catalogue</p>
                 </a>
-                <a href="#quotations" class="quick-action-card" data-view="quotations">
+                <a href="#quotations" class="quick-action-card" data-view="quotations" data-action="prepare-quote">
                   <span class="action-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
                   <h4 class="action-title">Prepare Quotation</h4>
                   <p class="action-description">Submit tiered bulk pricing to buyer RFQs</p>
                 </a>
-                <a href="#inventory" class="quick-action-card" data-view="inventory">
+                <a href="#inventory" class="quick-action-card" data-view="inventory" data-action="update-stock">
                   <span class="action-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
                   <h4 class="action-title">Update Stock</h4>
                   <p class="action-description">Adjust warehouse stock &amp; replenish items</p>
                 </a>
-                <a href="#shipping" class="quick-action-card" data-view="shipping">
+                <a href="#shipping" class="quick-action-card" data-view="shipping" data-action="dispatch-shipment">
                   <span class="action-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
                   <h4 class="action-title">Dispatch Shipment</h4>
                   <p class="action-description">Enter carrier AWB &amp; track logistics milestones</p>
@@ -1143,21 +1143,21 @@
               <div class="stat-card-compact clickable-stat" id="cardFinTotal" role="button" tabindex="0" title="Click to view all transactions">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Total Transaction Volume</span>
-                  <div class="stat-compact-val" id="finTotalVolume">$9,088.20</div>
+                  <div class="stat-compact-val" id="finTotalVolume">₹7,16,040</div>
                 </div>
                 <div class="stat-compact-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
               </div>
               <div class="stat-card-compact clickable-stat" id="cardFinEscrow" role="button" tabindex="0" title="Click to filter In-Escrow transactions">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">TradeShield In-Escrow</span>
-                  <div class="stat-compact-val" id="finEscrowProtected" style="color: var(--warning);">$6,284.00</div>
+                  <div class="stat-compact-val" id="finEscrowProtected" style="color: var(--warning);">₹4,93,000</div>
                 </div>
                 <div class="stat-compact-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
               </div>
               <div class="stat-card-compact clickable-stat" id="cardFinReleased" role="button" tabindex="0" title="Click to filter Released transactions">
                 <div class="stat-compact-info">
                   <span class="stat-compact-title">Released to Supplier Account</span>
-                  <div class="stat-compact-val" id="finReleased" style="color: var(--success);">$2,804.20</div>
+                  <div class="stat-compact-val" id="finReleased" style="color: var(--success);">₹2,23,040</div>
                 </div>
                 <div class="stat-compact-icon"><svg class="tn-icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
               </div>
@@ -1420,8 +1420,8 @@
                   <div class="form-group">
                     <label for="setCurrency">Default Currency</label>
                     <select id="setCurrency" class="form-control">
+                      <option value="INR (₹)" selected>₹ (Indian Rupee)</option>
                       <option value="USD ($)">USD ($)</option>
-                      <option value="INR (₹)">₹ (Indian Rupee)</option>
                       <option value="EUR (€)">EUR (€)</option>
                       <option value="GBP (£)">GBP (£)</option>
                     </select>
@@ -1513,8 +1513,8 @@
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label for="prodFormUnitPrice">Base Unit Price ($) *</label>
-              <input type="number" step="0.01" id="prodFormUnitPrice" class="form-control" required placeholder="4.90" />
+              <label for="prodFormUnitPrice">Base Unit Price (₹) *</label>
+              <input type="number" step="0.01" id="prodFormUnitPrice" class="form-control" required placeholder="490.00" />
             </div>
             <div class="form-group">
               <label for="prodFormMoq">Minimum Order Quantity (MOQ) *</label>
@@ -1633,15 +1633,15 @@
               <input type="number" id="quoteFormOfferedQty" class="form-control" required min="1" />
             </div>
             <div class="form-group">
-              <label for="quoteFormUnitPrice">Unit Price ($) *</label>
+              <label for="quoteFormUnitPrice">Unit Price (₹) *</label>
               <input type="number" step="0.01" id="quoteFormUnitPrice" class="form-control" required />
             </div>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label for="quoteFormDeliveryFee">Delivery / Freight Charges ($)</label>
-              <input type="number" step="0.01" id="quoteFormDeliveryFee" class="form-control" value="75.00" />
+              <label for="quoteFormDeliveryFee">Delivery / Freight Charges (₹)</label>
+              <input type="number" step="0.01" id="quoteFormDeliveryFee" class="form-control" value="5000.00" />
             </div>
             <div class="form-group">
               <label for="quoteFormTimeline">Delivery Timeline *</label>
@@ -1674,19 +1674,19 @@
           <div class="quote-calc-card">
             <div class="calc-row">
               <span>Subtotal:</span>
-              <strong id="calcSubtotal">$0.00</strong>
+              <strong id="calcSubtotal">₹0</strong>
             </div>
             <div class="calc-row">
-              <span>Estimated Tax (8%):</span>
-              <strong id="calcTax">$0.00</strong>
+              <span>Estimated Tax (18%):</span>
+              <strong id="calcTax">₹0</strong>
             </div>
             <div class="calc-row">
               <span>Freight &amp; Handling:</span>
-              <strong id="calcDelivery">$75.00</strong>
+              <strong id="calcDelivery">₹0</strong>
             </div>
             <div class="calc-row total-row">
               <span>Total Quotation Amount:</span>
-              <span id="calcGrandTotal" style="color: var(--primary);">$0.00</span>
+              <span id="calcGrandTotal" style="color: var(--primary);">₹0</span>
             </div>
           </div>
 
@@ -1974,6 +1974,7 @@
 
     <!-- Scripts -->
     <script src="../../js/tradenest-store.js"></script>
+    <script src="../../js/product-service.js"></script>
     <script src="../../js/supplier/supplier-store.js"></script>
     <script src="../../js/supplier/dashboard.js"></script>
   </body>

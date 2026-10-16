@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Verification Test</title>
+</head>
+<body>
+  <div id="test-results">RUNNING</div>
+
+  <script>
+    window.__errors = [];
+    window.onerror = function(msg, url, line, col, err) {
+      window.__errors.push({ msg: msg, url: url, line: line, col: col, stack: err ? err.stack : '' });
+    };
+    console.error = function() {
+      window.__errors.push({ msg: Array.from(arguments).join(' ') });
+    };
+
+    // Setup mock localStorage with supplier-001
+    localStorage.clear();
+    localStorage.setItem("tradenestCurrentUser", JSON.stringify({
+      id: "supplier-001",
+      name: "Rajesh Kulkarni",
+      email: "supplier@tradenest.com",
+      role: "supplier",
+      accountType: "supplier",
+      companyName: "Apex Gear Co.",
+      verified: true
+    }));
+  </script>
+
+  <script src="../js/tradenest-store.js"></script>
+  <script src="../js/product-service.js"></script>
+  <script src="../js/supplier/supplier-store.js"></script>
+
+  <!-- Include sidebar nav elements and view containers to test dashboard.js -->
+  <div class="dashboard-container">
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#overview" class="nav-link active" data-view="overview" id="nav-link-overview">Overview</a>
+        <a href="#products" class="nav-link" data-view="products" id="nav-link-products">My Products</a>
+        <a href="#inventory" class="nav-link" data-view="inventory" id="nav-link-inventory">Inventory</a>
+        <a href="#rfqs" class="nav-link" data-view="rfqs" id="nav-link-rfqs">Incoming RFQs</a>
+        <a href="#quotations" class="nav-link" data-view="quotations" id="nav-link-quotations">Quotations</a>
+        <a href="#samples" class="nav-link" data-view="samples" id="nav-link-samples">Samples</a>
+        <a href="#orders" class="nav-link" data-view="orders" id="nav-link-orders">Orders</a>
+      </nav>
+      <button id="sidebarLogoutButton">Logout</button>
+    </aside>
+    <div class="main-wrapper">
+      <span id="currentSectionTitle"></span>
+      <section class="module-view active" id="view-overview"></section>
+      <section class="module-view" id="view-products"></section>
+      <section class="module-view" id="view-inventory"></section>
+      <section class="module-view" id="view-rfqs"></section>
+      <section class="module-view" id="view-quotations"></section>
+      <section class="module-view" id="view-samples"></section>
+      <section class="module-view" id="view-orders"></section>
+    </div>
+  </div>
+
+  <script src="../js/supplier/dashboard.js"></script>
+
+  <script>
+    setTimeout(function() {
+      var results = [];
+      results.push("Errors: " + JSON.stringify(window.__errors));
+
+      // Test click on #nav-link-products
+      var prodLink = document.getElementById("nav-link-products");
+      if (prodLink) {
+        prodLink.click();
+        var prodView = document.getElementById("view-products");
+        results.push("Products view active: " + (prodView && prodView.classList.contains("active")));
+      }
+
+      // Test click on #nav-link-inventory
+      var invLink = document.getElementById("nav-link-inventory");
+      if (invLink) {
+        invLink.click();
+        var invView = document.getElementById("view-inventory");
+        results.push("Inventory view active: " + (invView && invView.classList.contains("active")));
+      }
+
+      // Test click on #nav-link-rfqs
+      var rfqLink = document.getElementById("nav-link-rfqs");
+      if (rfqLink) {
+        rfqLink.click();
+        var rfqView = document.getElementById("view-rfqs");
+        results.push("RFQs view active: " + (rfqView && rfqView.classList.contains("active")));
+      }
+
+      // Test click on #nav-link-quotations
+      var quoteLink = document.getElementById("nav-link-quotations");
+      if (quoteLink) {
+        quoteLink.click();
+        var quoteView = document.getElementById("view-quotations");
+        results.push("Quotations view active: " + (quoteView && quoteView.classList.contains("active")));
+      }
+
+      // Test click on #nav-link-orders
+      var orderLink = document.getElementById("nav-link-orders");
+      if (orderLink) {
+        orderLink.click();
+        var orderView = document.getElementById("view-orders");
+        results.push("Orders view active: " + (orderView && orderView.classList.contains("active")));
+      }
+
+      document.getElementById("test-results").textContent = results.join(" | ");
+    }, 500);
+  </script>
+</body>
+</html>
