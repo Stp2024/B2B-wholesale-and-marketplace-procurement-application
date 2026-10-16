@@ -1,58 +1,387 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TradeNest Buyer Orders</title>
-    <link rel="stylesheet" href="../../css/buyer/modules.css" />
-  </head>
-  <body data-page="orders">
-    <div class="module-shell">
-      <aside class="module-sidebar">
-        <div class="brand">
-          <div class="logo">
-            <img src="../../images/TradeNest.webp" alt="TradeNest" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Orders — TradeNest Buyer</title>
+  <meta name="description" content="View and manage all your purchase orders on TradeNest." />
+  <link rel="stylesheet" href="../../css/buyer/modules.css" />
+  <link rel="stylesheet" href="../../css/shared.css" />
+</head>
+<body data-page="orders">
+  <div class="module-shell">
+    <aside class="module-sidebar">
+      <div class="brand">
+        <a class="logo" href="../../index.html"><img src="../../images/TradeNest.webp" alt="TradeNest" /></a>
+        <div class="brand-text"><span>Buyer Workspace</span></div>
+      </div>
+      <nav class="sidebar-nav" aria-label="Buyer navigation">
+        <a href="dashboard.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Dashboard</a>
+        <a href="products.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>️ Products</a>
+        <a href="suppliers.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="22.01"/><line x1="15" y1="22" x2="15" y2="22.01"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/></svg> Suppliers</a>
+        <a href="rfqs.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> RFQs</a>
+        <a href="quotations.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Quotations</a>
+        <a href="compare-quotes.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>️ Compare Quotes</a>
+        <a href="my-quotes.html">My Quotes</a>
+        <a href="samples.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L3.29 20.7A2 2 0 0 0 5 22h14a2 2 0 0 0 1.71-1.3L14 9.31V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg> Samples</a>
+        <a href="orders.html" class="active"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Orders</a>
+        <a href="purchase-history.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Purchase History</a>
+        <a href="payments.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Payments</a>
+        <a href="delivery.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Delivery</a>
+        <a href="messages.html">Messages</a>
+        <a href="collaboration.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Collaboration</a>
+        <a href="supplier-offers.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>️ Supplier Offers</a>
+        <a href="saved-products.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg> Saved Products</a>
+        <a href="saved-suppliers.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Saved Suppliers</a>
+        <a href="profile.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</a>
+        <a href="settings.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>️ Settings</a>
+        <a href="../../index.html"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Back to Site</a>
+      </nav>
+    </aside>
+    <main class="module-main">
+      <header class="module-header">
+        <div class="module-header-title">
+          <h1>My Orders</h1>
+          <span class="badge badge-blue" id="orderCountBadge">0 orders</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="search" id="orderSearch" class="form-control" placeholder="Search orders…" style="width:200px;">
+          <select id="orderStatusFilter" class="form-control" style="width:160px;">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <select id="orderSortFilter" class="form-control" style="width:160px;">
+            <option value="date-desc">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="amount-desc">Highest Amount</option>
+            <option value="amount-asc">Lowest Amount</option>
+          </select>
+        </div>
+      </header>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="orderStats"></div>
+
+      <!-- Order List -->
+      <section class="page-panel">
+        <div class="tn-table-wrap">
+          <table class="tn-table" id="ordersTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Supplier</th>
+                <th>Qty</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="8"><div class="empty-state">Loading orders…</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Order Detail Modal -->
+      <div class="tn-modal-backdrop" id="orderDetailModal" style="display:none;" role="dialog" aria-modal="true">
+        <div class="tn-modal-card" style="max-width:640px;">
+          <div class="tn-modal-header">
+            <h2 class="tn-modal-title">Order Details</h2>
+            <button class="tn-modal-close" id="closeOrderModal">&times;</button>
           </div>
-          <div class="brand-text">
-            <h2>TradeNest</h2>
-            <span>Buyer Workspace</span>
+          <div class="tn-modal-body" id="orderDetailBody"></div>
+          <div class="tn-modal-footer">
+            <button class="btn btn-primary btn-sm" id="btnOpenInvoiceFromModal" style="display:none;">View Invoice / Summary</button>
+            <button class="btn btn-secondary btn-sm" id="closeOrderModalFooter">Close</button>
           </div>
         </div>
-        <nav class="sidebar-nav" aria-label="Buyer navigation">
-          <a href="dashboard.html">📊 Dashboard</a>
-          <a href="products.html">🛍️ Products</a>
-          <a href="suppliers.html">🏢 Suppliers</a>
-          <a href="rfqs.html">📝 RFQs</a>
-          <a href="quotations.html">💬 Quotations</a>
-          <a href="compare-quotes.html">⚖️ Compare</a>
-          <a href="samples.html">🧪 Samples</a>
-          <a href="collaboration.html">🤝 Collaboration</a>
-          <a href="messages.html">📨 Messages</a>
-          <a href="orders.html" class="active">📦 Orders</a>
-          <a href="payments.html">💳 Payments</a>
-          <a href="delivery.html">🚚 Delivery</a>
-        </nav>
-      </aside>
-      <main class="module-main">
-        <header class="module-header">
-          <div class="module-header-title">
-            <h1>Order Management</h1>
-          </div>
-          <button
-            class="btn btn-secondary"
-            type="button"
-            id="reset-demo-data-btn"
-          >
-            Reset Local Data
-          </button>
-        </header>
+      </div>
 
-        <section class="page-panel">
-          <div id="order-list" class="record-grid"></div>
-        </section>
-      </main>
-    </div>
-    <script src="../../js/tradenest-store.js"></script>
-    <script src="../../js/buyer/modules.js"></script>
-  </body>
+      <!-- Invoice / Order Summary Modal (Extra Feature 5) -->
+      <div class="tn-invoice-modal" id="invoiceModal" role="dialog" aria-modal="true" aria-label="Order Invoice Preview">
+        <div class="tn-invoice-paper">
+          <div class="tn-invoice-actions">
+            <button type="button" class="btn btn-primary btn-sm" id="btnPrintInvoice"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>️ Print / Save as PDF</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCloseInvoice">Close</button>
+          </div>
+          <div id="invoiceContent">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/tradenest-store.js"></script>
+  <script src="../../js/buyer/modules.js"></script>
+  <script>
+  (function() {
+    const store = window.TradeNestStore;
+    if (!store) return;
+
+    let activeSelectedOrderId = null;
+
+    function formatCurrency(v) { return store.formatCurrency(v); }
+    function formatDate(v) {
+      if (!v) return '—';
+      const d = new Date(v);
+      return isNaN(d) ? v : d.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+    }
+
+    function getStatusClass(status) {
+      const s = String(status || '').toLowerCase();
+      if (s.includes('delivered') || s.includes('completed')) return 'status-completed';
+      if (s.includes('shipped')) return 'status-processing';
+      if (s.includes('cancelled') || s.includes('rejected')) return 'status-cancelled';
+      if (s.includes('processing') || s.includes('confirmed')) return 'status-processing';
+      return 'status-pending';
+    }
+
+    function getState() { return store.getStore(); }
+
+    function getBuyerOrders() {
+      const state = getState();
+      const user = store.getCurrentUser();
+      const buyerId = user && user.id ? user.id : 'buyer-001';
+      return (state.orders || []).filter(o => o.buyerId === buyerId || o.buyerId === 'buyer-001');
+    }
+
+    function renderStats(orders) {
+      const total = orders.length;
+      const pending = orders.filter(o => ['Pending','Processing','Confirmed'].includes(o.status)).length;
+      const delivered = orders.filter(o => ['Delivered','Completed'].includes(o.status)).length;
+      const spent = orders.reduce((s, o) => s + (Number(o.totalAmount || o.amount) || 0), 0);
+      document.getElementById('orderStats').innerHTML = [
+        {label:'Total Orders', value: total, icon:'<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>'},
+        {label:'Active/Pending', value: pending, icon:'⏳'},
+        {label:'Delivered', value: delivered, icon: 'Delivered'},
+        {label:'Total Spent', value: formatCurrency(spent), icon:'<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>'}
+      ].map(s => `<div class="stat-card"><h3>${s.icon} ${s.label}</h3><strong>${s.value}</strong></div>`).join('');
+    }
+
+    function renderOrders(orders) {
+      const search = (document.getElementById('orderSearch').value || '').toLowerCase();
+      const statusFilter = document.getElementById('orderStatusFilter').value;
+      const sort = document.getElementById('orderSortFilter').value;
+
+      let filtered = orders.filter(o => {
+        const matchSearch = !search || String(o.productName || o.id || '').toLowerCase().includes(search) || String(o.supplierName || '').toLowerCase().includes(search);
+        const matchStatus = !statusFilter || o.status === statusFilter;
+        return matchSearch && matchStatus;
+      });
+
+      filtered.sort((a, b) => {
+        if (sort === 'date-asc') return new Date(a.createdAt) - new Date(b.createdAt);
+        if (sort === 'amount-desc') return (Number(b.totalAmount || b.amount) || 0) - (Number(a.totalAmount || a.amount) || 0);
+        if (sort === 'amount-asc') return (Number(a.totalAmount || a.amount) || 0) - (Number(b.totalAmount || b.amount) || 0);
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      document.getElementById('orderCountBadge').textContent = filtered.length + ' order' + (filtered.length !== 1 ? 's' : '');
+
+      const tbody = document.getElementById('ordersTableBody');
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><p class="empty-state-title">No orders found</p><p class="empty-state-text">Your matched orders will appear here.</p></div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(o => `
+        <tr>
+          <td><strong>#${o.id}</strong></td>
+          <td>${o.productName || '—'}</td>
+          <td>${o.supplierName || '—'}</td>
+          <td>${o.quantity || '—'}</td>
+          <td>${formatCurrency(o.totalAmount || o.amount || 0)}</td>
+          <td><span class="status-badge ${getStatusClass(o.status)}">${o.status}</span></td>
+          <td>${formatDate(o.createdAt || o.orderDate)}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-primary btn-sm" data-view-order="${o.id}">View</button>
+              <button class="btn btn-secondary btn-sm" data-view-invoice="${o.id}">Invoice</button>
+            </div>
+          </td>
+        </tr>`).join('');
+    }
+
+    function showOrderDetail(orderId) {
+      const state = getState();
+      const order = (state.orders || []).find(o => o.id === orderId);
+      if (!order) return;
+      activeSelectedOrderId = orderId;
+      const modal = document.getElementById('orderDetailModal');
+      const body = document.getElementById('orderDetailBody');
+      const invoiceBtn = document.getElementById('btnOpenInvoiceFromModal');
+      if (invoiceBtn) invoiceBtn.style.display = 'inline-flex';
+
+      body.innerHTML = `
+        <div class="profile-modal-grid" style="gap:14px;">
+          ${[
+            ['Order ID', '#' + order.id],
+            ['Product', order.productName],
+            ['Supplier', order.supplierName],
+            ['Quantity', order.quantity],
+            ['Unit', order.unit || 'units'],
+            ['Amount', formatCurrency(order.totalAmount || order.amount || 0)],
+            ['Status', order.status],
+            ['Order Date', formatDate(order.createdAt || order.orderDate)],
+            ['Delivery Date', formatDate(order.deliveryDate) || 'TBD'],
+            ['Notes', order.notes || '—']
+          ].map(([k,v]) => `<div class="modal-field"><span class="field-label">${k}</span><p class="field-value">${v || '—'}</p></div>`).join('')}
+        </div>`;
+      modal.style.display = 'flex';
+    }
+
+    /* Extra Feature 5: Invoice Generator */
+    function showInvoice(orderId) {
+      const state = getState();
+      const order = (state.orders || []).find(o => o.id === orderId);
+      if (!order) return;
+
+      const user = store.getCurrentUser() || {};
+      const modal = document.getElementById('invoiceModal');
+      const content = document.getElementById('invoiceContent');
+
+      const qty = Number(order.quantity) || 1;
+      const totalAmount = Number(order.totalAmount || order.amount) || 0;
+      const unitPrice = order.unitPrice || Math.round((totalAmount / 1.18) / qty);
+      const subtotal = unitPrice * qty;
+      const gst = Math.round(subtotal * 0.18);
+      const shipping = order.shippingFee !== undefined ? Number(order.shippingFee) : (subtotal >= 50000 ? 0 : 750);
+      const grandTotal = subtotal + gst + shipping;
+
+      content.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--color-border);padding-bottom:18px;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:1.6rem;color:var(--color-heading);margin-bottom:4px;font-weight:800;">TradeNest</h1>
+            <p style="font-size:0.85rem;color:var(--color-text-secondary);">B2B Wholesale & Procurement Marketplace</p>
+          </div>
+          <div style="text-align:right;">
+            <span class="tn-invoice-badge-demo">Demo Order Summary / Invoice</span>
+            <p style="font-size:0.88rem;color:var(--color-heading);font-weight:700;margin-top:6px;">Invoice #: INV-${order.id}</p>
+            <p style="font-size:0.8rem;color:var(--color-text-secondary);">Order Date: ${formatDate(order.createdAt || order.orderDate)}</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;font-size:0.88rem;">
+          <div style="background:var(--color-ice-white);padding:14px 18px;border-radius:var(--radius-md);border:1px solid var(--color-border);">
+            <strong style="color:var(--color-heading);display:block;margin-bottom:4px;">Seller (Supplier):</strong>
+            <p style="color:var(--color-heading);font-weight:600;">${order.supplierName || 'TradeNest Verified Supplier'}</p>
+            <p style="color:var(--color-text-secondary);font-size:0.82rem;">Business Verification: Verified Partner</p>
+            <p style="color:var(--color-text-secondary);font-size:0.82rem;">Dispatch Location: India</p>
+          </div>
+          <div style="background:var(--color-ice-white);padding:14px 18px;border-radius:var(--radius-md);border:1px solid var(--color-border);">
+            <strong style="color:var(--color-heading);display:block;margin-bottom:4px;">Billed & Shipped To (Buyer):</strong>
+            <p style="color:var(--color-heading);font-weight:600;">${order.buyerName || user.businessName || user.fullName || 'TradeNest Buyer'}</p>
+            <p style="color:var(--color-text-secondary);font-size:0.82rem;">${order.deliveryAddress || 'Primary Business Address, Bengaluru, Karnataka'}</p>
+            <p style="color:var(--color-text-secondary);font-size:0.82rem;">Payment Method: ${order.paymentMethod || 'Online Escrow (Simulated)'}</p>
+          </div>
+        </div>
+
+        <table class="tn-invoice-table">
+          <thead>
+            <tr>
+              <th>Item Description</th>
+              <th style="text-align:center;">Qty</th>
+              <th style="text-align:right;">Unit Price</th>
+              <th style="text-align:right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>${order.productName || 'Wholesale Goods'}</strong>
+                <div style="font-size:0.75rem;color:var(--color-text-secondary);">Order Reference: #${order.id}</div>
+              </td>
+              <td style="text-align:center;">${qty} ${order.unit || 'units'}</td>
+              <td style="text-align:right;">${formatCurrency(unitPrice)}</td>
+              <td style="text-align:right;"><strong>${formatCurrency(subtotal)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;">
+          <div style="font-size:0.78rem;color:var(--color-text-secondary);max-width:340px;line-height:1.4;">
+            <p><strong>Note:</strong> This document is a frontend demonstration order summary generated from your browser session records. All tax calculations (18% GST) and shipping estimates adhere to standard procurement rules.</p>
+          </div>
+          <div class="tn-invoice-summary-box">
+            <div class="tn-invoice-row">
+              <span>Item Subtotal:</span>
+              <span>${formatCurrency(subtotal)}</span>
+            </div>
+            <div class="tn-invoice-row">
+              <span>GST (18% IGST):</span>
+              <span>${formatCurrency(gst)}</span>
+            </div>
+            <div class="tn-invoice-row">
+              <span>Delivery & Handling:</span>
+              <span>${shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span>
+            </div>
+            <div class="tn-invoice-row is-total">
+              <span>Total Payable:</span>
+              <span style="color:var(--color-steel-blue);">${formatCurrency(grandTotal)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      modal.classList.add('is-open');
+    }
+
+    const orders = getBuyerOrders();
+    renderStats(orders);
+    renderOrders(orders);
+
+    ['orderSearch','orderStatusFilter','orderSortFilter'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => renderOrders(orders));
+      if (el) el.addEventListener('change', () => renderOrders(orders));
+    });
+
+    document.addEventListener('click', e => {
+      const viewBtn = e.target.closest('[data-view-order]');
+      if (viewBtn) showOrderDetail(viewBtn.getAttribute('data-view-order'));
+
+      const invBtn = e.target.closest('[data-view-invoice]');
+      if (invBtn) showInvoice(invBtn.getAttribute('data-view-invoice'));
+    });
+
+    const openInvFromModalBtn = document.getElementById('btnOpenInvoiceFromModal');
+    if (openInvFromModalBtn) {
+      openInvFromModalBtn.addEventListener('click', () => {
+        if (activeSelectedOrderId) {
+          document.getElementById('orderDetailModal').style.display = 'none';
+          showInvoice(activeSelectedOrderId);
+        }
+      });
+    }
+
+    const printBtn = document.getElementById('btnPrintInvoice');
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    const closeInvBtn = document.getElementById('btnCloseInvoice');
+    if (closeInvBtn) {
+      closeInvBtn.addEventListener('click', () => {
+        document.getElementById('invoiceModal').classList.remove('is-open');
+      });
+    }
+
+    const closeModal = () => { document.getElementById('orderDetailModal').style.display = 'none'; };
+    document.getElementById('closeOrderModal').addEventListener('click', closeModal);
+    document.getElementById('closeOrderModalFooter').addEventListener('click', closeModal);
+    document.getElementById('orderDetailModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  })();
+  </script>
+</body>
 </html>

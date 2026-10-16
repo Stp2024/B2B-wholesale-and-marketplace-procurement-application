@@ -30,7 +30,7 @@
 
           <div class="benefits">
             <div class="benefit-item">
-              <div class="benefit-icon">✓</div>
+              <div class="benefit-icon"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
               <div>
                 <h4>Administrator access only</h4>
                 <p>This portal is intended for authorized TradeNest administrators.</p>
@@ -72,7 +72,7 @@
               <div class="form-group">
                 <label for="email" id="emailLabel">Administrator Email <span>*</span></label>
                 <div class="input-box">
-                  <span class="input-icon">✉</span>
+                  <span class="input-icon"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
                   <input
                     type="email"
                     id="email"
@@ -127,8 +127,15 @@
               </button>
             </form>
 
+            <div style="margin-top: 16px; padding: 12px 14px; background: #F7F5EF; border: 1px solid #E5E1D6; border-radius: 8px; font-size: 0.82rem; color: #555555;">
+              <div style="font-weight: 600; color: #000000; margin-bottom: 4px;">Demo Administrator Credentials:</div>
+              <div>Email: <strong style="color: #000;">admin@tradenest.com</strong></div>
+              <div>Password: <strong style="color: #000;">Admin@123</strong></div>
+              <button type="button" onclick="document.getElementById('email').value='admin@tradenest.com';document.getElementById('password').value='Admin@123';" style="margin-top: 8px; padding: 6px 12px; background: #000000; color: #ffffff; border: none; border-radius: 4px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Fill Demo Credentials</button>
+            </div>
+
             <div class="security-message">
-              <div class="security-icon">✓</div>
+              <div class="security-icon"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
               <div>
                 <h4>Protected administrator portal</h4>
                 <p>Only accounts with the administrator role can access this workspace.</p>
@@ -140,15 +147,13 @@
 
       <footer class="login-footer">
         <div class="footer-help">
-          <span class="footer-icon">♧</span>
+          <span class="footer-icon"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
           <div>
             <strong>Need Help?</strong>
             <small>Contact TradeNest support for admin account assistance.</small>
           </div>
         </div>
-        <div class="footer-item">
-          ✉
-          <span>support@tradenest.com</span>
+        <div class="footer-item"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span>support@tradenest.com</span>
         </div>
         <div class="footer-links">
           <a href="../index.html">TradeNest Home</a>

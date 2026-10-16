@@ -24,6 +24,24 @@
     return null;
   }
 
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function highlightMatch(text, query) {
+    if (!text || !query) return escapeHtml(text || "");
+    const escapedText = escapeHtml(text);
+    const escapedQuery = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${escapedQuery})`, "gi");
+    return escapedText.replace(regex, `<mark class="tn-search-highlight">$1</mark>`);
+  }
+
   function renderNav() {
     const currentPath = window.location.pathname.replace(/\\/g, "/");
     const relativeRoot = getRelativeRoot();
@@ -41,17 +59,13 @@
     const isLoggedIn = !!user;
     const userRole = (user && user.role ? String(user.role).toLowerCase() : "buyer");
 
-    // Resolve dashboard URL and label based on role
     let dashboardUrl = `${relativeRoot}buyer-dashboard.html`;
-    let dashboardLabel = "My Buyer Dashboard";
     let dashboardShort = "My Dashboard";
     if (userRole === "supplier") {
       dashboardUrl = `${relativeRoot}supplier-dashboard.html`;
-      dashboardLabel = "My Supplier Dashboard";
       dashboardShort = "My Dashboard";
     } else if (userRole === "admin") {
       dashboardUrl = `${relativeRoot}pages/admin/dashboard.html`;
-      dashboardLabel = "Admin Governance";
       dashboardShort = "Admin Dashboard";
     }
 
@@ -59,18 +73,17 @@
       : currentFile === "supplier-details.html" ? "suppliers.html"
       : currentFile;
 
-    // Navigation links
     const baseNavLinks = [
       { label: "Home", href: `${relativeRoot}index.html`, file: "index.html" },
-      { label: "About", href: resolvePath("pages/about.html"), file: "about.html" },
       { label: "Products", href: resolvePath("pages/products.html"), file: "products.html" },
       { label: "Suppliers", href: resolvePath("pages/suppliers.html"), file: "suppliers.html" },
+      { label: "About", href: resolvePath("pages/about.html"), file: "about.html" },
       { label: "Contact", href: resolvePath("pages/contact.html"), file: "contact.html" }
     ];
 
     let existingHeader = document.querySelector(".tn-site-header");
     const header = existingHeader || document.createElement("header");
-    header.className = "tn-site-header";
+    header.className = "tn-site-header main-header";
     header.id = "mainSiteHeader";
 
     let navListHtml = baseNavLinks.map((item) => {
@@ -84,12 +97,51 @@
       `;
     }
 
+    // Global Search Component HTML
+    const searchHtml = `
+      <div class="tn-nav-search" id="tnNavSearch" role="search">
+        <svg class="tn-nav-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="tn-nav-search-input" id="tnGlobalSearchInput" placeholder="Search products, suppliers..." aria-label="Global marketplace search" autocomplete="off" />
+        <button type="button" class="tn-nav-search-clear" id="tnGlobalSearchClear" aria-label="Clear search">&times;</button>
+        <button type="button" class="tn-nav-search-btn" id="tnGlobalSearchSubmit" aria-label="Search">Search</button>
+        <div class="tn-search-dropdown" id="tnSearchDropdown" role="listbox" aria-label="Search suggestions"></div>
+      </div>
+    `;
+
+    // Notification Center Component HTML (for logged-in users)
+    let notifHtml = "";
+    if (isLoggedIn && window.TradeNestStore && typeof window.TradeNestStore.getUnreadNotificationCount === "function") {
+      const unreadCount = window.TradeNestStore.getUnreadNotificationCount(user.id, user.role);
+      notifHtml = `
+        <div class="tn-notif-wrapper" id="tnNotifWrapper">
+          <button type="button" class="tn-notif-btn" id="tnNotifBtn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="tn-notif-badge${unreadCount > 0 ? "" : " is-hidden"}" id="tnNotifBadge">${unreadCount}</span>
+          </button>
+          <div class="tn-notif-dropdown" id="tnNotifDropdown" role="region" aria-label="Notification center">
+            <div class="tn-notif-header">
+              <span class="tn-notif-title">Notifications</span>
+              <button type="button" class="tn-notif-mark-read" id="tnNotifMarkAllRead">Mark all read</button>
+            </div>
+            <ul class="tn-notif-list" id="tnNotifList"></ul>
+          </div>
+        </div>
+      `;
+    }
+
     let actionsHtml = "";
     if (isLoggedIn) {
       const displayName = user.fullName || user.businessName || (user.email ? user.email.split("@")[0] : "User");
       actionsHtml = `
         <div class="tn-nav-actions tn-nav-logged-in" id="navLoggedInActions">
-          <span class="tn-nav-user-greeting">Hi, <strong>${displayName}</strong></span>
+          ${notifHtml}
+          <span class="tn-nav-user-greeting">Hi, <strong>${escapeHtml(displayName)}</strong></span>
           <a class="tn-nav-dash-pill tn-nav-dashboard-link" id="navDashboardLink" data-id="navDashPillBtn" href="${dashboardUrl}">${dashboardShort}</a>
           <button type="button" class="tn-nav-logout-btn btn btn-outline" id="navLogoutBtn" aria-label="Log out of TradeNest">Logout</button>
         </div>
@@ -103,24 +155,13 @@
       `;
     }
 
-    const isHomePage = (currentFile === "index.html" || currentFile === "" || currentPath.endsWith("/"));
-
-    let ctaButtonsHtml = "";
-    if (isHomePage) {
-      ctaButtonsHtml = `
-        <div class="tn-nav-cta-group" id="navHomeCtaGroup">
-          <a class="tn-nav-cta-btn tn-nav-cta-discover" id="navCtaDiscover" href="${resolvePath("pages/discover-suppliers.html")}">Discover Suppliers</a>
-          <a class="tn-nav-cta-btn tn-nav-cta-join" id="navCtaJoin" href="${resolvePath("pages/join-supplier-network.html")}">Join Network</a>
-        </div>
-      `;
-    }
-
     header.innerHTML = `
       <div class="tn-header-inner">
         <div class="tn-header-left">
           <a class="tn-brand" href="${relativeRoot}index.html" aria-label="TradeNest home">
             <img src="${relativeRoot}images/TradeNest.webp" alt="TradeNest" width="168" height="48">
           </a>
+          ${searchHtml}
         </div>
         <button class="tn-menu-toggle" id="tnMenuToggle" type="button" aria-expanded="false" aria-controls="tn-primary-navigation" aria-label="Open navigation">
           <span></span><span></span><span></span>
@@ -129,7 +170,6 @@
           <ul class="tn-nav-list" id="tnPrimaryNavList">
             ${navListHtml}
           </ul>
-          ${ctaButtonsHtml}
           ${actionsHtml}
         </nav>
       </div>
@@ -142,6 +182,14 @@
       } else {
         document.body.prepend(header);
       }
+    }
+
+    // Attach search handlers
+    attachSearchListeners(header, relativeRoot, resolvePath);
+
+    // Attach notification handlers
+    if (isLoggedIn) {
+      attachNotificationListeners(header, user, relativeRoot, resolvePath);
     }
 
     // Attach menu toggle listener
@@ -177,6 +225,238 @@
       });
     }
   }
+
+  function attachSearchListeners(header, relativeRoot, resolvePath) {
+    const searchWrapper = header.querySelector("#tnNavSearch");
+    const searchInput = header.querySelector("#tnGlobalSearchInput");
+    const searchClear = header.querySelector("#tnGlobalSearchClear");
+    const dropdown = header.querySelector("#tnSearchDropdown");
+    if (!searchInput || !dropdown) return;
+
+    function doSearch() {
+      const query = searchInput.value.trim();
+      if (!query) {
+        searchWrapper.classList.remove("has-val");
+        dropdown.classList.remove("is-open");
+        dropdown.innerHTML = "";
+        return;
+      }
+      searchWrapper.classList.add("has-val");
+
+      if (!window.TradeNestStore || typeof window.TradeNestStore.searchCatalog !== "function") {
+        return;
+      }
+
+      const results = window.TradeNestStore.searchCatalog(query);
+      let html = "";
+
+      if (results.products.length > 0) {
+        html += `<div class="tn-search-group-title">Products (${results.products.length})</div>`;
+        results.products.forEach(p => {
+          const detailUrl = `${resolvePath("pages/product-details.html")}?id=${encodeURIComponent(p.id)}`;
+          const imgUrl = p.image || p.imageUrl || `${relativeRoot}images/placeholder-product.svg`;
+          html += `
+            <a class="tn-search-item" href="${detailUrl}">
+              <img class="tn-search-item-thumb" src="${imgUrl}" alt="${escapeHtml(p.name)}" onerror="this.src='${relativeRoot}images/placeholder-product.svg'" />
+              <div class="tn-search-item-info">
+                <div class="tn-search-item-name">${highlightMatch(p.name, query)}</div>
+                <div class="tn-search-item-meta">${escapeHtml(p.category || "")} &bull; ₹${(p.price || 0).toLocaleString("en-IN")}</div>
+              </div>
+            </a>
+          `;
+        });
+      }
+
+      if (results.suppliers.length > 0) {
+        html += `<div class="tn-search-group-title">Suppliers (${results.suppliers.length})</div>`;
+        results.suppliers.forEach(s => {
+          const supUrl = `${resolvePath("pages/supplier-details.html")}?id=${encodeURIComponent(s.id)}`;
+          html += `
+            <a class="tn-search-item" href="${supUrl}">
+              <div class="tn-search-item-thumb" style="display:flex;align-items:center;justify-content:center;background:var(--color-soft-sky);color:var(--color-steel-blue);font-weight:700;">
+                ${escapeHtml((s.businessName || "S")[0])}
+              </div>
+              <div class="tn-search-item-info">
+                <div class="tn-search-item-name">${highlightMatch(s.businessName, query)}</div>
+                <div class="tn-search-item-meta">${escapeHtml(s.category || "")} &bull; ${escapeHtml(s.location || "")}</div>
+              </div>
+            </a>
+          `;
+        });
+      }
+
+      if (results.products.length === 0 && results.suppliers.length === 0) {
+        html = `
+          <div style="padding: 16px 20px; font-size: 0.85rem; color: var(--color-text-secondary); text-align: center;">
+            No products or suppliers found for "<strong>${escapeHtml(query)}</strong>"
+          </div>
+        `;
+      }
+
+      dropdown.innerHTML = html;
+      dropdown.classList.add("is-open");
+    }
+
+    searchInput.addEventListener("input", doSearch);
+    searchInput.addEventListener("focus", () => {
+      if (searchInput.value.trim()) doSearch();
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        dropdown.classList.remove("is-open");
+      } else if (e.key === "Enter") {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `${resolvePath("pages/products.html")}?q=${encodeURIComponent(query)}`;
+        }
+      }
+    });
+
+    if (searchClear) {
+      searchClear.addEventListener("click", () => {
+        searchInput.value = "";
+        searchWrapper.classList.remove("has-val");
+        dropdown.classList.remove("is-open");
+        searchInput.focus();
+      });
+    }
+
+    const searchSubmit = header.querySelector("#tnGlobalSearchSubmit");
+    if (searchSubmit) {
+      searchSubmit.addEventListener("click", () => {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `${resolvePath("pages/products.html")}?q=${encodeURIComponent(query)}`;
+        } else {
+          searchInput.focus();
+        }
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!searchWrapper.contains(e.target)) {
+        dropdown.classList.remove("is-open");
+      }
+    });
+  }
+
+  function attachNotificationListeners(header, user, relativeRoot, resolvePath) {
+    const btn = header.querySelector("#tnNotifBtn");
+    const dropdown = header.querySelector("#tnNotifDropdown");
+    const badge = header.querySelector("#tnNotifBadge");
+    const list = header.querySelector("#tnNotifList");
+    const markAllBtn = header.querySelector("#tnNotifMarkAllRead");
+    if (!btn || !dropdown || !list) return;
+
+    function renderNotificationItems() {
+      if (!window.TradeNestStore || typeof window.TradeNestStore.getNotifications !== "function") return;
+      const notifs = window.TradeNestStore.getNotifications(user.id, user.role);
+      const unreadCount = notifs.filter(n => !n.read).length;
+
+      if (badge) {
+        badge.textContent = unreadCount;
+        badge.classList.toggle("is-hidden", unreadCount === 0);
+      }
+
+      if (notifs.length === 0) {
+        list.innerHTML = `
+          <li style="padding: 24px; text-align: center; color: var(--color-text-secondary); font-size: 0.85rem;">
+            No notifications yet.
+          </li>
+        `;
+        return;
+      }
+
+      list.innerHTML = notifs.map(n => {
+        const timeAgo = formatTimeAgo(n.timestamp);
+        const resolvedLink = n.link ? resolvePath(n.link) : "javascript:void(0)";
+        return `
+          <li>
+            <a class="tn-notif-item${n.read ? "" : " is-unread"}" href="${resolvedLink}" data-notif-id="${n.id}">
+              <div class="tn-notif-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="tn-notif-item-body">
+                <div class="tn-notif-item-title">${escapeHtml(n.title)}</div>
+                <div class="tn-notif-item-msg">${escapeHtml(n.message)}</div>
+                <div class="tn-notif-item-time">${timeAgo}</div>
+              </div>
+            </a>
+          </li>
+        `;
+      }).join("");
+
+      list.querySelectorAll(".tn-notif-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const id = item.getAttribute("data-notif-id");
+          if (id && window.TradeNestStore.markNotificationAsRead) {
+            window.TradeNestStore.markNotificationAsRead(id);
+          }
+        });
+      });
+    }
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", String(isOpen));
+      if (isOpen) {
+        renderNotificationItems();
+      }
+    });
+
+    if (markAllBtn) {
+      markAllBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (window.TradeNestStore && window.TradeNestStore.markAllNotificationsAsRead) {
+          window.TradeNestStore.markAllNotificationsAsRead(user.id, user.role);
+          renderNotificationItems();
+        }
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // Listen for notification events
+    window.addEventListener("tradenest:notification-added", renderNotificationItems);
+    window.addEventListener("tradenest:notification-updated", renderNotificationItems);
+  }
+
+  function formatTimeAgo(isoString) {
+    if (!isoString) return "just now";
+    const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+  }
+
+  // Global toast notification helper
+  window.showTradeNestToast = function(message, type = "info", duration = 3500) {
+    let container = document.querySelector(".tn-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "tn-toast-container";
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = `tn-toast tn-toast-${type}`;
+    toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add("is-leaving");
+      setTimeout(() => toast.remove(), 250);
+    }, duration);
+  };
 
   // Global logout handler
   window.logoutTradeNestUser = function () {

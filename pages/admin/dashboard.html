@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TradeNest | Central Administrative & Governance Platform</title>
+    <title>TradeNest | Central Administrative &amp; Governance Platform</title>
     <meta
       name="description"
-      content="TradeNest B2B Administration & Governance Console for managing buyers, suppliers, business verifications, product listings, platform risk, order escrows, complaints, and trust score metrics."
+      content="TradeNest B2B Administration &amp; Governance Console for managing buyers, suppliers, business verifications, product listings, platform risk, order escrows, complaints, and trust score metrics."
     />
 
     <!-- Google Fonts -->
@@ -21,14 +21,17 @@
     <link rel="stylesheet" href="../../css/shared.css" />
     <link rel="stylesheet" href="../../css/admin/dashboard.css" />
   </head>
-  <body>
+  <body class="admin-app">
+    <!-- Mobile sidebar drawer overlay -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <div class="admin-layout">
       <!-- =====================================================================
            ADMIN SIDEBAR NAVIGATION
            ===================================================================== -->
       <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
-          <a href="../../index.html" class="sidebar-brand">
+          <a href="#overview" class="sidebar-brand">
             <img
               src="../../images/TradeNest.webp"
               alt="TradeNest"
@@ -45,8 +48,8 @@
             <ul class="nav-list">
               <li class="nav-item">
                 <a href="#overview" data-view="overview" class="active">
-                  <span class="nav-icon">📊</span>
-                  <span>Overview</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                  <span>Dashboard</span>
                 </a>
               </li>
             </ul>
@@ -54,25 +57,25 @@
 
           <!-- GROUP 2: USER & VERIFICATION -->
           <div class="nav-group">
-            <div class="nav-group-title">Identity & Governance</div>
+            <div class="nav-group-title">Identity &amp; Governance</div>
             <ul class="nav-list">
               <li class="nav-item">
                 <a href="#users" data-view="users">
-                  <span class="nav-icon">👥</span>
-                  <span>User Directory</span>
+                  <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                  <span>User Management</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#verification" data-view="verification">
-                  <span class="nav-icon">🛡️</span>
-                  <span>Verifications</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                  <span>Supplier Verification</span>
                   <span class="nav-badge warning" id="navVerifBadge">3</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#trust" data-view="trust">
-                  <span class="nav-icon">⭐</span>
-                  <span>Trust Scores</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                  <span>Trust &amp; Reviews</span>
                 </a>
               </li>
             </ul>
@@ -84,41 +87,48 @@
             <ul class="nav-list">
               <li class="nav-item">
                 <a href="#products" data-view="products">
-                  <span class="nav-icon">📦</span>
-                  <span>Product Catalog</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+                  <span>Product Moderation</span>
+                  <span class="nav-badge" id="navProductBadge">0</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#orders" data-view="orders">
-                  <span class="nav-icon">🛒</span>
-                  <span>Orders & Escrow</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
+                  <span>Order Management</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#risk" data-view="risk">
-                  <span class="nav-icon">⚠️</span>
-                  <span>Risk & Activity</span>
+                  <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                  <span>Risk Monitoring</span>
                   <span class="nav-badge danger" id="navRiskBadge">2</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#complaints" data-view="complaints">
-                  <span class="nav-icon">⚖️</span>
-                  <span>Disputes & Reports</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                  <span>Complaint Management</span>
                   <span class="nav-badge warning" id="navComplaintsBadge">1</span>
                 </a>
               </li>
             </ul>
           </div>
 
-          <!-- GROUP 4: INTELLIGENCE -->
+          <!-- GROUP 4: INTELLIGENCE & SYSTEM -->
           <div class="nav-group">
-            <div class="nav-group-title">Intelligence</div>
+            <div class="nav-group-title">Intelligence &amp; System</div>
             <ul class="nav-list">
               <li class="nav-item">
                 <a href="#reports" data-view="reports">
-                  <span class="nav-icon">📈</span>
-                  <span>Reports & Analytics</span>
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+                  <span>Reports &amp; Analytics</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#settings" data-view="settings">
+                  <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                  <span>Settings</span>
                 </a>
               </li>
             </ul>
@@ -126,11 +136,11 @@
         </nav>
 
         <div class="sidebar-footer">
-          <div class="admin-profile-card" id="sidebarAdminCard" style="cursor: pointer;" title="View Administrator Session Profile">
-            <div class="admin-avatar" id="sidebarAdminAvatar">VS</div>
+          <div class="admin-profile-card">
+            <div class="admin-avatar">VS</div>
             <div class="admin-profile-info">
-              <div class="admin-profile-name" id="sidebarAdminName">Vikram Sengupta</div>
-              <div class="admin-profile-role" id="sidebarAdminRole">Governance Head</div>
+              <div class="admin-profile-name">Vikram Sengupta</div>
+              <div class="admin-profile-role">Governance Head</div>
             </div>
           </div>
         </div>
@@ -144,71 +154,108 @@
         <header class="admin-topbar">
           <div class="topbar-left">
             <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation Menu">
-              ☰
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" x1="4" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
             <div class="view-breadcrumb">
               <a href="#overview" class="breadcrumb-root">Admin Console</a>
-              <span>/</span>
+              <span class="breadcrumb-sep">/</span>
               <span class="breadcrumb-current" id="breadcrumbCurrent">Dashboard Overview</span>
             </div>
           </div>
 
+          <!-- Global Admin Search -->
+          <div class="admin-search-wrapper">
+            <div class="admin-search-box">
+              <span class="admin-search-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </span>
+              <input
+                type="text"
+                id="adminGlobalSearch"
+                placeholder="Search users, verifications, orders, products..."
+                autocomplete="off"
+                aria-label="Global admin search"
+              />
+              <button type="button" class="admin-search-clear" id="adminGlobalSearchClear" style="display: none;" aria-label="Clear search">&times;</button>
+            </div>
+            <div class="admin-search-dropdown" id="adminSearchResults" style="display: none;"></div>
+          </div>
+
+          <!-- Topbar Actions & Profile -->
           <div class="topbar-right">
             <div class="system-status-indicator">
               <span class="pulse-dot"></span>
-              <span>Platform Node Live (₹ Core)</span>
+              <span class="status-text">Node Live (₹ Core)</span>
             </div>
 
-            <!-- Active Admin Identity Profile Chip -->
-            <div class="admin-user-chip" id="topbarAdminChip" style="display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 4px 10px 4px 6px; border-radius: 999px; border: 1px solid #cbd5e1; cursor: pointer; transition: all 0.2s ease;" title="Active Administrator Session Profile">
-              <div class="admin-avatar" id="topbarAdminAvatar" style="width: 28px; height: 28px; font-size: 0.75rem; background: linear-gradient(135deg, #d87543, #f59e0b);">VS</div>
-              <div style="line-height: 1.15; text-align: left;">
-                <div id="topbarAdminName" style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">Administrator</div>
-                <div id="topbarAdminEmail" style="font-size: 0.68rem; color: #64748b;">admin@tradenest.com</div>
+            <!-- Notifications Center -->
+            <div class="admin-notif-container">
+              <button
+                class="btn-icon"
+                id="adminNotifBtn"
+                title="Governance Notifications"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span class="icon-badge" id="adminNotifBadge">5</span>
+              </button>
+              <div class="admin-notif-popover" id="adminNotifPopover" style="display: none;">
+                <div class="notif-popover-header">
+                  <span class="notif-popover-title">Governance Alerts</span>
+                  <button type="button" class="btn-text-sm" id="markAllAlertsReadBtn">Mark read</button>
+                </div>
+                <div class="notif-popover-list" id="adminNotifList">
+                  <!-- Dynamically rendered -->
+                </div>
               </div>
-              <span class="status-pill status-approved" style="font-size: 0.65rem; padding: 2px 7px; margin-left: 2px;">Active</span>
             </div>
 
-            <div class="topbar-actions">
-              <button
-                class="btn-icon"
-                title="Pending Verifications"
-                onclick="window.location.hash='verification'"
-              >
-                <span>🛡️</span>
-                <span class="icon-badge" id="topPendingVerifBadge">3</span>
+            <!-- Admin Profile Menu -->
+            <div class="admin-profile-menu-wrapper">
+              <button class="admin-profile-btn" id="adminProfileBtn" aria-haspopup="true" aria-expanded="false">
+                <div class="admin-avatar-small" id="topbarAvatar">VS</div>
+                <div class="admin-meta-compact">
+                  <span class="admin-name-compact" id="topbarAdminName">Vikram Sengupta</span>
+                  <span class="admin-role-compact">Governance Head</span>
+                </div>
+                <svg class="chevron-down" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
 
-              <button
-                class="btn-icon"
-                title="Active Risk Alerts"
-                onclick="window.location.hash='risk'"
-              >
-                <span>🚨</span>
-                <span class="icon-badge" id="topRiskBadge">2</span>
-              </button>
-
-              <a href="../../index.html" class="role-switch-link" title="Return to Marketplace Home">
-                Marketplace ↗
-              </a>
-              <a href="../buyer/dashboard.html" class="role-switch-link" title="Switch to Buyer View">
-                Buyer View ↗
-              </a>
-              <a href="../supplier/dashboard.html" class="role-switch-link" title="Switch to Supplier View">
-                Supplier View ↗
-              </a>
-
-              <button class="btn btn-secondary btn-sm" id="resetAdminDemoBtn" title="Reset Demo Data">
-                Reset Demo
-              </button>
-              <button class="btn btn-secondary btn-sm" id="adminLogoutBtn" type="button">
-                Logout
-              </button>
+              <div class="admin-profile-dropdown" id="adminProfileDropdown" style="display: none;">
+                <div class="profile-dropdown-header">
+                  <div class="profile-dropdown-name" id="dropdownAdminName">Vikram Sengupta</div>
+                  <div class="profile-dropdown-email" id="dropdownAdminEmail">admin@tradenest.com</div>
+                  <span class="badge-role-admin">Platform Governance</span>
+                </div>
+                <div class="profile-dropdown-divider"></div>
+                <a href="#overview" class="profile-dropdown-item" data-action="nav">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                  <span>Dashboard Overview</span>
+                </a>
+                <a href="#settings" class="profile-dropdown-item" data-action="nav">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <span>Governance Settings</span>
+                </a>
+                <a href="../../index.html" class="profile-dropdown-item" target="_blank" rel="noopener">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  <span>View Public Marketplace</span>
+                </a>
+                <div class="profile-dropdown-divider"></div>
+                <button type="button" class="profile-dropdown-item btn-action-reset" id="resetAdminDemoBtn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span>Reset Demo Data</span>
+                </button>
+                <button type="button" class="profile-dropdown-item btn-action-logout" id="adminLogoutBtn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </header>
 
-        <!-- Content Views -->
+        <!-- Content Views Container -->
         <div class="admin-content">
           <!-- =================================================================
                VIEW 1: OVERVIEW (ADMIN DASHBOARD OVERVIEW)
@@ -231,7 +278,31 @@
               </div>
             </div>
 
-            <!-- KPI Metric Cards Grid -->
+            <!-- Quick Action Shortcuts Bar -->
+            <div class="quick-actions-bar">
+              <span class="quick-actions-label">Quick Actions:</span>
+              <button class="quick-action-pill" onclick="window.location.hash='verification'">
+                <span>Supplier Queue</span>
+                <span class="quick-pill-badge" id="qaVerifBadge">3</span>
+              </button>
+              <button class="quick-action-pill" onclick="window.location.hash='products'">
+                <span>Moderate Products</span>
+                <span class="quick-pill-badge" id="qaProductBadge">0</span>
+              </button>
+              <button class="quick-action-pill" onclick="window.location.hash='risk'">
+                <span>Review Risk Alerts</span>
+                <span class="quick-pill-badge alert" id="qaRiskBadge">2</span>
+              </button>
+              <button class="quick-action-pill" onclick="window.location.hash='complaints'">
+                <span>Dispute Tickets</span>
+                <span class="quick-pill-badge" id="qaComplaintBadge">1</span>
+              </button>
+              <button class="quick-action-pill" onclick="window.location.hash='settings'">
+                <span>Configure Settings</span>
+              </button>
+            </div>
+
+            <!-- 8 KPI Metric Cards Grid -->
             <div class="kpi-grid" id="overviewKpiGrid">
               <!-- Dynamically hydrated by dashboard.js -->
             </div>
@@ -242,7 +313,7 @@
                 <div class="chart-header">
                   <div>
                     <h3 class="chart-title">Gross Marketplace Value (GMV Trend)</h3>
-                    <p style="font-size: 0.8rem; color: #64748b;">
+                    <p style="font-size: 0.8rem; color: #555555;">
                       Monthly transaction settlement trajectory in ₹
                     </p>
                   </div>
@@ -257,7 +328,7 @@
                 <div class="chart-header">
                   <div>
                     <h3 class="chart-title">Trading Sectors</h3>
-                    <p style="font-size: 0.8rem; color: #64748b;">Sourcing category breakdown</p>
+                    <p style="font-size: 0.8rem; color: #555555;">Sourcing category breakdown</p>
                   </div>
                 </div>
                 <div class="chart-container" id="overviewCategoryDonut">
@@ -266,8 +337,83 @@
               </div>
             </div>
 
+            <!-- Actionable Queues & Activity Grid -->
+            <div class="action-queues-grid">
+              <!-- Queue 1: Pending Supplier Verifications -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Supplier Verification Queue</h3>
+                    <p>Enterprises awaiting KYC, GSTIN and corporate clearance</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" onclick="window.location.hash='verification'">
+                    View All →
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div id="overviewVerifQueue">
+                    <!-- Hydrated by dashboard.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Queue 2: Flagged / Pending Products -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Product Moderation Queue</h3>
+                    <p>Catalog listings requiring compliance verification</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" onclick="window.location.hash='products'">
+                    Moderate All →
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div id="overviewProductQueue">
+                    <!-- Hydrated by dashboard.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Queue 3: Recent Commercial Orders & Escrow -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Recent Commercial Orders</h3>
+                    <p>Active procurement contracts and escrow allocations</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" onclick="window.location.hash='orders'">
+                    All Orders →
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div id="overviewOrderQueue">
+                    <!-- Hydrated by dashboard.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Queue 4: Open Disputes & Complaints -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Active Dispute Tickets</h3>
+                    <p>Open buyer-supplier specification and delivery inquiries</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" onclick="window.location.hash='complaints'">
+                    Mediate →
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div id="overviewComplaintQueue">
+                    <!-- Hydrated by dashboard.js -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Recent Activity Stream -->
-            <div class="admin-card">
+            <div class="admin-card" style="margin-top: 24px;">
               <div class="card-header">
                 <div class="card-title-group">
                   <h2>Recent Administrative Activity</h2>
@@ -286,7 +432,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 2: MODULE 30: BUYER & SUPPLIER MANAGEMENT
+               VIEW 2: USER MANAGEMENT
                ================================================================= -->
           <section class="view-section" id="view-users">
             <div class="section-header">
@@ -297,8 +443,7 @@
                 </p>
               </div>
               <div class="section-actions">
-                <button class="btn btn-primary btn-sm" id="btnAdminAddUser">+ Add Enterprise Account</button>
-                <span id="usersTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
+                <span id="usersTotalCount" class="counter-badge">
                   Loading...
                 </span>
               </div>
@@ -308,7 +453,7 @@
               <div class="card-body">
                 <div class="filter-toolbar">
                   <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                     <input
                       type="text"
                       class="search-input"
@@ -355,7 +500,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 3: MODULE 31: BUSINESS VERIFICATION
+               VIEW 3: SUPPLIER VERIFICATION
                ================================================================= -->
           <section class="view-section" id="view-verification">
             <div class="section-header">
@@ -365,13 +510,10 @@
                   Review enterprise documentation, GST credentials, and corporate identity proofs.
                 </p>
               </div>
-              <div class="section-actions">
-                <button class="btn btn-primary btn-sm" id="btnAdminAddVerif">+ Queue Verification Proof</button>
-              </div>
             </div>
 
             <div class="demo-disclaimer-banner">
-              <span class="disclaimer-icon">🛡️</span>
+              <span class="disclaimer-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
               <div class="disclaimer-text">
                 <strong>Demonstration Workflow:</strong> All verification actions occur locally in the client demonstration. No real legal verification or government registry lookup is executed.
               </div>
@@ -392,7 +534,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 4: MODULE 32: PRODUCT MONITORING
+               VIEW 4: PRODUCT MODERATION
                ================================================================= -->
           <section class="view-section" id="view-products">
             <div class="section-header">
@@ -403,7 +545,7 @@
                 </p>
               </div>
               <div class="section-actions">
-                <span id="productsTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
+                <span id="productsTotalCount" class="counter-badge">
                   Loading...
                 </span>
               </div>
@@ -413,7 +555,7 @@
               <div class="card-body">
                 <div class="filter-toolbar">
                   <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                     <input
                       type="text"
                       class="search-input"
@@ -456,7 +598,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 5: MODULE 33: RISK & ACTIVITY MONITORING
+               VIEW 5: RISK MONITORING
                ================================================================= -->
           <section class="view-section" id="view-risk">
             <div class="section-header">
@@ -469,7 +611,7 @@
             </div>
 
             <div class="demo-disclaimer-banner">
-              <span class="disclaimer-icon">⚠️</span>
+              <span class="disclaimer-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
               <div class="disclaimer-text">
                 <strong>Limitation:</strong> Actual fraud and risk detection algorithms require backend machine learning services and heuristic microservices. This interface demonstrates administrative risk triage and manual review flows using frontend demonstration data.
               </div>
@@ -510,7 +652,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 6: MODULE 34: ORDER & TRANSACTION MONITORING
+               VIEW 6: ORDER MANAGEMENT
                ================================================================= -->
           <section class="view-section" id="view-orders">
             <div class="section-header">
@@ -519,9 +661,6 @@
                 <p class="section-subtitle">
                   Supervise procurement contracts, escrow allocations, and fulfillment dispatch.
                 </p>
-              </div>
-              <div class="section-actions">
-                <button class="btn btn-primary btn-sm" id="btnAdminSimulateOrder">+ Simulate Procurement Order</button>
               </div>
             </div>
 
@@ -534,7 +673,7 @@
               <div class="card-body">
                 <div class="filter-toolbar">
                   <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                     <input
                       type="text"
                       class="search-input"
@@ -577,7 +716,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 7: MODULE 35: COMPLAINTS & REPORTS
+               VIEW 7: COMPLAINT MANAGEMENT
                ================================================================= -->
           <section class="view-section" id="view-complaints">
             <div class="section-header">
@@ -587,60 +726,18 @@
                   Formal buyer and supplier complaints, spec disputes, and escrow mediation tickets.
                 </p>
               </div>
-              <div class="section-actions">
-                <button class="btn btn-primary btn-sm" id="btnAdminAddDispute">+ File Dispute Ticket</button>
-                <span id="complaintsTotalCount" style="font-size: 0.88rem; font-weight: 700; color: #64748b;">
-                  Loading...
-                </span>
-              </div>
             </div>
 
-            <!-- Dispute KPI Summary Strip -->
-            <div class="kpi-grid" id="disputeKpiGrid" style="margin-bottom: 24px;">
-              <!-- Rendered by dashboard.js: Active Inquiries, High Severity, Disputed Escrow, Resolution Rate -->
+            <div style="margin-bottom: 20px;">
+              <div class="tab-pills" id="complaintTabPills">
+                <button class="tab-pill active" data-tab="all">All Tickets</button>
+                <button class="tab-pill" data-tab="open">Active Inquiries</button>
+                <button class="tab-pill" data-tab="resolved">Resolved Cases</button>
+              </div>
             </div>
 
             <div class="admin-card">
               <div class="card-body">
-                <div class="filter-toolbar">
-                  <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input
-                      type="text"
-                      class="search-input"
-                      id="complaintSearchInput"
-                      placeholder="Search tickets by ID, complainant, counterparty, or issue..."
-                    />
-                  </div>
-
-                  <div class="filter-group">
-                    <select class="select-filter" id="complaintCategorySelect" aria-label="Filter by category">
-                      <option value="all">All Dispute Categories</option>
-                      <option value="specification">Warranty &amp; Specification</option>
-                      <option value="damage">Transit Damage</option>
-                      <option value="delay">Late Dispatch / SLA</option>
-                      <option value="sample">Sample Evaluation</option>
-                      <option value="escrow">Escrow &amp; Pricing</option>
-                    </select>
-
-                    <select class="select-filter" id="complaintSeveritySelect" aria-label="Filter by severity">
-                      <option value="all">All Severities</option>
-                      <option value="high">High Severity</option>
-                      <option value="medium">Medium Severity</option>
-                      <option value="low">Low Severity</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style="margin-bottom: 18px;">
-                  <div class="tab-pills" id="complaintTabPills">
-                    <button class="tab-pill active" data-tab="all">All Tickets</button>
-                    <button class="tab-pill" data-tab="open">Active Inquiries</button>
-                    <button class="tab-pill" data-tab="resolved">Resolved Cases</button>
-                    <button class="tab-pill" data-tab="high">High Severity Flags</button>
-                  </div>
-                </div>
-
                 <div class="table-responsive">
                   <table class="admin-table">
                     <thead>
@@ -648,8 +745,7 @@
                         <th>Ticket ID</th>
                         <th>Complainant</th>
                         <th>Reported Entity</th>
-                        <th>Dispute Category</th>
-                        <th>Disputed Value</th>
+                        <th>Category</th>
                         <th>Severity</th>
                         <th>Case Status</th>
                         <th>Action</th>
@@ -665,7 +761,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 8: MODULE 36: TRUST SCORE MONITORING
+               VIEW 8: TRUST AND REVIEWS
                ================================================================= -->
           <section class="view-section" id="view-trust">
             <div class="section-header">
@@ -709,7 +805,7 @@
           </section>
 
           <!-- =================================================================
-               VIEW 9: MODULE 37: REPORTS & ANALYTICS
+               VIEW 9: REPORTS & ANALYTICS
                ================================================================= -->
           <section class="view-section" id="view-reports">
             <div class="section-header">
@@ -720,15 +816,11 @@
                 </p>
               </div>
               <div class="section-actions">
-                <select class="select-filter" id="reportDateRangeSelect" style="font-size: 0.82rem; padding: 6px 10px;">
-                  <option value="30days">Last 30 Days (MTD)</option>
-                  <option value="quarter">Current Quarter (Q3 2026)</option>
-                  <option value="90days">Last 90 Days</option>
-                  <option value="ytd">Year-to-Date (FY 26-27)</option>
-                </select>
-                <button class="btn btn-secondary btn-sm" id="exportJsonBtn">Export JSON Audit</button>
-                <button class="btn btn-secondary btn-sm" id="exportCsvBtn">Export CSV Ledger</button>
-                <button class="btn btn-primary btn-sm" id="printReportBtn">Print Report 🖨️</button>
+                <button class="btn btn-secondary" id="exportJsonBtn">Export JSON Audit</button>
+                <button class="btn btn-secondary" id="exportCsvBtn">Export CSV Ledger</button>
+                <button class="btn btn-primary" id="printReportBtn">
+                  Print Report <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                </button>
               </div>
             </div>
 
@@ -736,54 +828,173 @@
               <!-- Rendered by dashboard.js -->
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 24px;">
-              <div class="admin-card" style="margin-bottom: 0;">
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Category Trading Volume (₹ Lakhs)</h3>
+                  <p>Aggregate procurement value distributed by product category</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div id="reportsCategoryBarChart">
+                  <!-- Vector bar chart rendered by dashboard.js -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================================
+               VIEW 10: GOVERNANCE SETTINGS
+               ================================================================= -->
+          <section class="view-section" id="view-settings">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title">Governance &amp; Marketplace Settings</h1>
+                <p class="section-subtitle">
+                  System parameters, escrow rules, verification policies, and security preferences.
+                </p>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-primary" id="saveSettingsBtn">Save Preferences</button>
+              </div>
+            </div>
+
+            <div class="settings-grid">
+              <!-- Card 1: Escrow & Financial Parameters -->
+              <div class="admin-card">
                 <div class="card-header">
                   <div class="card-title-group">
-                    <h3>Category Trading Volume (₹ Lakhs)</h3>
-                    <p>Aggregate procurement value distributed by product category</p>
+                    <h3>Escrow &amp; Financial Governance</h3>
+                    <p>Fulfillment settlement and risk retention rules</p>
                   </div>
                 </div>
                 <div class="card-body">
-                  <div id="reportsCategoryBarChart">
-                    <!-- Vector bar chart rendered by dashboard.js -->
+                  <div class="form-row">
+                    <label class="form-label" for="settingEscrowPeriod">Escrow Release Buffer (Days)</label>
+                    <select class="form-select" id="settingEscrowPeriod">
+                      <option value="3">3 Days (Fast Settlement)</option>
+                      <option value="7" selected>7 Days (Standard Protocol)</option>
+                      <option value="14">14 Days (Extended Inspection)</option>
+                      <option value="30">30 Days (Custom Machinery)</option>
+                    </select>
+                    <small class="form-hint">Time window after recorded delivery before funds auto-release to supplier.</small>
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-label" for="settingPlatformFee">Marketplace Governance Levy (%)</label>
+                    <input type="number" class="form-input" id="settingPlatformFee" value="1.5" min="0" max="10" step="0.1" />
+                    <small class="form-hint">Platform mediation and escrow processing deduction per order.</small>
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-label" for="settingMinTrustScore">Auto-Approval Minimum TrustScore</label>
+                    <input type="range" class="form-range" id="settingMinTrustScore" min="50" max="95" value="75" oninput="document.getElementById('trustScoreVal').textContent = this.value;" />
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #555555; margin-top: 4px;">
+                      <span>50 (Permissive)</span>
+                      <strong>Threshold: <span id="trustScoreVal">75</span> / 100</strong>
+                      <span>95 (Strict)</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="admin-card" style="margin-bottom: 0;">
+              <!-- Card 2: Regulatory & Compliance Controls -->
+              <div class="admin-card">
                 <div class="card-header">
                   <div class="card-title-group">
-                    <h3>Dispute Resolution &amp; Arbitration Ledger</h3>
-                    <p>Resolution outcomes across filed marketplace complaints</p>
+                    <h3>Regulatory &amp; Verification Safeguards</h3>
+                    <p>Enterprise onboarding requirements and KYC thresholds</p>
                   </div>
                 </div>
                 <div class="card-body">
-                  <div id="reportsDisputeAnalyticsChart">
-                    <!-- Vector donut / breakdown rendered by dashboard.js -->
+                  <div class="toggle-row">
+                    <div>
+                      <div class="toggle-title">Mandatory GSTIN CBIC Verification</div>
+                      <div class="toggle-desc">Require verified GST registration before supplier products go live</div>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="settingMandatoryGst" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+
+                  <div class="toggle-row">
+                    <div>
+                      <div class="toggle-title">Auto-Hold Flagged Listings</div>
+                      <div class="toggle-desc">Instantly suspend products flagged by more than 2 verified buyers</div>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="settingAutoModerate" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+
+                  <div class="form-row" style="margin-top: 16px;">
+                    <label class="form-label" for="settingRegistrationMode">Supplier Registration Policy</label>
+                    <select class="form-select" id="settingRegistrationMode">
+                      <option value="open">Open Registration (Immediate Catalog Draft)</option>
+                      <option value="approval_required" selected>Admin Approval Required (Restricted Live)</option>
+                      <option value="invite_only">Invite Only (Enterprise Tier)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3: System Administration & Storage -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>System Administration &amp; Demo Session</h3>
+                    <p>Active platform environment and demonstration storage management</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="system-meta-list">
+                    <div class="system-meta-item">
+                      <span class="meta-label">Active Node:</span>
+                      <span class="meta-value">TradeNest Core Governance Engine v1.0</span>
+                    </div>
+                    <div class="system-meta-item">
+                      <span class="meta-label">Storage Backend:</span>
+                      <span class="meta-value">Browser LocalStorage (Encrypted Simulation)</span>
+                    </div>
+                    <div class="system-meta-item">
+                      <span class="meta-label">Current Administrator:</span>
+                      <span class="meta-value">Vikram Sengupta (admin@tradenest.com)</span>
+                    </div>
+                    <div class="system-meta-item">
+                      <span class="meta-label">Access Level:</span>
+                      <span class="meta-value" style="color: #1b7a4b; font-weight: 700;">Full Governance Clearance</span>
+                    </div>
+                  </div>
+
+                  <div class="danger-zone-box">
+                    <div>
+                      <strong style="color: #c53030; font-size: 0.9rem;">Reset Demonstration State</strong>
+                      <p style="font-size: 0.8rem; color: #555555; margin-top: 2px;">
+                        Restores initial seeded suppliers, buyers, verifications, orders, and risk logs.
+                      </p>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="settingsResetDemoBtn">
+                      Reset Demo Data
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
+          </section>
 
-            <!-- Detailed Executive Audit Ledgers -->
-            <div class="admin-card">
-              <div class="card-header">
-                <div class="card-title-group">
-                  <h3>Platform Audit &amp; Settlement Breakdown</h3>
-                  <p>Comprehensive transaction, commission, and arbitration records</p>
-                </div>
-                <div class="tab-pills" id="reportAuditTabPills">
-                  <button class="tab-pill active" data-report-tab="financial">Escrow &amp; Settlements</button>
-                  <button class="tab-pill" data-report-tab="disputes">Dispute Outcomes</button>
-                  <button class="tab-pill" data-report-tab="logistics">Courier &amp; Dispatch SLAs</button>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive" id="reportsAuditTableWrap">
-                  <!-- Dynamically rendered table by dashboard.js -->
-                </div>
-              </div>
+          <!-- =================================================================
+               VIEW 11: NOT FOUND / 404 ROUTE
+               ================================================================= -->
+          <section class="view-section" id="view-notfound">
+            <div class="admin-card not-found-card">
+              <div class="not-found-icon">404</div>
+              <h2>Administrative Section Not Found</h2>
+              <p>The requested administrative route or module does not exist in the governance console.</p>
+              <button class="btn btn-primary" onclick="window.location.hash='overview'">
+                Return to Dashboard Overview →
+              </button>
             </div>
           </section>
         </div>
@@ -797,7 +1008,7 @@
       <div class="modal-container">
         <div class="modal-header">
           <h2 class="modal-title" id="adminModalTitle">Modal Title</h2>
-          <button class="modal-close-btn" id="adminModalCloseBtn" aria-label="Close dialog">✕</button>
+          <button class="modal-close-btn" id="adminModalCloseBtn" aria-label="Close dialog">&times;</button>
         </div>
         <div class="modal-body" id="adminModalBody">
           <!-- Injected dynamically -->
@@ -810,7 +1021,6 @@
 
     <!-- Scripts -->
     <script src="../../js/tradenest-store.js"></script>
-    <script src="../../js/product-service.js"></script>
     <script src="../../js/admin/admin-store.js"></script>
     <script src="../../js/admin/dashboard.js"></script>
   </body>

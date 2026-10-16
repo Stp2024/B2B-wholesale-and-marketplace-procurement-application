@@ -10,44 +10,60 @@
 ========================================================= */
 
 :root {
-  --navy: #1e2a3a;
-  --navy-dark: #15202d;
-  --navy-soft: #2d3a4c;
+  --color-black: #000000;
+  --color-beige: #E1DCC9;
+  --color-white: #FFFFFF;
 
-  --orange: #d97745;
-  --orange-dark: #b95e31;
-  --orange-light: #f3c5ad;
-  --orange-soft: #fff1e9;
+  --color-text: #000000;
+  --color-muted: #555555;
+  --color-border: #E5E1D6;
+  --color-surface: #F7F5EF;
+  --color-beige-hover: #D5CFB9;
 
-  --paper: #f7f5f2;
-  --paper-dark: #eeeae4;
+  --color-ice-white: #F7FBFC;
+  --color-soft-sky: #D6E6F2;
+  --color-powder-blue: #B9D7EA;
+  --color-steel-blue: #769FCD;
+
+  --navy: #000000;
+  --navy-dark: #000000;
+  --navy-soft: #555555;
+
+  --orange: #000000;
+  --orange-dark: #222222;
+  --orange-light: var(--color-beige);
+  --orange-soft: var(--color-surface);
+
+  --paper: #FFFFFF;
+  --paper-dark: #F7F5EF;
   --surface: #ffffff;
-  --surface-soft: #f3f0eb;
+  --surface-soft: #F7F5EF;
 
-  --text: #26313d;
-  --text-soft: #52606d;
-  --text-muted: #707b86;
-  --text-light: #f8fafc;
+  --text: #000000;
+  --text-soft: #555555;
+  --text-muted: #666666;
+  --text-light: #FFFFFF;
 
-  --border: #ddd8d0;
-  --border-dark: #c8c1b8;
+  --border: #E5E1D6;
+  --border-dark: #D5CFB9;
 
-  --success: #2f7d5a;
-  --success-dark: #246345;
-  --success-soft: #e7f3ec;
+  --success: #167D68;
+  --success-dark: #126352;
+  --success-soft: #E8F5E9;
 
-  --warning: #98631e;
-  --warning-soft: #fff2dc;
+  --warning: #B7791F;
+  --warning-soft: #FFF8E1;
 
-  --shadow-sm: 0 4px 16px rgba(30, 42, 58, 0.07);
-  --shadow-md: 0 12px 30px rgba(30, 42, 58, 0.1);
-  --shadow-lg: 0 20px 45px rgba(30, 42, 58, 0.14);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
 
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
 
-  --container: 1180px;
+  --container: 1240px;
 }
 
 /* =========================================================
@@ -659,7 +675,7 @@ ol {
 }
 
 .feature-list li::before {
-  content: "✓";
+  content: "";
   position: absolute;
   left: 0;
   top: 0;

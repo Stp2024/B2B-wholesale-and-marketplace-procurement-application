@@ -776,11 +776,11 @@
         },
 
         activity: [
-            { id: "ACT-01", icon: "📥", text: "New RFQ (RFQ-2026-892) received from PackLine Distributors", time: "1 hour ago", link: "rfqs" },
-            { id: "ACT-02", icon: "🚚", text: "Shipment SHP-7690 is now Out for Delivery to OfficeHub Enterprises", time: "3 hours ago", link: "shipping" },
-            { id: "ACT-03", icon: "💰", text: "Payment of $2,756.00 for Order #ORD-98231 secured in TradeShield Escrow", time: "Yesterday", link: "payments" },
-            { id: "ACT-04", icon: "🧪", text: "Sample Request SMP-402 dispatched via BlueDart Express", time: "2 days ago", link: "samples" },
-            { id: "ACT-05", icon: "⚠️", text: "Low stock alert: A4 Copy Paper Premium has 240 reams remaining", time: "2 days ago", link: "inventory" }
+            { id: "ACT-01", icon: "RFQ", text: "New RFQ (RFQ-2026-892) received from PackLine Distributors", time: "1 hour ago", link: "rfqs" },
+            { id: "ACT-02", icon: "Delivery", text: "Shipment SHP-7690 is now Out for Delivery to OfficeHub Enterprises", time: "3 hours ago", link: "shipping" },
+            { id: "ACT-03", icon: "Payment", text: "Payment of $2,756.00 for Order #ORD-98231 secured in TradeShield Escrow", time: "Yesterday", link: "payments" },
+            { id: "ACT-04", icon: "Sample", text: "Sample Request SMP-402 dispatched via BlueDart Express", time: "2 days ago", link: "samples" },
+            { id: "ACT-05", icon: "Alert", text: "Low stock alert: A4 Copy Paper Premium has 240 reams remaining", time: "2 days ago", link: "inventory" }
         ]
     };
 
@@ -866,7 +866,7 @@
         const activities = readStorage(KEYS.ACTIVITY, SEED_DATA.activity);
         const newAct = {
             id: "ACT-" + Date.now(),
-            icon: icon || "📌",
+            icon: icon || "•",
             text: text,
             time: "Just now",
             link: link || "overview"
@@ -954,7 +954,7 @@
                     specs: productData.specs || {}
                 };
                 window.TradeNestProductService.saveProductSync(normalized, user);
-                logActivity("📦", `Product "${productData.name}" saved and synced to shared catalogue`, "products");
+                logActivity("Product", `Product "${productData.name}" saved and synced to shared catalogue`, "products");
                 notifyChange("products");
                 return true;
             } catch (err) {
@@ -968,7 +968,7 @@
 
         if (existingIdx >= 0) {
             products[existingIdx] = { ...products[existingIdx], ...productData, updatedAt: new Date().toISOString() };
-            logActivity("📦", `Product "${productData.name}" updated`, "products");
+            logActivity("Product", `Product "${productData.name}" updated`, "products");
         } else {
             const highestId = products.reduce((highest, product) => {
                 const match = /^PRD-(\d+)$/.exec(String(product.id || ""));
@@ -982,7 +982,7 @@
                 ...productData
             };
             products.unshift(newProduct);
-            logActivity("➕", `New product "${newProduct.name}" added to catalogue`, "products");
+            logActivity("Add", `New product "${newProduct.name}" added to catalogue`, "products");
         }
 
         writeStorage(KEYS.PRODUCTS, products);
@@ -997,7 +997,7 @@
                     ? window.TradeNestStore.getCurrentUser()
                     : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier" });
                 window.TradeNestProductService.deleteProductSync(id, user);
-                logActivity("🗑️", `Product removed from catalogue`, "products");
+                logActivity("Remove", `Product removed from catalogue`, "products");
                 notifyChange("products");
                 return true;
             } catch (err) {
@@ -1011,7 +1011,7 @@
         if (prod) {
             products = products.filter(p => p.id !== id);
             writeStorage(KEYS.PRODUCTS, products);
-            logActivity("🗑️", `Product "${prod.name}" removed from catalogue`, "products");
+            logActivity("Remove", `Product "${prod.name}" removed from catalogue`, "products");
             notifyChange("products");
             return true;
         }
@@ -1025,7 +1025,7 @@
                     ? window.TradeNestStore.getCurrentUser()
                     : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier" });
                 const newStatus = window.TradeNestProductService.toggleProductStatusSync(id, user);
-                logActivity("🔄", `Product status updated to ${newStatus}`, "products");
+                logActivity("Update", `Product status updated to ${newStatus}`, "products");
                 notifyChange("products");
                 return newStatus;
             } catch (err) {
@@ -1038,7 +1038,7 @@
         if (prod) {
             prod.status = prod.status === "active" ? "unavailable" : "active";
             writeStorage(KEYS.PRODUCTS, products);
-            logActivity("🔄", `Product "${prod.name}" marked as ${prod.status}`, "products");
+            logActivity("Update", `Product "${prod.name}" marked as ${prod.status}`, "products");
             notifyChange("products");
             return prod.status;
         }
@@ -1052,7 +1052,7 @@
                     ? window.TradeNestStore.getCurrentUser()
                     : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || { id: "supplier-001", role: "supplier" });
                 window.TradeNestProductService.updateStockSync(id, newAvailableStock, newMinThreshold, user);
-                logActivity("📑", `Stock updated to ${newAvailableStock}`, "inventory");
+                logActivity("Stock", `Stock updated to ${newAvailableStock}`, "inventory");
                 notifyChange("inventory");
                 return true;
             } catch (err) {
@@ -1069,7 +1069,7 @@
             }
             prod.lastStockUpdated = new Date().toISOString().split("T")[0];
             writeStorage(KEYS.PRODUCTS, products);
-            logActivity("📑", `Stock for "${prod.name}" updated to ${prod.availableStock} ${prod.uom}`, "inventory");
+            logActivity("Stock", `Stock for "${prod.name}" updated to ${prod.availableStock} ${prod.uom}`, "inventory");
             notifyChange("inventory");
             return true;
         }
@@ -1128,7 +1128,7 @@
                 saveMarketplaceState(marketplace);
             }
             logActivity(
-                newStatus === "Accepted" ? "✅" : (newStatus === "Declined" ? "❌" : "📝"),
+                newStatus === "Accepted" ? "Accepted" : (newStatus === "Declined" ? "Declined" : "Revision"),
                 `RFQ ${id} from ${rfq.buyerName} marked as ${newStatus}`,
                 "rfqs"
             );
@@ -1160,7 +1160,7 @@
 
         if (existingIdx >= 0) {
             quotations[existingIdx] = { ...quotations[existingIdx], ...quoteData, updatedAt: new Date().toISOString() };
-            logActivity("📝", `Quotation ${quoteData.id} revised for ${quoteData.buyerName}`, "quotations");
+            logActivity("Quote", `Quotation ${quoteData.id} revised for ${quoteData.buyerName}`, "quotations");
         } else {
             const newId = "QUO-" + (9000 + quotations.length + 1);
             const newQuote = {
@@ -1210,7 +1210,7 @@
                 }
             }
 
-            logActivity("📤", `Quotation ${newId} sent to ${quoteData.buyerName} ($${quoteData.totalAmount || quoteData.subtotal})`, "quotations");
+            logActivity("Sent", `Quotation ${newId} sent to ${quoteData.buyerName} ($${quoteData.totalAmount || quoteData.subtotal})`, "quotations");
         }
 
         const finalQuote = quotations.find((quote) => quote.id === quoteData.id) || quotations[0];
@@ -1309,7 +1309,7 @@
                 saveMarketplaceState(marketplace);
             }
             logActivity(
-                newStatus === "Dispatched" ? "🚚" : "🧪",
+                newStatus === "Dispatched" ? "Delivery" : "Sample",
                 `Sample Request ${id} for ${sample.buyerName} updated to ${newStatus}`,
                 "samples"
             );
@@ -1341,7 +1341,7 @@
         };
         requests.unshift(newReq);
         writeStorage(KEYS.COLLAB_REQUESTS, requests);
-        logActivity("🤝", `Collaboration proposal sent to ${reqData.partnerName}`, "collaboration");
+        logActivity("Collab", `Collaboration proposal sent to ${reqData.partnerName}`, "collaboration");
         notifyChange("collaboration");
         return newReq;
     }
@@ -1352,7 +1352,7 @@
         if (req) {
             req.status = newStatus;
             writeStorage(KEYS.COLLAB_REQUESTS, requests);
-            logActivity("🤝", `Collaboration request ${id} ${newStatus.toLowerCase()}`, "collaboration");
+            logActivity("Collab", `Collaboration request ${id} ${newStatus.toLowerCase()}`, "collaboration");
             notifyChange("collaboration");
             return true;
         }
@@ -1474,7 +1474,15 @@
         const localOrders = readStorage(KEYS.ORDERS, SEED_DATA.orders);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localOrders;
-        const sharedOrders = (marketplace.orders || []).filter((order) => order.supplierId === "supplier-001").map((order) => {
+        const currentSupplierId = (function() {
+            try {
+                const u = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
+                return u.supplierId || u.id || "supplier-001";
+            } catch(e) { return "supplier-001"; }
+        })();
+        const sharedOrders = (marketplace.orders || []).filter((order) => {
+            return !order.supplierId || order.supplierId === currentSupplierId || order.supplierId === "supplier-001";
+        }).map((order) => {
             const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === order.buyerId) || {};
             const shipment = (marketplace.shipments || []).find((item) => item.orderId === order.id) || {};
             return {
@@ -1533,7 +1541,12 @@
                 }
                 saveMarketplaceState(marketplace);
             }
-            logActivity("🛒", `Order #${id} status updated to "${newStatus}"`, "orders");
+            if (window.TradeNestStore && typeof window.TradeNestStore.updateOrderStatus === "function") {
+                try {
+                    window.TradeNestStore.updateOrderStatus(id, ({ Confirmed: "Placed", "In Production": "Processing" })[newStatus] || newStatus);
+                } catch(e) {}
+            }
+            logActivity("Order", `Order #${id} status updated to "${newStatus}"`, "orders");
             notifyChange("orders");
             return true;
         }
@@ -1547,7 +1560,15 @@
         const localPayments = readStorage(KEYS.PAYMENTS, SEED_DATA.payments);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localPayments;
-        const sharedPayments = (marketplace.payments || []).filter((payment) => payment.supplierId === "supplier-001").map((payment) => {
+        const currentSupplierId = (function() {
+            try {
+                const u = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
+                return u.supplierId || u.id || "supplier-001";
+            } catch(e) { return "supplier-001"; }
+        })();
+        const sharedPayments = (marketplace.payments || []).filter((payment) => {
+            return !payment.supplierId || payment.supplierId === currentSupplierId || payment.supplierId === "supplier-001";
+        }).map((payment) => {
             const order = (marketplace.orders || []).find((item) => item.id === payment.orderId) || {};
             const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === order.buyerId) || {};
             const invoice = (marketplace.invoices || []).find((item) => item.orderId === payment.orderId) || {};
@@ -1578,9 +1599,15 @@
         const localShipments = readStorage(KEYS.SHIPMENTS, SEED_DATA.shipments);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localShipments;
+        const currentSupplierId = (function() {
+            try {
+                const u = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
+                return u.supplierId || u.id || "supplier-001";
+            } catch(e) { return "supplier-001"; }
+        })();
         const sharedShipments = (marketplace.shipments || []).filter((shipment) => {
             const order = (marketplace.orders || []).find((item) => item.id === shipment.orderId);
-            return order && order.supplierId === "supplier-001";
+            return !order || !order.supplierId || order.supplierId === currentSupplierId || order.supplierId === "supplier-001";
         }).map((shipment) => {
             const order = (marketplace.orders || []).find((item) => item.id === shipment.orderId) || {};
             const buyer = (marketplace.buyerProfiles || []).find((item) => item.id === order.buyerId) || {};
@@ -1664,7 +1691,7 @@
             }
         }
 
-        logActivity("🚚", `Shipment ${newId} dispatched for Order ${shipmentData.orderRef || ""}`, "shipping");
+        logActivity("Delivery", `Shipment ${newId} dispatched for Order ${shipmentData.orderRef || ""}`, "shipping");
         notifyChange("shipping");
         return newShipment;
     }
@@ -1699,7 +1726,7 @@
                 }
                 saveMarketplaceState(marketplace);
             }
-            logActivity("🚚", `Shipment ${shipmentId} milestone: ${newStatus}`, "shipping");
+            logActivity("Delivery", `Shipment ${shipmentId} milestone: ${newStatus}`, "shipping");
             notifyChange("shipping");
             return true;
         }
@@ -1717,7 +1744,7 @@
         const current = getBusinessProfile();
         const updated = { ...current, ...profileData };
         writeStorage(KEYS.BUSINESS_PROFILE, updated);
-        logActivity("🏢", "Business profile and GSTIN credentials updated", "business-profile");
+        logActivity("Company", "Business profile and GSTIN credentials updated", "business-profile");
         notifyChange("business-profile");
         return updated;
     }
@@ -1734,7 +1761,7 @@
         };
         profile.documents.push(newDoc);
         writeStorage(KEYS.BUSINESS_PROFILE, profile);
-        logActivity("📄", `Uploaded document "${docName}" (Demonstration Verification)`, "business-profile");
+        logActivity("Document", `Uploaded document "${docName}" (Demonstration Verification)`, "business-profile");
         notifyChange("business-profile");
         return newDoc;
     }
@@ -1794,7 +1821,7 @@
         const current = getSettings();
         const updated = { ...current, ...settingsData };
         writeStorage(KEYS.SETTINGS, updated);
-        logActivity("⚙️", "Supplier preferences and notification settings saved", "settings");
+        logActivity("Settings", "Supplier preferences and notification settings saved", "settings");
         notifyChange("settings");
         return updated;
     }

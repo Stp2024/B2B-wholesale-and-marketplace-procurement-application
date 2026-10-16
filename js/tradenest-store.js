@@ -935,9 +935,661 @@
     saveStore(state);
   }
 
+  function validatePurchase(productId, requestedQuantity) {
+    const state = getStore();
+    const product = state.products.find(item => item.id === productId);
+    if (!product) {
+      return { valid: false, error: "Product not found in marketplace catalog." };
+    }
+    
+    const isAvailable = product.availability !== "Out of Stock" && 
+                        product.availability !== "Unavailable" && 
+                        (product.status === undefined || product.status === "Active" || product.status === "active");
+    if (!isAvailable) {
+      return { valid: false, error: `Product "${product.name}" is currently unavailable or out of stock.`, product };
+    }
+
+    const qty = Number(requestedQuantity);
+    const moq = Number(product.moq) || 1;
+    if (isNaN(qty) || qty <= 0) {
+      return { valid: false, error: "Please enter a valid positive order quantity.", product };
+    }
+
+    if (qty < moq) {
+      return { valid: false, error: `Minimum order quantity (MOQ) for ${product.name} is ${moq} ${product.unit || 'units'}.`, product };
+    }
+
+    const currentStock = Number(product.stock !== undefined ? product.stock : (product.availableStock || 0));
+    if (qty > currentStock) {
+      return { valid: false, error: `Requested quantity (${qty}) exceeds available stock (${currentStock} ${product.unit || 'units'}).`, product };
+    }
+
+    return { valid: true, product };
+  }
+
+  function calculateOrderTotals(product, requestedQuantity, paymentMethod) {
+    const qty = Math.max(Number(requestedQuantity) || 1, Number(product.moq) || 1);
+    const regularPrice = Number(product.price) || 0;
+    const bulkPrice = Number(product.bulkPrice) || regularPrice;
+    
+    const unitPrice = (bulkPrice > 0 && bulkPrice < regularPrice && qty >= (Number(product.moq) || 1))
+      ? bulkPrice 
+      : regularPrice;
+    
+    const subtotal = Math.round(qty * unitPrice);
+    const bulkDiscount = Math.round((regularPrice - unitPrice) * qty);
+    const gstRate = 0.18;
+    const gst = Math.round(subtotal * gstRate);
+    const shippingFee = subtotal >= 50000 ? 0 : 750;
+    const totalAmount = subtotal + gst + shippingFee;
+
+    return {
+      quantity: qty,
+      unitPrice,
+      regularPrice,
+      bulkPrice,
+      subtotal,
+      bulkDiscount,
+      gst,
+      taxAmount: gst,
+      gstRate,
+      shippingFee,
+      totalAmount
+    };
+  }
+
+  function createOrder(orderData, currentUser) {
+    const user = currentUser || getCurrentUser();
+    const productId = orderData.productId;
+    const qty = Number(orderData.quantity) || 1;
+    
+    const isQuoteOrder = !!orderData.quotationId;
+    let product = getProduct(productId);
+    
+    if (!isQuoteOrder) {
+      const val = validatePurchase(productId, qty);
+      if (!val.valid) {
+        throw new Error(val.error);
+      }
+      product = val.product;
+    } else if (!product && orderData.productName) {
+      product = {
+        id: productId || "custom",
+        name: orderData.productName,
+        price: orderData.unitPrice,
+        unit: orderData.unit || "unit",
+        supplierId: orderData.supplierId || "supplier-001",
+        supplierName: orderData.supplierName || "TradeNest Supplier"
+      };
+    }
+
+    const totals = orderData.totalAmount 
+      ? {
+          subtotal: orderData.subtotal || (orderData.unitPrice * qty),
+          gst: orderData.gst || Math.round((orderData.subtotal || (orderData.unitPrice * qty)) * 0.18),
+          shippingFee: orderData.shippingFee || 0,
+          totalAmount: orderData.totalAmount
+        }
+      : calculateOrderTotals(product, qty, orderData.paymentMethod);
+
+    const now = new Date();
+    const orderId = orderData.id || `ORD-${Date.now()}`;
+    const paymentId = `PAY-${Date.now()}`;
+    const invoiceId = `INV-TRN-${Date.now().toString().slice(-6)}`;
+    const shipmentId = `SHIP-TRN-${Date.now().toString().slice(-6)}`;
+
+    const payMethod = String(orderData.paymentMethod || "UPI").toLowerCase();
+    const isFailed = payMethod.includes("fail");
+    const isEscrow = payMethod.includes("escrow");
+    const isCredit = payMethod.includes("credit") || payMethod.includes("net 30") || payMethod.includes("net 60");
+    const isBank = payMethod.includes("bank") || payMethod.includes("neft") || payMethod.includes("rtgs");
+    const isBankOrCredit = isBank || isCredit;
+
+    let paymentStatus = "Paid";
+    if (isFailed) {
+      paymentStatus = "Failed";
+    } else if (isCredit || isBank) {
+      paymentStatus = "Pending";
+    } else if (isEscrow) {
+      paymentStatus = "Escrow Funded";
+    }
+
+    let orderPaymentStatus = "Paid";
+    if (isFailed) {
+      orderPaymentStatus = "Payment Failed";
+    } else if (isCredit) {
+      orderPaymentStatus = "Pending Verification";
+    } else if (isBank) {
+      orderPaymentStatus = "Payment Pending";
+    } else if (isEscrow) {
+      orderPaymentStatus = "Escrow Funded";
+    }
+
+    const orderStatus = isFailed ? "Cancelled" : (isBankOrCredit ? "Pending Payment Confirmation" : "Placed");
+    const shipmentStatus = isFailed ? "Cancelled" : "Processing";
+
+    const newOrder = {
+      id: orderId,
+      buyerId: user.id || "buyer-001",
+      buyerName: orderData.buyerName || user.fullName || "North Star Retail",
+      buyerBusiness: user.businessName || user.company || "North Star Retail",
+      productId: product ? product.id : productId,
+      productName: product ? product.name : orderData.productName,
+      supplierId: product ? (product.supplierId || orderData.supplierId || "supplier-001") : (orderData.supplierId || "supplier-001"),
+      supplierName: product ? (product.supplierName || orderData.supplierName || "TradeNest Supplier") : (orderData.supplierName || "TradeNest Supplier"),
+      quantity: qty,
+      unit: product ? (product.unit || "unit") : (orderData.unit || "unit"),
+      unitPrice: orderData.unitPrice || totals.unitPrice || (product ? product.price : 0),
+      subtotal: totals.subtotal,
+      gst: totals.gst,
+      shippingFee: totals.shippingFee,
+      totalAmount: totals.totalAmount,
+      amount: totals.totalAmount,
+      paymentMethod: orderData.paymentMethod || "UPI",
+      paymentStatus: orderPaymentStatus,
+      status: orderStatus,
+      orderStatus: orderStatus,
+      shipmentStatus: shipmentStatus,
+      fulfillmentStatus: shipmentStatus,
+      deliveryAddress: orderData.deliveryAddress || "102 Brigade Gateway, Bengaluru, Karnataka",
+      buyerAddress: orderData.buyerAddress || null,
+      notes: orderData.notes || "",
+      quotationId: orderData.quotationId || null,
+      orderType: isQuoteOrder ? "quotation" : "direct",
+      orderDate: now.toISOString().slice(0, 10),
+      expectedDate: orderData.expectedDate || new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString()
+    };
+
+    const newPayment = {
+      id: paymentId,
+      orderId: orderId,
+      supplierId: newOrder.supplierId,
+      supplierName: newOrder.supplierName,
+      buyerId: newOrder.buyerId,
+      buyerName: newOrder.buyerName,
+      amount: totals.totalAmount,
+      paymentDate: now.toISOString().slice(0, 10),
+      paymentMethod: newOrder.paymentMethod,
+      status: paymentStatus,
+      transactionRef: orderData.transactionRef || `TXN-${Date.now()}`
+    };
+
+    const newInvoice = {
+      id: invoiceId,
+      orderId: orderId,
+      invoiceNumber: invoiceId,
+      supplierId: newOrder.supplierId,
+      supplierName: newOrder.supplierName,
+      buyerName: newOrder.buyerName,
+      lineItems: [
+        { product: newOrder.productName, quantity: qty, unitPrice: newOrder.unitPrice, total: totals.subtotal }
+      ],
+      subtotal: totals.subtotal,
+      gst: totals.gst,
+      totalAmount: totals.totalAmount,
+      createdAt: now.toISOString()
+    };
+
+    const newShipment = {
+      id: shipmentId,
+      orderId: orderId,
+      shipmentReference: shipmentId,
+      courierName: "TradeNest Logistics Express",
+      trackingNumber: `TN${Date.now().toString().slice(-8)}`,
+      status: shipmentStatus,
+      dispatchDate: now.toISOString().slice(0, 10),
+      expectedDate: newOrder.expectedDate,
+      deliveryAddress: newOrder.deliveryAddress,
+      timeline: [
+        { status: "Order Placed", date: now.toISOString() },
+        { status: "Processing", date: now.toISOString() }
+      ]
+    };
+
+    const state = getStore();
+    state.orders = [newOrder, ...(state.orders || []).filter(o => o.id !== orderId)];
+    state.payments = [newPayment, ...(state.payments || []).filter(p => p.id !== paymentId)];
+    state.invoices = [newInvoice, ...(state.invoices || []).filter(i => i.id !== invoiceId)];
+    state.shipments = [newShipment, ...(state.shipments || []).filter(s => s.id !== shipmentId)];
+
+    if (product && !isFailed) {
+      ["products", "inventory"].forEach(col => {
+        if (Array.isArray(state[col])) {
+          const item = state[col].find(p => p.id === product.id);
+          if (item) {
+            const currentStock = Number(item.stock !== undefined ? item.stock : item.availableStock) || 0;
+            const updatedStock = Math.max(0, currentStock - qty);
+            if (item.stock !== undefined) item.stock = updatedStock;
+            if (item.availableStock !== undefined) item.availableStock = updatedStock;
+            if (updatedStock <= 0) {
+              item.availability = "Out of Stock";
+            } else if (item.minThreshold && updatedStock <= item.minThreshold) {
+              item.availability = "Low Stock";
+            }
+          }
+        }
+      });
+
+      if (window.TradeNestProductService && typeof window.TradeNestProductService.updateStockSync === "function") {
+        try {
+          const currentStock = Number(product.stock !== undefined ? product.stock : product.availableStock) || 0;
+          const updatedStock = Math.max(0, currentStock - qty);
+          window.TradeNestProductService.updateStockSync(product.id, updatedStock, product.minThreshold, user);
+        } catch(e) {
+          console.warn("Stock sync error:", e);
+        }
+      }
+    }
+
+    saveStore(state);
+    addActivity("Order", `Order placed: ${newOrder.productName} × ${qty} (${formatCurrency(totals.totalAmount)})`);
+
+    // Auto-create notifications
+    try {
+      const orderTotalAmt = Number(newOrder.totalAmount || totals.totalAmount || 0);
+      addNotification({
+        recipientId: newOrder.buyerId,
+        role: "buyer",
+        type: "order",
+        title: "Order Placed",
+        message: `Order #${newOrder.id} for ₹${orderTotalAmt.toLocaleString("en-IN")} was created successfully.`,
+        link: "pages/buyer/orders.html"
+      });
+      addNotification({
+        recipientId: newOrder.supplierId,
+        role: "supplier",
+        type: "order",
+        title: "New Order Received",
+        message: `New order #${newOrder.id} received from ${newOrder.buyerName || "Buyer"} (₹${orderTotalAmt.toLocaleString("en-IN")}).`,
+        link: "pages/supplier/orders.html"
+      });
+    } catch(e) {
+      console.warn("Error triggering order notifications:", e);
+    }
+
+    try {
+      if (typeof window !== "undefined" && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent("tradenest:order-created", { detail: { order: newOrder, payment: newPayment, shipment: newShipment } }));
+      }
+    } catch(e) {}
+
+    return {
+      order: newOrder,
+      payment: newPayment,
+      invoice: newInvoice,
+      shipment: newShipment
+    };
+  }
+
+  function convertQuoteToOrder(quoteId, currentUser, paymentMethod, deliveryAddress) {
+    const user = currentUser || getCurrentUser();
+    let state = getStore();
+    const quote = (state.quotations || []).find(q => q.id === quoteId);
+    if (!quote) {
+      return { success: false, error: "Quotation not found." };
+    }
+
+    if (quote.status === "Accepted") {
+      const existing = (state.orders || []).find(o => o.id === quote.convertedOrderId || o.quotationId === quote.id);
+      return { success: false, error: "This quotation has already been converted into an order.", order: existing };
+    }
+
+    const orderResult = createOrder({
+      id: `ORD-Q-${Date.now()}`,
+      quotationId: quote.id,
+      productId: quote.productId,
+      productName: quote.productName,
+      supplierId: quote.supplierId,
+      supplierName: quote.supplierName,
+      quantity: quote.quantity,
+      unitPrice: quote.unitPrice,
+      shippingFee: quote.deliveryCharges || 0,
+      totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
+      paymentMethod: paymentMethod || "Online Escrow",
+      deliveryAddress: deliveryAddress || `${user.businessName || user.fullName}, Bengaluru`,
+      expectedDate: quote.validityDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+      orderType: "quotation"
+    }, user);
+
+    state = getStore();
+    const updatedQuote = (state.quotations || []).find(q => q.id === quoteId);
+    if (updatedQuote) {
+      updatedQuote.status = "Accepted";
+      updatedQuote.convertedOrderId = orderResult.order.id;
+    }
+    saveStore(state);
+
+    try {
+      addNotification({
+        recipientId: quote.supplierId,
+        role: "supplier",
+        type: "quotation",
+        title: "Quotation Accepted",
+        message: `Quotation #${quoteId} has been accepted and converted to order #${orderResult.order.id}.`,
+        link: "pages/supplier/orders.html"
+      });
+    } catch(e) {}
+
+    return { success: true, ...orderResult };
+  }
+
+  function updateOrderStatus(orderId, newStatus) {
+    const state = getStore();
+    const order = (state.orders || []).find(o => o.id === orderId);
+    if (!order) return false;
+
+    order.status = newStatus;
+    order.orderStatus = newStatus;
+    order.updatedAt = new Date().toISOString();
+
+    if (newStatus === "Delivered") {
+      order.shipmentStatus = "Delivered";
+      order.fulfillmentStatus = "Delivered";
+      const payment = (state.payments || []).find(p => p.orderId === orderId);
+      if (payment && payment.status !== "Failed") {
+        payment.status = "Released";
+      }
+      const shipment = (state.shipments || []).find(s => s.orderId === orderId);
+      if (shipment) {
+        shipment.status = "Delivered";
+        shipment.timeline.push({ status: "Delivered", date: new Date().toISOString() });
+      }
+    } else if (newStatus === "Shipped") {
+      order.shipmentStatus = "In Transit";
+      order.fulfillmentStatus = "In Transit";
+      const shipment = (state.shipments || []).find(s => s.orderId === orderId);
+      if (shipment) {
+        shipment.status = "In Transit";
+        shipment.timeline.push({ status: "In Transit", date: new Date().toISOString() });
+      }
+    }
+
+    saveStore(state);
+    addActivity("Order", `Order #${orderId} status updated to ${newStatus}`);
+
+    try {
+      addNotification({
+        recipientId: order.buyerId,
+        role: "buyer",
+        type: "shipment",
+        title: `Order ${newStatus}`,
+        message: `Order #${orderId} is now ${newStatus}.`,
+        link: "pages/buyer/tracking.html"
+      });
+      addNotification({
+        recipientId: order.supplierId,
+        role: "supplier",
+        type: "order",
+        title: `Order Status: ${newStatus}`,
+        message: `Order #${orderId} marked as ${newStatus}.`,
+        link: "pages/supplier/orders.html"
+      });
+    } catch(e) {}
+
+    return true;
+  }
+
+  /* =====================================================
+     EXTRA FEATURE 3 — RECENTLY VIEWED PRODUCTS
+     ===================================================== */
+  const RECENTLY_VIEWED_KEY = "tradenest_recently_viewed";
+
+  function recordRecentlyViewed(productId) {
+    if (!productId) return;
+    try {
+      let list = [];
+      const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
+      if (raw) {
+        list = JSON.parse(raw);
+        if (!Array.isArray(list)) list = [];
+      }
+      list = list.filter(id => id !== productId);
+      list.unshift(productId);
+      list = list.slice(0, 8);
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(list));
+      if (typeof window !== "undefined" && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent("tradenest:recently-viewed-updated", { detail: { productId, list } }));
+      }
+    } catch (e) {
+      console.warn("Could not record recently viewed product:", e);
+    }
+  }
+
+  function getRecentlyViewed(limit = 8) {
+    try {
+      const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
+      if (!raw) return [];
+      const list = JSON.parse(raw);
+      if (!Array.isArray(list)) return [];
+      const state = getStore();
+      const products = state.products || [];
+      const results = [];
+      for (const id of list) {
+        const prod = products.find(p => p.id === id && p.status !== "Inactive");
+        if (prod) {
+          results.push(prod);
+          if (results.length >= limit) break;
+        }
+      }
+      return results;
+    } catch (e) {
+      console.warn("Error getting recently viewed products:", e);
+      return [];
+    }
+  }
+
+  /* =====================================================
+     EXTRA FEATURE 6 — NOTIFICATION CENTER
+     ===================================================== */
+  const NOTIFICATIONS_KEY = "tradenest_notifications";
+
+  function getNotifications(recipientId, role) {
+    try {
+      const raw = localStorage.getItem(NOTIFICATIONS_KEY);
+      let all = [];
+      if (raw) {
+        all = JSON.parse(raw);
+        if (!Array.isArray(all)) all = [];
+      } else {
+        // Seed contextual initial notifications
+        all = [
+          {
+            id: "notif-seed-01",
+            recipientId: "buyer-001",
+            role: "buyer",
+            type: "quotation",
+            title: "Quotation Received",
+            message: "Apex Gear Co. submitted quotation #QT-2026-001 for Heavy Duty Industrial Gloves.",
+            link: "pages/buyer/quotations.html",
+            timestamp: new Date(Date.now() - 3600000).toISOString(),
+            read: false
+          },
+          {
+            id: "notif-seed-02",
+            recipientId: "buyer-001",
+            role: "buyer",
+            type: "order",
+            title: "Order In Transit",
+            message: "Shipment for Order #ORD-2026-003 is on schedule for delivery.",
+            link: "pages/buyer/tracking.html",
+            timestamp: new Date(Date.now() - 86400000).toISOString(),
+            read: true
+          },
+          {
+            id: "notif-seed-03",
+            recipientId: "supplier-001",
+            role: "supplier",
+            type: "rfq",
+            title: "New RFQ Received",
+            message: "Buyer Aisha Patel submitted RFQ-2026-001 for 200 units.",
+            link: "pages/supplier/quote-requests.html",
+            timestamp: new Date(Date.now() - 7200000).toISOString(),
+            read: false
+          },
+          {
+            id: "notif-seed-04",
+            recipientId: "admin",
+            role: "admin",
+            type: "system",
+            title: "Supplier Verification Pending",
+            message: "Precision Tooling Works uploaded business license for verification.",
+            link: "pages/admin/verification.html",
+            timestamp: new Date(Date.now() - 14400000).toISOString(),
+            read: false
+          }
+        ];
+        localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(all));
+      }
+
+      return all.filter(n => {
+        if (recipientId && n.recipientId === recipientId) return true;
+        if (role && n.role === role) return true;
+        if (!recipientId && !role) return true;
+        return false;
+      }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    } catch (e) {
+      console.warn("Error getting notifications:", e);
+      return [];
+    }
+  }
+
+  function getUnreadNotificationCount(recipientId, role) {
+    const list = getNotifications(recipientId, role);
+    return list.filter(n => !n.read).length;
+  }
+
+  function addNotification(data) {
+    try {
+      const raw = localStorage.getItem(NOTIFICATIONS_KEY);
+      let all = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(all)) all = [];
+
+      const now = Date.now();
+      // Deduplicate recent notifications within 30 seconds
+      const isDup = all.some(n =>
+        n.recipientId === data.recipientId &&
+        n.type === data.type &&
+        n.title === data.title &&
+        (now - new Date(n.timestamp).getTime()) < 30000
+      );
+      if (isDup) return null;
+
+      const notif = {
+        id: "notif-" + now + "-" + Math.random().toString(36).substr(2, 5),
+        recipientId: data.recipientId || "general",
+        role: data.role || "buyer",
+        type: data.type || "system",
+        title: data.title || "Notification",
+        message: data.message || "",
+        link: data.link || "",
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+
+      all.unshift(notif);
+      if (all.length > 100) all = all.slice(0, 100);
+      localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(all));
+
+      if (typeof window !== "undefined" && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent("tradenest:notification-added", { detail: notif }));
+      }
+      return notif;
+    } catch (e) {
+      console.warn("Error adding notification:", e);
+      return null;
+    }
+  }
+
+  function markNotificationAsRead(id) {
+    try {
+      const raw = localStorage.getItem(NOTIFICATIONS_KEY);
+      if (!raw) return;
+      let all = JSON.parse(raw);
+      if (!Array.isArray(all)) return;
+      const notif = all.find(n => n.id === id);
+      if (notif) {
+        notif.read = true;
+        localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(all));
+        if (typeof window !== "undefined" && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent("tradenest:notification-updated", { detail: notif }));
+        }
+      }
+    } catch (e) {
+      console.warn("Error marking notification read:", e);
+    }
+  }
+
+  function markAllNotificationsAsRead(recipientId, role) {
+    try {
+      const raw = localStorage.getItem(NOTIFICATIONS_KEY);
+      if (!raw) return;
+      let all = JSON.parse(raw);
+      if (!Array.isArray(all)) return;
+      all.forEach(n => {
+        if ((recipientId && n.recipientId === recipientId) || (role && n.role === role) || (!recipientId && !role)) {
+          n.read = true;
+        }
+      });
+      localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(all));
+      if (typeof window !== "undefined" && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent("tradenest:notification-updated", { detail: { allRead: true } }));
+      }
+    } catch (e) {
+      console.warn("Error marking all notifications read:", e);
+    }
+  }
+
+  /* =====================================================
+     EXTRA FEATURE 4 — GLOBAL SEARCH ENGINE
+     ===================================================== */
+  function searchCatalog(query, options = {}) {
+    if (!query || typeof query !== "string") {
+      return { query: "", products: [], categories: [], suppliers: [] };
+    }
+    const cleanQ = query.trim().toLowerCase();
+    if (!cleanQ) return { query: "", products: [], categories: [], suppliers: [] };
+
+    const state = getStore();
+    const products = (state.products || []).filter(p => p.status !== "Inactive");
+    const suppliers = state.supplierProfiles || state.suppliers || [];
+
+    const matchedProducts = products.filter(p => {
+      return (p.name && p.name.toLowerCase().includes(cleanQ)) ||
+             (p.category && p.category.toLowerCase().includes(cleanQ)) ||
+             (p.description && p.description.toLowerCase().includes(cleanQ)) ||
+             (p.supplierName && p.supplierName.toLowerCase().includes(cleanQ)) ||
+             (p.sku && p.sku.toLowerCase().includes(cleanQ));
+    }).slice(0, 8);
+
+    const categoriesSet = new Set();
+    products.forEach(p => {
+      if (p.category && p.category.toLowerCase().includes(cleanQ)) {
+        categoriesSet.add(p.category);
+      }
+    });
+
+    const matchedSuppliers = suppliers.filter(s => {
+      return (s.businessName && s.businessName.toLowerCase().includes(cleanQ)) ||
+             (s.category && s.category.toLowerCase().includes(cleanQ)) ||
+             (s.location && s.location.toLowerCase().includes(cleanQ)) ||
+             (s.description && s.description.toLowerCase().includes(cleanQ));
+    }).slice(0, 6);
+
+    return {
+      query: cleanQ,
+      products: matchedProducts,
+      categories: Array.from(categoriesSet),
+      suppliers: matchedSuppliers
+    };
+  }
+
   window.TradeNestStore = {
     STORAGE_KEY,
     CURRENT_USER_KEY,
+    RECENTLY_VIEWED_KEY,
+    NOTIFICATIONS_KEY,
     demoBuyer,
     ensureDemoState,
     getStore,
@@ -950,6 +1602,19 @@
     formatCurrency,
     updateCollection,
     addActivity,
-    defaultState
+    defaultState,
+    validatePurchase,
+    calculateOrderTotals,
+    createOrder,
+    convertQuoteToOrder,
+    updateOrderStatus,
+    recordRecentlyViewed,
+    getRecentlyViewed,
+    getNotifications,
+    getUnreadNotificationCount,
+    addNotification,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+    searchCatalog
   };
 })();

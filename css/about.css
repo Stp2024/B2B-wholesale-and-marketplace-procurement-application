@@ -8,39 +8,54 @@
    DESIGN TOKENS
 ========================= */
 :root {
-  --primary: #1e2a3a;
-  --primary-dark: #141d29;
-  --primary-light: #34445a;
+  --color-black: #000000;
+  --color-beige: #E1DCC9;
+  --color-white: #FFFFFF;
 
-  --accent: #d97745;
-  --accent-dark: #b85f32;
-  --accent-light: #f2c4ae;
+  --color-text: #000000;
+  --color-muted: #555555;
+  --color-border: #E5E1D6;
+  --color-surface: #F7F5EF;
+  --color-beige-hover: #D5CFB9;
 
-  --background: #f7f5f2;
+  --color-ice-white: #F7FBFC;
+  --color-soft-sky: #D6E6F2;
+  --color-powder-blue: #B9D7EA;
+  --color-steel-blue: #769FCD;
+
+  --primary: #000000;
+  --primary-dark: #000000;
+  --primary-light: #555555;
+
+  --accent: #000000;
+  --accent-dark: #222222;
+  --accent-light: var(--color-beige);
+
+  --background: #FFFFFF;
   --surface: #ffffff;
-  --surface-soft: #f0ede8;
-  --surface-warm: #eae5de;
+  --surface-soft: var(--color-surface);
+  --surface-warm: var(--color-beige);
 
-  --text: #1e2a3a;
-  --text-soft: #465467;
-  --text-muted: #667085;
+  --text: #000000;
+  --text-soft: #555555;
+  --text-muted: #666666;
 
-  --border: #e2ded7;
-  --border-dark: #cfc8be;
+  --border: #E5E1D6;
+  --border-dark: #D5CFB9;
 
-  --success: #52705d;
+  --success: #167D68;
 
-  --shadow-xs: 0 2px 8px rgba(30, 42, 58, 0.05);
-  --shadow-sm: 0 8px 24px rgba(30, 42, 58, 0.07);
-  --shadow-md: 0 18px 42px rgba(30, 42, 58, 0.1);
-  --shadow-lg: 0 28px 65px rgba(30, 42, 58, 0.13);
+  --shadow-xs: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
 
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
 
-  --container: 1200px;
+  --container: 1240px;
 
   --space-1: 0.35rem;
   --space-2: 0.55rem;
@@ -460,7 +475,7 @@ p {
 }
 
 .feature-grid-list li::before {
-  content: "✓";
+  content: "";
   position: absolute;
   left: 0.9rem;
   top: 50%;
@@ -866,7 +881,7 @@ p {
 }
 
 .role-capabilities li::before {
-  content: "✓";
+  content: "";
   position: absolute;
   left: 0;
   top: 0.1rem;

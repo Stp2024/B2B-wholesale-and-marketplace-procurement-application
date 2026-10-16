@@ -119,9 +119,9 @@
           <div class="nav-section">
             <span class="nav-section-title">Main Menu</span>
             <ul class="nav-list">
-              <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a></li>
-              <li><a href="products.html" class="nav-link"><span class="nav-icon">🛍️</span><span class="nav-label">Products</span></a></li>
-              <li><a href="suppliers.html" class="nav-link"><span class="nav-icon">🏢</span><span class="nav-label">Suppliers</span></a></li>
+              <li><a href="dashboard.html" class="nav-link"><span class="nav-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span class="nav-label">Dashboard</span></a></li>
+              <li><a href="products.html" class="nav-link"><span class="nav-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>️</span><span class="nav-label">Products</span></a></li>
+              <li><a href="suppliers.html" class="nav-link"><span class="nav-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="22.01"/><line x1="15" y1="22" x2="15" y2="22.01"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/></svg></span><span class="nav-label">Suppliers</span></a></li>
             </ul>
           </div>
         </nav>
@@ -152,10 +152,30 @@
               <span class="eyebrow" id="detail-supplier">Supplier</span>
               <h1 id="detail-name">Loading product...</h1>
               <p id="detail-description">Loading product description...</p>
-              <div class="detail-price" id="detail-price">₹0</div>
+              <div class="detail-price-wrap" style="margin: 18px 0;">
+                <div class="detail-price" id="detail-price" style="margin: 0;">₹0</div>
+                <div id="bulk-price-hint" style="font-size: 0.85rem; color: #059669; font-weight: 600; margin-top: 4px;"></div>
+              </div>
+
+              <!-- QUANTITY & TOTAL CALCULATOR -->
+              <div class="order-calculator-card" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin: 20px 0;">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 8px;">Order Quantity (<span id="unit-label">units</span>)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button type="button" id="qty-dec-btn" style="width: 38px; height: 38px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; font-size: 1.1rem; font-weight: 700;">-</button>
+                  <input type="number" id="order-qty-input" style="width: 110px; height: 38px; border: 1.5px solid #cbd5e1; border-radius: 8px; text-align: center; font-size: 1rem; font-weight: 700;" value="1" min="1" />
+                  <button type="button" id="qty-inc-btn" style="width: 38px; height: 38px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; font-size: 1.1rem; font-weight: 700;">+</button>
+                  <span id="qty-stock-warning" style="font-size: 0.82rem; color: #dc2626; font-weight: 600; margin-left: 8px; display: none;"></span>
+                </div>
+                <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.9rem; color: #64748b;">Estimated Total (incl. 18% GST):</span>
+                  <strong id="estimated-total" style="font-size: 1.25rem; color: #0f172a;">₹0</strong>
+                </div>
+              </div>
+
               <div class="detail-actions">
                 <button id="save-product-btn" class="btn btn-secondary" type="button">Save Product</button>
-                <button id="buy-now-btn" class="btn btn-primary" type="button" style="background:linear-gradient(135deg,#10b981,#059669);border:none;color:#fff;box-shadow:0 4px 14px rgba(5,150,105,0.3);">🛒 Buy Now</button>
+                <a id="rfq-btn" href="request-quote.html" class="btn btn-secondary" style="border-color:#0f766e;color:#0f766e;">Request a Quote</a>
+                <button id="buy-now-btn" class="btn btn-primary" type="button" style="background:linear-gradient(135deg,#10b981,#059669);border:none;color:#fff;box-shadow:0 4px 14px rgba(5,150,105,0.3);"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Buy Now</button>
               </div>
             </div>
           </div>
@@ -185,6 +205,68 @@
           document.getElementById("detail-stock").textContent = `${product.stock} ${product.unit}`;
           document.getElementById("detail-price").textContent = `₹${product.price}`;
           document.getElementById("detail-supplier").textContent = product.supplierName || "Supplier";
+          document.getElementById("unit-label").textContent = product.unit || "units";
+
+          const moq = Number(product.moq) || 1;
+          const stock = Number(product.stock) || 0;
+          const qtyInput = document.getElementById("order-qty-input");
+          const decBtn = document.getElementById("qty-dec-btn");
+          const incBtn = document.getElementById("qty-inc-btn");
+          const warningEl = document.getElementById("qty-stock-warning");
+          const totalEl = document.getElementById("estimated-total");
+          const bulkHintEl = document.getElementById("bulk-price-hint");
+          const rfqBtn = document.getElementById("rfq-btn");
+
+          if (rfqBtn) {
+            rfqBtn.href = `request-quote.html?productId=${encodeURIComponent(product.id)}`;
+          }
+
+          if (product.bulkPrice && product.bulkPrice < product.price) {
+            bulkHintEl.textContent = `Bulk volume price: ₹${product.bulkPrice}/${product.unit} (for orders ≥ ${moq} ${product.unit})`;
+          }
+
+          qtyInput.value = moq;
+          qtyInput.min = moq;
+          if (stock > 0) qtyInput.max = stock;
+
+          function updateCalculator() {
+            let val = parseInt(qtyInput.value, 10);
+            if (isNaN(val) || val < 1) val = 1;
+
+            if (val < moq) {
+              warningEl.textContent = `MOQ is ${moq} ${product.unit}`;
+              warningEl.style.display = "inline";
+            } else if (stock > 0 && val > stock) {
+              warningEl.textContent = `Exceeds stock (${stock} available)`;
+              warningEl.style.display = "inline";
+            } else {
+              warningEl.style.display = "none";
+            }
+
+            const totals = store.calculateOrderTotals 
+              ? store.calculateOrderTotals(product, val) 
+              : { totalAmount: Math.round(val * (product.price || 0) * 1.18) };
+            totalEl.textContent = store.formatCurrency(totals.totalAmount);
+          }
+
+          decBtn.addEventListener("click", function () {
+            let val = parseInt(qtyInput.value, 10) || moq;
+            if (val > moq) {
+              qtyInput.value = val - 1;
+              updateCalculator();
+            }
+          });
+
+          incBtn.addEventListener("click", function () {
+            let val = parseInt(qtyInput.value, 10) || moq;
+            if (stock <= 0 || val < stock) {
+              qtyInput.value = val + 1;
+              updateCalculator();
+            }
+          });
+
+          qtyInput.addEventListener("input", updateCalculator);
+          updateCalculator();
 
           const saveBtn = document.getElementById("save-product-btn");
           saveBtn.addEventListener("click", function () {
@@ -210,8 +292,18 @@
           const buyNowBtn = document.getElementById("buy-now-btn");
           if (buyNowBtn) {
             buyNowBtn.addEventListener("click", function () {
-              const params = new URLSearchParams({
+              const qty = parseInt(qtyInput.value, 10) || moq;
+              if (qty < moq) {
+                alert(`Minimum order quantity for this item is ${moq} ${product.unit}.`);
+                return;
+              }
+              if (stock > 0 && qty > stock) {
+                alert(`Requested quantity (${qty}) exceeds available stock (${stock}).`);
+                return;
+              }
+              const query = new URLSearchParams({
                 id:       product.id,
+                qty:      qty,
                 name:     product.name,
                 price:    product.price,
                 unit:     product.unit || "unit",
@@ -221,7 +313,7 @@
                 category: product.category || "General",
                 from:     "product-details"
               });
-              window.location.href = "checkout.html?" + params.toString();
+              window.location.href = "checkout.html?" + query.toString();
             });
           }
         }

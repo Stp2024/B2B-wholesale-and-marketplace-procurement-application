@@ -1391,105 +1391,130 @@ img{max-width:100%;display:block}
       // --------------------------------------------------------
       // Place order
       // --------------------------------------------------------
+      var isSubmitting = false;
+
       function placeOrder(){
+        if(isSubmitting) return;
         var btn = el("place-order-btn");
         if(btn){ btn.disabled=true; btn.textContent="Placing order\u2026"; }
+        isSubmitting = true;
 
         var addr   = getSelectedAddress();
         var qty    = getQty();
-        var sub    = qty * product.price;
-        var gst    = Math.round(sub*0.18);
-        var total  = sub + gst;
-        var now    = new Date();
 
         var user = {};
         try{ user = JSON.parse(localStorage.getItem("tradenestCurrentUser")||"{}"); }catch(e){}
 
         var payLabel = getPaymentLabel();
-        var isBank   = activePayTab==="bank";
+        var now    = new Date();
 
-        var order = {
-          id:              "ORD-" + Date.now(),
-          buyerId:         user.id || "buyer-001",
-          buyerName:       addr ? addr.name : (user.fullName||"Buyer"),
-          productId:       product.id,
-          productName:     product.name,
-          supplierId:      product.supplierId || "",
-          supplierName:    product.supplierName,
-          quantity:        qty,
-          unit:            product.unit,
-          unitPrice:       product.price,
-          subtotal:        sub,
-          gst:             gst,
-          totalAmount:     total,
-          amount:          total,
-          paymentMethod:   payLabel,
-          paymentStatus:   isBank ? "Awaiting Verification" : "Paid",
-          deliveryAddress: addr ? [addr.addr, addr.city, addr.state, addr.pin].filter(Boolean).join(", ") : "",
-          buyerAddress:    addr || null,
-          notes:           (el("co-order-notes")||{}).value||"",
-          status:          isBank ? "Pending Payment Confirmation" : "Placed",
-          expectedDate:    new Date(now.getTime() + 7*24*60*60*1000).toISOString(),
-          createdAt:       now.toISOString(),
-          updatedAt:       now.toISOString(),
-          orderType:       "direct"
-        };
-
-        var shipment = {
-          id:                "SHIP-" + Date.now(),
-          orderId:           order.id,
-          shipmentReference: "SHP-" + order.id,
-          courierName:       "TradeNest Logistics",
-          trackingNumber:    "TN" + Date.now().toString().slice(-8),
-          status:            "Processing",
-          deliveryAddress:   order.deliveryAddress,
-          expectedDate:      order.expectedDate,
-          timeline: [
-            { status:"Order Placed",  date: now.toISOString() },
-            { status:"Processing",    date: now.toISOString() }
-          ]
-        };
-
-        try{
-          if(store && store.updateCollection){
-            store.updateCollection("orders",    function(list){ return [order].concat(list); });
-            store.updateCollection("shipments", function(list){ return [shipment].concat(list); });
-            if(store.addActivity) store.addActivity("order","Direct order: "+product.name+" \u00D7 "+qty);
+        try {
+          var result = null;
+          if (store && typeof store.createOrder === "function") {
+            result = store.createOrder({
+              productId:       product.id,
+              productName:     product.name,
+              supplierId:      product.supplierId || "supplier-001",
+              supplierName:    product.supplierName,
+              quantity:        qty,
+              unit:            product.unit,
+              unitPrice:       product.price,
+              paymentMethod:   payLabel,
+              buyerName:       addr ? addr.name : (user.fullName||"Buyer"),
+              deliveryAddress: addr ? [addr.addr, addr.city, addr.state, addr.pin].filter(Boolean).join(", ") : "Default Commercial Address",
+              buyerAddress:    addr || null,
+              notes:           (el("co-order-notes")||{}).value||""
+            }, user);
           } else {
-            var ords = JSON.parse(localStorage.getItem("tradenestOrders")||"[]");
-            ords.unshift(order);
-            localStorage.setItem("tradenestOrders", JSON.stringify(ords));
+            var sub    = qty * product.price;
+            var gst    = Math.round(sub*0.18);
+            var total  = sub + gst;
+            var isBank = activePayTab==="bank";
+            var fallbackOrder = {
+              id:              "ORD-" + Date.now(),
+              buyerId:         user.id || "buyer-001",
+              buyerName:       addr ? addr.name : (user.fullName||"Buyer"),
+              productId:       product.id,
+              productName:     product.name,
+              supplierId:      product.supplierId || "supplier-001",
+              supplierName:    product.supplierName,
+              quantity:        qty,
+              unit:            product.unit,
+              unitPrice:       product.price,
+              subtotal:        sub,
+              gst:             gst,
+              totalAmount:     total,
+              amount:          total,
+              paymentMethod:   payLabel,
+              paymentStatus:   isBank ? "Awaiting Verification" : "Paid",
+              deliveryAddress: addr ? [addr.addr, addr.city, addr.state, addr.pin].filter(Boolean).join(", ") : "",
+              buyerAddress:    addr || null,
+              notes:           (el("co-order-notes")||{}).value||"",
+              status:          isBank ? "Pending Payment Confirmation" : "Placed",
+              shipmentStatus:  "Processing",
+              expectedDate:    new Date(now.getTime() + 7*24*60*60*1000).toISOString(),
+              createdAt:       now.toISOString(),
+              updatedAt:       now.toISOString(),
+              orderType:       "direct"
+            };
+            var shipment = {
+              id:                "SHIP-" + Date.now(),
+              orderId:           fallbackOrder.id,
+              shipmentReference: "SHP-" + fallbackOrder.id,
+              courierName:       "TradeNest Logistics",
+              trackingNumber:    "TN" + Date.now().toString().slice(-8),
+              status:            "Processing",
+              deliveryAddress:   fallbackOrder.deliveryAddress,
+              expectedDate:      fallbackOrder.expectedDate,
+              timeline: [
+                { status:"Order Placed",  date: now.toISOString() },
+                { status:"Processing",    date: now.toISOString() }
+              ]
+            };
+            if(store && store.updateCollection){
+              store.updateCollection("orders", function(list){ return [fallbackOrder].concat(list); });
+              store.updateCollection("shipments", function(list){ return [shipment].concat(list); });
+            }
+            result = { order: fallbackOrder, shipment: shipment };
           }
-        }catch(err){ console.error(err); }
 
-        el("checkout-area").style.display  = "none";
-        el("success-screen").style.display = "block";
-        el("sc-order-id").textContent      = "#" + order.id;
-        el("sc-placed-at").textContent     = "Placed " + now.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) + " \u00B7 " + now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+          var order = result.order;
 
-        var statuses   = ["Order Placed","Processing","Dispatched","In Transit","Out for Delivery","Delivered"];
-        var currentIdx = 1;
-        var timeline   = el("track-timeline");
-        if(timeline){
-          timeline.innerHTML = statuses.map(function(s,i){
-            var cls  = "pending";
-            if(i < currentIdx) cls = "done";
-            else if(i===currentIdx) cls = "current";
-            var icon = cls==="done"?"\u2713": cls==="current"?"\u25CF":"\u25CB";
-            return '<div class="track-step'+(cls==="current"?" current-step":"")+'">'+
-              '<span class="track-dot '+cls+'">'+icon+'</span>'+
-              '<span>'+s+(cls==="current"?" (Current)":"")+
-              '</span></div>';
-          }).join("");
+          el("checkout-area").style.display  = "none";
+          el("success-screen").style.display = "block";
+          el("sc-order-id").textContent      = "#" + order.id;
+          el("sc-placed-at").textContent     = "Placed " + now.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) + " \u00B7 " + now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+
+          var statuses   = ["Order Placed","Processing","Dispatched","In Transit","Out for Delivery","Delivered"];
+          var currentIdx = 1;
+          var timeline   = el("track-timeline");
+          if(timeline){
+            timeline.innerHTML = statuses.map(function(s,i){
+              var cls  = "pending";
+              if(i < currentIdx) cls = "done";
+              else if(i===currentIdx) cls = "current";
+              var icon = cls==="done"?"\u2713": cls==="current"?"\u25CF":"\u25CB";
+              return '<div class="track-step'+(cls==="current"?" current-step":"")+'">'+
+                '<span class="track-dot '+cls+'">'+icon+'</span>'+
+                '<span>'+s+(cls==="current"?" (Current)":"")+
+                '</span></div>';
+            }).join("");
+          }
+
+          window.scrollTo({ top:0, behavior:"smooth" });
+        } catch(err) {
+          console.error("Order placement failed:", err);
+          showToast(err.message || "Failed to place order. Please try again.", "error");
+          if(btn){ btn.disabled=false; btn.textContent="Place Order"; }
+          isSubmitting = false;
         }
-
-        window.scrollTo({ top:0, behavior:"smooth" });
       }
 
       // --------------------------------------------------------
       // initCheckout — re-reads URL params fresh every pageshow
       // --------------------------------------------------------
       function initCheckout(){
+        isSubmitting = false;
         // 1. Read URL params fresh
         var params = new URLSearchParams(window.location.search);
         var state  = store ? store.getStore() : { products: [], supplierProfiles: [] };
@@ -1512,6 +1537,10 @@ img{max-width:100%;display:block}
           };
         }
         MOQ = product.moq || 1;
+        var initialQty = parseInt(params.get("qty"), 10);
+        if (isNaN(initialQty) || initialQty < MOQ) {
+          initialQty = MOQ;
+        }
 
         // 3. Reset UI state
         currentStep    = 1;
@@ -1549,7 +1578,7 @@ img{max-width:100%;display:block}
         }
         if(oldInp){
           var ni = oldInp.cloneNode(true);
-          ni.value = MOQ;
+          ni.value = initialQty;
           ni.min   = MOQ;
           oldInp.parentNode.replaceChild(ni, oldInp);
           ni.addEventListener("input", function(){ var v=parseInt(ni.value,10); if(isNaN(v)||v<MOQ){v=MOQ;ni.value=v;} recalc(); });

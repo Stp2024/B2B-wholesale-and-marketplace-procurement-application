@@ -693,7 +693,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <p class="product-moq">MOQ: ${product.moq} ${product.unit}</p>
               <div class="product-card-actions">
                 <a href="pages/buyer/product-details.html?id=${encodeURIComponent(product.id)}" class="btn btn-card">View Product</a>
-                <a href="${checkoutUrl}" class="btn btn-buy-now">🛒 Buy Now</a>
+                <a href="${checkoutUrl}" class="btn btn-buy-now"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Buy Now</a>
               </div>
             </div>
           </article>`;
@@ -967,7 +967,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             <div class="product-body">
               <h3>${product.name}</h3>
-              <p class="muted">🏢 Supplier: <strong>${product.supplierName}</strong></p>
+              <p class="muted"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="22.01"/><line x1="15" y1="22" x2="15" y2="22.01"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/></svg> Supplier: <strong>${product.supplierName}</strong></p>
               ${productTrustMarkup(product, state)}
               <p>${product.description}</p>
               <div class="info-row">
@@ -988,7 +988,7 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
               <div class="info-row" style="font-size: 0.8rem; color: #64748b;">
                 <span>Delivery</span>
-                <strong>🚚 ${product.deliveryInfo || '3-5 business days'}</strong>
+                <strong><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> ${product.deliveryInfo || '3-5 business days'}</strong>
               </div>
               <div class="button-row" style="margin-top: 10px;">
                 <button class="btn btn-primary small" type="button" data-open-product="${product.id}">Open details</button>
@@ -999,7 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   data-buy-product-price="${product.price}"
                   data-buy-product-unit="${product.unit}"
                   data-buy-product-moq="${product.moq}"
-                  data-buy-product-supplier="${product.supplierName}">🛒 Buy Now</button>
+                  data-buy-product-supplier="${product.supplierName}"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Buy Now</button>
               </div>
             </div>
           </article>
@@ -1362,7 +1362,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const buyer = getBuyer();
     const quotations = state.quotations.filter((item) => item.buyerId === buyer.id);
 
-    list.innerHTML = quotations.length ? quotations.map((quote) => `
+    list.innerHTML = quotations.length ? quotations.map((quote) => {
+      const isAccepted = quote.status === "Accepted";
+      const isRejected = quote.status === "Rejected";
+      return `
       <article class="record-card">
         <div class="record-header">
           <div>
@@ -1375,14 +1378,25 @@ document.addEventListener("DOMContentLoaded", function () {
           <span>Supplier</span><strong>${quote.supplierName}</strong>
           <span>Qty</span><strong>${quote.quantity}</strong>
           <span>Unit Price</span><strong>${formatCurrency(quote.unitPrice)}</strong>
+          <span>Total</span><strong>${formatCurrency((quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0))}</strong>
           <span>Delivery</span><strong>${quote.deliveryTimeline}</strong>
+          <span>Payment Terms</span><strong>${quote.paymentTerms || "Net 30"}</strong>
         </div>
         <div class="button-row">
-          <button class="btn btn-primary small" type="button" data-accept-quote="${quote.id}">Accept</button>
-          <button class="btn btn-secondary small" type="button" data-reject-quote="${quote.id}">Reject</button>
+          ${isAccepted 
+            ? `<span style="color:#059669;font-weight:700;font-size:0.85rem;display:inline-flex;align-items:center;gap:4px;">Order Placed</span>
+               <a href="orders.html" class="btn btn-secondary small">View in Orders</a>
+               <a href="delivery.html" class="btn btn-secondary small">Track Delivery</a>`
+            : isRejected
+            ? `<span style="color:#dc2626;font-weight:700;font-size:0.85rem;">Rejected</span>`
+            : `<button class="btn btn-primary small" type="button" data-accept-quote="${quote.id}">Accept Quote</button>
+               <button class="btn btn-secondary small" type="button" data-reject-quote="${quote.id}">Reject</button>
+               <a href="messages.html?rfqId=${encodeURIComponent(quote.rfqId || '')}&supplierId=${encodeURIComponent(quote.supplierId || '')}" class="btn btn-secondary small">Negotiate</a>`
+          }
         </div>
       </article>
-    `).join("") : '<div class="empty-state large">No quotations received yet.</div>';
+      `;
+    }).join("") : '<div class="empty-state large">No quotations received yet.</div>';
 
     if (document.body.dataset.quotationHandlersBound !== "true") {
       document.body.dataset.quotationHandlersBound = "true";
@@ -1393,64 +1407,39 @@ document.addEventListener("DOMContentLoaded", function () {
           const stateNow = getState();
           const quote = stateNow.quotations.find((item) => item.id === quoteId);
           if (!quote) return;
-          quote.status = "Accepted";
-          saveState(stateNow);
-          store.addActivity("Quotation", `Quotation accepted for ${quote.productName}`);
-          const orderId = `order-${Date.now()}`;
-          stateNow.orders.unshift({
-            id: orderId,
-            buyerId: buyer.id,
-            quotationId: quote.id,
-            supplierId: quote.supplierId,
-            supplierName: quote.supplierName,
-            productId: quote.productId,
-            productName: quote.productName,
-            quantity: quote.quantity,
-            unitPrice: quote.unitPrice,
-            totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
-            orderDate: new Date().toISOString().slice(0, 10),
-            expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
-            status: "Placed",
-            shipmentStatus: "Pending Dispatch"
-          });
-          const paymentId = `payment-${Date.now()}`;
-          stateNow.payments.unshift({
-            id: paymentId,
-            orderId,
-            supplierId: quote.supplierId,
-            supplierName: quote.supplierName,
-            amount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
-            paymentDate: new Date().toISOString().slice(0, 10),
-            paymentMethod: "Bank Transfer",
-            status: "Pending"
-          });
-          stateNow.invoices.unshift({
-            id: `invoice-${Date.now()}`,
-            orderId,
-            supplierId: quote.supplierId,
-            supplierName: quote.supplierName,
-            buyerName: buyer.businessName || buyer.fullName,
-            invoiceNumber: `INV-TRN-${Date.now()}`,
-            lineItems: [{ product: quote.productName, quantity: quote.quantity, unitPrice: quote.unitPrice, total: (quote.unitPrice * quote.quantity) }],
-            totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0)
-          });
-          stateNow.shipments.unshift({
-            id: `shipment-${Date.now()}`,
-            orderId,
-            shipmentReference: `SHIP-TRN-${Date.now()}`,
-            courierName: "BlueRoute Logistics",
-            trackingNumber: `BRL-${Date.now()}`,
-            dispatchDate: new Date().toISOString().slice(0, 10),
-            expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
-            deliveryAddress: `${buyer.businessName || buyer.fullName}, Bengaluru`,
-            status: "Confirmed",
-            timeline: [
-              { status: "Order Confirmed", date: new Date().toISOString().slice(0, 10) },
-              { status: "Processing", date: new Date().toISOString().slice(0, 10) },
-              { status: "Dispatched", date: new Date().toISOString().slice(0, 10) }
-            ]
-          });
-          saveState(stateNow);
+          if (quote.status === "Accepted") {
+            showToast("This quotation has already been accepted.", "info");
+            return;
+          }
+
+          if (store && typeof store.convertQuoteToOrder === "function") {
+            const res = store.convertQuoteToOrder(quoteId, buyer);
+            if (!res.success) {
+              showToast(res.error || "Could not convert quote.", "error");
+              return;
+            }
+          } else {
+            quote.status = "Accepted";
+            const orderId = `order-${Date.now()}`;
+            stateNow.orders.unshift({
+              id: orderId,
+              buyerId: buyer.id,
+              quotationId: quote.id,
+              supplierId: quote.supplierId,
+              supplierName: quote.supplierName,
+              productId: quote.productId,
+              productName: quote.productName,
+              quantity: quote.quantity,
+              unitPrice: quote.unitPrice,
+              totalAmount: (quote.unitPrice * quote.quantity) + (quote.deliveryCharges || 0),
+              orderDate: new Date().toISOString().slice(0, 10),
+              expectedDate: quote.validityDate || new Date().toISOString().slice(0, 10),
+              status: "Placed",
+              shipmentStatus: "Pending Dispatch"
+            });
+            saveState(stateNow);
+          }
+
           renderQuotations();
           renderOrders();
           renderPayments();
@@ -1483,7 +1472,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const buyer = getBuyer();
     const sameRFQ = state.rfqs.filter((item) => item.buyerId === buyer.id).map((item) => item.id);
     const quotes = state.quotations.filter((item) => buyer.id === item.buyerId && sameRFQ.includes(item.rfqId));
-    const selected = quotes.slice(0, 2);
+
+    if (!quotes.length) {
+      container.innerHTML = '<div class="empty-state">No RFQ quotations available for comparison.</div>';
+      table.innerHTML = "";
+      return;
+    }
 
     container.innerHTML = quotes.map((quote) => `
       <label class="compare-option">
@@ -1509,6 +1503,18 @@ document.addEventListener("DOMContentLoaded", function () {
             <tr><td>Delivery</td>${activeQuotes.map((quote) => `<td>${quote.deliveryTimeline}</td>`).join("")}</tr>
             <tr><td>Payment</td>${activeQuotes.map((quote) => `<td>${quote.paymentTerms}</td>`).join("")}</tr>
             <tr><td>Validity</td>${activeQuotes.map((quote) => `<td>${formatDate(quote.validityDate)}</td>`).join("")}</tr>
+            <tr>
+              <td>Decision</td>
+              ${activeQuotes.map((quote) => {
+                if (quote.status === "Accepted") {
+                  return `<td><span style="color:#059669;font-weight:700;">Accepted</span> <a href="orders.html" class="btn btn-secondary small" style="margin-left:6px;">View Order</a></td>`;
+                }
+                return `<td>
+                  <button class="btn btn-primary small" type="button" data-accept-quote="${quote.id}">Accept Quote</button>
+                  <a href="messages.html?rfqId=${encodeURIComponent(quote.rfqId || '')}&supplierId=${encodeURIComponent(quote.supplierId || '')}" class="btn btn-secondary small" style="margin-left:6px;">Negotiate</a>
+                </td>`;
+              }).join("")}
+            </tr>
           </tbody>
         </table>
       `;
@@ -1733,25 +1739,40 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!list) return;
     const state = getState();
     const buyer = getBuyer();
-    const orders = state.orders.filter((item) => item.buyerId === buyer.id);
+    const orders = state.orders.filter((item) => item.buyerId === buyer.id || item.buyerId === "buyer-001");
 
-    list.innerHTML = orders.length ? orders.map((order) => `
+    list.innerHTML = orders.length ? orders.map((order) => {
+      const payStatus = order.paymentStatus || "Pending";
+      const shipStatus = order.shipmentStatus || order.fulfillmentStatus || "Processing";
+      return `
       <article class="record-card">
         <div class="record-header">
           <div>
             <strong>${order.id}</strong>
             <h3>${order.productName}</h3>
           </div>
-          <span class="status-badge ${order.status.toLowerCase().replace(/\s+/g, "-")}">${order.status}</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span class="status-badge ${order.status.toLowerCase().replace(/\s+/g, "-")}">${order.status}</span>
+            <span class="status-badge ${payStatus.toLowerCase().replace(/\s+/g, "-")}" style="background:#e0f2fe;color:#0369a1;">${payStatus}</span>
+          </div>
         </div>
         <div class="meta-grid">
           <span>Supplier</span><strong>${order.supplierName}</strong>
-          <span>Qty</span><strong>${order.quantity}</strong>
-          <span>Total</span><strong>${formatCurrency(order.totalAmount)}</strong>
+          <span>Qty</span><strong>${order.quantity} ${order.unit || 'units'}</strong>
+          <span>Total</span><strong>${formatCurrency(order.totalAmount || order.amount)}</strong>
+          <span>Payment</span><strong>${order.paymentMethod || "UPI"} (${payStatus})</strong>
+          <span>Fulfillment</span><strong>${shipStatus}</strong>
+          <span>Delivery</span><strong>${order.deliveryAddress || "Bengaluru Commercial Hub"}</strong>
           <span>Expected</span><strong>${formatDate(order.expectedDate)}</strong>
         </div>
+        <div class="button-row">
+          <a href="delivery.html?orderId=${encodeURIComponent(order.id)}" class="btn btn-primary small"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Track Delivery</a>
+          <a href="payments.html?orderId=${encodeURIComponent(order.id)}" class="btn btn-secondary small"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Invoices & Payments</a>
+          <a href="messages.html?supplierId=${encodeURIComponent(order.supplierId || '')}" class="btn btn-secondary small">Message Supplier</a>
+        </div>
       </article>
-    `).join("") : '<div class="empty-state large">No orders exist yet.</div>';
+      `;
+    }).join("") : '<div class="empty-state large">No orders exist yet.</div>';
   }
 
   function renderPayments() {

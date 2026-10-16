@@ -68,6 +68,16 @@
             <li class="nav-item">
               <a href="contact.html" class="nav-link">Contact</a>
             </li>
+
+            <li class="nav-item">
+              <a href="discover-suppliers.html" class="nav-link"> Discover </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="join-supplier-network.html" class="nav-link">
+                Supplier Network
+              </a>
+            </li>
           </ul>
         </nav>
 
@@ -148,7 +158,7 @@
 
               <div class="product-rating-trust">
                 <div class="product-rating">
-                  <span class="rating-stars"> ★★★★★ </span>
+                  <span class="rating-stars" aria-label="5 stars"><svg class="tn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="#D5CFB9" stroke="#000000" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="tn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="#D5CFB9" stroke="#000000" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="tn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="#D5CFB9" stroke="#000000" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="tn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="#D5CFB9" stroke="#000000" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="tn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="#D5CFB9" stroke="#000000" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
 
                   <span class="rating-value"> 5.0 </span>
 
@@ -199,12 +209,38 @@
                 </div>
               </div>
 
+              <div class="product-quantity-selector" style="margin: 20px 0 16px; padding: 16px; background: #fdfbf9; border: 1px solid #e8e2dc; border-radius: 8px;">
+                <label for="purchase-quantity" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Order Quantity:</label>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <div style="display: inline-flex; align-items: center; border: 1px solid #d4ccc5; border-radius: 6px; overflow: hidden; background: #fff;">
+                    <button type="button" id="btn-qty-minus" style="border: none; background: #f0eae4; padding: 8px 16px; font-size: 1.1rem; cursor: pointer; font-weight: bold;">−</button>
+                    <input type="number" id="purchase-quantity" value="500" min="1" style="width: 90px; text-align: center; border: none; padding: 8px; font-size: 1rem; font-weight: 600;" />
+                    <button type="button" id="btn-qty-plus" style="border: none; background: #f0eae4; padding: 8px 16px; font-size: 1.1rem; cursor: pointer; font-weight: bold;">+</button>
+                  </div>
+                  <span id="qty-unit-label" style="color: #6e655f; font-size: 0.9rem;">units</span>
+                  <div id="live-order-estimate" style="margin-left: auto; font-weight: 600; color: #7a5c52; font-size: 1.05rem;">
+                    Est. Total: ₹90,000
+                  </div>
+                </div>
+                <div id="qty-validation-msg" style="font-size: 0.85rem; margin-top: 6px; color: #8c2a2a; display: none;"></div>
+              </div>
+
               <!-- ACTION BUTTONS -->
 
-              <div class="product-detail-actions">
+              <div class="product-detail-actions" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button
+                  type="button"
+                  id="btn-buy-now"
+                  class="btn btn-primary btn-large"
+                  style="background: #1e7e34; border-color: #1e7e34; color: #fff; cursor: pointer; padding: 12px 24px; font-weight: 600; border-radius: 6px;"
+                >
+                  Buy Now
+                </button>
+
                 <a
                   href="../auth/register.html"
-                  class="btn btn-primary btn-large"
+                  id="btn-request-quote"
+                  class="btn btn-outline btn-large"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -213,6 +249,7 @@
 
                 <a
                   href="../auth/register.html"
+                  id="btn-contact-supplier"
                   class="btn btn-outline btn-large"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -861,6 +898,9 @@
 
         if (product && product.id) {
           localStorage.setItem("tradenestSelectedProductId", JSON.stringify(product.id));
+          if (window.TradeNestStore && typeof window.TradeNestStore.recordRecentlyViewed === "function") {
+            window.TradeNestStore.recordRecentlyViewed(product.id);
+          }
         }
 
         if (product) {
@@ -905,7 +945,7 @@
             image.src = product.image;
             image.alt = product.name;
             image.onerror = function() {
-              this.src = "../images/products/industrial-safety-gloves.webp";
+              this.src = "../images/placeholder-product.svg";
             };
           }
           const alt = document.querySelector(".product-image-caption");
@@ -925,12 +965,113 @@
           }
 
           // Supplier Information Section
-          const supSectionTitle = document.querySelector(".supplier-details-section .section-title");
-          if (supSectionTitle) supSectionTitle.textContent = product.supplierName;
-          const supCardName = document.querySelector(".supplier-details-card .supplier-name");
-          if (supCardName) supCardName.textContent = product.supplierName;
-          const supLocation = document.querySelector(".supplier-metric:nth-child(2) .metric-value");
-          if (supLocation && product.supplierLocation) supLocation.textContent = product.supplierLocation;
+          // Interactive Quantity & Buy Now Logic
+          const qtyInput = document.getElementById("purchase-quantity");
+          const btnMinus = document.getElementById("btn-qty-minus");
+          const btnPlus = document.getElementById("btn-qty-plus");
+          const unitLabel = document.getElementById("qty-unit-label");
+          const liveEst = document.getElementById("live-order-estimate");
+          const valMsg = document.getElementById("qty-validation-msg");
+          const btnBuyNow = document.getElementById("btn-buy-now");
+          const btnReqQuote = document.getElementById("btn-request-quote");
+
+          const minMoq = Number(product.moq) || 50;
+          const maxStock = Number(product.stock) || 1000;
+          const unitRate = Number(product.price) || 180;
+
+          if (qtyInput) qtyInput.value = minMoq;
+          if (unitLabel) unitLabel.textContent = product.unit || product.uom || "units";
+
+          function updatePricing() {
+            if (!qtyInput) return;
+            const currentQty = parseInt(qtyInput.value, 10) || minMoq;
+            if (currentQty < minMoq) {
+              if (valMsg) {
+                valMsg.textContent = `Minimum order quantity is ${minMoq} ${product.unit || 'units'}.`;
+                valMsg.style.display = "block";
+              }
+            } else if (currentQty > maxStock) {
+              if (valMsg) {
+                valMsg.textContent = `Only ${maxStock} units available in stock.`;
+                valMsg.style.display = "block";
+              }
+            } else {
+              if (valMsg) valMsg.style.display = "none";
+            }
+
+            const subtotal = currentQty * unitRate;
+            const gst = Math.round(subtotal * 0.18);
+            const shipping = subtotal >= 50000 ? 0 : 750;
+            const total = subtotal + gst + shipping;
+
+            if (liveEst) {
+              liveEst.innerHTML = `Est. Total: ₹${total.toLocaleString("en-IN")} <small style="font-size: 0.75rem; color: #746d69;">(incl. 18% GST)</small>`;
+            }
+          }
+
+          if (qtyInput) {
+            qtyInput.addEventListener("input", updatePricing);
+          }
+          if (btnMinus) {
+            btnMinus.addEventListener("click", function() {
+              const current = parseInt(qtyInput.value, 10) || minMoq;
+              const step = minMoq >= 50 ? 50 : 10;
+              qtyInput.value = Math.max(minMoq, current - step);
+              updatePricing();
+            });
+          }
+          if (btnPlus) {
+            btnPlus.addEventListener("click", function() {
+              const current = parseInt(qtyInput.value, 10) || minMoq;
+              const step = minMoq >= 50 ? 50 : 10;
+              qtyInput.value = Math.min(maxStock, current + step);
+              updatePricing();
+            });
+          }
+
+          updatePricing();
+
+          if (btnBuyNow) {
+            btnBuyNow.addEventListener("click", function() {
+              const currentQty = parseInt(qtyInput ? qtyInput.value : minMoq, 10) || minMoq;
+              if (currentQty < minMoq) {
+                alert(`Order quantity must meet or exceed the MOQ of ${minMoq} units.`);
+                return;
+              }
+              if (currentQty > maxStock) {
+                alert(`Order quantity cannot exceed available inventory of ${maxStock} units.`);
+                return;
+              }
+
+              // Check if user is logged in
+              let currentUser = null;
+              try {
+                const uRaw = localStorage.getItem("tradenestCurrentUser");
+                if (uRaw) currentUser = JSON.parse(uRaw);
+              } catch(e) {}
+
+              if (currentUser && currentUser.role === "buyer") {
+                window.location.href = `buyer/checkout.html?id=${encodeURIComponent(product.id)}&qty=${currentQty}`;
+              } else {
+                localStorage.setItem("tradenest_intended_checkout", JSON.stringify({ productId: product.id, qty: currentQty }));
+                window.location.href = `../auth/login.html?redirect=checkout&id=${encodeURIComponent(product.id)}&qty=${currentQty}`;
+              }
+            });
+          }
+
+          // If buyer is already logged in, enhance request quote button
+          try {
+            const uRaw = localStorage.getItem("tradenestCurrentUser");
+            if (uRaw) {
+              const curUser = JSON.parse(uRaw);
+              if (curUser && curUser.role === "buyer" && btnReqQuote) {
+                btnReqQuote.addEventListener("click", function(e) {
+                  e.preventDefault();
+                  window.location.href = `buyer/request-quote.html?productId=${encodeURIComponent(product.id)}`;
+                });
+              }
+            }
+          } catch(e) {}
         }
       });
     </script>

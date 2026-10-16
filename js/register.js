@@ -1679,7 +1679,7 @@ document.addEventListener("DOMContentLoaded", function () {
       createButton.disabled = true;
 
       createButton.textContent =
-        "Account Created ✓";
+        "Account Created";
 
 
       alert(

@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const activities = store.getActivityFeed().slice(0, 5);
             activityFeedList.innerHTML = activities.map(act => `
                 <div class="activity-item" style="cursor: pointer;" title="Click to view activity context" data-view="${act.view || 'orders'}">
-                    <div class="activity-icon-wrap" aria-hidden="true">${act.icon || "📌"}</div>
+                    <div class="activity-icon-wrap" aria-hidden="true">${act.icon || "•"}</div>
                     <div class="activity-content">
                         <p class="activity-text">${escapeHtml(act.text)}</p>
                         <span class="activity-time">${escapeHtml(act.time)}</span>
@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
             docsContainer.innerHTML = (profile.documents || []).map(doc => `
                 <div class="doc-item-card">
                     <div class="doc-info">
-                        <span class="doc-icon">📄</span>
+                        <span class="doc-icon"><svg class="tn-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
                         <div>
                             <div class="doc-title">${escapeHtml(doc.name)}</div>
                             <div class="doc-meta">${escapeHtml(doc.type)} • ${escapeHtml(doc.size)} • ${doc.uploadDate}</div>
@@ -598,10 +598,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (products.length === 0) {
             productsMgmtGrid.innerHTML = `
                 <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-md);">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">📦</div>
+                    <div style="font-size: 2rem; margin-bottom: 8px;"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
                     <h3>No products found</h3>
                     <p style="color: var(--text-light); margin-bottom: 14px;">Try changing filters or add a new wholesale product.</p>
-                    <button type="button" class="btn btn-primary" onclick="document.getElementById('btnAddNewProductModal').click()">➕ Add New Product</button>
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('btnAddNewProductModal').click()">Add New Product</button>
                 </div>
             `;
             return;
@@ -643,7 +643,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="prod-body">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span class="prod-category-tag">${escapeHtml(prod.category)}</span>
-                            ${canManage ? '<span style="font-size: 0.72rem; color: var(--success); font-weight: 600;">✓ My Product</span>' : `<span style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(prod.supplierName || 'Other Supplier')}</span>`}
+                            ${canManage ? '<span style="font-size: 0.72rem; color: var(--success); font-weight: 600;">My Product</span>' : `<span style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(prod.supplierName || 'Other Supplier')}</span>`}
                         </div>
                         <h3 class="prod-name">
                             <a href="${publicUrl}" target="_blank" title="View live listing on public marketplace" style="color: inherit; text-decoration: none;">
@@ -652,7 +652,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </h3>
                         <p class="prod-desc-snippet">${escapeHtml(prod.description)}</p>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">
-                            <span>🚚 <strong>Delivery:</strong> ${escapeHtml(prod.deliveryInfo || '3-5 business days across India')}</span>
+                            <span><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> <strong>Delivery:</strong> ${escapeHtml(prod.deliveryInfo || '3-5 business days across India')}</span>
                         </div>
                         ${specsList ? `<p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">${specsList}</p>` : ""}
 
@@ -667,24 +667,24 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="prod-stock-bar">
                             <span>Available Stock: <strong>${prod.availableStock}</strong></span>
                             <span style="color: ${isLowStock ? 'var(--danger)' : 'var(--text-muted)'}; font-weight: ${isLowStock ? '700' : 'normal'}">
-                                ${isLowStock ? '⚠️ Low Threshold (' + prod.minThreshold + ')' : 'Min: ' + prod.minThreshold}
+                                ${isLowStock ? 'Low Threshold (' + prod.minThreshold + ')' : 'Min: ' + prod.minThreshold}
                             </span>
                         </div>
 
                         <div class="prod-actions-bar">
                             <a href="${publicUrl}" target="_blank" class="btn btn-sm btn-outline btn-full btn-view-public" style="color: var(--primary-dark); border-color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
-                                <span>🌐</span> View on Public Site ↗
+                                View on Public Site ↗
                             </a>
                             ${canManage ? `
                             <div style="display: flex; gap: 6px; width: 100%;">
                                 <button type="button" class="btn btn-sm btn-secondary btn-full btn-edit-product" data-id="${prod.id}">
-                                    ✏️ Edit
+                                    Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline btn-full btn-toggle-status" data-id="${prod.id}">
                                     ${prod.status === "active" ? "Deactivate" : "Publish"}
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline btn-delete-product" data-id="${prod.id}" title="Delete Product" style="color: var(--danger); border-color: rgba(167,93,88,0.3);">
-                                    🗑️
+                                    Delete
                                 </button>
                             </div>
                             ` : `
@@ -981,7 +981,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td style="font-size: 0.8rem; color: var(--text-muted);">${prod.lastStockUpdated || prod.createdAt || "2026-10-01"}</td>
                     <td>
                         <button type="button" class="btn btn-sm btn-secondary btn-update-stock" data-id="${prod.id}">
-                            📑 Adjust Stock
+                            <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Adjust Stock
                         </button>
                     </td>
                 </tr>
@@ -1100,7 +1100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (rfqs.length === 0) {
             rfqCardsContainer.innerHTML = `
                 <div style="padding: 40px; text-align: center; background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-md);">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">📥</div>
+                    <div style="font-size: 2rem; margin-bottom: 8px;"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
                     <h3>No RFQs found in this category</h3>
                     <p style="color: var(--text-light);">Try selecting another status tab or clear the search query.</p>
                 </div>
@@ -1138,18 +1138,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <div class="rfq-side-actions">
                         <button type="button" class="btn btn-primary btn-full btn-quote-from-rfq" data-id="${rfq.id}">
-                            📝 Create Quote
+                            <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Create Quote
                         </button>
                         <button type="button" class="btn btn-secondary btn-full btn-view-rfq" data-id="${rfq.id}">
-                            🔍 Details
+                            <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Details
                         </button>
                         ${rfq.status === "New" ? `
                             <div style="display: flex; gap: 8px;">
                                 <button type="button" class="btn btn-sm btn-outline btn-full btn-accept-rfq" data-id="${rfq.id}" style="color: var(--success); border-color: rgba(95,128,104,0.4);">
-                                    ✓ Accept
+                                    Accept
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline btn-full btn-decline-rfq" data-id="${rfq.id}" style="color: var(--danger); border-color: rgba(167,93,88,0.4);">
-                                    ✕ Decline
+                                    Decline
                                 </button>
                             </div>
                         ` : ""}
@@ -1297,7 +1297,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td><span class="badge-pill badge-${badgeClass}">${q.status}</span></td>
                     <td>
                         <button type="button" class="btn btn-sm btn-secondary btn-edit-quote" data-id="${q.id}">
-                            ✏️ Edit
+                            Edit
                         </button>
                     </td>
                 </tr>
@@ -1505,11 +1505,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                             ${s.status === "Pending" ? `
-                                <button type="button" class="btn btn-sm btn-secondary btn-approve-sample" data-id="${s.id}">✓ Approve</button>
-                                <button type="button" class="btn btn-sm btn-outline btn-reject-sample" data-id="${s.id}" style="color: var(--danger);">✕</button>
+                                <button type="button" class="btn btn-sm btn-secondary btn-approve-sample" data-id="${s.id}">Approve</button>
+                                <button type="button" class="btn btn-sm btn-outline btn-reject-sample" data-id="${s.id}" style="color: var(--danger);">&times;</button>
                             ` : ""}
                             ${s.status === "Approved" ? `
-                                <button type="button" class="btn btn-sm btn-primary btn-dispatch-sample-trigger" data-id="${s.id}">🚚 Dispatch</button>
+                                <button type="button" class="btn btn-sm btn-primary btn-dispatch-sample-trigger" data-id="${s.id}"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Dispatch</button>
                             ` : ""}
                             ${s.status === "Dispatched" ? `
                                 <span style="font-size: 0.75rem; color: var(--success); font-weight: 600;">In Transit</span>
@@ -1614,7 +1614,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="collab-header">
                             <div>
                                 <h3 class="collab-title">${escapeHtml(p.businessName)}</h3>
-                                <span class="collab-location">📍 ${escapeHtml(p.location)}</span>
+                                <span class="collab-location">${escapeHtml(p.location)}</span>
                             </div>
                             <span class="badge-pill badge-active">${escapeHtml(p.trustTier)}</span>
                         </div>
@@ -1627,7 +1627,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                     <button type="button" class="btn btn-sm btn-primary btn-full btn-propose-collab-to" data-name="${escapeHtml(p.businessName)}">
-                        🤝 Propose Joint Execution
+                        <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Propose Joint Execution
                     </button>
                 </article>
             `).join("");
@@ -1817,7 +1817,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 chatMessagesStream.innerHTML = (activeConv.messages || []).map(m => `
                     <div class="chat-bubble ${m.sender}">
                         <div>${escapeHtml(m.text)}</div>
-                        <span class="chat-time-tick">${escapeHtml(m.time)} ${m.sender === 'supplier' ? '✓✓' : ''}</span>
+                        <span class="chat-time-tick">${escapeHtml(m.time)} ${m.sender === 'supplier' ? '' : ''}</span>
                     </div>
                 `).join("");
                 chatMessagesStream.scrollTop = chatMessagesStream.scrollHeight;
@@ -1910,10 +1910,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>
                         <div class="table-action-group">
                             <button type="button" class="btn btn-sm btn-secondary btn-order-advance" data-id="${ord.id}">
-                                ⚡ Next Step
+                                Next Step
                             </button>
                             <button type="button" class="btn btn-sm btn-outline btn-view-invoice" data-order-id="${ord.id}" title="View Invoice">
-                                🧾 Invoice
+                                <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Invoice
                             </button>
                         </div>
                     </td>
@@ -2004,7 +2004,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td><span style="font-family: monospace; font-size: 0.8rem; font-weight: 700;">${p.invoiceRef}</span></td>
                     <td>
                         <button type="button" class="btn btn-sm btn-secondary btn-open-invoice-modal" data-order-id="${p.orderRef}">
-                            🧾 View Invoice
+                            <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg> View Invoice
                         </button>
                     </td>
                 </tr>
@@ -2193,7 +2193,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td><span class="badge-pill badge-${badgeClass}">${s.status}</span></td>
                     <td>
                         <button type="button" class="btn btn-sm btn-secondary btn-advance-shipment" data-id="${s.id}">
-                            🚚 Advance Tracking
+                            <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Advance Tracking
                         </button>
                     </td>
                 </tr>
@@ -2317,11 +2317,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 const revKey = rev.id || rev.buyerName.replace(/\s+/g, "_");
                 return `
                 <div class="activity-item">
-                    <div class="activity-icon-wrap" style="color: #b48645;">★</div>
+                    <div class="activity-icon-wrap"><svg class="tn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="#D5CFB9" stroke="#000000" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <div class="activity-content">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
                             <strong>${escapeHtml(rev.buyerName)}</strong>
-                            <span style="font-size: 0.8rem; color: #b48645; font-weight: 700;">★ ${rev.rating} / 5</span>
+                            <span style="font-size: 0.8rem; color: #b48645; font-weight: 700;">${rev.rating} / 5</span>
                         </div>
                         <p class="activity-text">${escapeHtml(rev.comment)}</p>
                         <span class="activity-time">${rev.date}</span>
@@ -2333,7 +2333,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                             ` : `
                                 <button type="button" class="btn btn-sm btn-outline btn-reply-review" data-rev-id="${revKey}" style="font-size: 0.75rem; padding: 3px 8px;">
-                                    💬 Reply to Buyer
+                                    <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Reply to Buyer
                                 </button>
                                 <div class="review-reply-form" id="replyForm-${revKey}" style="display: none; margin-top: 6px;">
                                     <div style="display: flex; gap: 8px;">
@@ -2478,7 +2478,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let notifications = [
         {
             id: "notif-1",
-            icon: "📥",
+            icon: "<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>",
             title: "New RFQ Received",
             desc: "Metro Retail Solutions requested quote for 2,000 units Nitrile Gloves",
             time: "10 mins ago",
@@ -2487,7 +2487,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         {
             id: "notif-2",
-            icon: "💰",
+            icon: "<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>",
             title: "TradeShield Escrow Funded",
             desc: "Payment of $6,284.00 funded in escrow for Order #ORD-2026-1049",
             time: "1 hour ago",
@@ -2496,7 +2496,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         {
             id: "notif-3",
-            icon: "⚠️",
+            icon: "Warning",
             title: "Low Inventory Warning",
             desc: "Nitrile Industrial Gloves stock is below minimum threshold (200 units)",
             time: "3 hours ago",
@@ -2528,7 +2528,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (notifications.length === 0) {
             notificationDropdownList.innerHTML = `
                 <div style="padding: 28px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-                    <div>🔔</div>
+                    <div><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
                     <div style="margin-top: 6px;">No notifications at this time</div>
                 </div>
             `;

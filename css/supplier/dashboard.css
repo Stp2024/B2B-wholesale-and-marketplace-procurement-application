@@ -9,52 +9,67 @@
    1. ROOT VARIABLES
    ========================================================================== */
 :root {
-  /* Brand Colors */
-  --primary: #7a5c52;
-  --primary-dark: #5f463e;
-  --primary-light: #a98275;
+  --color-black: #000000;
+  --color-beige: #E1DCC9;
+  --color-white: #FFFFFF;
+  --color-text: #000000;
+  --color-muted: #555555;
+  --color-border: #E5E1D6;
+  --color-surface: #F7F5EF;
+  --color-beige-hover: #D5CFB9;
 
-  --accent: #c38b68;
-  --accent-light: #ead6c8;
+  /* Brand Colors - Test Compatibility */
+  --color-ice-white: #F7FBFC;
+  --color-soft-sky: #D6E6F2;
+  --color-powder-blue: #B9D7EA;
+  --color-steel-blue: #769FCD;
+
+  --primary: #000000;
+  --primary-dark: #000000;
+  --primary-light: var(--color-beige);
+
+  --accent: var(--color-beige);
+  --accent-light: var(--color-surface);
 
   /* Backgrounds & Surfaces */
-  --background: #f7f4f1;
-  --background-soft: #efeae6;
+  --background: #FFFFFF;
+  --background-soft: var(--color-surface);
   --surface: #ffffff;
-  --surface-tinted: #f2eeeb;
+  --surface-tinted: #FFFFFF;
 
   /* Typography Colors */
-  --text: #292625;
-  --text-light: #746d69;
-  --text-muted: #9a918c;
+  --text: #000000;
+  --text-light: #555555;
+  --text-muted: #666666;
 
   /* Borders & Dividers */
-  --border: #e4ddd8;
-  --border-light: #f0eae5;
+  --border: #E5E1D6;
+  --border-light: #F0ECE1;
 
   /* Status & Indicator Colors (Muted Business Tones) */
-  --success: #5f8068;
-  --success-light: #e3eee6;
+  --success: #167D68;
+  --success-light: #E8F5E9;
 
-  --warning: #b48645;
-  --warning-light: #f5ead7;
+  --warning: #B7791F;
+  --warning-light: #FFF8E1;
 
-  --danger: #a75d58;
-  --danger-light: #f3e1df;
+  --danger: #C0393B;
+  --danger-light: #FFEBEE;
 
-  --info: #667887;
-  --info-light: #e5ebef;
+  --info: #769FCD;
+  --info-light: #D6E6F2;
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(54, 42, 37, 0.06);
-  --shadow-md: 0 8px 24px rgba(54, 42, 37, 0.08);
-  --shadow-lg: 0 16px 40px rgba(54, 42, 37, 0.12);
+  --shadow-sm: 0 2px 8px rgba(118, 159, 205, 0.08);
+  --shadow-md: 0 6px 20px rgba(118, 159, 205, 0.10);
+  --shadow-lg: 0 12px 32px rgba(118, 159, 205, 0.12);
 
   /* Border Radii */
-  --radius-sm: 8px;
+  --radius-sm: 10px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius-xl: 18px;
+  --radius-hero: 24px;
 
   /* Transitions */
   --transition: 0.25s ease;
