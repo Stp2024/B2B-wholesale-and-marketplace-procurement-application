@@ -176,7 +176,7 @@
               <div class="product-price-box">
                 <span class="detail-price"> ₹180 </span>
 
-                <span class="price-unit"> / unit </span>
+                <span class="price-unit"> / pair </span>
               </div>
 
               <!-- BASIC PRODUCT INFORMATION -->
@@ -185,7 +185,7 @@
                 <div class="product-info-item">
                   <span class="info-label"> Minimum Order Quantity </span>
 
-                  <strong class="info-value"> 500 units </strong>
+                  <strong class="info-value"> 100 pairs </strong>
                 </div>
 
                 <div class="product-info-item">
@@ -214,12 +214,12 @@
                 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                   <div style="display: inline-flex; align-items: center; border: 1px solid #d4ccc5; border-radius: 6px; overflow: hidden; background: #fff;">
                     <button type="button" id="btn-qty-minus" style="border: none; background: #f0eae4; padding: 8px 16px; font-size: 1.1rem; cursor: pointer; font-weight: bold;">−</button>
-                    <input type="number" id="purchase-quantity" value="500" min="1" style="width: 90px; text-align: center; border: none; padding: 8px; font-size: 1rem; font-weight: 600;" />
+                    <input type="number" id="purchase-quantity" value="100" min="1" style="width: 90px; text-align: center; border: none; padding: 8px; font-size: 1rem; font-weight: 600;" />
                     <button type="button" id="btn-qty-plus" style="border: none; background: #f0eae4; padding: 8px 16px; font-size: 1.1rem; cursor: pointer; font-weight: bold;">+</button>
                   </div>
-                  <span id="qty-unit-label" style="color: #6e655f; font-size: 0.9rem;">units</span>
+                  <span id="qty-unit-label" style="color: #6e655f; font-size: 0.9rem;">pairs</span>
                   <div id="live-order-estimate" style="margin-left: auto; font-weight: 600; color: #7a5c52; font-size: 1.05rem;">
-                    Est. Total: ₹90,000
+                    Est. Total: ₹21,990
                   </div>
                 </div>
                 <div id="qty-validation-msg" style="font-size: 0.85rem; margin-top: 6px; color: #8c2a2a; display: none;"></div>
@@ -320,12 +320,12 @@
 
                 <div class="specification-row">
                   <span>MOQ</span>
-                  <strong> 500 units </strong>
+                  <strong> 100 pairs </strong>
                 </div>
 
                 <div class="specification-row">
                   <span>Unit Price</span>
-                  <strong> ₹180 / unit </strong>
+                  <strong> ₹180 / pair </strong>
                 </div>
               </div>
             </article>
@@ -430,7 +430,7 @@
                 <div class="related-product-price">₹145 / meter</div>
 
                 <a
-                  href="product-details.html?id=product-002"
+                  href="product-details.html?id=product-009"
                   class="btn btn-outline btn-sm"
                 >
                   View Product
@@ -458,10 +458,10 @@
                   and cargo protection.
                 </p>
 
-                <div class="related-product-price">₹28 / box</div>
+                <div class="related-product-price">₹55 / box</div>
 
                 <a
-                  href="product-details.html?id=product-003"
+                  href="product-details.html?id=product-006"
                   class="btn btn-outline btn-sm"
                 >
                   View Product
@@ -489,10 +489,10 @@
                   industrial spaces.
                 </p>
 
-                <div class="related-product-price">₹2,450 / unit</div>
+                <div class="related-product-price">₹1,650 / piece</div>
 
                 <a
-                  href="product-details.html?id=product-004"
+                  href="product-details.html?id=product-005"
                   class="btn btn-outline btn-sm"
                 >
                   View Product
@@ -775,31 +775,114 @@
         );
         const productId = requestedId || fallbackProductId;
 
+        // Canonical product catalog matching Buyer Dashboard product page exactly
+        const BUYER_DASHBOARD_CATALOG = {
+          "product-001": { price: 180, moq: 100, unit: "pairs", name: "Industrial Safety Gloves" },
+          "product-002": { price: 520, moq: 50, unit: "units", name: "Industrial Safety Helmets" },
+          "product-003": { price: 420, moq: 50, unit: "reams", name: "A4 Premium Copy Paper" },
+          "product-004": { price: 1180, moq: 20, unit: "sets", name: "Executive Desk Organiser" },
+          "product-005": { price: 1650, moq: 20, unit: "pieces", name: "Commercial LED Panel Lights" },
+          "product-006": { price: 55, moq: 500, unit: "boxes", name: "Corrugated Packaging Boxes" },
+          "product-007": { price: 230, moq: 150, unit: "sets", name: "Protective Foam Inserts" },
+          "product-008": { price: 5300, moq: 5, unit: "units", name: "Heavy Duty Warehouse Shelving" },
+          "product-009": { price: 145, moq: 100, unit: "meters", name: "Cotton Fabric Rolls" },
+          "product-010": { price: 120, moq: 100, unit: "pieces", name: "Commercial LED Bulbs" },
+          "product-012": { price: 450, moq: 100, unit: "packs", name: "Food Packaging Materials" },
+          "product-013": { price: 1150, moq: 25, unit: "pieces", name: "Carbide CNC Milling Cutters" },
+          "product-014": { price: 210, moq: 100, unit: "packs", name: "Biodegradable Trash Bags" },
+          "product-015": { price: 4850, moq: 20, unit: "units", name: "Commercial Ergonomic Office Chairs" }
+        };
+
+        const NAME_TO_ID = {
+          "industrial safety gloves": "product-001",
+          "industrial safety helmets": "product-002",
+          "a4 premium copy paper": "product-003",
+          "a4 copy paper premium 80 gsm": "product-003",
+          "executive desk organizer": "product-004",
+          "executive desk organiser": "product-004",
+          "commercial led panel lights": "product-005",
+          "led industrial lights": "product-005",
+          "corrugated packaging boxes": "product-006",
+          "protective foam inserts": "product-007",
+          "heavy duty warehouse shelving": "product-008",
+          "cotton fabric rolls": "product-009",
+          "commercial led bulbs": "product-010",
+          "food packaging materials": "product-012",
+          "carbide cnc milling cutters": "product-013",
+          "biodegradable trash bags": "product-014",
+          "commercial ergonomic office chairs": "product-015"
+        };
+
+        function resolveBuyerPrice(prod) {
+          if (!prod) return 180;
+          if (prod.id && BUYER_DASHBOARD_CATALOG[prod.id]) {
+            return BUYER_DASHBOARD_CATALOG[prod.id].price;
+          }
+          if (prod.name) {
+            const key = prod.name.toLowerCase().trim();
+            if (NAME_TO_ID[key] && BUYER_DASHBOARD_CATALOG[NAME_TO_ID[key]]) {
+              return BUYER_DASHBOARD_CATALOG[NAME_TO_ID[key]].price;
+            }
+          }
+          if (typeof prod.price === "number" && prod.price > 0) {
+            return prod.price;
+          }
+          if (typeof prod.price === "string") {
+            const num = parseFloat(prod.price.replace(/[^0-9.]/g, ""));
+            if (!isNaN(num) && num > 0) return num;
+          }
+          if (typeof prod.unitPrice === "number" && prod.unitPrice > 0) {
+            return prod.unitPrice;
+          }
+          return 180;
+        }
+
+        function resolveUnit(prod) {
+          if (prod && prod.id && BUYER_DASHBOARD_CATALOG[prod.id]) {
+            return BUYER_DASHBOARD_CATALOG[prod.id].unit;
+          }
+          if (prod && prod.name) {
+            const key = prod.name.toLowerCase().trim();
+            if (NAME_TO_ID[key] && BUYER_DASHBOARD_CATALOG[NAME_TO_ID[key]]) {
+              return BUYER_DASHBOARD_CATALOG[NAME_TO_ID[key]].unit;
+            }
+          }
+          return (prod && (prod.unit || prod.uom)) || "units";
+        }
+
         let product = null;
 
         // 0. Primary source: TradeNestProductService
         if (window.TradeNestProductService) {
-          const sp = window.TradeNestProductService.getProductByIdSync(productId);
+          let sp = window.TradeNestProductService.getProductByIdSync(productId);
+          if (!sp && productId) {
+            const low = productId.toLowerCase();
+            const mappedId = NAME_TO_ID[low];
+            if (mappedId) {
+              sp = window.TradeNestProductService.getProductByIdSync(mappedId);
+            }
+          }
           if (sp) {
             let cleanImg = sp.image || "../images/products/industrial-safety-gloves.webp";
             if (cleanImg.startsWith("../../")) {
               cleanImg = cleanImg.replace("../../", "../");
             } else if (!cleanImg.startsWith("../") && !cleanImg.startsWith("http") && !cleanImg.startsWith("data:")) {
-              cleanImg = "../" + cleanImg;
+              cleanImg = "../" + cleanImg.replace(/^\/+/, "");
             }
+            const bPrice = resolveBuyerPrice(sp);
+            const bUnit = resolveUnit(sp);
             product = {
               id: sp.id,
               name: sp.name,
               description: sp.description,
               category: sp.category,
-              price: sp.price || (sp.unitPrice ? (sp.unitPrice * 80).toFixed(0) : "390"),
-              rawPrice: sp.unitPrice || (sp.price ? (sp.price / 80) : 5),
-              uom: sp.uom || "units",
-              moq: sp.moq || 50,
-              unit: sp.uom || "units",
+              price: bPrice,
+              moq: sp.moq || (BUYER_DASHBOARD_CATALOG[sp.id] ? BUYER_DASHBOARD_CATALOG[sp.id].moq : 50),
+              unit: bUnit,
+              uom: bUnit,
               stock: sp.availableStock !== undefined ? sp.availableStock : (sp.stock || 0),
-              availability: sp.status === "active"
-                ? ((sp.availableStock > 0 || sp.stock > 0) ? `In Stock (${sp.availableStock || sp.stock} ${sp.uom || 'units'} available)` : "Out of Stock")
+              availability: (sp.status === "active" || sp.status === "Active")
+                ? ((sp.availableStock > 0 || sp.stock > 0) ? `In Stock (${sp.availableStock || sp.stock} ${bUnit} available)` : "Out of Stock")
                 : (sp.status === "out-of-stock" ? "Out of Stock" : "Inactive"),
               deliveryInfo: sp.deliveryInfo || "Standard 3-5 business days dispatch",
               image: cleanImg,
@@ -819,81 +902,103 @@
         if (!product) {
           try {
             const supRaw = localStorage.getItem("tradenest_supplier_products");
-          let supProducts = [];
-          if (supRaw) {
-            supProducts = JSON.parse(supRaw);
-          } else if (window.SupplierStore && typeof window.SupplierStore.getProducts === "function") {
-            supProducts = window.SupplierStore.getProducts();
-          }
-
-          if (Array.isArray(supProducts) && supProducts.length > 0) {
-            const found = supProducts.find(p => 
-              p.id === productId || 
-              p.sku === productId || 
-              (productId && p.name && p.name.toLowerCase() === productId.toLowerCase())
-            );
-
-            if (found) {
-              // Retrieve supplier business profile
-              let bizName = "ABC Trade";
-              let bizLocation = "Bengaluru, Karnataka";
-              try {
-                const curUserRaw = localStorage.getItem("tradenestCurrentUser");
-                if (curUserRaw) {
-                  const u = JSON.parse(curUserRaw);
-                  if (u.businessName) bizName = u.businessName;
-                }
-                const bizRaw = localStorage.getItem("tradenest_supplier_biz_profile");
-                if (bizRaw) {
-                  const b = JSON.parse(bizRaw);
-                  if (!curUserRaw && b.businessName) bizName = b.businessName;
-                  if (b.registeredAddress) bizLocation = b.registeredAddress;
-                }
-              } catch (e) {}
-
-              // Format clean image path
-              let cleanImage = found.image || "../images/products/industrial-safety-gloves.webp";
-              if (cleanImage.startsWith("../../")) {
-                cleanImage = cleanImage.replace("../../", "../");
-              } else if (!cleanImage.startsWith("../") && !cleanImage.startsWith("http") && !cleanImage.startsWith("data:")) {
-                cleanImage = "../" + cleanImage;
-              }
-
-              product = {
-                id: found.id,
-                name: found.name,
-                description: found.description,
-                category: found.category,
-                price: found.unitPrice ? (found.unitPrice * 80).toFixed(0) : "390",
-                rawPrice: found.unitPrice,
-                uom: found.uom || "units",
-                moq: found.moq || 100,
-                unit: found.uom || "units",
-                stock: found.availableStock || 0,
-                availability: found.status === "active" 
-                  ? (found.availableStock > 0 ? `In Stock (${found.availableStock} ${found.uom || 'units'} available)` : "Out of Stock") 
-                  : "Unavailable",
-                image: cleanImage,
-                supplierName: bizName,
-                supplierLocation: bizLocation,
-                specs: found.specs || {
-                  "Material": "Commercial Wholesale Standard",
-                  "Grade": "B2B Export Certified",
-                  "Origin": "India"
-                }
-              };
+            let supProducts = [];
+            if (supRaw) {
+              supProducts = JSON.parse(supRaw);
+            } else if (window.SupplierStore && typeof window.SupplierStore.getProducts === "function") {
+              supProducts = window.SupplierStore.getProducts();
             }
+
+            if (Array.isArray(supProducts) && supProducts.length > 0) {
+              const found = supProducts.find(p => 
+                p.id === productId || 
+                p.sku === productId || 
+                (productId && p.name && p.name.toLowerCase() === productId.toLowerCase())
+              );
+
+              if (found) {
+                let bizName = "Apex Gear Co.";
+                let bizLocation = "Bengaluru, Karnataka";
+                try {
+                  const curUserRaw = localStorage.getItem("tradenestCurrentUser");
+                  if (curUserRaw) {
+                    const u = JSON.parse(curUserRaw);
+                    if (u.businessName) bizName = u.businessName;
+                  }
+                  const bizRaw = localStorage.getItem("tradenest_supplier_biz_profile");
+                  if (bizRaw) {
+                    const b = JSON.parse(bizRaw);
+                    if (!curUserRaw && b.businessName) bizName = b.businessName;
+                    if (b.registeredAddress) bizLocation = b.registeredAddress;
+                  }
+                } catch (e) {}
+
+                let cleanImage = found.image || "../images/products/industrial-safety-gloves.webp";
+                if (cleanImage.startsWith("../../")) {
+                  cleanImage = cleanImage.replace("../../", "../");
+                } else if (!cleanImage.startsWith("../") && !cleanImage.startsWith("http") && !cleanImage.startsWith("data:")) {
+                  cleanImage = "../" + cleanImage.replace(/^\/+/, "");
+                }
+
+                const bPrice = resolveBuyerPrice(found);
+                const bUnit = resolveUnit(found);
+                product = {
+                  id: found.id,
+                  name: found.name,
+                  description: found.description,
+                  category: found.category,
+                  price: bPrice,
+                  moq: found.moq || (BUYER_DASHBOARD_CATALOG[found.id] ? BUYER_DASHBOARD_CATALOG[found.id].moq : 50),
+                  unit: bUnit,
+                  uom: bUnit,
+                  stock: found.availableStock || 0,
+                  availability: found.status === "active" 
+                    ? (found.availableStock > 0 ? `In Stock (${found.availableStock} ${bUnit} available)` : "Out of Stock") 
+                    : "Unavailable",
+                  image: cleanImage,
+                  supplierName: bizName,
+                  supplierLocation: bizLocation,
+                  specs: found.specs || {
+                    "Material": "Commercial Wholesale Standard",
+                    "Grade": "B2B Export Certified",
+                    "Origin": "India"
+                  }
+                };
+              }
+            }
+          } catch (e) {
+            console.warn("Error parsing supplier product:", e);
           }
-        } catch (e) {
-          console.warn("Error parsing supplier product:", e);
-        }
         }
 
-        // 2. Fallback to TradeNestStore if not found in SupplierStore
+        // 2. Fallback to TradeNestStore if not found
         if (!product && window.TradeNestStore) {
           const store = window.TradeNestStore;
           const storeProducts = store.getStore().products;
-          product = storeProducts.find((item) => item.id === productId) || storeProducts[0];
+          let foundStore = storeProducts.find((item) => item.id === productId);
+          if (!foundStore && productId) {
+            const lowId = productId.toLowerCase();
+            foundStore = storeProducts.find((item) => 
+              (item.name && item.name.toLowerCase() === lowId) || 
+              (NAME_TO_ID[lowId] && item.id === NAME_TO_ID[lowId])
+            );
+          }
+          if (!foundStore) {
+            foundStore = storeProducts[0];
+          }
+          if (foundStore) {
+            const bPrice = resolveBuyerPrice(foundStore);
+            const bUnit = resolveUnit(foundStore);
+            let cImg = foundStore.image || "../images/products/industrial-safety-gloves.webp";
+            if (cImg.startsWith("/")) cImg = ".." + cImg;
+            product = {
+              ...foundStore,
+              price: bPrice,
+              unit: bUnit,
+              uom: bUnit,
+              image: cImg
+            };
+          }
         }
 
         if (product && product.id) {
@@ -904,6 +1009,13 @@
         }
 
         if (product) {
+          // Double check exact price resolution
+          const finalPrice = resolveBuyerPrice(product);
+          product.price = finalPrice;
+          const finalUnit = resolveUnit(product);
+          product.unit = finalUnit;
+          product.uom = finalUnit;
+
           document.title = `${product.name} | TradeNest`;
 
           // Breadcrumb
@@ -924,11 +1036,15 @@
           if (title) title.textContent = product.name;
           if (desc) desc.textContent = product.description;
           if (category) category.textContent = product.category;
+
+          // DISPLAY PRICE MATCHING BUYER DASHBOARD IN RUPEES
           if (price) {
-            price.textContent = product.rawPrice ? `$${product.rawPrice.toFixed(2)}` : `₹${product.price}`;
+            price.textContent = `₹${finalPrice.toLocaleString('en-IN')}`;
           }
-          if (priceUnit) priceUnit.textContent = ` / ${product.unit || product.uom || 'unit'}`;
-          if (moq) moq.textContent = `${product.moq} ${product.unit || product.uom || 'units'}`;
+          if (priceUnit) {
+            priceUnit.textContent = ` / ${finalUnit}`;
+          }
+          if (moq) moq.textContent = `${product.moq} ${finalUnit}`;
           if (availability) availability.textContent = product.availability;
           if (locationEl && product.supplierLocation) locationEl.textContent = product.supplierLocation;
 
@@ -951,20 +1067,25 @@
           const alt = document.querySelector(".product-image-caption");
           if (alt) alt.textContent = product.name;
 
-          // Specifications Table
-          if (product.specs && Object.keys(product.specs).length > 0) {
-            const specTable = document.querySelector(".specification-table");
-            if (specTable) {
-              specTable.innerHTML = Object.entries(product.specs).map(([key, val]) => `
+          // Specifications Table - ensure Unit Price matches and no dollar signs
+          const specTable = document.querySelector(".specification-table");
+          if (specTable) {
+            const rawSpecs = product.specs || {};
+            const displaySpecs = { ...rawSpecs };
+            displaySpecs["Unit Price"] = `₹${finalPrice.toLocaleString("en-IN")} / ${finalUnit}`;
+            displaySpecs["MOQ"] = `${product.moq} ${finalUnit}`;
+
+            specTable.innerHTML = Object.entries(displaySpecs).map(([key, val]) => {
+              const cleanVal = String(val).replace(/\$/g, "₹");
+              return `
                 <div class="specification-row">
                   <span>${key}</span>
-                  <strong>${val}</strong>
+                  <strong>${cleanVal}</strong>
                 </div>
-              `).join("");
-            }
+              `;
+            }).join("");
           }
 
-          // Supplier Information Section
           // Interactive Quantity & Buy Now Logic
           const qtyInput = document.getElementById("purchase-quantity");
           const btnMinus = document.getElementById("btn-qty-minus");
@@ -977,22 +1098,22 @@
 
           const minMoq = Number(product.moq) || 50;
           const maxStock = Number(product.stock) || 1000;
-          const unitRate = Number(product.price) || 180;
+          const unitRate = Number(finalPrice);
 
           if (qtyInput) qtyInput.value = minMoq;
-          if (unitLabel) unitLabel.textContent = product.unit || product.uom || "units";
+          if (unitLabel) unitLabel.textContent = finalUnit;
 
           function updatePricing() {
             if (!qtyInput) return;
             const currentQty = parseInt(qtyInput.value, 10) || minMoq;
             if (currentQty < minMoq) {
               if (valMsg) {
-                valMsg.textContent = `Minimum order quantity is ${minMoq} ${product.unit || 'units'}.`;
+                valMsg.textContent = `Minimum order quantity is ${minMoq} ${finalUnit}.`;
                 valMsg.style.display = "block";
               }
             } else if (currentQty > maxStock) {
               if (valMsg) {
-                valMsg.textContent = `Only ${maxStock} units available in stock.`;
+                valMsg.textContent = `Only ${maxStock} ${finalUnit} available in stock.`;
                 valMsg.style.display = "block";
               }
             } else {
@@ -1035,11 +1156,11 @@
             btnBuyNow.addEventListener("click", function() {
               const currentQty = parseInt(qtyInput ? qtyInput.value : minMoq, 10) || minMoq;
               if (currentQty < minMoq) {
-                alert(`Order quantity must meet or exceed the MOQ of ${minMoq} units.`);
+                alert(`Order quantity must meet or exceed the MOQ of ${minMoq} ${finalUnit}.`);
                 return;
               }
               if (currentQty > maxStock) {
-                alert(`Order quantity cannot exceed available inventory of ${maxStock} units.`);
+                alert(`Order quantity cannot exceed available inventory of ${maxStock} ${finalUnit}.`);
                 return;
               }
 
@@ -1072,6 +1193,13 @@
               }
             }
           } catch(e) {}
+
+          // Sanitize any remaining dollar signs across the document
+          document.querySelectorAll(".detail-price, .product-price-box, .related-product-price, .specification-table, #live-order-estimate").forEach(function(el) {
+            if (el.innerHTML && el.innerHTML.includes("$")) {
+              el.innerHTML = el.innerHTML.replace(/\$/g, "₹");
+            }
+          });
         }
       });
     </script>
