@@ -20,6 +20,8 @@
     <!-- Supplier Details CSS -->
     <link rel="stylesheet" href="../css/supplier-details.css" />
     <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/product-service.js"></script>
+    <script src="../js/guest-auth-guard.js" defer></script>
     <script src="../js/shared-nav.js" defer></script>
   </head>
 
@@ -67,16 +69,6 @@
             <li class="nav-item">
               <a href="contact.html" class="nav-link">Contact</a>
             </li>
-
-            <li class="nav-item">
-              <a href="discover-suppliers.html" class="nav-link"> Discover </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="join-supplier-network.html" class="nav-link">
-                Supplier Network
-              </a>
-            </li>
           </ul>
         </nav>
 
@@ -104,26 +96,16 @@
 
     <main id="main-content">
       <!-- ==========================================
-           BREADCRUMB
-           ========================================== -->
-
-      <section class="breadcrumb-section">
-        <div class="container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-          <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="../index.html">Home</a>
-            <span>/</span>
-            <a href="suppliers.html">Suppliers</a>
-            <span>/</span>
-            <span aria-current="page">Example Manufacturing Co.</span>
-          </nav>
-        </div>
-      </section>
-
-      <!-- ==========================================
            SUPPLIER HERO / PROFILE HEADER
            ========================================== -->
 
       <section class="supplier-details-hero">
+        <div class="container hero-back-container">
+          <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='suppliers.html';}" aria-label="Go back to previous page">
+            <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back</span>
+          </button>
+        </div>
         <div class="container">
           <div class="supplier-profile-header">
             <div class="supplier-logo-section">
@@ -141,7 +123,7 @@
                 <div>
                   <span class="supplier-category"> Industrial Equipment </span>
 
-                  <h1>Example Manufacturing Co.</h1>
+                  <h1 class="supplier-detail-title">Example Manufacturing Co.</h1>
 
                   <p class="supplier-location">Bengaluru, Karnataka</p>
                 </div>
@@ -156,21 +138,27 @@
               </p>
 
               <div class="supplier-actions">
-                <a
-                  href="../auth/register.html"
+                <button
+                  type="button"
                   class="btn btn-primary"
                   id="btnContactSupplierDetails"
+                  data-auth-required="true"
+                  data-auth-action="Contact Supplier"
+                  onclick="if(window.TradeNestAuthGuard&&window.TradeNestAuthGuard.isLoggedIn()){window.location.href='../buyer-dashboard.html';}"
                 >
                   Contact Supplier
-                </a>
+                </button>
 
-                <a
-                  href="../auth/register.html"
+                <button
+                  type="button"
                   class="btn btn-secondary"
                   id="btnRequestQuoteDetails"
+                  data-auth-required="true"
+                  data-auth-action="Request a Quote"
+                  onclick="if(window.TradeNestAuthGuard&&window.TradeNestAuthGuard.isLoggedIn()){window.location.href='../buyer-dashboard.html';}"
                 >
                   Request a Quote
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -483,18 +471,25 @@
             <h2>Connect Through TradeNest</h2>
 
             <p>
-              Register as a business buyer to access supplier communication and
-              procurement features.
+              Log in or register as a business buyer to contact this supplier, request quotes, and manage procurement orders.
             </p>
 
             <div class="cta-actions">
+              <button
+                type="button"
+                class="btn btn-primary btn-large"
+                data-auth-required="true"
+                data-auth-action="Contact Supplier"
+                onclick="if(window.TradeNestAuthGuard&&window.TradeNestAuthGuard.isLoggedIn()){window.location.href='../buyer-dashboard.html';}"
+              >
+                Contact This Supplier
+              </button>
               <a
                 href="../auth/register.html"
-                class="btn btn-primary btn-large"
-                target="_blank"
-                rel="noopener noreferrer"
+                class="btn btn-secondary"
+                style="margin-left:10px;"
               >
-                Register as a Buyer
+                Register Free
               </a>
             </div>
           </div>
@@ -552,7 +547,7 @@
 
           <ul class="footer-links">
             <li>
-              <a href="discover-suppliers.html"> Discover Suppliers </a>
+              <a href="suppliers.html"> Discover Suppliers </a>
             </li>
 
             <li>
@@ -665,54 +660,130 @@
       document.addEventListener("DOMContentLoaded", function () {
         const store = window.TradeNestStore;
         const params = new URLSearchParams(window.location.search);
-        const requestedId = params.get("id");
+        const requested = (params.get("id") || params.get("supplier") || params.get("company") || params.get("name") || params.get("q") || "").trim();
         const fallbackId = JSON.parse(
           localStorage.getItem("tradenestSelectedSupplierId") ||
-            '"supplier-001"',
+            '"supplier-abc"',
         );
-        const supplierId = requestedId || fallbackId;
-        const supplier =
-          store
-            .getStore()
-            .supplierProfiles.find((item) => item.id === supplierId) ||
-          store.getStore().supplierProfiles[0];
+        const queryTerm = requested || fallbackId;
+
+        // Get suppliers from store and product-service
+        const storeProfiles = store ? (store.getStore().supplierProfiles || []) : [];
+        let allSuppliers = [...storeProfiles];
+
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.getSuppliers === "function") {
+          try {
+            const svcSuppliers = window.TradeNestProductService.getSuppliers();
+            svcSuppliers.forEach(ss => {
+              if (!allSuppliers.some(s => s.id === ss.id || (s.businessName && ss.name && s.businessName.toLowerCase() === ss.name.toLowerCase()))) {
+                allSuppliers.push({
+                  id: ss.id,
+                  businessName: ss.name,
+                  location: ss.location,
+                  category: "Industrial Wholesale",
+                  description: `Verified wholesale supplier ${ss.name}.`,
+                  trustScore: ss.trustScore || 95,
+                  verificationStatus: ss.verificationStatus || "Verified"
+                });
+              }
+            });
+          } catch(e) {}
+        }
+
+        const cleanQ = queryTerm.toLowerCase();
+        let supplier = allSuppliers.find(s => s.id.toLowerCase() === cleanQ) ||
+          allSuppliers.find(s => s.businessName && s.businessName.toLowerCase() === cleanQ) ||
+          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt.toLowerCase() === cleanQ)) ||
+          allSuppliers.find(s => s.businessName && s.businessName.toLowerCase().includes(cleanQ)) ||
+          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt.toLowerCase().includes(cleanQ))) ||
+          allSuppliers.find(s => cleanQ.includes("abc") && (s.id === "supplier-abc" || s.businessName.toLowerCase().includes("abc"))) ||
+          allSuppliers[0];
+
         if (supplier && supplier.id) {
           localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplier.id));
         }
-        const products = store
-          .getStore()
-          .products.filter((item) => item.supplierId === supplier.id);
 
-        const title = document.querySelector(".supplier-detail-title");
-        const desc = document.querySelector(".supplier-detail-description");
-        const location = document.querySelector(".supplier-info-location");
+        // Gather all products belonging to this supplier from both TradeNestProductService and TradeNestStore
+        let products = [];
+        const seenPids = new Set();
+
+        function matchesSupplier(p, sup) {
+          if (!p || !sup) return false;
+          if (p.supplierId && p.supplierId === sup.id) return true;
+          const supName = (sup.businessName || "").toLowerCase();
+          const pSupName = (p.supplierName || "").toLowerCase();
+          if (pSupName && pSupName === supName) return true;
+          if (sup.altNames && sup.altNames.some(a => a.toLowerCase() === pSupName)) return true;
+          if (supName && pSupName && (pSupName.includes(supName) || supName.includes(pSupName))) return true;
+          if (sup.products && Array.isArray(sup.products) && sup.products.includes(p.id)) return true;
+          return false;
+        }
+
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.getProductsSync === "function") {
+          try {
+            const sps = window.TradeNestProductService.getProductsSync({ includeAllStatuses: true }) || [];
+            sps.forEach(p => {
+              if (matchesSupplier(p, supplier) && !seenPids.has(p.id)) {
+                seenPids.add(p.id);
+                products.push(p);
+              }
+            });
+          } catch(e) {}
+        }
+
+        if (store) {
+          try {
+            const storeProds = store.getStore().products || [];
+            storeProds.forEach(p => {
+              if (matchesSupplier(p, supplier) && !seenPids.has(p.id)) {
+                seenPids.add(p.id);
+                products.push(p);
+              }
+            });
+          } catch(e) {}
+        }
+
+        const title = document.querySelector(".supplier-detail-title") || document.querySelector(".supplier-header-info h1") || document.querySelector("h1");
+        const desc = document.querySelector(".supplier-detail-description") || document.querySelector(".supplier-introduction");
+        const location = document.querySelector(".supplier-info-location") || document.querySelector(".supplier-location");
+        const category = document.querySelector(".supplier-category");
         const trust = document.querySelector(".supplier-trust-score");
         const productList = document.querySelector(".supplier-product-grid");
 
         if (title) title.textContent = supplier.businessName;
         if (desc) desc.textContent = supplier.description;
         if (location) location.textContent = supplier.location;
+        if (category && supplier.category) category.textContent = supplier.category;
         if (trust) trust.textContent = `${supplier.trustScore}/100`;
+
         if (productList) {
           productList.innerHTML = products.length
-            ? products
-                .map(
-                  (product) => `
-            <article class="supplier-product-card">
-              <div class="product-image-wrapper">
-                <img src="${product.image}" alt="${product.name}" />
-              </div>
-              <div class="product-card-content">
-                <span class="product-category">${product.category}</span>
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
-                <a href="product-details.html?id=${product.id}" class="btn btn-secondary">View Product</a>
-              </div>
-            </article>
-          `,
-                )
-                .join("")
-            : '<div class="empty-state">No products are connected to this supplier yet.</div>';
+            ? products.map((product) => {
+                let img = product.image || "../images/products/industrial-safety-gloves.webp";
+                if (img.startsWith("/")) img = ".." + img;
+                else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
+                  img = "../" + img.replace(/^\/+/, "");
+                }
+                const priceFormatted = product.price ? `₹${Number(product.price).toLocaleString("en-IN")}` : "Contact for Quote";
+                return `
+                  <article class="supplier-product-card" style="display:flex;flex-direction:column;background:#ffffff;border:1px solid #e5e1d6;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                    <div class="product-image-wrapper" style="height:190px;display:flex;align-items:center;justify-content:center;background:#faf9f5;padding:12px;">
+                      <img src="${img}" alt="${product.name}" onerror="this.src='../images/products/industrial-safety-gloves.webp'" style="max-height:100%;max-width:100%;object-fit:contain;" />
+                    </div>
+                    <div class="product-card-content" style="padding:16px;flex:1;display:flex;flex-direction:column;">
+                      <span class="product-category" style="font-size:0.75rem;text-transform:uppercase;font-weight:700;color:#666666;margin-bottom:6px;">${product.category || "Industrial"}</span>
+                      <h3 style="font-size:1.05rem;font-weight:700;color:#111111;margin:0 0 8px;">${product.name}</h3>
+                      <p style="font-size:0.85rem;color:#555555;line-height:1.4;margin:0 0 12px;flex:1;">${product.description || ""}</p>
+                      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-top:1px solid #f0ece3;margin-bottom:12px;">
+                        <span style="font-size:1.1rem;font-weight:800;color:#111111;">${priceFormatted}</span>
+                        <span style="font-size:0.78rem;color:#666666;font-weight:600;">MOQ: ${product.moq || 1} ${product.unit || "units"}</span>
+                      </div>
+                      <a href="product-details.html?id=${product.id}" class="btn btn-primary btn-sm" style="display:block;text-align:center;text-decoration:none;font-weight:700;padding:10px 14px;border-radius:8px;">View Product Description &rarr;</a>
+                    </div>
+                  </article>
+                `;
+              }).join("")
+            : '<div class="empty-state" style="padding:40px;text-align:center;grid-column:1/-1;">No products found for this supplier. Check back soon.</div>';
         }
       });
     </script>

@@ -342,6 +342,47 @@ button {
   font-weight: 700;
 }
 
+.tn-nav-profile-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #FFFFFF;
+  color: var(--color-heading);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.tn-nav-profile-btn:hover {
+  background: var(--color-surface);
+  border-color: var(--color-black);
+  color: var(--color-black);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.tn-nav-profile-btn:active {
+  transform: translateY(0);
+}
+
+.tn-nav-profile-btn:focus-visible {
+  outline: 2px solid var(--color-black);
+  outline-offset: 2px;
+}
+
+.tn-nav-profile-icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
 .tn-nav-dash-pill {
   display: inline-flex;
   min-height: 38px;
@@ -2156,20 +2197,139 @@ select.form-control {
     display: none !important;
   }
 }
-/* Keep public page framing and navigation aligned with the homepage. */
-body:has(> .tn-site-header):not(.public-home) {
-  font-size: 16px;
+
+/* =========================================================
+   PAGE HERO BACK NAVIGATION BAR & BUTTON
+   Standardized layout, padding, and top-left placement across all TradeNest pages
+   ========================================================= */
+
+/* Ensure all hero sections have proper relative positioning & standardized top padding */
+:is(
+  .hero-section,
+  .about-hero,
+  .product-hero-section,
+  .contact-hero,
+  .supplier-details-hero,
+  .hero-suppliers,
+  .product-details-section
+) {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  padding-top: clamp(82px, 8.5vw, 98px) !important;
 }
 
-body:has(> .tn-site-header):not(.public-home) .tn-header-inner {
-  width: min(calc(100% - 48px), 1360px);
-  min-height: 68px;
+.page-back-bar {
+  background: #fbfbfc;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 0;
+  width: 100%;
+  position: relative;
+  z-index: 15;
 }
 
-body:has(> .tn-site-header):not(.public-home) .tn-nav-link {
-  font-size: 0.9rem;
+/* Back button container positioned consistently at the TOP LEFT of the hero section */
+.hero-back-container {
+  position: absolute !important;
+  top: clamp(16px, 2.5vw, 24px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100% - 48px), 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  z-index: 30 !important;
+  pointer-events: none !important;
 }
 
-body:has(> .tn-site-header):not(.public-home) main .container {
-  width: min(calc(100% - 48px), 1320px);
+.hero-back-container > * {
+  pointer-events: auto !important;
+}
+
+.page-back-bar .container,
+.page-back-bar .section-container,
+.page-back-bar .hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: min(calc(100% - 48px), 1280px);
+  margin-inline: auto;
+  padding: 0 4px;
+}
+
+.dashboard-back-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.auth-back-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+/* Premium, unified styling and consistent padding for all back buttons */
+.back-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 18px !important;
+  min-height: 38px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 8px !important;
+  color: #000000 !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+  line-height: 1.2 !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  user-select: none !important;
+}
+
+.back-btn:hover {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+  border-color: #000000 !important;
+  transform: translateX(-3px) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+}
+
+.back-btn:hover .back-btn-icon {
+  stroke: #FFFFFF !important;
+  transform: translateX(-2px) !important;
+}
+
+.back-btn:active {
+  transform: translateX(-1px) scale(0.98) !important;
+}
+
+.back-btn:focus-visible {
+  outline: 2px solid #000000 !important;
+  outline-offset: 2px !important;
+}
+
+.back-btn-icon {
+  display: inline-block !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  stroke: currentColor !important;
+  stroke-width: 2.2 !important;
+  transition: transform 0.2s ease !important;
 }

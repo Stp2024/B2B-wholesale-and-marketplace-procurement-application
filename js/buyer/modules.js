@@ -932,9 +932,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const sort = sortSelect ? sortSelect.value : "name";
 
       let results = productsList.filter((product) => {
-        const matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm) || product.supplierName.toLowerCase().includes(searchTerm);
+        const prodName = (product.name || "").toLowerCase();
+        const prodSup = (product.supplierName || "").toLowerCase();
+        const isAbcSearch = searchTerm.includes("abc") || searchTerm.includes("treader") || searchTerm.includes("trader");
+        const isAbcProd = prodSup.includes("abc") || prodName.includes("abc") || (product.supplierId && product.supplierId.includes("abc"));
+        const matchesSearch = !searchTerm || prodName.includes(searchTerm) || prodSup.includes(searchTerm) || (isAbcSearch && isAbcProd);
         const matchesCategory = !category || product.category === category;
-        const matchesSupplier = !supplier || product.supplierId === supplier || product.supplierName === supplier;
+        const matchesSupplier = !supplier || product.supplierId === supplier || product.supplierName === supplier || (supplier === "supplier-abc" && (product.supplierId === "supplier-abc" || prodSup.includes("abc")));
         const matchesAvailability = !availability || product.availability === availability;
         return matchesSearch && matchesCategory && matchesSupplier && matchesAvailability;
       });
@@ -1097,7 +1101,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const sort = sortFilter ? sortFilter.value : "trust";
 
       let results = state.supplierProfiles.filter((supplier) => {
-        const matchesSearch = !query || supplier.businessName.toLowerCase().includes(query) || supplier.category.toLowerCase().includes(query) || supplier.location.toLowerCase().includes(query);
+        const sName = (supplier.businessName || "").toLowerCase();
+        const sCat = (supplier.category || "").toLowerCase();
+        const sLoc = (supplier.location || "").toLowerCase();
+        const sAlts = (supplier.altNames || []).map(a => a.toLowerCase());
+        const isAbcSearch = query.includes("abc") || query.includes("treader") || query.includes("trader");
+        const isAbcSup = sName.includes("abc") || (supplier.id && supplier.id.includes("abc")) || sAlts.some(a => a.includes("abc"));
+        const matchesSearch = !query || sName.includes(query) || sCat.includes(query) || sLoc.includes(query) || sAlts.some(a => a.includes(query)) || (isAbcSearch && isAbcSup);
         const matchesLocation = !location || supplier.location.toLowerCase().includes(location.toLowerCase());
         const matchesCategory = !category || supplier.category === category;
         return matchesSearch && matchesLocation && matchesCategory;

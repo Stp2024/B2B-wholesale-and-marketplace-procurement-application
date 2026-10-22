@@ -75,9 +75,9 @@
 
     const baseNavLinks = [
       { label: "Home", href: `${relativeRoot}index.html`, file: "index.html" },
+      { label: "About", href: resolvePath("pages/about.html"), file: "about.html" },
       { label: "Products", href: resolvePath("pages/products.html"), file: "products.html" },
       { label: "Suppliers", href: resolvePath("pages/suppliers.html"), file: "suppliers.html" },
-      { label: "About", href: resolvePath("pages/about.html"), file: "about.html" },
       { label: "Contact", href: resolvePath("pages/contact.html"), file: "contact.html" }
     ];
 
@@ -90,12 +90,6 @@
       const isCurrent = (item.file === activePage && activePage !== "index.html");
       return `<li><a class="tn-nav-link${isCurrent ? " is-active" : ""}" href="${item.href}"${isCurrent ? ' aria-current="page"' : ""}>${item.label}</a></li>`;
     }).join("");
-
-    if (isLoggedIn) {
-      navListHtml += `
-        <li><a class="tn-nav-link tn-nav-profile-link" id="navProfileLink" href="${relativeRoot}index.html#user-profile">Profile</a></li>
-      `;
-    }
 
     // Global Search Component HTML
     const searchHtml = `
@@ -141,7 +135,12 @@
       actionsHtml = `
         <div class="tn-nav-actions tn-nav-logged-in" id="navLoggedInActions">
           ${notifHtml}
-          <span class="tn-nav-user-greeting">Hi, <strong>${escapeHtml(displayName)}</strong></span>
+          <button type="button" class="tn-nav-profile-btn" id="navProfileBtn" aria-label="View Profile" title="View Profile (${escapeHtml(displayName)})">
+            <svg class="tn-nav-profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
           <a class="tn-nav-dash-pill tn-nav-dashboard-link" id="navDashboardLink" data-id="navDashPillBtn" href="${dashboardUrl}">${dashboardShort}</a>
           <button type="button" class="tn-nav-logout-btn btn btn-outline" id="navLogoutBtn" aria-label="Log out of TradeNest">Logout</button>
         </div>
@@ -214,16 +213,76 @@
     }
 
     // Attach Profile click listener
+    const profileBtn = header.querySelector("#navProfileBtn");
     const profileLink = header.querySelector("#navProfileLink");
-    if (profileLink) {
-      profileLink.addEventListener("click", (e) => {
-        const profileModal = document.getElementById("viewProfileModal") || document.getElementById("userProfileModal");
-        if (profileModal) {
-          e.preventDefault();
-          profileModal.style.display = "flex";
-        }
-      });
+    const handleProfileClick = (e) => {
+      e.preventDefault();
+      openUserProfileModal(user, dashboardUrl);
+    };
+    if (profileBtn) profileBtn.addEventListener("click", handleProfileClick);
+    if (profileLink) profileLink.addEventListener("click", handleProfileClick);
+  }
+
+  function openUserProfileModal(user, dashboardUrl) {
+    if (!user) return;
+    let modal = document.getElementById("viewProfileModal") || document.getElementById("userProfileModal");
+
+    if (!modal) {
+      let existingSharedModal = document.getElementById("sharedViewProfileModal");
+      if (!existingSharedModal) {
+        existingSharedModal = document.createElement("div");
+        existingSharedModal.className = "tn-modal-backdrop";
+        existingSharedModal.id = "sharedViewProfileModal";
+        existingSharedModal.setAttribute("role", "dialog");
+        existingSharedModal.setAttribute("aria-modal", "true");
+        existingSharedModal.setAttribute("aria-labelledby", "sharedProfileModalTitle");
+        existingSharedModal.innerHTML = `
+          <div class="tn-modal-card">
+            <div class="tn-modal-header">
+              <h2 class="tn-modal-title" id="sharedProfileModalTitle">My Profile</h2>
+              <button type="button" class="tn-modal-close" id="closeSharedProfileModal" aria-label="Close profile">&times;</button>
+            </div>
+            <div class="tn-modal-body">
+              <div class="profile-modal-grid" id="sharedProfileModalContent"></div>
+            </div>
+            <div class="tn-modal-footer">
+              <a href="${dashboardUrl || '#'}" class="btn btn-primary" id="sharedProfileDashBtn" style="margin-right:auto;">Go to Dashboard</a>
+              <button type="button" class="btn btn-secondary" id="closeSharedProfileModalFooter">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(existingSharedModal);
+
+        const closeFn = () => { existingSharedModal.style.display = "none"; };
+        existingSharedModal.querySelector("#closeSharedProfileModal")?.addEventListener("click", closeFn);
+        existingSharedModal.querySelector("#closeSharedProfileModalFooter")?.addEventListener("click", closeFn);
+        existingSharedModal.addEventListener("click", (e) => {
+          if (e.target === existingSharedModal) closeFn();
+        });
+      }
+      modal = existingSharedModal;
     }
+
+    const contentContainer = modal.querySelector("#profileModalContent") || modal.querySelector("#sharedProfileModalContent");
+    if (contentContainer) {
+      const displayName = user.fullName || user.businessName || (user.email ? user.email.split("@")[0] : "User");
+      const role = (user.role || "buyer");
+      const formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
+      const loc = [user.city, user.state, user.country].filter(Boolean).join(", ") || "—";
+      contentContainer.innerHTML = [
+        { label: "Full Name", value: displayName },
+        { label: "Email", value: user.email },
+        { label: "Phone", value: user.phone || "—" },
+        { label: "Business", value: user.businessName || "—" },
+        { label: "Role", value: formattedRole },
+        { label: "Location", value: loc }
+      ].map(f => `<div class="modal-field">
+        <span class="field-label">${escapeHtml(f.label)}</span>
+        <p class="field-value">${escapeHtml(f.value || "—")}</p>
+      </div>`).join("");
+    }
+
+    modal.style.display = "flex";
   }
 
   function attachSearchListeners(header, relativeRoot, resolvePath) {

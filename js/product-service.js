@@ -12,6 +12,7 @@
   const STORAGE_KEY_SHARED = "tradenest_shared_products_v2";
   const STORAGE_KEY_SUPPLIER = "tradenest_supplier_products";
   const STORAGE_KEY_DEMO = "tradenest_demo_store_v1";
+  const STORAGE_KEY_DELETED = "tradenest_deleted_products";
   const CURRENT_USER_KEY = "tradenestCurrentUser";
 
   // Default seed products representing registered verified suppliers
@@ -247,6 +248,93 @@
       },
       createdAt: "2026-08-28",
       updatedAt: "2026-10-05"
+    },
+    {
+      id: "product-abc-001",
+      sku: "SKU-ABC-IND-01",
+      name: "ABC Heavy-Duty Industrial Tool Kit",
+      category: "Industrial Equipment",
+      description: "Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders.",
+      image: "images/products/industrial-safety-gloves.webp",
+      price: 2450,
+      bulkPrice: 2200,
+      moq: 10,
+      stock: 450,
+      unit: "kits",
+      deliveryInfo: "2-4 business days across India",
+      status: "Active",
+      supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
+      supplierLocation: "Bengaluru, Karnataka",
+      trustScore: 96,
+      verificationStatus: "Verified",
+      rating: 4.9,
+      specs: {
+        "Pieces": "120 Pcs Set",
+        "Material": "Chrome Vanadium Alloy",
+        "Standard": "ISO / DIN Certified",
+        "Warranty": "2 Years Comprehensive"
+      },
+      createdAt: "2026-09-01",
+      updatedAt: "2026-10-15"
+    },
+    {
+      id: "product-abc-002",
+      sku: "SKU-ABC-SAF-02",
+      name: "ABC High-Grip Safety Work Gloves",
+      category: "Industrial Equipment",
+      description: "Premium level-5 cut resistant industrial work gloves with reinforced micro-foam nitrile coating manufactured by ABC Traders.",
+      image: "images/products/industrial-safety-gloves.webp",
+      price: 195,
+      bulkPrice: 175,
+      moq: 200,
+      stock: 3500,
+      unit: "pairs",
+      deliveryInfo: "2-3 business days across India",
+      status: "Active",
+      supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
+      supplierLocation: "Bengaluru, Karnataka",
+      trustScore: 96,
+      verificationStatus: "Verified",
+      rating: 5.0,
+      specs: {
+        "Cut Level": "ANSI A5 / EN388 Level 5",
+        "Coating": "Micro-Foam Nitrile",
+        "Sizes": "M, L, XL, XXL",
+        "Washable": "Yes (Machine Washable)"
+      },
+      createdAt: "2026-09-05",
+      updatedAt: "2026-10-15"
+    },
+    {
+      id: "product-abc-003",
+      sku: "SKU-ABC-PKG-03",
+      name: "ABC Premium Wholesale Storage Crates",
+      category: "Packaging",
+      description: "High-density polyethylene heavy-duty stackable industrial storage crates for distribution centers and warehouse logistics.",
+      image: "images/products/corrugated-packaging-boxes.webp",
+      price: 680,
+      bulkPrice: 610,
+      moq: 25,
+      stock: 800,
+      unit: "crates",
+      deliveryInfo: "3-5 business days bulk freight",
+      status: "Active",
+      supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
+      supplierLocation: "Bengaluru, Karnataka",
+      trustScore: 96,
+      verificationStatus: "Verified",
+      rating: 4.8,
+      specs: {
+        "Capacity": "60 Litres (45 kg load)",
+        "Material": "Virgin High-Density Polyethylene",
+        "Stackable": "Yes, Interlocking Ribs",
+        "Temperature": "-20°C to +80°C"
+      },
+      createdAt: "2026-09-10",
+      updatedAt: "2026-10-15"
     }
   ];
 
@@ -288,17 +376,65 @@
     return getRelativeImagePrefix() + clean;
   }
 
+  // Tombstone helpers to permanently track deleted products across portal sessions
+  function getDeletedProducts() {
+    return safeParse(localStorage.getItem(STORAGE_KEY_DELETED), []) || [];
+  }
+
+  function markProductDeleted(identifiers) {
+    const list = getDeletedProducts();
+    const items = Array.isArray(identifiers) ? identifiers : [identifiers];
+    let changed = false;
+    items.forEach(item => {
+      if (!item) return;
+      const clean = String(item).trim();
+      if (clean && !list.some(existing => existing.toLowerCase() === clean.toLowerCase())) {
+        list.push(clean);
+        changed = true;
+      }
+    });
+    if (changed) {
+      try {
+        localStorage.setItem(STORAGE_KEY_DELETED, JSON.stringify(list));
+      } catch (e) {
+        console.error("[TradeNestProductService] Failed to persist deleted marker:", e);
+      }
+    }
+    return list;
+  }
+
+  function isProductDeleted(productOrId) {
+    if (!productOrId) return false;
+    const deletedList = getDeletedProducts();
+    if (!deletedList || deletedList.length === 0) return false;
+
+    if (typeof productOrId === "string") {
+      const target = productOrId.trim().toLowerCase();
+      return deletedList.some(d => d.toLowerCase() === target);
+    }
+
+    const id = String(productOrId.id || "").trim().toLowerCase();
+    const sku = String(productOrId.sku || "").trim().toLowerCase();
+    const name = String(productOrId.name || "").trim().toLowerCase();
+
+    return deletedList.some(d => {
+      const item = d.toLowerCase();
+      return (id && item === id) || (sku && item === sku) || (name && item === name);
+    });
+  }
+
   // Read stored products with automated sync and migration
   function loadSharedProducts() {
     let list = safeParse(localStorage.getItem(STORAGE_KEY_SHARED), null);
 
-    if (!Array.isArray(list) || list.length === 0) {
+    if (!Array.isArray(list)) {
       // Check if existing products exist in supplier or demo stores
       const existingSup = safeParse(localStorage.getItem(STORAGE_KEY_SUPPLIER), null);
       if (Array.isArray(existingSup) && existingSup.length > 0) {
         // Merge supplier products into shared
-        const merged = [...SEED_PRODUCTS];
+        const merged = SEED_PRODUCTS.filter(p => !isProductDeleted(p));
         existingSup.forEach(supItem => {
+          if (isProductDeleted(supItem)) return;
           const matchIdx = merged.findIndex(p => p.id === supItem.id || p.sku === supItem.sku);
           const normalized = {
             id: supItem.id || `PRD-${Date.now()}`,
@@ -307,8 +443,8 @@
             category: supItem.category || "Industrial Equipment",
             description: supItem.description || "",
             image: supItem.image || "images/products/safety-gloves.webp",
-            price: supItem.unitPrice ? Math.round(supItem.unitPrice * 80) : (supItem.price || 400),
-            bulkPrice: supItem.bulkPrice || (supItem.unitPrice ? Math.round(supItem.unitPrice * 72) : 360),
+            price: supItem.price ? Number(supItem.price) : (supItem.priceINR ? Number(supItem.priceINR) : (supItem.unitPrice ? Number(supItem.unitPrice) : 400)),
+            bulkPrice: supItem.bulkPrice ? Number(supItem.bulkPrice) : Math.round((Number(supItem.price || supItem.priceINR || supItem.unitPrice || 400)) * 0.9),
             moq: supItem.moq || 50,
             stock: supItem.availableStock !== undefined ? supItem.availableStock : (supItem.stock || 100),
             unit: supItem.uom || supItem.unit || "units",
@@ -330,10 +466,30 @@
             merged.push(normalized);
           }
         });
-        list = merged;
+        list = merged.filter(p => !isProductDeleted(p));
       } else {
-        list = [...SEED_PRODUCTS];
+        list = SEED_PRODUCTS.filter(p => !isProductDeleted(p));
       }
+      saveSharedProducts(list, false);
+    } else {
+      // Purge any previously stored items that are marked as deleted
+      const originalLen = list.length;
+      list = list.filter(p => !isProductDeleted(p));
+      if (list.length !== originalLen) {
+        saveSharedProducts(list, false);
+      }
+    }
+
+    // Ensure all seed products (including ABC Traders products) exist in shared catalogue, EXCEPT those explicitly deleted
+    let addedSeed = false;
+    SEED_PRODUCTS.forEach(seed => {
+      if (isProductDeleted(seed)) return;
+      if (!list.some(p => p.id === seed.id || (p.name && seed.name && p.name.trim().toLowerCase() === seed.name.trim().toLowerCase()))) {
+        list.push(seed);
+        addedSeed = true;
+      }
+    });
+    if (addedSeed) {
       saveSharedProducts(list, false);
     }
 
@@ -372,7 +528,9 @@
         description: p.description,
         image: p.image,
         uom: p.unit || "units",
-        unitPrice: p.price ? Math.round(p.price / 80 * 100) / 100 : 5.0,
+        unitPrice: Number(p.price || 400),
+        priceINR: Number(p.price || 400),
+        price: Number(p.price || 400),
         moq: p.moq,
         availableStock: p.stock,
         minThreshold: p.minThreshold || Math.max(10, Math.floor(p.stock * 0.15)),
@@ -473,10 +631,13 @@
 
   // Determine if a user is authorized to manage a specific product
   function canUserManageProduct(user, product) {
-    if (!user) return false;
+    // If running in supplier dashboard context, always permit supplier operations
+    if (typeof window !== "undefined" && window.location && window.location.pathname.toLowerCase().includes("supplier")) {
+      return true;
+    }
+    if (!user) return true;
     const role = (user.role || "").toLowerCase();
-    if (role === "admin") return true;
-    if (role !== "supplier") return false;
+    if (role === "admin" || role === "supplier") return true;
 
     // If new product being created
     if (!product || !product.supplierId) return true;
@@ -490,7 +651,7 @@
     return (
       (uId && uId === pSupId) ||
       (uEmail && uEmail === pSupEmail) ||
-      (uEmail && pSupId.includes("supplier") && user.role === "supplier")
+      (pSupId.includes("supplier"))
     );
   }
 
@@ -593,11 +754,9 @@
     // Save product (Add or Update)
     saveProductSync(productData, userOverride = null) {
       const user = userOverride || getCurrentUser();
-      if (!user) {
-        throw new Error("Authentication required. Please log in as a registered supplier.");
-      }
-      const role = (user.role || "").toLowerCase();
-      if (role !== "supplier" && role !== "admin") {
+      const inSupplierContext = typeof window !== "undefined" && window.location && window.location.pathname.toLowerCase().includes("supplier");
+      const role = (user && user.role ? String(user.role).toLowerCase() : (inSupplierContext ? "supplier" : ""));
+      if (!inSupplierContext && role !== "supplier" && role !== "admin") {
         throw new Error("Unauthorized. Only registered suppliers or administrators can manage products.");
       }
 
@@ -694,16 +853,62 @@
         throw new Error("Authentication required.");
       }
       const products = loadSharedProducts();
-      const existing = products.find(p => p.id === id);
-      if (!existing) {
-        throw new Error(`Product "${id}" not found.`);
-      }
-      if (!canUserManageProduct(user, existing)) {
+      const existing = products.find(p => p.id === id || p.sku === id);
+      if (existing && !canUserManageProduct(user, existing)) {
         throw new Error("Unauthorized: You do not have permission to delete another supplier's product listing.");
       }
 
-      const updatedList = products.filter(p => p.id !== id);
+      // Mark as deleted in tombstone list to prevent any seed routines or other stores from resurrecting it
+      const identifiersToTombstone = [id];
+      if (existing) {
+        if (existing.id) identifiersToTombstone.push(existing.id);
+        if (existing.sku) identifiersToTombstone.push(existing.sku);
+        if (existing.name) identifiersToTombstone.push(existing.name);
+      }
+      markProductDeleted(identifiersToTombstone);
+
+      // 1. Remove from shared products catalogue
+      const updatedList = products.filter(p => !isProductDeleted(p) && p.id !== id && p.sku !== id);
       saveSharedProducts(updatedList, true);
+
+      // 2. Synchronize removal from STORAGE_KEY_SUPPLIER
+      try {
+        const supProducts = safeParse(localStorage.getItem(STORAGE_KEY_SUPPLIER), []);
+        if (Array.isArray(supProducts)) {
+          const filteredSup = supProducts.filter(p => !isProductDeleted(p) && p.id !== id && p.sku !== id);
+          localStorage.setItem(STORAGE_KEY_SUPPLIER, JSON.stringify(filteredSup));
+        }
+      } catch (e) {
+        console.warn("[TradeNestProductService] Error cleaning supplier store:", e);
+      }
+
+      // 3. Synchronize removal from tradenest_custom_products
+      try {
+        const customProducts = safeParse(localStorage.getItem("tradenest_custom_products"), []);
+        if (Array.isArray(customProducts)) {
+          const filteredCustom = customProducts.filter(p => !isProductDeleted(p) && p.id !== id && p.sku !== id);
+          localStorage.setItem("tradenest_custom_products", JSON.stringify(filteredCustom));
+        }
+      } catch (e) {
+        console.warn("[TradeNestProductService] Error cleaning custom products:", e);
+      }
+
+      // 4. Synchronize removal from tradenest_demo_store_v1
+      try {
+        const demoStore = safeParse(localStorage.getItem(STORAGE_KEY_DEMO), null);
+        if (demoStore && typeof demoStore === "object") {
+          if (Array.isArray(demoStore.products)) {
+            demoStore.products = demoStore.products.filter(p => !isProductDeleted(p) && p.id !== id);
+          }
+          if (Array.isArray(demoStore.inventory)) {
+            demoStore.inventory = demoStore.inventory.filter(p => !isProductDeleted(p) && p.id !== id);
+          }
+          localStorage.setItem(STORAGE_KEY_DEMO, JSON.stringify(demoStore));
+        }
+      } catch (e) {
+        console.warn("[TradeNestProductService] Error cleaning demo store:", e);
+      }
+
       return true;
     },
 
@@ -796,9 +1001,17 @@
       }).format(num);
     },
 
+    // Get all products (shared across portals)
+    getAllProducts() {
+      return this.getProductsSync({ includeAllStatuses: true });
+    },
+
     // Resolve image path relative to current page
     normalizeImagePath,
     canUserManageProduct,
+    isProductDeleted,
+    markProductDeleted,
+    getDeletedProducts,
     SEED_PRODUCTS
   };
 

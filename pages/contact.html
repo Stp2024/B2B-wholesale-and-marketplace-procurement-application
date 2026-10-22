@@ -43,14 +43,6 @@
               >Contact</a
             >
           </li>
-          <li class="nav-item">
-            <a href="discover-suppliers.html" class="nav-link">Discover </a>
-          </li>
-          <li class="nav-item">
-            <a href="join-supplier-network.html" class="nav-link">
-              Supplier Network</a
-            >
-          </li>
         </ul>
 
         <div class="nav-auth">
@@ -75,21 +67,70 @@
     <main id="main-content">
       <!-- Contact Hero Section -->
       <section class="hero-section contact-hero">
+        <div class="container hero-back-container">
+          <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back to previous page">
+            <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back</span>
+          </button>
+        </div>
         <div class="container hero-container">
           <div class="hero-content">
+            <div class="hero-badge">
+              <span class="badge-icon">&#x1F4AC;</span>
+              <span class="badge-text">Dedicated B2B Procurement Support</span>
+            </div>
             <h1>Get in Touch with TradeNest</h1>
-            <p>
-              Have a question about sourcing, suppliers, procurement or the
-              TradeNest platform? Send us your enquiry and our team can help
-              direct it to the appropriate channel.
+            <p class="hero-subtitle">
+              Have questions about sourcing verified suppliers, bulk RFQs, custom quotes, or platform capabilities? Our enterprise procurement specialists are here 24/7 to support your business.
             </p>
+            <div class="hero-cta-group">
+              <a href="#contact-form-section" class="btn btn-primary btn-large">
+                <span class="btn-text">Send Enquiry</span>
+                <span class="btn-icon">&rarr;</span>
+              </a>
+              <a href="#contact-info-section" class="btn-hero-secondary">
+                <span class="btn-text">Support Channels</span>
+              </a>
+            </div>
+            <div class="hero-stats-row">
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">&lt; 15m</span>
+                <span class="hero-stat-label">Average Response</span>
+              </div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">24 / 7</span>
+                <span class="hero-stat-label">Procurement Desk</span>
+              </div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">100%</span>
+                <span class="hero-stat-label">Resolution SLA</span>
+              </div>
+            </div>
           </div>
           <div class="hero-image-wrapper">
-            <img
-              src="../images/contact-hero.webp"
-              alt="TradeNest customer support representative assisting with B2B procurement and supplier enquiries"
-              class="hero-image"
-            />
+            <div class="hero-media">
+              <img
+                src="../images/contact-showcase.jpg"
+                alt="Omnichannel digital customer support and enterprise B2B helpdesk"
+                class="hero-image"
+              />
+              <div class="hero-floating-badge badge-top">
+                <span class="floating-badge-icon">&#x1F7E2;</span>
+                <div class="floating-badge-content">
+                  <span class="floating-badge-title">Helpdesk Active Now</span>
+                  <span class="floating-badge-sub">Live Sourcing Specialists</span>
+                </div>
+              </div>
+              <div class="hero-floating-badge badge-bottom">
+                <span class="floating-badge-icon">&#x26A1;</span>
+                <div class="floating-badge-content">
+                  <span class="floating-badge-title">Priority Enterprise Support</span>
+                  <span class="floating-badge-sub">Dedicated Account Desk</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -395,7 +436,7 @@
             </p>
           </div>
           <div class="cta-action">
-            <a href="discover-suppliers.html" class="btn btn-primary"
+            <a href="suppliers.html" class="btn btn-primary"
               >Discover Suppliers</a
             >
           </div>
@@ -444,7 +485,7 @@
               <div class="faq-answer">
                 <p>
                   Use the
-                  <a href="discover-suppliers.html">Discover Suppliers</a>
+                  <a href="suppliers.html">Discover Suppliers</a>
                   section to explore available supplier information.
                 </p>
               </div>
@@ -530,7 +571,7 @@
         <div class="footer-column">
           <p class="footer-heading">For Buyers</p>
           <ul class="footer-links">
-            <li><a href="discover-suppliers.html">Discover Suppliers</a></li>
+            <li><a href="suppliers.html">Discover Suppliers</a></li>
             <li><a href="../auth/register.html">Request a Quote</a></li>
             <li><a href="../auth/register.html">Compare Suppliers</a></li>
             <li><a href="../auth/register.html">Request a Sample</a></li>

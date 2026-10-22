@@ -86,7 +86,7 @@
       title: "Smart Supplier Discovery",
       desc: "Filter by category, location, trust score and availability to find the perfect supplier.",
       cta: "Discover Suppliers →",
-      href: "pages/discover-suppliers.html"
+      href: "pages/suppliers.html"
     }
   ];
 

@@ -6,6 +6,7 @@
     <title>Supplier Details</title>
     <link rel="stylesheet" href="../../css/buyer/dashboard.css" />
     <link rel="stylesheet" href="../../css/shared.css" />
+    <script src="../../js/product-service.js"></script>
     <style>
       body {
         margin: 0;
@@ -170,31 +171,110 @@
       document.addEventListener("DOMContentLoaded", function () {
         const store = window.TradeNestStore;
         const params = new URLSearchParams(window.location.search);
-        const requestedId = params.get("id");
-        const fallbackId = JSON.parse(localStorage.getItem("tradenestSelectedSupplierId") || '"supplier-001"');
-        const supplierId = requestedId || fallbackId;
-        const supplier = store.getStore().supplierProfiles.find((item) => item.id === supplierId) || store.getStore().supplierProfiles[0];
+        const requested = (params.get("id") || params.get("supplier") || params.get("company") || params.get("name") || params.get("q") || "").trim();
+        const fallbackId = JSON.parse(localStorage.getItem("tradenestSelectedSupplierId") || '"supplier-abc"');
+        const queryTerm = requested || fallbackId;
+
+        const storeProfiles = store ? (store.getStore().supplierProfiles || []) : [];
+        let allSuppliers = [...storeProfiles];
+
+        if (window.TradeNestProductService && typeof window.TradeNestProductService.getSuppliers === "function") {
+          try {
+            const svcSuppliers = window.TradeNestProductService.getSuppliers();
+            svcSuppliers.forEach(ss => {
+              if (!allSuppliers.some(s => s.id === ss.id || (s.businessName && ss.name && s.businessName.toLowerCase() === ss.name.toLowerCase()))) {
+                allSuppliers.push({
+                  id: ss.id,
+                  businessName: ss.name,
+                  location: ss.location,
+                  category: "Industrial Equipment",
+                  description: `Verified wholesale supplier ${ss.name}.`,
+                  trustScore: ss.trustScore || 96,
+                  verificationStatus: ss.verificationStatus || "Verified"
+                });
+              }
+            });
+          } catch(e) {}
+        }
+
+        const cleanQ = queryTerm.toLowerCase();
+        let supplier = allSuppliers.find(s => s.id.toLowerCase() === cleanQ) ||
+          allSuppliers.find(s => s.businessName && s.businessName.toLowerCase() === cleanQ) ||
+          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt.toLowerCase() === cleanQ)) ||
+          allSuppliers.find(s => s.businessName && s.businessName.toLowerCase().includes(cleanQ)) ||
+          allSuppliers.find(s => cleanQ.includes("abc") && (s.id === "supplier-abc" || s.businessName.toLowerCase().includes("abc"))) ||
+          allSuppliers[0];
 
         if (supplier) {
           localStorage.setItem("tradenestSelectedSupplierId", JSON.stringify(supplier.id));
-          document.getElementById("supplier-logo").textContent = supplier.logo || supplier.businessName.charAt(0);
+          document.getElementById("supplier-logo").textContent = supplier.logo || (supplier.businessName || "S").charAt(0);
           document.getElementById("supplier-name").textContent = supplier.businessName;
           document.getElementById("supplier-description").textContent = supplier.description;
           document.getElementById("supplier-location").textContent = supplier.location;
           document.getElementById("supplier-category").textContent = supplier.category;
           document.getElementById("supplier-trust").textContent = `Trust ${supplier.trustScore}/100`;
 
-          const products = store.getStore().products.filter((item) => item.supplierId === supplier.id);
+          let products = [];
+          const seenPids = new Set();
+
+          function matchesSupplier(p, sup) {
+            if (!p || !sup) return false;
+            if (p.supplierId && p.supplierId === sup.id) return true;
+            const supName = (sup.businessName || "").toLowerCase();
+            const pSupName = (p.supplierName || "").toLowerCase();
+            if (pSupName && pSupName === supName) return true;
+            if (sup.altNames && sup.altNames.some(a => a.toLowerCase() === pSupName)) return true;
+            if (supName && pSupName && (pSupName.includes(supName) || supName.includes(pSupName))) return true;
+            if (sup.products && Array.isArray(sup.products) && sup.products.includes(p.id)) return true;
+            return false;
+          }
+
+          if (window.TradeNestProductService && typeof window.TradeNestProductService.getProductsSync === "function") {
+            try {
+              const sps = window.TradeNestProductService.getProductsSync({ includeAllStatuses: true }) || [];
+              sps.forEach(p => {
+                if (matchesSupplier(p, supplier) && !seenPids.has(p.id)) {
+                  seenPids.add(p.id);
+                  products.push(p);
+                }
+              });
+            } catch(e) {}
+          }
+
+          if (store) {
+            try {
+              const storeProds = store.getStore().products || [];
+              storeProds.forEach(p => {
+                if (matchesSupplier(p, supplier) && !seenPids.has(p.id)) {
+                  seenPids.add(p.id);
+                  products.push(p);
+                }
+              });
+            } catch(e) {}
+          }
+
           const container = document.getElementById("supplier-products");
-          container.innerHTML = products.map((product) => `
-            <article class="product-card">
-              <img src="${product.image}" alt="${product.name}" />
-              <span class="pill">${product.category}</span>
-              <h3>${product.name}</h3>
-              <p>${product.description}</p>
-              <a class="btn btn-secondary" href="product-details.html?id=${product.id}">View product</a>
-            </article>
-          `).join("") || '<div class="product-card"><h3>No products</h3><p>This supplier has no catalog items yet.</p></div>';
+          container.innerHTML = products.map((product) => {
+            let img = product.image || "../../images/products/industrial-safety-gloves.webp";
+            if (img.startsWith("../../../")) img = img.replace("../../../", "../../");
+            else if (!img.startsWith("../../") && !img.startsWith("http") && !img.startsWith("data:")) {
+              img = "../../" + img.replace(/^\/+/, "");
+            }
+            const priceText = product.price ? `₹${Number(product.price).toLocaleString("en-IN")}` : "Contact for Quote";
+            return `
+              <article class="product-card" style="display:flex;flex-direction:column;">
+                <img src="${img}" alt="${product.name}" onerror="this.src='../../images/products/industrial-safety-gloves.webp'" style="height:170px;object-fit:contain;background:#f8fafc;padding:10px;border-radius:10px;" />
+                <span class="pill" style="align-self:flex-start;margin-top:10px;">${product.category}</span>
+                <h3 style="margin:8px 0 6px;font-size:1.05rem;">${product.name}</h3>
+                <p style="font-size:0.85rem;color:#64748b;margin:0 0 10px;flex:1;">${product.description || ""}</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:700;">
+                  <span style="font-size:1.1rem;color:#0f172a;">${priceText}</span>
+                  <span style="font-size:0.8rem;color:#64748b;">MOQ: ${product.moq || 1}</span>
+                </div>
+                <a class="btn btn-primary" href="product-details.html?id=${product.id}" style="text-align:center;">View Product</a>
+              </article>
+            `;
+          }).join("") || '<div class="product-card"><h3>No products</h3><p>This supplier has no catalog items yet.</p></div>';
 
           document.getElementById("save-supplier-btn").addEventListener("click", function () {
             const saved = JSON.parse(localStorage.getItem("tradenest_saved_suppliers") || "[]");

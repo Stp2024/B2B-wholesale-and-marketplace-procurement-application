@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="../css/product-details.css" />
     <link rel="stylesheet" href="../css/shared.css" />
     <script src="../js/product-service.js"></script>
+    <script src="../js/guest-auth-guard.js"></script>
     <script src="../js/shared-nav.js" defer></script>
   </head>
 
@@ -68,16 +69,6 @@
             <li class="nav-item">
               <a href="contact.html" class="nav-link">Contact</a>
             </li>
-
-            <li class="nav-item">
-              <a href="discover-suppliers.html" class="nav-link"> Discover </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="join-supplier-network.html" class="nav-link">
-                Supplier Network
-              </a>
-            </li>
           </ul>
         </nav>
 
@@ -105,26 +96,16 @@
 
     <main id="main-content">
       <!-- ================================================== -->
-      <!-- BREADCRUMB                                        -->
-      <!-- ================================================== -->
-
-      <section class="product-breadcrumb-section">
-        <div class="section-container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-          <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="../index.html">Home</a>
-            <span>/</span>
-            <a href="products.html">Products</a>
-            <span>/</span>
-            <span aria-current="page">Industrial Safety Gloves</span>
-          </nav>
-        </div>
-      </section>
-
-      <!-- ================================================== -->
       <!-- PRODUCT DETAILS                                    -->
       <!-- ================================================== -->
 
       <section class="product-details-section">
+        <div class="section-container hero-back-container">
+          <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='products.html';}" aria-label="Go back to previous page">
+            <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back</span>
+          </button>
+        </div>
         <div class="section-container">
           <div class="product-details-layout">
             <!-- PRODUCT IMAGE -->
@@ -232,35 +213,36 @@
                   type="button"
                   id="btn-buy-now"
                   class="btn btn-primary btn-large"
+                  data-auth-required="true"
+                  data-auth-action="Buy Now — Place Order"
                   style="background: #1e7e34; border-color: #1e7e34; color: #fff; cursor: pointer; padding: 12px 24px; font-weight: 600; border-radius: 6px;"
                 >
                   Buy Now
                 </button>
 
-                <a
-                  href="../auth/register.html"
+                <button
+                  type="button"
                   id="btn-request-quote"
                   class="btn btn-outline btn-large"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  data-auth-required="true"
+                  data-auth-action="Request a Quote"
                 >
                   Request a Quote
-                </a>
+                </button>
 
-                <a
-                  href="../auth/register.html"
+                <button
+                  type="button"
                   id="btn-contact-supplier"
                   class="btn btn-outline btn-large"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  data-auth-required="true"
+                  data-auth-action="Contact Supplier"
                 >
                   Contact Supplier
-                </a>
+                </button>
               </div>
 
               <p class="registration-note">
-                Register or log in to continue with procurement, quotation
-                requests, and supplier communication.
+                <strong style="color:#0f4c4c;">✓ Browsing is free.</strong> Log in or register to place orders, request quotes, and contact suppliers.
               </p>
             </div>
           </div>
@@ -598,7 +580,7 @@
 
             <ul class="footer-links-list">
               <li>
-                <a href="discover-suppliers.html"> Discover Suppliers </a>
+                <a href="suppliers.html"> Discover Suppliers </a>
               </li>
 
               <li>
@@ -769,11 +751,11 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const params = new URLSearchParams(window.location.search);
-        const requestedId = params.get("id");
+        const requestedParam = params.get("id") || params.get("name") || params.get("query") || params.get("q") || params.get("search");
         const fallbackProductId = JSON.parse(
           localStorage.getItem("tradenestSelectedProductId") || '"product-001"',
         );
-        const productId = requestedId || fallbackProductId;
+        const productId = requestedParam || fallbackProductId;
 
         // Canonical product catalog matching Buyer Dashboard product page exactly
         const BUYER_DASHBOARD_CATALOG = {
@@ -815,6 +797,21 @@
 
         function resolveBuyerPrice(prod) {
           if (!prod) return 180;
+          // Priority 1: Exact live price set on product
+          if (typeof prod.price === "number" && prod.price > 0) {
+            return prod.price;
+          }
+          if (typeof prod.priceINR === "number" && prod.priceINR > 0) {
+            return prod.priceINR;
+          }
+          if (typeof prod.unitPrice === "number" && prod.unitPrice > 0) {
+            return prod.unitPrice;
+          }
+          if (typeof prod.price === "string") {
+            const num = parseFloat(prod.price.replace(/[^0-9.]/g, ""));
+            if (!isNaN(num) && num > 0) return num;
+          }
+          // Priority 2: Fall back to catalog defaults if no price is specified
           if (prod.id && BUYER_DASHBOARD_CATALOG[prod.id]) {
             return BUYER_DASHBOARD_CATALOG[prod.id].price;
           }
@@ -823,16 +820,6 @@
             if (NAME_TO_ID[key] && BUYER_DASHBOARD_CATALOG[NAME_TO_ID[key]]) {
               return BUYER_DASHBOARD_CATALOG[NAME_TO_ID[key]].price;
             }
-          }
-          if (typeof prod.price === "number" && prod.price > 0) {
-            return prod.price;
-          }
-          if (typeof prod.price === "string") {
-            const num = parseFloat(prod.price.replace(/[^0-9.]/g, ""));
-            if (!isNaN(num) && num > 0) return num;
-          }
-          if (typeof prod.unitPrice === "number" && prod.unitPrice > 0) {
-            return prod.unitPrice;
           }
           return 180;
         }
@@ -856,10 +843,22 @@
         if (window.TradeNestProductService) {
           let sp = window.TradeNestProductService.getProductByIdSync(productId);
           if (!sp && productId) {
-            const low = productId.toLowerCase();
+            const low = productId.toLowerCase().trim();
             const mappedId = NAME_TO_ID[low];
             if (mappedId) {
               sp = window.TradeNestProductService.getProductByIdSync(mappedId);
+            }
+            if (!sp) {
+              try {
+                const allShared = (typeof window.TradeNestProductService.getProductsSync === "function") 
+                  ? window.TradeNestProductService.getProductsSync({ includeAllStatuses: true }) 
+                  : [];
+                sp = allShared.find(p => 
+                  (p.name && p.name.toLowerCase().trim() === low) ||
+                  (p.name && p.name.toLowerCase().includes(low)) ||
+                  (low && p.name && low.includes(p.name.toLowerCase()))
+                );
+              } catch (e) {}
             }
           }
           if (sp) {

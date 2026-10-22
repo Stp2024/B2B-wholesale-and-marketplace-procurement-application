@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../css/products.css" />
     <link rel="stylesheet" href="../css/shared.css" />
     <script src="../js/product-service.js"></script>
+    <script src="../js/guest-auth-guard.js"></script>
     <script src="../js/shared-nav.js" defer></script>
   </head>
 
@@ -61,28 +62,6 @@
             <li class="nav-item">
               <a href="contact.html" class="nav-link">Contact</a>
             </li>
-
-            <li class="nav-item">
-              <a
-                href="discover-suppliers.html"
-                class="nav-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Discover
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a
-                href="join-supplier-network.html"
-                class="nav-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Supplier Network
-              </a>
-            </li>
           </ul>
         </nav>
 
@@ -109,44 +88,68 @@
     </header>
 
     <main id="main-content">
-      <!-- BREADCRUMB & BACK NAVIGATION -->
-      <section class="breadcrumb-section">
-        <div class="container">
-          <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="../index.html">Home</a>
-            <span>/</span>
-            <span aria-current="page">Products</span>
-          </nav>
-        </div>
-      </section>
-
       <!-- ================================================== -->
       <!-- PRODUCT HERO SECTION                               -->
       <!-- ================================================== -->
 
-      <section class="product-hero-section">
+      <section class="product-hero-section" id="products-hero">
+        <div class="hero-container hero-back-container">
+          <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back to previous page">
+            <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back</span>
+          </button>
+        </div>
         <div class="hero-container">
           <div class="hero-content">
             <h1 class="hero-title">Explore Wholesale Products</h1>
 
             <p class="hero-description">
-              Discover products from businesses across multiple categories and
-              connect directly with suppliers for your procurement requirements.
+              Discover verified products from certified manufacturers and wholesale distributors across multiple categories. Connect directly with suppliers for bulk procurement.
             </p>
 
             <div class="hero-actions">
-              <a href="discover-suppliers.html" class="btn btn-primary">
+              <a href="suppliers.html" class="btn btn-primary">
                 Discover Suppliers
               </a>
+              <a href="#product-search-input" class="btn btn-hero-secondary" onclick="event.preventDefault(); document.getElementById('product-search-input')?.focus(); document.getElementById('product-search-input')?.scrollIntoView({behavior:'smooth', block:'center'});">
+                Search Catalog
+              </a>
+            </div>
+
+            <div class="hero-stats-row">
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">15K+</span>
+                <span class="hero-stat-label">Verified Products</span>
+              </div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">1,200+</span>
+                <span class="hero-stat-label">Wholesale Suppliers</span>
+              </div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">100%</span>
+                <span class="hero-stat-label">Trade Protection</span>
+              </div>
             </div>
           </div>
 
           <div class="hero-media">
+            <div class="hero-floating-badge badge-top">
+              <svg class="tn-ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Verified Wholesale Sourcing</span>
+            </div>
+
             <img
-              src="../images/product-hero.webp"
-              alt="TradeNest B2B wholesale product warehouse and procurement showcase"
+              src="../images/wholesale-showcase.jpg"
+              alt="TradeNest B2B wholesale procurement and industrial supply showcase"
               class="hero-image"
             />
+
+            <div class="hero-floating-badge badge-bottom">
+              <svg class="tn-ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Direct Factory Dispatch</span>
+            </div>
           </div>
         </div>
       </section>
@@ -169,14 +172,23 @@
               </label>
 
               <div class="search-input-wrapper">
-                <input
-                  type="search"
-                  id="product-search-input"
-                  name="query"
-                  class="form-input"
-                  placeholder="Search products..."
-                  aria-label="Search products"
-                />
+                <div class="search-input-field-wrapper">
+                  <input
+                    type="search"
+                    id="product-search-input"
+                    name="query"
+                    class="form-input"
+                    placeholder="Search products..."
+                    aria-label="Search products"
+                    autocomplete="off"
+                  />
+                  <div
+                    id="product-search-suggestions"
+                    class="search-suggestions-dropdown"
+                    aria-label="Product suggestions"
+                    role="listbox"
+                  ></div>
+                </div>
 
                 <button type="submit" class="btn btn-search">Search</button>
               </div>
@@ -527,6 +539,202 @@
           </div>
 
           <div class="products-grid">
+            <!-- ================================================== -->
+            <!-- ABC Traders Product Cards                          -->
+            <!-- ================================================== -->
+
+            <article class="product-card" data-product-id="product-abc-001">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/industrial-safety-gloves.webp"
+                  alt="ABC Heavy-Duty Industrial Tool Kit"
+                  class="product-image"
+                />
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Industrial Equipment </span>
+
+                <h3 class="product-title">ABC Heavy-Duty Industrial Tool Kit</h3>
+
+                <p class="product-description">
+                  Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    ₹2,450 <small>/ kit</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 10 kits </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> ABC Traders </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>96/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 4.9 out of 5 stars"
+                  >
+                    <small>4.9 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-abc-001"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="supplier-details.html?id=supplier-abc" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-product-id="product-abc-002">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/industrial-safety-gloves.webp"
+                  alt="ABC High-Grip Safety Work Gloves"
+                  class="product-image"
+                />
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Industrial Equipment </span>
+
+                <h3 class="product-title">ABC High-Grip Safety Work Gloves</h3>
+
+                <p class="product-description">
+                  Premium level-5 cut resistant industrial work gloves with reinforced micro-foam nitrile coating manufactured by ABC Traders.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    ₹195 <small>/ pair</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 200 pairs </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> ABC Traders </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>96/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 5 out of 5 stars"
+                  >
+                    <small>5.0 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-abc-002"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="supplier-details.html?id=supplier-abc" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-product-id="product-abc-003">
+              <div class="product-image-container">
+                <img
+                  src="../images/products/corrugated-packaging-boxes.webp"
+                  alt="ABC Premium Wholesale Storage Crates"
+                  class="product-image"
+                />
+                <span class="badge badge-stock"> In Stock </span>
+              </div>
+
+              <div class="product-content">
+                <span class="product-category"> Packaging </span>
+
+                <h3 class="product-title">ABC Premium Wholesale Storage Crates</h3>
+
+                <p class="product-description">
+                  High-density polyethylene heavy-duty stackable industrial storage crates for distribution centers and warehouse logistics by ABC Traders.
+                </p>
+
+                <div class="product-pricing-info">
+                  <span class="product-price">
+                    ₹680 <small>/ crate</small>
+                  </span>
+
+                  <span class="product-moq"> MOQ: 25 crates </span>
+                </div>
+
+                <div class="product-supplier-info">
+                  <span class="supplier-name"> ABC Traders </span>
+
+                  <span class="verification-badge status-verified">
+                    Verified Supplier
+                  </span>
+                </div>
+
+                <div class="product-metrics">
+                  <span class="trust-score">
+                    Trust Score:
+                    <strong>96/100</strong>
+                  </span>
+
+                  <span
+                    class="rating-stars"
+                    aria-label="Rating: 4.8 out of 5 stars"
+                  >
+                    <small>4.8 / 5</small>
+                  </span>
+                </div>
+
+                <div class="product-card-actions">
+                  <a
+                    href="product-details.html?id=product-abc-003"
+                    class="btn btn-primary btn-sm"
+                  >
+                    View Product
+                  </a>
+
+                  <a href="supplier-details.html?id=supplier-abc" class="btn btn-outline btn-sm">
+                    View Supplier
+                  </a>
+                </div>
+              </div>
+            </article>
+
             <!-- ================================================== -->
             <!-- Product Card 1                                     -->
             <!-- ================================================== -->
@@ -1153,7 +1361,7 @@
 
             <ul class="footer-links-list">
               <li>
-                <a href="discover-suppliers.html"> Discover Suppliers </a>
+                <a href="suppliers.html"> Discover Suppliers </a>
               </li>
 
               <li>
@@ -1269,7 +1477,10 @@
 
     <!-- External JavaScript File Link -->
 
+    <script src="../js/product-service.js"></script>
     <script src="../js/tradenest-store.js"></script>
+    <script src="../js/products-page.js"></script>
+    <script src="../js/guest-auth-guard.js"></script>
     <script src="../js/script.js"></script>
   </body>
 </html>

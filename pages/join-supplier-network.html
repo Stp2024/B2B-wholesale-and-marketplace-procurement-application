@@ -49,20 +49,6 @@
           <li class="nav-item">
             <a href="contact.html" class="nav-link">Contact</a>
           </li>
-
-          <li class="nav-item">
-            <a href="discover-suppliers.html" class="nav-link"> Discover </a>
-          </li>
-
-          <li class="nav-item">
-            <a
-              href="join-supplier-network.html"
-              class="nav-link active"
-              aria-current="page"
-            >
-              Supplier Network
-            </a>
-          </li>
         </ul>
 
         <div class="nav-auth">
@@ -90,6 +76,12 @@
     <main id="main-content">
       <!-- Hero Section -->
       <section class="hero-section" id="hero">
+        <div class="container hero-back-container">
+          <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back to previous page">
+            <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back</span>
+          </button>
+        </div>
         <div class="container hero-container">
           <div class="hero-content">
             <h1 class="hero-title">Grow Your Business with TradeNest</h1>
@@ -1172,7 +1164,7 @@
 
           <ul class="footer-links">
             <li>
-              <a href="discover-suppliers.html"> Discover Suppliers </a>
+              <a href="suppliers.html"> Discover Suppliers </a>
             </li>
 
             <li><a href="../auth/register.html">Request a Quote</a></li>

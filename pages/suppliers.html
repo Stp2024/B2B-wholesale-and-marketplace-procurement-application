@@ -12,6 +12,7 @@
     <!-- External CSS -->
     <link rel="stylesheet" href="../css/suppliers.css" />
     <link rel="stylesheet" href="../css/shared.css" />
+    <script src="../js/guest-auth-guard.js"></script>
     <script src="../js/shared-nav.js" defer></script>
   </head>
   <body>
@@ -51,25 +52,6 @@
             <li class="nav-item">
               <a href="contact.html" class="nav-link">Contact</a>
             </li>
-            <li class="nav-item">
-              <a
-                href="discover-suppliers.html"
-                class="nav-link"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Discover
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                href="join-supplier-network.html"
-                class="nav-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Supplier Network</a
-              >
-            </li>
           </ul>
         </nav>
 
@@ -97,28 +79,70 @@
              HERO SECTION
              ========================================== -->
       <section class="hero-section hero-suppliers">
+        <div class="container hero-back-container">
+          <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back to previous page">
+            <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back</span>
+          </button>
+        </div>
         <div class="container hero-container">
           <div class="hero-content">
-            <h1 class="hero-title">Discover Suppliers for Your Business</h1>
+            <div class="hero-badge">
+              <span class="badge-icon">&#x2728;</span>
+              <span class="badge-text">Verified B2B Supplier Network</span>
+            </div>
+            <h1 class="hero-title">Connect with Verified Global Suppliers</h1>
             <p class="hero-subtitle">
-              Explore supplier profiles, products, business information and
-              performance indicators to support your wholesale sourcing
-              decisions.
+              Discover audited manufacturers, top-tier wholesale distributors, and trusted trade partners. Evaluate performance metrics, factory credentials, and direct pricing with zero middleman markup.
             </p>
             <div class="hero-cta-group">
-              <a
-                href="discover-suppliers.html"
-                class="btn btn-primary btn-large"
-                >Discover Suppliers</a
-              >
+              <a href="#supplier-search" class="btn btn-primary btn-large">
+                <span class="btn-text">Explore Suppliers</span>
+                <span class="btn-icon">&rarr;</span>
+              </a>
+              <a href="discover-suppliers.html" class="btn-hero-secondary">
+                <span class="btn-text">Discover Matrix</span>
+              </a>
+            </div>
+            <div class="hero-stats-row">
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">1,200+</span>
+                <span class="hero-stat-label">Verified Suppliers</span>
+              </div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">98.6%</span>
+                <span class="hero-stat-label">On-Time Dispatch</span>
+              </div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat-item">
+                <span class="hero-stat-num">100%</span>
+                <span class="hero-stat-label">Direct Factory Price</span>
+              </div>
             </div>
           </div>
           <div class="hero-image-wrapper">
-            <img
-              src="../images/suppliers-hero.webp"
-              alt="Commercial warehouse with logistics and supplier management professionals"
-              class="hero-image"
-            />
+            <div class="hero-media">
+              <img
+                src="../images/suppliers-showcase.jpg"
+                alt="Verified B2B suppliers and business partnership handshake"
+                class="hero-image"
+              />
+              <div class="hero-floating-badge badge-top">
+                <span class="floating-badge-icon">&#x2705;</span>
+                <div class="floating-badge-content">
+                  <span class="floating-badge-title">ISO &amp; GST Audited</span>
+                  <span class="floating-badge-sub">Enterprise Certified</span>
+                </div>
+              </div>
+              <div class="hero-floating-badge badge-bottom">
+                <span class="floating-badge-icon">&#x2B50;</span>
+                <div class="floating-badge-content">
+                  <span class="floating-badge-title">4.9 / 5.0 Trust Score</span>
+                  <span class="floating-badge-sub">Top Rated Vendors</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -830,7 +854,7 @@
               </li>
             </ul>
             <div class="cta-wrapper">
-              <a href="discover-suppliers.html" class="btn btn-primary"
+              <a href="#supplier-search" class="btn btn-primary"
                 >Discover Suppliers</a
               >
             </div>
@@ -991,11 +1015,11 @@
         <div class="footer-column">
           <h3 class="footer-heading">For Buyers</h3>
           <ul class="footer-links">
-            <li><a href="discover-suppliers.html">Discover Suppliers</a></li>
-            <li><a href="../auth/register.html">Request a Quote</a></li>
-            <li><a href="../auth/register.html">Compare Suppliers</a></li>
-            <li><a href="../auth/register.html">Request a Sample</a></li>
-            <li><a href="../auth/register.html">Track Orders</a></li>
+            <li><a href="suppliers.html">Discover Suppliers</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Request a Quote">Request a Quote</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Compare Suppliers">Compare Suppliers</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Request a Sample">Request a Sample</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Track Orders">Track Orders</a></li>
           </ul>
         </div>
 
@@ -1005,10 +1029,10 @@
             <li>
               <a href="join-supplier-network.html">Join Our Supplier Network</a>
             </li>
-            <li><a href="../auth/register.html">List Products</a></li>
-            <li><a href="../auth/register.html">Manage Quotes</a></li>
-            <li><a href="../auth/register.html">Supplier Collaboration</a></li>
-            <li><a href="../auth/register.html">Manage Orders</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="List Products">List Products</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Manage Quotes">Manage Quotes</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Supplier Collaboration">Supplier Collaboration</a></li>
+            <li><a href="#" data-auth-required="true" data-auth-action="Manage Orders">Manage Orders</a></li>
           </ul>
         </div>
 
@@ -1049,6 +1073,9 @@
     </footer>
 
     <!-- External JavaScript -->
+    <script src="../js/product-service.js"></script>
+    <script src="../js/tradenest-store.js"></script>
+    <script src="../js/suppliers-page.js"></script>
     <script src="../js/script.js"></script>
   </body>
 </html>

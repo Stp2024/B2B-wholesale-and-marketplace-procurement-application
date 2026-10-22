@@ -18,6 +18,18 @@
 
   const demoSuppliers = [
     {
+      id: "supplier-abc",
+      businessName: "ABC Traders",
+      altNames: ["ABC Treaders", "ABC Trade", "ABC Traders Pvt Ltd"],
+      category: "Industrial Equipment",
+      location: "Bengaluru",
+      description: "Premier certified wholesale supplier of industrial safety equipment, heavy-duty toolkits, and commercial warehouse supplies across India.",
+      verificationStatus: "Verified",
+      trustScore: 96,
+      logo: "ABC",
+      products: ["product-abc-001", "product-abc-002", "product-abc-003"]
+    },
+    {
       id: "supplier-001",
       businessName: "Apex Gear Co.",
       category: "Industrial Equipment",
@@ -130,6 +142,54 @@
   ];
 
   const demoProducts = [
+    {
+      id: "product-abc-001",
+      name: "ABC Heavy-Duty Industrial Tool Kit",
+      description: "Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders.",
+      category: "Industrial Equipment",
+      supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
+      price: 2450,
+      bulkPrice: 2200,
+      moq: 10,
+      stock: 450,
+      unit: "kit",
+      availability: "In Stock",
+      specifications: "120-piece set, chrome vanadium alloy, DIN/ISO certified, heavy-duty molded carrying case",
+      image: "/images/products/industrial-safety-gloves.webp"
+    },
+    {
+      id: "product-abc-002",
+      name: "ABC High-Grip Safety Work Gloves",
+      description: "Premium level-5 cut resistant industrial work gloves with reinforced micro-foam nitrile coating manufactured by ABC Traders.",
+      category: "Industrial Equipment",
+      supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
+      price: 195,
+      bulkPrice: 175,
+      moq: 200,
+      stock: 3500,
+      unit: "pair",
+      availability: "In Stock",
+      specifications: "ANSI A5 cut protection, micro-foam nitrile coating, ergonomic seamless knit",
+      image: "/images/products/industrial-safety-gloves.webp"
+    },
+    {
+      id: "product-abc-003",
+      name: "ABC Premium Wholesale Storage Crates",
+      description: "High-density polyethylene heavy-duty stackable industrial storage crates for distribution centers and warehouse logistics.",
+      category: "Packaging",
+      supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
+      price: 680,
+      bulkPrice: 610,
+      moq: 25,
+      stock: 800,
+      unit: "crate",
+      availability: "In Stock",
+      specifications: "60 Litres volume, virgin HDPE, interlocking stackable ribs, 45 kg load capacity",
+      image: "/images/products/corrugated-packaging-boxes.webp"
+    },
     {
       id: "product-001",
       name: "Industrial Safety Gloves",
@@ -730,6 +790,9 @@
       }
     });
     const addedProductIds = new Set([
+      "product-abc-001",
+      "product-abc-002",
+      "product-abc-003",
       "product-009",
       "product-010",
       "product-012",
@@ -804,9 +867,9 @@
           category: product.category || "Other",
           supplierId: "supplier-001",
           supplierName: merged.supplierProfiles.find((supplier) => supplier.id === "supplier-001")?.businessName || "TradeNest Supplies Pvt. Ltd.",
-          // Supplier workspace prices are stored in USD; catalogue prices are INR.
-          price: (Number(product.unitPrice) || 0) * 80,
-          bulkPrice: (Number(product.unitPrice) || 0) * 80,
+          // Supplier workspace prices are stored in INR
+          price: Number(product.price !== undefined ? product.price : (product.priceINR !== undefined ? product.priceINR : (product.unitPrice || 0))),
+          bulkPrice: Number(product.bulkPrice || product.price || product.priceINR || product.unitPrice || 0),
           moq: Number(product.moq) || 1,
           stock,
           unit: product.uom || "unit",
@@ -1578,7 +1641,9 @@
     });
 
     const matchedSuppliers = suppliers.filter(s => {
+      const matchAlt = s.altNames && s.altNames.some(alt => alt.toLowerCase().includes(cleanQ));
       return (s.businessName && s.businessName.toLowerCase().includes(cleanQ)) ||
+             matchAlt ||
              (s.category && s.category.toLowerCase().includes(cleanQ)) ||
              (s.location && s.location.toLowerCase().includes(cleanQ)) ||
              (s.description && s.description.toLowerCase().includes(cleanQ));

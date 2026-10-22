@@ -51,18 +51,6 @@
         <li class="nav-item">
           <a href="contact.html" class="nav-link">Contact</a>
         </li>
-
-        <li class="nav-item">
-          <a href="discover-suppliers.html" class="nav-link" target="_blank" rel="noopener noreferrer">
-            Discover
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="join-supplier-network.html" class="nav-link" target="_blank" rel="noopener noreferrer">
-            Supplier Network
-          </a>
-        </li>
       </ul>
 
       <div class="nav-actions">
@@ -79,32 +67,74 @@
 
   <main id="main-content">
     <!-- ================================================== -->
+    <!-- ================================================== -->
     <!-- HERO SECTION                                       -->
     <!-- ================================================== -->
     <section class="about-hero" id="hero">
+      <div class="container hero-back-container">
+        <button type="button" class="back-btn" onclick="if(window.history.length>1&&document.referrer){window.history.back();}else{window.location.href='../index.html';}" aria-label="Go back to previous page">
+          <svg class="back-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Back</span>
+        </button>
+      </div>
       <div class="container hero-container">
         <div class="hero-content">
-          <h1>About TradeNest</h1>
-
+          <div class="hero-badge">
+            <span class="badge-icon">&#x2728;</span>
+            <span class="badge-text">Transforming Global B2B Commerce</span>
+          </div>
+          <h1>Empowering Modern B2B Procurement</h1>
           <p class="hero-lead">
-            Building a more direct, transparent and technology-driven way for
-            businesses to discover suppliers and manage wholesale procurement.
+            TradeNest bridges verified wholesale suppliers and enterprise buyers through direct connections, audited trade data, and automated procurement workflows with zero intermediary markup.
           </p>
 
           <div class="hero-actions">
-            <a href="discover-suppliers.html" class="btn btn-primary">
-              Discover Suppliers
+            <a href="suppliers.html" class="btn btn-primary">
+              <span>Discover Suppliers</span>
             </a>
+            <a href="join-supplier-network.html" class="btn btn-hero-secondary">
+              <span>Join Supplier Network</span>
+            </a>
+          </div>
 
-            <a href="join-supplier-network.html" class="btn btn-outline">
-              Join Our Supplier Network
-            </a>
+          <div class="hero-stats-row">
+            <div class="hero-stat-item">
+              <span class="hero-stat-num">50K+</span>
+              <span class="hero-stat-label">Verified Transactions</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-num">1,200+</span>
+              <span class="hero-stat-label">Audited Suppliers</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-num">99.8%</span>
+              <span class="hero-stat-label">Procurement SLA</span>
+            </div>
           </div>
         </div>
 
         <div class="hero-media">
-          <img src="../images/about-hero.webp"
-            alt="Commercial trade operations and wholesale product warehousing representing TradeNest procurement marketplace" />
+          <div class="hero-image-card">
+            <img src="../images/about-showcase.jpg"
+              alt="TradeNest automated wholesale procurement center and supply chain hub"
+              class="hero-image" />
+            <div class="hero-floating-badge badge-top">
+              <span class="floating-badge-icon">&#x1F310;</span>
+              <div class="floating-badge-content">
+                <span class="floating-badge-title">Direct Enterprise Trade</span>
+                <span class="floating-badge-sub">End-to-End Transparency</span>
+              </div>
+            </div>
+            <div class="hero-floating-badge badge-bottom">
+              <span class="floating-badge-icon">&#x1F6E1;&#xFE0F;</span>
+              <div class="floating-badge-content">
+                <span class="floating-badge-title">100% Trade Protection</span>
+                <span class="floating-badge-sub">Audited &amp; Escrow Protected</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -424,7 +454,7 @@
             </ul>
 
             <div class="card-action">
-              <a href="discover-suppliers.html" class="btn btn-primary">
+              <a href="suppliers.html" class="btn btn-primary">
                 Discover Suppliers
               </a>
             </div>
@@ -477,7 +507,7 @@
           </p>
 
           <div class="cta-actions">
-            <a href="discover-suppliers.html" class="btn btn-primary">
+            <a href="suppliers.html" class="btn btn-primary">
               Discover Suppliers
             </a>
 
@@ -537,7 +567,7 @@
 
         <ul class="footer-links">
           <li>
-            <a href="discover-suppliers.html"> Discover Suppliers </a>
+            <a href="suppliers.html"> Discover Suppliers </a>
           </li>
 
           <li>

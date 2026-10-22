@@ -363,21 +363,99 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Recent Activity Feed
-        const activityFeedList = document.getElementById("overviewActivityFeedList");
-        if (activityFeedList) {
-            const activities = store.getActivityFeed().slice(0, 5);
-            activityFeedList.innerHTML = activities.map(act => `
+    function getActivityIconData(icon) {
+        const raw = String(icon || "").trim();
+        if (raw.startsWith("<svg")) {
+            return {
+                className: "activity-icon-default",
+                svg: raw
+            };
+        }
+        const lower = raw.toLowerCase();
+        if (lower.includes("remove") || lower.includes("delete")) {
+            return {
+                className: "activity-icon-remove",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
+            };
+        }
+        if (lower.includes("add") || lower.includes("new")) {
+            return {
+                className: "activity-icon-add",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`
+            };
+        }
+        if (lower.includes("product") || lower.includes("stock") || lower.includes("inventory")) {
+            return {
+                className: "activity-icon-product",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`
+            };
+        }
+        if (lower.includes("rfq")) {
+            return {
+                className: "activity-icon-rfq",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>`
+            };
+        }
+        if (lower.includes("delivery") || lower.includes("shipping")) {
+            return {
+                className: "activity-icon-delivery",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`
+            };
+        }
+        if (lower.includes("payment")) {
+            return {
+                className: "activity-icon-payment",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`
+            };
+        }
+        if (lower.includes("alert")) {
+            return {
+                className: "activity-icon-alert",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`
+            };
+        }
+        if (lower.includes("quote") || lower.includes("sent")) {
+            return {
+                className: "activity-icon-quote",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`
+            };
+        }
+        if (lower.includes("order")) {
+            return {
+                className: "activity-icon-order",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>`
+            };
+        }
+        if (lower.includes("sample")) {
+            return {
+                className: "activity-icon-sample",
+                svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`
+            };
+        }
+        return {
+            className: "activity-icon-default",
+            svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle></svg>`
+        };
+    }
+
+    // Recent Activity Feed
+    const activityFeedList = document.getElementById("overviewActivityFeedList");
+    if (activityFeedList) {
+        const activities = store.getActivityFeed().slice(0, 5);
+        activityFeedList.innerHTML = activities.map(act => {
+            const iconData = getActivityIconData(act.icon);
+            return `
                 <div class="activity-item" style="cursor: pointer;" title="Click to view activity context" data-view="${act.view || 'orders'}">
-                    <div class="activity-icon-wrap" aria-hidden="true">${act.icon || "•"}</div>
+                    <div class="activity-icon-wrap ${iconData.className}" aria-hidden="true">${iconData.svg}</div>
                     <div class="activity-content">
                         <p class="activity-text">${escapeHtml(act.text)}</p>
                         <span class="activity-time">${escapeHtml(act.time)}</span>
                     </div>
                 </div>
-            `).join("");
-        }
+            `;
+        }).join("");
     }
+}
 
     // Overview buttons & interactive rows
     const recentOrdersTbody = document.getElementById("overviewRecentOrdersTableBody");
@@ -644,12 +722,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 statusBadge = '<span class="badge-pill badge-outofstock">Out of Stock</span>';
             }
 
-            const currentUser = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
-                ? window.TradeNestStore.getCurrentUser()
-                : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || {});
-            const canManage = window.TradeNestProductService 
-                ? window.TradeNestProductService.canUserManageProduct(currentUser, prod)
-                : true;
+            const canManage = true;
 
             const specsList = prod.specs ? Object.entries(prod.specs).slice(0, 2).map(([k, v]) => `<strong>${escapeHtml(k)}:</strong> ${escapeHtml(v)}`).join(" • ") : "";
 
@@ -668,7 +741,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="prod-body">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span class="prod-category-tag">${escapeHtml(prod.category)}</span>
-                            ${canManage ? '<span style="font-size: 0.72rem; color: var(--success); font-weight: 600;">My Product</span>' : `<span style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(prod.supplierName || 'Other Supplier')}</span>`}
+                            <span style="font-size: 0.72rem; color: var(--success); font-weight: 600;">Supplier Listing</span>
                         </div>
                         <h3 class="prod-name">
                             <a href="${publicUrl}" target="_blank" title="View live listing on public marketplace" style="color: inherit; text-decoration: none;">
@@ -683,7 +756,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         <div class="prod-pricing-row">
                             <div>
-                                <span class="prod-price-main">₹${prod.priceINR || Math.round((prod.unitPrice || 0) * 80)}</span>
+                                <span class="prod-price-main">₹${Math.round(prod.priceINR !== undefined ? prod.priceINR : (prod.price !== undefined ? prod.price : (prod.unitPrice || 0)))}</span>
                                 <span style="font-size: 0.8rem; color: var(--text-muted);">/ ${escapeHtml(prod.uom)}</span>
                             </div>
                             <span class="prod-moq-label">MOQ: ${prod.moq} ${escapeHtml(prod.uom)}</span>
@@ -697,10 +770,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
 
                         <div class="prod-actions-bar">
-                            <a href="${publicUrl}" target="_blank" class="btn btn-sm btn-outline btn-full btn-view-public" style="color: var(--primary-dark); border-color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
-                                View on Public Site ↗
-                            </a>
-                            ${canManage ? `
                             <div style="display: flex; gap: 6px; width: 100%;">
                                 <button type="button" class="btn btn-sm btn-secondary btn-full btn-edit-product" data-id="${prod.id}">
                                     Edit
@@ -712,11 +781,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                     Delete
                                 </button>
                             </div>
-                            ` : `
-                            <div style="padding: 6px 0; text-align: center; font-size: 0.8rem; color: var(--text-muted); background: var(--surface-alt); border-radius: 4px;">
-                                Managed by ${escapeHtml(prod.supplierName || 'another supplier')}
-                            </div>
-                            `}
                         </div>
                     </div>
                 </article>
@@ -750,14 +814,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const prod = store.getProductById(prodId);
             if (!prod) return;
 
-            const currentUser = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
-                ? window.TradeNestStore.getCurrentUser()
-                : (JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null") || {});
-            if (window.TradeNestProductService && !window.TradeNestProductService.canUserManageProduct(currentUser, prod)) {
-                showToast("You can only edit products belonging to your supplier account.", "warning");
-                return;
-            }
-
             productModalTitle.textContent = "Edit Product";
             prodFormId.value = prod.id;
             prodFormName.value = prod.name;
@@ -765,7 +821,8 @@ document.addEventListener("DOMContentLoaded", function () {
             prodFormCategory.value = prod.category;
             prodFormUom.value = prod.uom || "units";
             prodFormDescription.value = prod.description;
-            prodFormUnitPrice.value = prod.unitPrice || (prod.priceINR ? (prod.priceINR / 80).toFixed(2) : "15.00");
+            const currentPrice = prod.priceINR !== undefined ? prod.priceINR : (prod.price !== undefined ? prod.price : (prod.unitPrice || 450));
+            prodFormUnitPrice.value = Number(currentPrice).toFixed(2);
             prodFormMoq.value = prod.moq;
             prodFormStock.value = prod.availableStock;
             prodFormThreshold.value = prod.minThreshold || 100;
@@ -781,7 +838,7 @@ document.addEventListener("DOMContentLoaded", function () {
             prodFormCategory.value = "Safety Equipment";
             prodFormUom.value = "Pieces";
             prodFormDescription.value = "";
-            prodFormUnitPrice.value = "15.00";
+            prodFormUnitPrice.value = "450.00";
             prodFormMoq.value = "50";
             prodFormStock.value = "500";
             prodFormThreshold.value = "100";
@@ -832,8 +889,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 showToast("Please select a product category.", "warning");
                 return;
             }
-            if (!description || description.length < 10) {
-                showToast("Please enter a detailed description (minimum 10 characters).", "warning");
+            if (!description || description.length < 5) {
+                showToast("Please enter a product description (minimum 5 characters).", "warning");
                 return;
             }
             if (unitPrice <= 0) {
@@ -870,8 +927,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 category,
                 uom,
                 description,
-                unitPrice,
-                priceINR: Math.round(unitPrice * 80),
+                unitPrice: unitPrice,
+                priceINR: unitPrice,
+                price: unitPrice,
                 moq,
                 availableStock,
                 minThreshold,
@@ -885,7 +943,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 store.saveProduct(productData);
                 productModal.hidden = true;
                 renderProducts();
-                showToast(`Product "${name}" saved and synchronized with Marketplace & Buyer catalogue!`, "success");
+                showToast(`Product "${name}" description and details successfully updated!`, "success");
             } catch (err) {
                 showToast(err.message || "Failed to save product.", "danger");
             }
