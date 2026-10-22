@@ -1,0 +1,15 @@
+.buyer-public-profile{--bp-ink:#171717;--bp-muted:#66645e;--bp-paper:#f7f5ef;--bp-line:#e5e1d6;--bp-accent:#e1dcc9;color:var(--bp-ink)}
+.buyer-profile-hero{padding:34px 0 54px;background:linear-gradient(135deg,#f7f5ef,#fff 68%);border-bottom:1px solid var(--bp-line)}
+.buyer-profile-back{display:inline-flex;margin:0 0 36px;color:var(--bp-muted);font-size:14px;font-weight:600}
+.buyer-profile-heading{display:flex;align-items:center;gap:24px;position:relative}
+.buyer-profile-avatar{width:92px;height:92px;display:grid;place-items:center;border-radius:50%;background:var(--bp-ink);color:#fff;font-size:28px;font-weight:700;letter-spacing:.04em;flex:0 0 auto}
+.buyer-profile-title{min-width:0}.buyer-profile-kicker,.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:#746d5e}
+.buyer-profile-title h1{margin:6px 0;font-size:clamp(30px,4vw,46px);letter-spacing:-.04em;line-height:1.12}.buyer-profile-title p{margin:0;color:var(--bp-muted)}
+.buyer-profile-badge{margin-left:auto;align-self:flex-start;padding:9px 14px;border:1px solid var(--bp-line);border-radius:999px;background:#fff;font-size:12px;font-weight:700;white-space:nowrap}
+.buyer-profile-content{padding:56px 0}.buyer-profile-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(290px,.7fr);gap:24px;align-items:start}
+.buyer-profile-card{padding:32px;border:1px solid var(--bp-line);border-radius:18px;background:#fff;box-shadow:0 8px 24px #0000000a}.buyer-profile-card h2{margin:8px 0 14px;font-size:23px;letter-spacing:-.025em}.buyer-profile-about>p{max-width:650px;color:#555;line-height:1.8}
+.buyer-profile-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}.buyer-profile-tags span{padding:8px 12px;border-radius:999px;background:var(--bp-paper);font-size:13px;font-weight:600}
+.buyer-profile-info dl{margin:22px 0}.buyer-profile-info dl div{padding:13px 0;border-bottom:1px solid #f0ece1}.buyer-profile-info dt{font-size:12px;color:var(--bp-muted)}.buyer-profile-info dd{margin:3px 0 0;font-weight:600}
+.buyer-profile-cta{display:flex;justify-content:center;padding:13px 18px;border-radius:999px;background:#111;color:#fff;font-size:14px;font-weight:700;transition:background .2s}.buyer-profile-cta:hover{background:#454239}
+.buyer-profile-note{padding:21px 0;background:var(--bp-paper);color:#555}.buyer-profile-note p{margin:0;text-align:center;font-size:14px}.buyer-profile-footer{padding:26px 0;background:#111;color:#fff}.buyer-profile-footer .container{display:flex;justify-content:space-between;gap:16px}.buyer-profile-footer a{font-weight:700}.buyer-profile-footer span{color:#c7c4bb;font-size:13px}
+@media(max-width:760px){.buyer-profile-hero{padding-top:24px}.buyer-profile-back{margin-bottom:26px}.buyer-profile-heading{align-items:flex-start;flex-wrap:wrap;gap:16px}.buyer-profile-avatar{width:68px;height:68px;font-size:22px}.buyer-profile-title{width:calc(100% - 88px)}.buyer-profile-title h1{font-size:30px}.buyer-profile-badge{margin:0}.buyer-profile-grid{grid-template-columns:1fr}.buyer-profile-card{padding:24px}.buyer-profile-content{padding:34px 0}.buyer-profile-footer .container{flex-direction:column}}

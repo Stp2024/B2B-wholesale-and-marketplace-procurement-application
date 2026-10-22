@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Supplier Details</title>
-    <link rel="stylesheet" href="../../css/buyer/dashboard.css" />
+    <link rel="stylesheet" href="../../css/buyer/dashboard.css?v=buyer-nav-4" />
     <link rel="stylesheet" href="../../css/shared.css" />
     <script src="../../js/product-service.js"></script>
     <style>
@@ -113,27 +113,11 @@
         }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="../../css/buyer/sidebar.css?v=buyer-nav-5" />
+</head>
   <body>
     <div class="dashboard-container">
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-          <a href="dashboard.html" class="brand-logo" aria-label="Buyer dashboard home">
-            <img src="../../images/TradeNest.webp" alt="TradeNest" class="dashboard-brand-image" />
-          </a>
-          <span class="brand-subtitle">Buyer Workspace</span>
-        </div>
-        <nav class="sidebar-nav" aria-label="Buyer Navigation">
-          <div class="nav-section">
-            <span class="nav-section-title">Main Menu</span>
-            <ul class="nav-list">
-              <li><a href="dashboard.html" class="nav-link"><span class="nav-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span class="nav-label">Dashboard</span></a></li>
-              <li><a href="products.html" class="nav-link"><span class="nav-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>️</span><span class="nav-label">Products</span></a></li>
-              <li><a href="suppliers.html" class="nav-link"><span class="nav-icon"><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="22.01"/><line x1="15" y1="22" x2="15" y2="22.01"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/></svg></span><span class="nav-label">Suppliers</span></a></li>
-            </ul>
-          </div>
-        </nav>
-      </aside>
+      <aside class="buyer-sidebar" id="sidebar" data-buyer-sidebar></aside>
 
       <div class="main-wrapper">
         <header class="top-navbar">
@@ -296,5 +280,6 @@
         }
       });
     </script>
-  </body>
+    <script src="../../js/buyer/shared-sidebar.js?v=buyer-nav-4"></script>
+</body>
 </html>

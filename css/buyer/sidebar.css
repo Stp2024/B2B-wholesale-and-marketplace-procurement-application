@@ -1,14 +1,39 @@
-/* Shared buyer navigation styling for dashboard and module pages. */
+/* Buyer dashboard sidebar matches the supplier workspace navigation. */
 .buyer-sidebar {
-  background: #ffffff;
-  border-right: 1px solid #e2e8f0;
-  color: #0f172a;
-  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03);
+  position: sticky;
+  top: 0;
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  max-height: 100vh;
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid #e5e1d6;
+  color: #000;
+  padding: 0;
+  overflow: hidden;
+  z-index: 150;
+  transition: none;
+}
+
+.buyer-sidebar .tn-ui-icon {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  max-width: none;
+  flex: 0 0 15px;
 }
 
 .buyer-sidebar .sidebar-brand {
-  padding: 24px 20px 20px;
-  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  margin: 0;
+  padding: 24px 20px;
+  border-bottom: 1px solid #f0ece1;
   flex-shrink: 0;
 }
 
@@ -29,10 +54,10 @@
 .buyer-sidebar .brand-subtitle {
   display: block;
   margin-top: 4px;
-  color: #d97745;
-  font-size: 0.68rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
+  color: #000;
+  font-size: 0.725rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -41,31 +66,34 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
+  gap: 24px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(216, 109, 56, 0.25) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
 .buyer-sidebar .sidebar-nav::-webkit-scrollbar { width: 5px; }
+.buyer-sidebar .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
 .buyer-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 4px;
 }
+.buyer-sidebar .sidebar-nav::-webkit-scrollbar-thumb:hover { background: #000; }
 
 .buyer-sidebar .nav-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .buyer-sidebar .nav-section-title {
   padding: 0 12px;
-  color: #94a3b8;
-  font-size: 0.68rem;
-  font-weight: 750;
+  color: #666;
+  font-size: 0.7rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -74,34 +102,53 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
-.buyer-sidebar .sidebar-nav a,
-.buyer-sidebar .logout-link-btn {
+.buyer-sidebar .sidebar-nav .nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 42px;
   width: 100%;
+  min-height: 42px;
   padding: 10px 14px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
-  color: #334155;
-  font: 500 0.88rem/1.4 "Plus Jakarta Sans", "DM Sans", "Segoe UI", sans-serif;
+  color: #555;
+  font: 500 0.9rem/1.4 Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   text-align: left;
   text-decoration: none;
-  cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.buyer-sidebar .sidebar-nav a:hover,
-.buyer-sidebar .sidebar-nav a.active,
-.buyer-sidebar .sidebar-nav a[aria-current="page"],
-.buyer-sidebar .logout-link-btn:hover {
-  background: linear-gradient(135deg, #1e2a3a 0%, #173b64 100%);
-  color: #ffffff;
+.buyer-sidebar .sidebar-nav .nav-link:hover {
+  background: #f7f5ef;
+  color: #000;
+  transform: none !important;
+}
+
+.buyer-sidebar .sidebar-nav .nav-link.active,
+.buyer-sidebar .sidebar-nav a.active {
+  background: #000 !important;
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transform: none !important;
+  background-image: none !important;
+}
+
+.buyer-sidebar .sidebar-nav .nav-link.active .nav-icon,
+.buyer-sidebar .sidebar-nav .nav-link.active .nav-label {
+  color: #fff !important;
+}
+
+.buyer-sidebar .sidebar-nav .nav-link.active .nav-icon {
+  transform: none !important;
+  filter: none !important;
 }
 
 .buyer-sidebar .nav-icon {
@@ -113,50 +160,102 @@
   font-size: 1.1rem;
 }
 
-.buyer-sidebar .nav-label { flex: 1; }
-
-/* Keep section dividers aligned across the shared 16-link sidebar. */
-.buyer-sidebar .sidebar-nav > a:nth-child(1),
-.buyer-sidebar .sidebar-nav > a:nth-child(4),
-.buyer-sidebar .sidebar-nav > a:nth-child(8),
-.buyer-sidebar .sidebar-nav > a:nth-child(11) {
-  position: relative;
-  margin-top: 22px;
+.buyer-sidebar .nav-label {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-
-.buyer-sidebar .sidebar-nav > a:nth-child(1)::before,
-.buyer-sidebar .sidebar-nav > a:nth-child(4)::before,
-.buyer-sidebar .sidebar-nav > a:nth-child(8)::before,
-.buyer-sidebar .sidebar-nav > a:nth-child(11)::before {
-  position: absolute;
-  top: -23px;
-  left: 12px;
-  color: #94a3b8;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.buyer-sidebar .sidebar-nav > a:nth-child(1)::before { content: "Main Menu"; }
-.buyer-sidebar .sidebar-nav > a:nth-child(4)::before { content: "Saved"; }
-.buyer-sidebar .sidebar-nav > a:nth-child(8)::before { content: "Procurement"; }
-.buyer-sidebar .sidebar-nav > a:nth-child(11)::before { content: "Fulfillment"; }
 
 .buyer-sidebar .sidebar-footer {
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 16px;
-  border-top: 1px solid #f1f5f9;
-  background: #f7f5f2;
+  border-top: 1px solid #f0ece1;
+  background: rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
 }
 
-@media (max-width: 900px) {
-  .module-sidebar.buyer-sidebar {
+.buyer-sidebar .sidebar-footer .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 14px;
+  background: transparent;
+  color: #555;
+  border-radius: 10px;
+  font: 500 0.9rem/1.4 Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.buyer-sidebar .sidebar-footer .nav-link:hover {
+  background: #f7f5ef;
+  color: #000;
+}
+
+.buyer-sidebar .logout-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #c0393b;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.buyer-sidebar .logout-link-btn:hover {
+  background: #ffebee;
+  transform: none !important;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-container:has(> .buyer-sidebar),
+  .module-shell:has(> .buyer-sidebar) {
+    display: flex;
+    flex-direction: column;
     height: auto;
     max-height: none;
+    min-height: 100vh;
     overflow: visible;
+  }
+
+  .buyer-sidebar {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-height: none;
+    height: auto;
+    flex: none;
+    overflow: visible;
+    transform: none !important;
+  }
+
+  .buyer-sidebar .sidebar-nav {
+    flex: none;
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+
+  .dashboard-container:has(> .buyer-sidebar) > .main-wrapper,
+  .module-shell:has(> .buyer-sidebar) > .module-main {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    margin-left: 0;
+    overflow: visible;
+  }
+
+  .dashboard-container:has(> .buyer-sidebar) .mobile-menu-toggle {
+    display: none;
   }
 }

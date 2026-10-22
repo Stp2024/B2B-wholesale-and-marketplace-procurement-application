@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
       label: "Buyer Business Email",
       placeholder: "Enter your buyer business email",
       buttonText: "Login as Buyer",
-      dashboard: "../pages/buyer/dashboard.html"
+      publicSite: "../pages/buyer-public-profile.html"
     },
     supplier: {
       key: "supplier",
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
       label: "Supplier Business Email",
       placeholder: "Enter your supplier business email",
       buttonText: "Login as Supplier",
-      dashboard: "../pages/supplier/dashboard.html"
+      publicSite: "../index.html?profile=1"
     }
   };
 
@@ -460,26 +460,15 @@ document.addEventListener("DOMContentLoaded", function () {
         loginButton.innerHTML = `Logging in as ${roleLabel}... <span>→</span>`;
       }
 
-      // Redirect to appropriate portal dashboard
+      // Redirect buyers and suppliers to their public marketplace profile.
       setTimeout(function () {
-        const redirectParam = urlParams.get("redirect");
-        if (!forcedRole && redirectParam && redirectParam.startsWith("pages/")) {
-          window.location.href = `../${redirectParam}`;
-          return;
-        }
-
         if (userRole === "admin" || forcedRole === "admin") {
           window.location.href = "../pages/admin/dashboard.html";
           return;
         }
 
-        if (userRole === "supplier") {
-          window.location.href = "../supplier-dashboard.html";
-          return;
-        }
-
-        if (userRole === "buyer") {
-          window.location.href = "../buyer-dashboard.html";
+        if (roleConfigs[userRole] && roleConfigs[userRole].publicSite) {
+          window.location.href = roleConfigs[userRole].publicSite;
           return;
         }
 

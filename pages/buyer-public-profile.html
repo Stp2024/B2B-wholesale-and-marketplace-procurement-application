@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Public business profile on TradeNest." />
+  <title>Buyer Business Profile | TradeNest</title>
+  <link rel="stylesheet" href="../css/supplier-details.css" />
+  <link rel="stylesheet" href="../css/buyer-public-profile.css" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <script src="../js/buyer-public-profile.js" defer></script>
+</head>
+<body class="buyer-public-profile">
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand-container"><a href="../index.html" class="brand-logo-link"><span class="brand-name">TradeNest</span></a><span class="brand-tagline">B2B Wholesale &amp; Procurement Marketplace</span></div>
+      <nav class="main-navigation" aria-label="Main navigation"><ul class="nav-list">
+        <li><a href="../index.html" class="nav-link">Home</a></li><li><a href="products.html" class="nav-link">Products</a></li><li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+      </ul></nav>
+      <div class="auth-navigation"><a href="../auth/login.html" class="btn btn-secondary">Login</a><a href="../auth/register.html" class="btn btn-primary">Join TradeNest</a></div>
+    </div>
+  </header>
+  <main id="main-content">
+    <section class="buyer-profile-hero">
+      <div class="container">
+        <a class="buyer-profile-back" href="../buyer-dashboard.html">&larr; Buyer workspace</a>
+        <div class="buyer-profile-heading">
+          <div class="buyer-profile-avatar" id="buyerAvatar" aria-hidden="true">TN</div>
+          <div class="buyer-profile-title">
+            <span class="buyer-profile-kicker">TRADENEST BUSINESS DIRECTORY</span>
+            <h1 id="buyerBusinessName">Business Profile</h1>
+            <p id="buyerLocation">Location available on request</p>
+          </div>
+          <span class="buyer-profile-badge">TradeNest Buyer</span>
+        </div>
+      </div>
+    </section>
+    <section class="buyer-profile-content">
+      <div class="container buyer-profile-grid">
+        <article class="buyer-profile-card buyer-profile-about">
+          <span class="section-eyebrow">BUSINESS OVERVIEW</span>
+          <h2>About this business</h2>
+          <p id="buyerIntroduction">A business buyer on TradeNest, sourcing products for commercial and wholesale needs.</p>
+          <div class="buyer-profile-tags"><span id="buyerBusinessType">Business Buyer</span><span id="buyerCategory">General Merchandise</span></div>
+        </article>
+        <aside class="buyer-profile-card buyer-profile-info">
+          <h2>Business information</h2>
+          <dl>
+            <div><dt>Business name</dt><dd id="buyerInfoName">—</dd></div>
+            <div><dt>Business type</dt><dd id="buyerInfoType">—</dd></div>
+            <div><dt>Industry</dt><dd id="buyerInfoCategory">—</dd></div>
+            <div><dt>Location</dt><dd id="buyerInfoLocation">—</dd></div>
+            <div><dt>Member</dt><dd>TradeNest buyer</dd></div>
+          </dl>
+          <a class="buyer-profile-cta" href="../auth/register.html">Connect through TradeNest</a>
+        </aside>
+      </div>
+    </section>
+    <section class="buyer-profile-note"><div class="container"><p>For a safer sourcing experience, connect with this business through TradeNest.</p></div></section>
+  </main>
+  <footer class="buyer-profile-footer"><div class="container"><a href="../index.html">TradeNest</a><span>Wholesale sourcing. Smarter business.</span></div></footer>
+</body>
+</html>
