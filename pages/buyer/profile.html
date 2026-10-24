@@ -27,6 +27,17 @@
         <section class="page-panel">
           <h2 style="margin-top:0; margin-bottom:18px;">Edit Buyer Profile</h2>
           <form id="buyer-profile-form">
+            <div class="field profile-photo-field">
+              <label for="profilePhoto">Profile photo</label>
+              <div class="profile-photo-editor">
+                <div class="profile-avatar profile-avatar-preview" id="profilePhotoPreview" aria-label="Profile photo preview">AP</div>
+                <div class="profile-photo-controls">
+                  <input id="profilePhoto" name="profilePhoto" type="file" accept="image/png,image/jpeg,image/webp" />
+                  <small>Choose a JPG, PNG, or WebP image. It will be resized to fit your profile.</small>
+                  <button class="btn btn-secondary small" id="removeProfilePhoto" type="button">Remove photo</button>
+                </div>
+              </div>
+            </div>
             <div class="form-grid">
               <div class="field">
                 <label for="fullName">Full Name</label>

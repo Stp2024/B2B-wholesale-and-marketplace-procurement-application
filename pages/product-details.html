@@ -19,6 +19,7 @@
 
     <!-- Product Details CSS -->
     <link rel="stylesheet" href="../css/product-details.css" />
+    <link rel="stylesheet" href="../css/product-reviews.css" />
     <link rel="stylesheet" href="../css/shared.css" />
     <script src="../js/product-service.js"></script>
     <script src="../js/guest-auth-guard.js"></script>
@@ -519,6 +520,19 @@
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="product-reviews-section" aria-labelledby="product-reviews-title">
+        <div class="section-container">
+          <div class="product-reviews-heading">
+            <div>
+              <span class="reviews-eyebrow">BUYER EXPERIENCE</span>
+              <h2 id="product-reviews-title">Product reviews</h2>
+            </div>
+            <div id="product-reviews-summary" class="product-reviews-summary">No reviews yet</div>
+          </div>
+          <div id="product-reviews-list" class="product-reviews-list" aria-live="polite"></div>
         </div>
       </section>
     </main>
@@ -1203,5 +1217,6 @@
       });
     </script>
     <script src="../js/script.js"></script>
+    <script src="../js/product-reviews.js"></script>
   </body>
 </html>

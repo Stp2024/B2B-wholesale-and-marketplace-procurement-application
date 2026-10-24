@@ -27,6 +27,31 @@
         <section class="page-panel">
           <div id="shipment-list" class="record-grid"></div>
         </section>
+        <dialog id="delivery-issue-dialog" class="sample-feedback-dialog" aria-labelledby="delivery-issue-title">
+          <form id="delivery-issue-form">
+            <h2 id="delivery-issue-title">Report a delivery issue</h2>
+            <p>Describe the problem. Your report will be saved and sent to the supplier in Messages.</p>
+            <input id="delivery-issue-shipment-id" type="hidden" />
+            <div class="field">
+              <label for="delivery-issue-type">Issue type</label>
+              <select id="delivery-issue-type" required>
+                <option value="Delay">Delivery is delayed</option>
+                <option value="Damaged items">Items arrived damaged</option>
+                <option value="Missing items">Items are missing</option>
+                <option value="Wrong items">Wrong items received</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="delivery-issue-details">Details</label>
+              <textarea id="delivery-issue-details" required maxlength="1000" placeholder="Add details to help the supplier resolve this..."></textarea>
+            </div>
+            <div class="button-row">
+              <button class="btn btn-secondary" type="button" id="delivery-issue-cancel">Cancel</button>
+              <button class="btn btn-primary" type="submit">Send to Supplier</button>
+            </div>
+          </form>
+        </dialog>
       </main>
     </div>
     <script src="../../js/tradenest-store.js"></script>

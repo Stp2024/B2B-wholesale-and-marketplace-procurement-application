@@ -13,3 +13,34 @@
 .buyer-profile-cta{display:flex;justify-content:center;padding:13px 18px;border-radius:999px;background:#111;color:#fff;font-size:14px;font-weight:700;transition:background .2s}.buyer-profile-cta:hover{background:#454239}
 .buyer-profile-note{padding:21px 0;background:var(--bp-paper);color:#555}.buyer-profile-note p{margin:0;text-align:center;font-size:14px}.buyer-profile-footer{padding:26px 0;background:#111;color:#fff}.buyer-profile-footer .container{display:flex;justify-content:space-between;gap:16px}.buyer-profile-footer a{font-weight:700}.buyer-profile-footer span{color:#c7c4bb;font-size:13px}
 @media(max-width:760px){.buyer-profile-hero{padding-top:24px}.buyer-profile-back{margin-bottom:26px}.buyer-profile-heading{align-items:flex-start;flex-wrap:wrap;gap:16px}.buyer-profile-avatar{width:68px;height:68px;font-size:22px}.buyer-profile-title{width:calc(100% - 88px)}.buyer-profile-title h1{font-size:30px}.buyer-profile-badge{margin:0}.buyer-profile-grid{grid-template-columns:1fr}.buyer-profile-card{padding:24px}.buyer-profile-content{padding:34px 0}.buyer-profile-footer .container{flex-direction:column}}
+
+.buyer-profile-access-denied {
+  width: min(100% - 32px, 720px);
+  margin: 72px auto;
+  padding: clamp(28px, 5vw, 48px);
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgba(16, 24, 40, 0.12);
+}
+
+.buyer-profile-access-denied h1 {
+  margin: 0 0 12px;
+  color: #172b4d;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.buyer-profile-access-denied p {
+  margin: 0 0 24px;
+  color: #526179;
+  line-height: 1.6;
+}
+
+.buyer-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  object-fit: cover;
+}

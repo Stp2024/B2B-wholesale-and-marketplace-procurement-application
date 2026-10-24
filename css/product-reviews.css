@@ -1,0 +1,238 @@
+.product-reviews-section {
+  padding: 48px 0 64px;
+  background: #f8f7f3;
+  border-top: 1px solid #e7e2d8;
+}
+
+.product-reviews-container {
+  width: min(100% - 40px, 1180px);
+  margin: 0 auto;
+}
+
+.product-reviews-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.reviews-eyebrow {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.product-reviews-heading h2 {
+  margin: 5px 0 0;
+  color: #111827;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.product-reviews-summary {
+  padding: 9px 13px;
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.product-reviews-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+}
+
+.product-review-card {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+}
+
+.product-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.product-review-header strong {
+  color: #172033;
+}
+
+.product-review-header time,
+.product-review-card small {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.product-review-rating {
+  margin-top: 12px;
+  color: #a66a00;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.product-review-card p {
+  margin: 10px 0 14px;
+  color: #334155;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.product-reviews-empty {
+  margin: 0;
+  padding: 22px;
+  color: #64748b;
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  line-height: 1.6;
+}
+
+.review-workflow-panel > .review-workflow-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.review-workflow-heading h2,
+.platform-feedback-history h3 {
+  margin: 0 0 6px;
+}
+
+.review-workflow-heading p,
+.review-section-description {
+  margin: 0 0 18px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.buyer-order-review-list {
+  display: grid;
+  gap: 18px;
+}
+
+.buyer-order-review-card {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+}
+
+.buyer-order-review-card.is-review-target {
+  outline: 3px solid rgba(15, 118, 110, 0.35);
+}
+
+.buyer-order-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.buyer-order-review-header h3 {
+  margin: 0 0 4px;
+  color: #172033;
+}
+
+.buyer-order-review-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.buyer-review-ready {
+  padding: 6px 10px;
+  color: #166534;
+  background: #ecfdf3;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.order-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.order-review-item {
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.order-review-item h4 {
+  margin: 0 0 12px;
+  color: #172033;
+}
+
+.order-review-form {
+  display: grid;
+  gap: 12px;
+}
+
+.order-review-form label {
+  display: grid;
+  gap: 6px;
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.order-review-form select,
+.order-review-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  color: #172033;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.platform-feedback-form .button-row {
+  justify-content: flex-end;
+}
+
+.platform-feedback-history {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.platform-feedback-history h3 {
+  margin-bottom: 14px;
+}
+
+@media (max-width: 760px) {
+  .review-workflow-panel > .review-workflow-heading,
+  .buyer-order-review-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-reviews-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .product-reviews-section {
+    padding: 34px 0 44px;
+  }
+
+  .product-reviews-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

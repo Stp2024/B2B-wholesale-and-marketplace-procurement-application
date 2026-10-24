@@ -1201,7 +1201,7 @@
             <div class="module-header">
               <div class="module-title-group">
                 <h2 id="shippingHeading">Shipping &amp; Delivery Progress</h2>
-                <p class="module-subtitle">Record courier dispatches, assign AWB numbers, and update shipment delivery milestones.</p>
+                <p class="module-subtitle">Record courier dispatches, assign AWB numbers, split an order into separate shipments, and update delivery milestones.</p>
               </div>
               <div class="module-actions">
                 <button type="button" class="btn btn-primary" id="btnCreateShipmentModal">
@@ -1835,6 +1835,10 @@
           <div class="form-group">
             <label for="shipmentTrackingNo">Air Waybill / Tracking No (AWB) *</label>
             <input type="text" id="shipmentTrackingNo" class="form-control" required placeholder="e.g. BLU-99281726" />
+          </div>
+          <div class="form-group">
+            <label for="shipmentQuantity">Quantity in this shipment (optional)</label>
+            <input type="number" id="shipmentQuantity" class="form-control" min="1" step="1" placeholder="Enter units in this dispatch" />
           </div>
           <div class="form-group">
             <label for="shipmentExpectedDelivery">Expected Delivery Date *</label>

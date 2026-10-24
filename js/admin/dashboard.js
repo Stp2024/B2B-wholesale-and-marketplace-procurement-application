@@ -1380,7 +1380,32 @@ document.addEventListener("DOMContentLoaded", function () {
   function renderComplaints() {
     const adminState = store.getAdminStore();
     const tbody = document.getElementById("complaintsTableBody");
+    const platformFeedbackBody = document.getElementById("platformFeedbackTableBody");
     if (!tbody) return;
+
+    if (platformFeedbackBody) {
+      const escapeFeedbackText = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+      let platformFeedback = [];
+      try {
+        const storedFeedback = JSON.parse(localStorage.getItem("tradenestPlatformFeedback") || "[]");
+        platformFeedback = Array.isArray(storedFeedback) ? storedFeedback : [];
+      } catch (_) {
+        platformFeedback = [];
+      }
+      platformFeedbackBody.innerHTML = platformFeedback.length
+        ? platformFeedback.slice().reverse().map((feedback) => `
+          <tr>
+            <td><strong>${escapeFeedbackText(feedback.id || "Platform feedback")}</strong></td>
+            <td>${escapeFeedbackText(feedback.buyerName || "TradeNest buyer")}</td>
+            <td>${escapeFeedbackText(feedback.topic || "Other")}</td>
+            <td>${Number(feedback.rating) || "—"}/5</td>
+            <td style="min-width:240px;white-space:normal;">${escapeFeedbackText(feedback.comment || "")}</td>
+            <td>${feedback.submittedAt ? store.formatDate(feedback.submittedAt) : "—"}</td>
+          </tr>`).join("")
+        : '<tr><td colspan="6" style="text-align:center;padding:24px;color:#64748b;">No platform feedback has been submitted.</td></tr>';
+    }
 
     const filtered = adminState.complaints.filter((c) => {
       if (complaintTab === "all") return true;

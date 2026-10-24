@@ -1854,7 +1854,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatMessageInput = document.getElementById("chatMessageInput");
     const chatSearchInput = document.getElementById("chatSearchInput");
 
-    let currentConversationId = "CONV-01";
+    const requestedConversationId = new URLSearchParams(window.location.search).get("conversationId");
+    let currentConversationId = requestedConversationId || "";
 
     function renderChat() {
         const conversations = store.getConversations();
@@ -1863,8 +1864,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let filtered = conversations;
         if (search) {
             filtered = conversations.filter(c =>
-                c.buyerName.toLowerCase().includes(search) ||
-                c.lastMessage.toLowerCase().includes(search)
+                String(c.buyerName || "").toLowerCase().includes(search) ||
+                String(c.lastMessage || "").toLowerCase().includes(search)
             );
         }
 
@@ -1881,11 +1882,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p class="thread-snippet">${escapeHtml(c.lastMessage)}</p>
                     </div>
                 </div>
-            `).join("");
+            `).join("") || '<div class="empty-state">Buyer conversations will appear here when buyers contact your business.</div>';
         }
 
         // Render Active Thread Messages
-        const activeConv = store.getConversationById(currentConversationId) || conversations[0];
+        const activeConv = filtered.find((conversation) => conversation.id === currentConversationId) || filtered[0];
         if (activeConv) {
             currentConversationId = activeConv.id;
             if (activeChatBuyerName) activeChatBuyerName.textContent = activeConv.buyerName;
@@ -1905,6 +1906,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 `).join("");
                 chatMessagesStream.scrollTop = chatMessagesStream.scrollHeight;
             }
+            if (chatMessageInput) chatMessageInput.disabled = false;
+            if (chatMessageForm) chatMessageForm.querySelector('[type="submit"]')?.removeAttribute("disabled");
+            document.querySelectorAll(".quick-reply-chip").forEach((button) => { button.disabled = false; });
+        } else {
+            currentConversationId = "";
+            if (activeChatBuyerName) activeChatBuyerName.textContent = "No conversation selected";
+            if (activeChatContactPerson) activeChatContactPerson.textContent = "Start an enquiry from a buyer account to begin chatting.";
+            if (activeChatContextBadge) activeChatContextBadge.textContent = "No active conversation";
+            if (chatMessagesStream) chatMessagesStream.innerHTML = '<div class="empty-state">Your buyer conversations will appear here when a buyer contacts you.</div>';
+            if (chatMessageInput) chatMessageInput.disabled = true;
+            if (chatMessageForm) chatMessageForm.querySelector('[type="submit"]')?.setAttribute("disabled", "disabled");
+            document.querySelectorAll(".quick-reply-chip").forEach((button) => { button.disabled = true; });
         }
     }
 
@@ -1924,7 +1937,7 @@ document.addEventListener("DOMContentLoaded", function () {
         chatMessageForm.addEventListener("submit", function (e) {
             e.preventDefault();
             const text = chatMessageInput.value.trim();
-            if (!text) return;
+            if (!text || !currentConversationId) return;
 
             store.sendMessage(currentConversationId, text, "supplier");
             chatMessageInput.value = "";
@@ -1937,7 +1950,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const quickBtn = e.target.closest(".quick-reply-chip");
         if (quickBtn) {
             const reply = quickBtn.getAttribute("data-reply");
-            if (reply) {
+            if (reply && currentConversationId) {
                 store.sendMessage(currentConversationId, reply, "supplier");
                 renderChat();
             }
@@ -2294,7 +2307,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (shipmentOrderSelect) {
             shipmentOrderSelect.innerHTML = orders.map(o => `
-                <option value="${o.id}" data-buyer="${escapeHtml(o.buyerName)}" data-addr="${escapeHtml(o.deliveryAddress)}">
+                <option value="${o.id}" data-buyer="${escapeHtml(o.buyerName)}" data-addr="${escapeHtml(o.deliveryAddress)}" data-qty="${Number(o.quantity) || 0}">
                     Order #${o.id} - ${escapeHtml(o.buyerName)} (${escapeHtml(o.productName)})
                 </option>
             `).join("");
@@ -2302,6 +2315,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const trackingInput = document.getElementById("shipmentTrackingNo");
         if (trackingInput) trackingInput.value = "BLU-" + Math.floor(10000000 + Math.random() * 90000000);
+        const quantityInput = document.getElementById("shipmentQuantity");
+        if (quantityInput) quantityInput.value = "";
         const est = new Date();
         est.setDate(est.getDate() + 7);
         const deliveryInput = document.getElementById("shipmentExpectedDelivery");
@@ -2336,14 +2351,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const buyerName = opt ? opt.getAttribute("data-buyer") : "Buyer";
             const courier = document.getElementById("shipmentCourier").value;
             const trackingNumber = document.getElementById("shipmentTrackingNo").value.trim();
+            const shippedQuantity = Number(document.getElementById("shipmentQuantity")?.value) || null;
             const expectedDeliveryDate = document.getElementById("shipmentExpectedDelivery").value;
             const deliveryAddress = document.getElementById("shipmentAddress").value.trim();
+            const orderedQuantity = Number(opt?.getAttribute("data-qty")) || 0;
+            const previouslyShipped = store.getShipments()
+                .filter((shipment) => (shipment.orderRef || shipment.orderId) === orderRef)
+                .reduce((total, shipment) => total + (Number(shipment.shippedQuantity) || 0), 0);
+            if (shippedQuantity && orderedQuantity && previouslyShipped + shippedQuantity > orderedQuantity) {
+                showToast(`This dispatch would exceed the order quantity. ${Math.max(0, orderedQuantity - previouslyShipped)} units remain.`, "error");
+                return;
+            }
 
             store.createShipment({
                 orderRef,
                 buyerName,
                 courier,
                 trackingNumber,
+                shippedQuantity,
                 expectedDeliveryDate,
                 deliveryAddress
             });

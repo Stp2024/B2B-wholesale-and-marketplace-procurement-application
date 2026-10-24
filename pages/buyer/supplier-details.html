@@ -6,6 +6,7 @@
     <title>Supplier Details</title>
     <link rel="stylesheet" href="../../css/buyer/dashboard.css?v=buyer-nav-4" />
     <link rel="stylesheet" href="../../css/shared.css" />
+    <link rel="stylesheet" href="../../css/product-reviews.css" />
     <script src="../../js/product-service.js"></script>
     <style>
       body {
@@ -146,6 +147,15 @@
           </div>
 
           <div class="product-grid" id="supplier-products"></div>
+          <section class="product-reviews-section" aria-labelledby="supplier-reviews-title" style="margin-top:32px;border-radius:14px;">
+            <div class="product-reviews-container">
+              <div class="product-reviews-heading">
+                <div><span class="reviews-eyebrow">BUYER EXPERIENCE</span><h2 id="supplier-reviews-title">Supplier reviews</h2></div>
+                <div id="supplier-reviews-summary" class="product-reviews-summary">No reviews yet</div>
+              </div>
+              <div id="supplier-reviews-list" class="product-reviews-list"></div>
+            </div>
+          </section>
         </main>
       </div>
     </div>
@@ -280,6 +290,7 @@
         }
       });
     </script>
+    <script src="../../js/supplier-reviews.js"></script>
     <script src="../../js/buyer/shared-sidebar.js?v=buyer-nav-4"></script>
 </body>
 </html>

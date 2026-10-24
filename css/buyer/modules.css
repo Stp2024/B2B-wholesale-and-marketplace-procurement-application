@@ -200,9 +200,29 @@ textarea {
 }
 
 .stat-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 24px;
   margin: 0;
   font-size: 0.84rem;
+  line-height: 1.35;
   color: var(--tn-muted);
+}
+
+.stat-card-icon {
+  display: inline-flex;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  color: var(--tn-success);
+}
+
+.stat-card-icon .tn-ui-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .stat-card strong {
@@ -364,7 +384,7 @@ textarea {
   object-fit: cover;
 }
 
-.badge {
+.product-image-wrap > .badge {
   position: absolute;
   top: 12px;
   left: 12px;
@@ -463,6 +483,84 @@ textarea {
   font-weight: 700;
   font-size: 1.7rem;
 }
+
+.profile-avatar img,
+.buyer-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.profile-photo-field {
+  margin-bottom: 20px;
+}
+
+.profile-photo-editor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar-preview {
+  flex: 0 0 auto;
+}
+
+.profile-photo-controls {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.profile-photo-controls small {
+  color: var(--tn-muted);
+}
+
+.sample-feedback-dialog {
+  width: min(520px, calc(100% - 32px));
+  max-width: none;
+  padding: 24px;
+  color: var(--tn-text);
+  background: var(--tn-surface);
+  border: 1px solid var(--tn-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+}
+
+.sample-feedback-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.sample-feedback-dialog h2 {
+  margin: 0 0 8px;
+}
+
+.sample-feedback-dialog > form > p {
+  margin: 0 0 20px;
+  color: var(--tn-muted);
+}
+
+.sample-feedback-dialog .field {
+  margin-top: 14px;
+}
+
+.sample-feedback-dialog .button-row {
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.upi-confirm-form {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--tn-border);
+}
+
+.upi-confirm-form > p {
+  color: var(--tn-muted);
+  font-size: 0.9rem;
+}
+
 
 .profile-summary h2 {
   margin: 0 0 4px;
@@ -672,6 +770,29 @@ textarea {
   cursor: pointer;
 }
 
+.conversation-item.active {
+  border-color: var(--tn-primary, #111827);
+  box-shadow: 0 0 0 1px var(--tn-primary, #111827);
+}
+
+.new-conversation-form {
+  padding: 12px;
+  border: 1px solid var(--tn-border);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+}
+
+.new-conversation-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.new-conversation-controls .form-control {
+  min-width: 0;
+  flex: 1;
+}
+
 .timeline {
   list-style: none;
   padding: 0;
@@ -687,6 +808,81 @@ textarea {
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid var(--tn-border);
+}
+
+.delivery-progress {
+  margin: 18px 0 14px;
+  padding: 14px 12px 6px;
+  border: 1px solid var(--tn-border);
+  border-radius: 12px;
+  background: var(--tn-surface, #fff);
+}
+
+.delivery-progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--tn-border);
+}
+
+.delivery-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--tn-success, #168b76);
+  transition: width 180ms ease;
+}
+
+.delivery-progress ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0;
+  margin: 10px -4px 0;
+  list-style: none;
+}
+
+.delivery-progress li {
+  position: relative;
+  padding-top: 12px;
+  color: var(--tn-muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.delivery-progress li::before {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 4px);
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--tn-border);
+  border-radius: 50%;
+  background: var(--tn-surface, #fff);
+  content: "";
+}
+
+.delivery-progress li.is-complete::before {
+  border-color: var(--tn-success, #168b76);
+  background: var(--tn-success, #168b76);
+}
+
+.delivery-progress li.is-current {
+  color: var(--tn-text);
+  font-weight: 700;
+}
+
+.delivery-confirmed-label,
+.delivery-issue-label {
+  align-self: center;
+  color: var(--tn-muted);
+  font-size: 0.8rem;
+}
+
+html[data-theme="dark"] .delivery-progress {
+  --tn-surface: #172438;
+  background: #172438;
 }
 
 .compare-option {
@@ -809,4 +1005,289 @@ textarea {
   background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(5, 150, 105, 0.38) !important;
+}
+
+/* Saved supplier cards */
+.saved-supplier-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 290px;
+  padding: 20px;
+}
+
+.saved-supplier-card .supplier-card-head {
+  align-items: center;
+  min-width: 0;
+  margin-bottom: 14px;
+}
+
+.saved-supplier-card .supplier-card-head > div:last-child {
+  min-width: 0;
+}
+
+.saved-supplier-card .supplier-card-head h3 {
+  margin: 0 0 4px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.saved-supplier-card .supplier-card-head span {
+  color: var(--tn-muted);
+  font-size: 0.84rem;
+}
+
+.saved-supplier-card > p {
+  min-height: 3em;
+  margin: 0 0 12px;
+  color: var(--tn-muted);
+  line-height: 1.5;
+}
+
+.saved-supplier-card .meta-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 9px 16px;
+  margin-top: auto;
+  padding: 12px 0;
+}
+
+.saved-supplier-card .meta-grid strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.saved-supplier-card .button-row {
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--tn-border);
+}
+
+.saved-supplier-card .button-row .btn {
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
+@media (max-width: 560px) {
+  .saved-supplier-card {
+    min-height: 0;
+    padding: 16px;
+  }
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --tn-bg: #111827;
+  --tn-card: #1f2937;
+  --tn-border: #374151;
+  --tn-text: #f3f4f6;
+  --tn-muted: #cbd5e1;
+  --tn-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+  --color-border: #374151;
+  --color-surface: #1f2937;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] .module-main {
+  background: var(--tn-bg);
+  color: var(--tn-text);
+}
+
+html[data-theme="dark"] .module-header {
+  background: rgba(17, 24, 39, 0.96);
+}
+
+html[data-theme="dark"] .page-panel,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .product-card,
+html[data-theme="dark"] .supplier-card,
+html[data-theme="dark"] .record-card,
+html[data-theme="dark"] .tn-modal-card,
+html[data-theme="dark"] .tn-invoice-paper,
+html[data-theme="dark"] .empty-state {
+  background: var(--tn-card);
+  color: var(--tn-text);
+  border-color: var(--tn-border);
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .form-control {
+  background-color: #111827;
+  color: var(--tn-text);
+  border-color: #4b5563;
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #9ca3af;
+}
+
+html[data-theme="dark"] .data-table th,
+html[data-theme="dark"] .data-table td,
+html[data-theme="dark"] .tn-table th,
+html[data-theme="dark"] .tn-table td,
+html[data-theme="dark"] .meta-grid,
+html[data-theme="dark"] .info-row {
+  border-color: var(--tn-border);
+}
+/* Refined premium buyer dark theme */
+html[data-theme="dark"] {
+  --tn-bg: #0b1220;
+  --tn-card: #121d2e;
+  --tn-border: #29374a;
+  --tn-text: #edf2f8;
+  --tn-muted: #aebbd0;
+  --tn-navy: #edf2f8;
+  --tn-dark: #09111f;
+  --tn-orange: #e0bd79;
+  --tn-orange-deep: #c9a96b;
+  --tn-success: #55c5a5;
+  --color-black: #edf2f8;
+  --color-text: #edf2f8;
+  --color-muted: #aebbd0;
+  --color-border: #29374a;
+  --color-surface: #121d2e;
+}
+
+html[data-theme="dark"] .module-header {
+  background: rgba(11, 18, 32, 0.96);
+}
+
+html[data-theme="dark"] .page-panel,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .product-card,
+html[data-theme="dark"] .supplier-card,
+html[data-theme="dark"] .record-card,
+html[data-theme="dark"] .tn-modal-card,
+html[data-theme="dark"] .tn-invoice-paper,
+html[data-theme="dark"] .empty-state {
+  background: #121d2e;
+  color: #edf2f8;
+  border-color: #29374a;
+}
+
+html[data-theme="dark"] .module-main h1,
+html[data-theme="dark"] .module-main h2,
+html[data-theme="dark"] .module-main h3,
+html[data-theme="dark"] .module-main h4,
+html[data-theme="dark"] .module-main .field label,
+html[data-theme="dark"] .module-main .checkbox-field span,
+html[data-theme="dark"] .module-main .product-body,
+html[data-theme="dark"] .module-main .product-body h3,
+html[data-theme="dark"] .module-main .supplier-card h3,
+html[data-theme="dark"] .module-main .record-card h3,
+html[data-theme="dark"] .module-main .info-row strong,
+html[data-theme="dark"] .module-main .meta-grid strong,
+html[data-theme="dark"] .module-main .stat-card strong,
+html[data-theme="dark"] .module-main .modal-field .field-value,
+html[data-theme="dark"] .module-main .muted {
+  color: #edf2f8 !important;
+}
+
+html[data-theme="dark"] .module-main p,
+html[data-theme="dark"] .module-main .info-row span,
+html[data-theme="dark"] .module-main .meta-grid span,
+html[data-theme="dark"] .module-main .stat-card h3,
+html[data-theme="dark"] .module-main .supplier-card-head span,
+html[data-theme="dark"] .module-main .record-card .meta-grid span {
+  color: #aebbd0 !important;
+}
+
+html[data-theme="dark"] .module-main button:not(.btn-primary):not(.btn-danger),
+html[data-theme="dark"] .module-main .btn-secondary {
+  color: #edf2f8;
+}
+
+html[data-theme="dark"] .supplier-logo,
+html[data-theme="dark"] .profile-avatar {
+  background: #20334b;
+  color: #e0bd79;
+}
+
+html[data-theme="dark"] .supplier-discovery-meta-item,
+html[data-theme="dark"] .message-thread,
+html[data-theme="dark"] .conversation-item,
+html[data-theme="dark"] .compare-option {
+  background: #172438;
+  color: #edf2f8;
+  border-color: #29374a;
+}
+
+html[data-theme="dark"] .buyer-sidebar .dashboard-brand-image {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 3px 8px;
+}
+/* Buyer page actions tuned to the premium dark reference */
+html[data-theme="dark"] .module-main .btn-primary,
+html[data-theme="dark"] .module-main a.btn-primary {
+  background: linear-gradient(135deg, #d6b675 0%, #b9985d 100%);
+  color: #101827 !important;
+  border: 1px solid #e2c98f;
+}
+
+html[data-theme="dark"] .module-main .btn-secondary,
+html[data-theme="dark"] .module-main a.btn-secondary,
+html[data-theme="dark"] .module-main button:not(.btn-primary):not(.btn-danger):not(.btn-buy-now-inline) {
+  background: #1a293d !important;
+  color: #edf2f8 !important;
+  border: 1px solid #3b4d63;
+}
+
+html[data-theme="dark"] .module-main .btn-danger {
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .module-main .btn-buy-now-inline {
+  background: linear-gradient(135deg, #168b76 0%, #116b5e 100%) !important;
+  color: #fff !important;
+}
+/* Dark-mode surfaces for settings, messages, and profile details */
+html[data-theme="dark"] .module-main .checkbox-field,
+html[data-theme="dark"] .module-main .profile-detail-card {
+  background: #172438 !important;
+  color: #edf2f8 !important;
+  border-color: #29374a;
+}
+
+html[data-theme="dark"] .module-main .checkbox-field:hover {
+  background: #1d3048 !important;
+  border-color: #55718d;
+}
+
+html[data-theme="dark"] .module-main .profile-detail-card span,
+html[data-theme="dark"] .module-main .profile-detail-card strong {
+  color: #edf2f8 !important;
+}
+
+html[data-theme="dark"] .module-main .profile-detail-card span {
+  color: #aebbd0 !important;
+}
+
+html[data-theme="dark"] .module-main .message {
+  background: #1b2b40 !important;
+  color: #edf2f8 !important;
+  border-color: #33465d;
+}
+
+html[data-theme="dark"] .module-main .message.self {
+  background: #173b3b !important;
+  border-color: #2d6661;
+}
+
+html[data-theme="dark"] .module-main .message strong,
+html[data-theme="dark"] .module-main .message p {
+  color: #edf2f8 !important;
+}
+
+html[data-theme="dark"] .module-main .message small {
+  color: #aebbd0 !important;
+}
+
+html[data-theme="dark"] .module-main .profile-avatar {
+  background: #20334b;
+  color: #f0d28e !important;
+  border: 1px solid #3b4d63;
 }

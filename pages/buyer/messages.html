@@ -28,6 +28,15 @@
           <div class="form-grid">
             <div style="display: flex; flex-direction: column; gap: 12px">
               <h2>Conversations</h2>
+              <form id="new-conversation-form" class="new-conversation-form">
+                <label class="field-label" for="new-conversation-supplier">Start a conversation</label>
+                <div class="new-conversation-controls">
+                  <select id="new-conversation-supplier" class="form-control" required>
+                    <option value="">Choose a supplier</option>
+                  </select>
+                  <button class="btn btn-secondary" type="submit">Start</button>
+                </div>
+              </form>
               <div id="conversation-list"></div>
             </div>
             <div>

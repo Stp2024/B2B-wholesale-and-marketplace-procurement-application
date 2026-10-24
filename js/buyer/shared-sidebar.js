@@ -1,4 +1,43 @@
 (() => {
+  const applyBuyerTheme = (theme) => {
+    const isSystem = theme === "System default";
+    const isDark = isSystem
+      ? window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      : theme === "Dark";
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
+    document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+  };
+  window.TradeNestBuyerTheme = { apply: applyBuyerTheme };
+  try {
+    const settings = JSON.parse(localStorage.getItem("tradenestBuyerSettings") || "{}");
+    applyBuyerTheme(settings.theme || "Light");
+  } catch (error) {
+    applyBuyerTheme("Light");
+  }
+
+  const systemThemeQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const syncSystemTheme = () => {
+    try {
+      const settings = JSON.parse(localStorage.getItem("tradenestBuyerSettings") || "{}");
+      if (settings.theme === "System default") applyBuyerTheme("System default");
+    } catch (error) {
+      // Keep the currently applied theme when stored settings cannot be read.
+    }
+  };
+  if (systemThemeQuery) {
+    if (systemThemeQuery.addEventListener) systemThemeQuery.addEventListener("change", syncSystemTheme);
+    else if (systemThemeQuery.addListener) systemThemeQuery.addListener(syncSystemTheme);
+  }
+  window.addEventListener("storage", (event) => {
+    if (event.key !== "tradenestBuyerSettings") return;
+    try {
+      const settings = JSON.parse(event.newValue || "{}");
+      applyBuyerTheme(settings.theme || "Light");
+    } catch (error) {
+      applyBuyerTheme("Light");
+    }
+  });
+
   const sidebar = document.getElementById("sidebar");
   if (!sidebar) return;
 
@@ -30,6 +69,7 @@
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
     logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
     recommendations: '<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+    reviews: '<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
   };
 
   const groups = [
@@ -42,14 +82,10 @@
     ] },
     { title: "Quotes", links: [
       ["rfqs.html", "RFQs", "document", "rfqs"],
-      ["request-quote.html", "Request Quote", "document", "request-quote"],
-      ["my-quotes.html", "My Quotes", "messages", "my-quotes"],
       ["quotations.html", "Quotations", "quote", "quotations"],
-      ["supplier-offers.html", "Supplier Offers", "tag", "supplier-offers"],
       ["compare-quotes.html", "Compare Quotes", "compare", "compare-quotes"],
     ] },
     { title: "Account", links: [
-      ["products.html", "Recommendations", "recommendations", null],
       ["saved-products.html", "Saved Products", "saved", "saved-products"],
       ["saved-suppliers.html", "Saved Suppliers", "folder", "saved-suppliers"],
       ["profile.html", "Profile", "profile", "profile"],
@@ -61,6 +97,7 @@
       ["messages.html", "Messages", "messages", "messages"],
       ["payments.html", "Payments", "payments", "payments"],
       ["delivery.html", "Delivery", "delivery", "delivery"],
+      ["reviews-feedback.html", "Reviews & Feedback", "reviews", "reviews-feedback"],
     ] },
   ];
 

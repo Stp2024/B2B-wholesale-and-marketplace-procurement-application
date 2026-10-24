@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reviews &amp; Feedback | TradeNest Buyer</title>
+  <link rel="stylesheet" href="../../css/buyer/modules.css?v=buyer-nav-4" />
+  <link rel="stylesheet" href="../../css/buyer/sidebar.css?v=buyer-nav-5" />
+  <link rel="stylesheet" href="../../css/product-reviews.css" />
+</head>
+<body data-page="reviews-feedback">
+  <div class="module-shell">
+    <aside class="buyer-sidebar" id="sidebar" data-buyer-sidebar></aside>
+    <main class="module-main">
+      <header class="module-header">
+        <div class="module-header-title">
+          <h1>Reviews &amp; Feedback</h1>
+          <p>Review products and suppliers, or send feedback directly to TradeNest.</p>
+        </div>
+      </header>
+
+      <section class="page-panel review-workflow-panel" aria-labelledby="product-feedback-heading">
+        <div class="review-workflow-heading">
+          <div><h2 id="product-feedback-heading">Product reviews</h2><p>Review a sample after delivery. Your review also appears on the product details page.</p></div>
+          <a class="btn btn-secondary" href="samples.html">Go to sample requests</a>
+        </div>
+        <div id="buyer-product-review-list" class="product-reviews-list"></div>
+      </section>
+
+      <section class="page-panel" aria-labelledby="order-reviews-heading">
+        <h2 id="order-reviews-heading">Order &amp; supplier reviews</h2>
+        <p class="review-section-description">Delivered orders are eligible. You can leave a product review and a separate review for the supplier.</p>
+        <div id="buyer-order-review-list" class="buyer-order-review-list"></div>
+      </section>
+
+      <section class="page-panel" aria-labelledby="platform-feedback-heading">
+        <h2 id="platform-feedback-heading">Feedback about TradeNest</h2>
+        <p class="review-section-description">This feedback goes to the TradeNest platform team. It is not published as a product or supplier review.</p>
+        <form id="platform-feedback-form" class="platform-feedback-form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="platform-feedback-topic">Topic</label>
+              <select id="platform-feedback-topic" name="topic" required>
+                <option value="">Select a topic</option>
+                <option>Marketplace experience</option>
+                <option>Products and search</option>
+                <option>Orders and payments</option>
+                <option>Delivery</option>
+                <option>Support</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="platform-feedback-rating">How was your experience?</label>
+              <select id="platform-feedback-rating" name="rating" required>
+                <option value="">Select a rating</option>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Good</option>
+                <option value="3">3 - Fair</option>
+                <option value="2">2 - Poor</option>
+                <option value="1">1 - Very poor</option>
+              </select>
+            </div>
+            <div class="field" style="grid-column:1/-1;">
+              <label for="platform-feedback-comment">Your feedback</label>
+              <textarea id="platform-feedback-comment" name="comment" rows="5" maxlength="1500" required placeholder="Tell us what worked well or what we should improve."></textarea>
+            </div>
+          </div>
+          <div class="button-row"><button class="btn btn-primary" type="submit">Send feedback to TradeNest</button></div>
+        </form>
+        <div class="platform-feedback-history">
+          <h3>Your submitted platform feedback</h3>
+          <div id="platform-feedback-list" class="product-reviews-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../../js/tradenest-store.js"></script>
+  <script src="../../js/reviews-feedback.js"></script>
+  <script src="../../js/buyer/shared-sidebar.js?v=buyer-nav-4"></script>
+</body>
+</html>

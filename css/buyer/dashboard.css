@@ -2389,3 +2389,209 @@ textarea:focus-visible {
 .tn-toast-info {
   border-left: 4px solid var(--info);
 }
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-black: #f3f4f6;
+  --color-white: #111827;
+  --color-text: #f3f4f6;
+  --color-muted: #cbd5e1;
+  --color-border: #374151;
+  --color-surface: #1f2937;
+  --background: #111827;
+  --background-soft: #1f2937;
+  --surface: #1f2937;
+  --surface-tinted: #1f2937;
+  --surface-glass: rgba(17, 24, 39, 0.96);
+  --text: #f3f4f6;
+  --text-dark: #f9fafb;
+  --text-secondary: #cbd5e1;
+  --text-light: #d1d5db;
+  --text-muted: #9ca3af;
+  --border: #374151;
+  --border-light: #374151;
+  --border-hover: #6b7280;
+}
+
+html[data-theme="dark"] body {
+  background: var(--background);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .dashboard-card,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .quick-action-card,
+html[data-theme="dark"] .activity-card {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+/* Refined premium buyer dashboard dark theme */
+html[data-theme="dark"] {
+  --color-black: #edf2f8;
+  --color-white: #0b1220;
+  --color-text: #edf2f8;
+  --color-muted: #aebbd0;
+  --color-border: #29374a;
+  --color-surface: #121d2e;
+  --primary: #2f8c87;
+  --primary-dark: #26746f;
+  --primary-light: #172b39;
+  --primary-subtle: #29374a;
+  --primary-glow: rgba(47, 140, 135, 0.2);
+  --accent: #e0bd79;
+  --accent-hover: #c9a96b;
+  --background: #0b1220;
+  --background-soft: #111b2b;
+  --surface: #121d2e;
+  --surface-tinted: #172438;
+  --surface-glass: rgba(11, 18, 32, 0.96);
+  --text: #edf2f8;
+  --text-dark: #f7f9fc;
+  --text-secondary: #c5d0df;
+  --text-light: #aebbd0;
+  --text-muted: #93a3ba;
+  --border: #29374a;
+  --border-light: #26354a;
+  --border-hover: #48607c;
+}
+
+html[data-theme="dark"] body {
+  background: #0b1220;
+  color: #edf2f8;
+}
+
+html[data-theme="dark"] .buyer-sidebar .dashboard-brand-image {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 3px 8px;
+}
+
+html[data-theme="dark"] .dashboard-container,
+html[data-theme="dark"] .dashboard-main,
+html[data-theme="dark"] .workspace-main {
+  background: #0b1220;
+  color: #edf2f8;
+}
+
+html[data-theme="dark"] .dashboard-container h1,
+html[data-theme="dark"] .dashboard-container h2,
+html[data-theme="dark"] .dashboard-container h3,
+html[data-theme="dark"] .dashboard-container p,
+html[data-theme="dark"] .dashboard-container .stat-title,
+html[data-theme="dark"] .dashboard-container .section-title {
+  color: #edf2f8;
+}
+
+html[data-theme="dark"] .dashboard-container .muted,
+html[data-theme="dark"] .dashboard-container .stat-label {
+  color: #aebbd0;
+}
+
+html[data-theme="dark"] .dashboard-card,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .quick-action-card,
+html[data-theme="dark"] .activity-card {
+  background: #121d2e;
+  color: #edf2f8;
+  border-color: #29374a;
+}
+/* Dashboard dark theme control and brand contrast */
+html[data-theme="dark"] .dashboard-container button,
+html[data-theme="dark"] .dashboard-container a.btn {
+  color: #edf2f8;
+}
+
+html[data-theme="dark"] .dashboard-container .btn-primary,
+html[data-theme="dark"] .dashboard-container .save-profile-button {
+  background: linear-gradient(135deg, #d6b675 0%, #b9985d 100%);
+  color: #101827 !important;
+  border: 1px solid #e2c98f;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+}
+
+html[data-theme="dark"] .dashboard-container .btn-secondary,
+html[data-theme="dark"] .dashboard-container .btn-card-secondary,
+html[data-theme="dark"] .dashboard-container .cancel-button,
+html[data-theme="dark"] .dashboard-container .notification-button,
+html[data-theme="dark"] .dashboard-container .profile-button,
+html[data-theme="dark"] .dashboard-container .edit-profile-button {
+  background: #1a293d;
+  color: #edf2f8 !important;
+  border: 1px solid #3b4d63;
+}
+
+html[data-theme="dark"] .dashboard-container .btn-card {
+  background: #2f7774;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .dashboard-container .btn-buy-now {
+  background: linear-gradient(135deg, #168b76 0%, #116b5e 100%);
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .dashboard-container .dropdown-action-btn,
+html[data-theme="dark"] .dashboard-container .dropdown-action-link {
+  color: #dbe5f1;
+}
+
+html[data-theme="dark"] .dashboard-container .profile-dropdown,
+html[data-theme="dark"] .dashboard-container .notification-dropdown,
+html[data-theme="dark"] .dashboard-container .modal-content {
+  background: #121d2e;
+  color: #edf2f8;
+  border-color: #29374a;
+}
+
+html[data-theme="dark"] .dashboard-container .supplier-avatar,
+html[data-theme="dark"] .dashboard-container .supplier-logo,
+html[data-theme="dark"] .dashboard-container .profile-avatar,
+html[data-theme="dark"] .dashboard-container .quick-action-icon,
+html[data-theme="dark"] .dashboard-container .stat-icon {
+  color: #f2d28e;
+  background: linear-gradient(135deg, #243650 0%, #1a293d 100%);
+  border: 1px solid #3b4d63;
+}
+
+html[data-theme="dark"] .dashboard-container .supplier-avatar img,
+html[data-theme="dark"] .dashboard-container .supplier-logo img,
+html[data-theme="dark"] .dashboard-container .product-image,
+html[data-theme="dark"] .dashboard-container .tn-product-img {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 6px;
+}
+
+html[data-theme="dark"] .buyer-sidebar .dashboard-brand-image {
+  background: #f8fafc !important;
+  border-radius: 9px;
+  padding: 4px 9px;
+}
+html[data-theme="dark"] {
+  --accent-gradient: linear-gradient(135deg, #d6b675 0%, #b9985d 100%);
+}
+
+html[data-theme="dark"] .dashboard-container .workspace-badge {
+  color: #f0d79f;
+  background: #1a293d;
+  border-color: #67593c;
+}
+
+html[data-theme="dark"] .dashboard-container .notification-badge {
+  color: #101827;
+}
+html[data-theme="dark"] .dashboard-container .btn-primary,
+html[data-theme="dark"] .dashboard-container .save-profile-button {
+  background: linear-gradient(135deg, #d6b675 0%, #b9985d 100%);
+  color: #101827 !important;
+  border-color: #e2c98f;
+}
+
+html[data-theme="dark"] .dashboard-container .btn-secondary,
+html[data-theme="dark"] .dashboard-container .btn-card-secondary,
+html[data-theme="dark"] .dashboard-container .cancel-button {
+  background: #1a293d;
+  color: #edf2f8 !important;
+  border-color: #3b4d63;
+}

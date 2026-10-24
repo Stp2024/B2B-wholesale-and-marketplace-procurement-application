@@ -27,6 +27,31 @@
         <section class="page-panel">
           <div id="payment-list" class="record-grid"></div>
         </section>
+        <dialog id="upi-payment-dialog" class="sample-feedback-dialog" aria-labelledby="upi-payment-title">
+          <form id="upi-payment-launch-form">
+            <h2 id="upi-payment-title">Pay with UPI</h2>
+            <p id="upi-payment-summary">Enter the supplier's UPI ID to open your UPI app.</p>
+            <div class="field">
+              <label for="upi-payee-id">Supplier UPI ID</label>
+              <input id="upi-payee-id" type="text" placeholder="supplier@bank" required autocomplete="off" />
+            </div>
+            <div class="button-row">
+              <button class="btn btn-secondary" type="button" id="upi-payment-cancel">Cancel</button>
+              <button class="btn btn-primary" type="submit">Open UPI app</button>
+            </div>
+          </form>
+          <form id="upi-payment-confirm-form" class="upi-confirm-form">
+            <p>After completing the transfer, enter the UTR / transaction reference so the payment can be verified.</p>
+            <div class="field">
+              <label for="upi-payment-utr">UTR / Transaction reference</label>
+              <input id="upi-payment-utr" type="text" placeholder="Enter UTR after payment" required autocomplete="off" />
+            </div>
+            <div class="button-row">
+              <button class="btn btn-secondary" type="button" id="upi-payment-close">Close</button>
+              <button class="btn btn-primary" type="submit">Submit for verification</button>
+            </div>
+          </form>
+        </dialog>
       </main>
     </div>
     <script src="../../js/tradenest-store.js"></script>

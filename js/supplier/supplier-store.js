@@ -1412,18 +1412,29 @@
     function getConversations() {
         const localConversations = readStorage(KEYS.CONVERSATIONS, SEED_DATA.conversations);
         const marketplace = getMarketplaceState();
-        if (!marketplace) return localConversations;
-        const sharedConversations = (marketplace.conversations || []).filter((conversation) => conversation.supplierId === "supplier-001").map((conversation) => ({
+        if (!marketplace) return [];
+        let currentSupplierId = "supplier-001";
+        try {
+            const currentUser = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
+            currentSupplierId = currentUser.supplierId || currentUser.id || currentSupplierId;
+        } catch (_) {}
+        const sharedConversations = (marketplace.conversations || []).filter((conversation) => conversation.supplierId === currentSupplierId).map((conversation) => ({
             id: conversation.id,
             buyerId: conversation.buyerId,
-            buyerName: (marketplace.buyerProfiles || []).find((buyer) => buyer.id === conversation.buyerId)?.businessName || "TradeNest Buyer",
+            buyerName: conversation.buyerName || (marketplace.buyerProfiles || []).find((buyer) => buyer.id === conversation.buyerId)?.businessName || "TradeNest Buyer",
+            contactPerson: (marketplace.buyerProfiles || []).find((buyer) => buyer.id === conversation.buyerId)?.fullName || conversation.buyerName || "Buyer contact",
+            avatar: (conversation.buyerName || (marketplace.buyerProfiles || []).find((buyer) => buyer.id === conversation.buyerId)?.businessName || "T").charAt(0),
             supplierName: conversation.supplierName || getBusinessProfile().businessName,
             rfqRef: conversation.rfqId,
             quotationRef: conversation.quotationId,
+            context: conversation.rfqId || conversation.quotationId ? {
+                ref: conversation.rfqId || conversation.quotationId,
+                product: (marketplace.products || []).find((product) => product.id === conversation.productId)?.name || "Procurement request"
+            } : null,
             lastMessage: conversation.preview || "",
             lastTimestamp: conversation.updatedAt || "",
             unread: 0,
-            messages: (marketplace.messages || []).filter((message) => message.conversationId === conversation.id).map((message) => ({
+            messages: (marketplace.messages || []).filter((message) => message.conversationId === conversation.id).sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0)).map((message) => ({
                 sender: message.sender,
                 text: message.text,
                 time: message.sentAt
@@ -1431,7 +1442,8 @@
             marketplaceConversation: true
         }));
         const sharedIds = new Set(sharedConversations.map((conversation) => conversation.id));
-        return [...sharedConversations, ...localConversations.filter((conversation) => !conversation.marketplaceConversation && !sharedIds.has(conversation.id))];
+        const liveLocalConversations = localConversations.filter((conversation) => conversation.buyerId && conversation.supplierId && !sharedIds.has(conversation.id) && !/^CONV-0[1-3]$/.test(conversation.id));
+        return [...sharedConversations, ...liveLocalConversations].sort((a, b) => new Date(b.lastTimestamp || 0) - new Date(a.lastTimestamp || 0));
     }
 
     function getConversationById(id) {
@@ -1443,7 +1455,8 @@
         const conv = conversations.find(c => c.id === convId);
         if (!conv) return null;
 
-        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const sentAt = new Date().toISOString();
+        const timeStr = new Date(sentAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
         const newMsg = {
             sender: sender || "supplier",
             text: text,
@@ -1466,7 +1479,7 @@
                 supplierId: sharedConversation.supplierId,
                 sender: sender || "supplier",
                 text,
-                sentAt: new Date().toISOString()
+                sentAt
             };
             marketplace.messages = marketplace.messages || [];
             marketplace.messages.push(sharedMessage);
@@ -1476,42 +1489,7 @@
         }
         notifyChange("communication");
 
-        // Simulate Buyer response if supplier sent message
-        if (sender === "supplier" && !sharedConversation) {
-            setTimeout(() => {
-                simulateBuyerReply(convId);
-            }, 1800);
-        }
-
         return newMsg;
-    }
-
-    function simulateBuyerReply(convId) {
-        const conversations = getConversations();
-        const conv = conversations.find(c => c.id === convId);
-        if (!conv) return;
-
-        const replies = [
-            "Thank you for the quick clarification! We are reviewing the terms now.",
-            "Acknowledged. Our logistics team will inspect the dispatch details.",
-            "Great, please ensure the commercial invoice includes the GSTIN reference.",
-            "Sounds good! We have forwarded this to our finance desk for milestone release.",
-            "Perfect. We appreciate the prompt turnaround on this procurement."
-        ];
-        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        conv.messages.push({
-            sender: "buyer",
-            text: randomReply,
-            time: timeStr
-        });
-        conv.lastMessage = randomReply;
-        conv.lastTimestamp = timeStr;
-        conv.unread = 1;
-
-        writeStorage(KEYS.CONVERSATIONS, conversations);
-        notifyChange("communication");
     }
 
     // ==========================================
@@ -1665,6 +1643,8 @@
                 deliveryAddress: shipment.deliveryAddress || "",
                 courier: shipment.courierName || "",
                 trackingNumber: shipment.trackingNumber || "",
+                shippedQuantity: shipment.shippedQuantity || null,
+                shipmentNumber: shipment.shipmentNumber || null,
                 dispatchDate: shipment.dispatchDate || "",
                 expectedDeliveryDate: shipment.expectedDate || "",
                 status: shipment.status,
@@ -1687,6 +1667,8 @@
             id: newId,
             status: "Dispatched",
             dispatchDate: new Date().toISOString().split("T")[0],
+            shipmentNumber: shipments.filter((shipment) => (shipment.orderRef || shipment.orderId) === shipmentData.orderRef).length + 1,
+            shippedQuantity: Number(shipmentData.shippedQuantity) || null,
             history: [
                 {
                     time: new Date().toLocaleString(),
@@ -1703,17 +1685,17 @@
         const marketplace = getMarketplaceState();
         const sharedOrder = marketplace && (marketplace.orders || []).find((order) => order.id === shipmentData.orderRef);
         if (marketplace && sharedOrder) {
-            let sharedShipment = (marketplace.shipments || []).find((shipment) => shipment.orderId === sharedOrder.id);
-            if (!sharedShipment) {
-                sharedShipment = {
-                    id: newId,
-                    shipmentReference: newId,
-                    orderId: sharedOrder.id,
-                    timeline: []
-                };
-                marketplace.shipments = marketplace.shipments || [];
-                marketplace.shipments.unshift(sharedShipment);
-            }
+            const orderShipments = marketplace.shipments || [];
+            const sharedShipment = {
+                id: newId,
+                shipmentReference: newId,
+                shipmentNumber: orderShipments.filter((shipment) => shipment.orderId === sharedOrder.id).length + 1,
+                shippedQuantity: Number(shipmentData.shippedQuantity) || null,
+                orderId: sharedOrder.id,
+                timeline: []
+            };
+            marketplace.shipments = marketplace.shipments || [];
+            marketplace.shipments.unshift(sharedShipment);
             sharedShipment.courierName = shipmentData.courier;
             sharedShipment.trackingNumber = shipmentData.trackingNumber;
             sharedShipment.dispatchDate = newShipment.dispatchDate;
@@ -1754,11 +1736,6 @@
                 note: note || `Shipment advanced to milestone: ${newStatus}`
             });
 
-            // If delivered, update order to delivered
-            if (newStatus === "Delivered" && shipment.orderRef) {
-                updateOrderStatus(shipment.orderRef, "Delivered");
-            }
-
             writeStorage(KEYS.SHIPMENTS, shipments);
             const marketplace = getMarketplaceState();
             const sharedShipment = marketplace && (marketplace.shipments || []).find((item) => item.id === shipmentId || item.shipmentReference === shipmentId);
@@ -1768,10 +1745,23 @@
                 sharedShipment.timeline.push({ status: newStatus, date: new Date().toISOString().slice(0, 10), note: note || "" });
                 const sharedOrder = (marketplace.orders || []).find((item) => item.id === sharedShipment.orderId);
                 if (sharedOrder) {
-                    sharedOrder.shipmentStatus = newStatus;
-                    if (newStatus === "Delivered") sharedOrder.status = "Delivered";
+                    const orderShipments = (marketplace.shipments || []).filter((item) => item.orderId === sharedShipment.orderId);
+                    const allDelivered = orderShipments.length > 0 && orderShipments.every((item) => item.status === "Delivered");
+                    sharedOrder.shipmentStatus = allDelivered ? "Delivered" : newStatus;
+                    if (allDelivered) sharedOrder.status = "Delivered";
+                    else if (sharedOrder.status === "Delivered") sharedOrder.status = "Shipped";
                 }
                 saveMarketplaceState(marketplace);
+            } else if (newStatus === "Delivered" && shipment.orderRef) {
+                const orderShipments = shipments.filter((item) => item.orderRef === shipment.orderRef);
+                if (orderShipments.length && orderShipments.every((item) => item.status === "Delivered")) {
+                    const localOrders = readStorage(KEYS.ORDERS, SEED_DATA.orders);
+                    const localOrder = localOrders.find((item) => item.id === shipment.orderRef);
+                    if (localOrder) {
+                        localOrder.status = "Delivered";
+                        writeStorage(KEYS.ORDERS, localOrders);
+                    }
+                }
             }
             logActivity("Delivery", `Shipment ${shipmentId} milestone: ${newStatus}`, "shipping");
             notifyChange("shipping");

@@ -19,6 +19,7 @@
 
     <!-- Supplier Details CSS -->
     <link rel="stylesheet" href="../css/supplier-details.css" />
+    <link rel="stylesheet" href="../css/product-reviews.css" />
     <link rel="stylesheet" href="../css/shared.css" />
     <script src="../js/product-service.js"></script>
     <script src="../js/guest-auth-guard.js" defer></script>
@@ -215,6 +216,16 @@
               <p>Typical supplier response timeframe.</p>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section class="product-reviews-section" aria-labelledby="supplier-reviews-title">
+        <div class="section-container">
+          <div class="product-reviews-heading">
+            <div><span class="reviews-eyebrow">BUYER EXPERIENCE</span><h2 id="supplier-reviews-title">Supplier reviews</h2></div>
+            <div id="supplier-reviews-summary" class="product-reviews-summary">No reviews yet</div>
+          </div>
+          <div id="supplier-reviews-list" class="product-reviews-list"></div>
         </div>
       </section>
 
@@ -787,6 +798,7 @@
         }
       });
     </script>
+    <script src="../js/supplier-reviews.js"></script>
     <script src="../js/script.js"></script>
   </body>
 </html>

@@ -78,6 +78,32 @@
         </section>
       </main>
     </div>
+    <dialog id="sample-feedback-dialog" class="sample-feedback-dialog" aria-labelledby="sample-feedback-title">
+      <form id="sample-feedback-form">
+        <h2 id="sample-feedback-title">Share sample feedback</h2>
+        <p id="sample-feedback-product"></p>
+        <input id="sample-feedback-id" type="hidden" />
+        <div class="field">
+          <label for="sample-feedback-rating">Rating</label>
+          <select id="sample-feedback-rating" required>
+            <option value="">Select a rating</option>
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Good</option>
+            <option value="3">3 - Meets expectations</option>
+            <option value="2">2 - Needs improvement</option>
+            <option value="1">1 - Poor</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sample-feedback-comment">Your feedback</label>
+          <textarea id="sample-feedback-comment" rows="5" maxlength="1000" required placeholder="Tell the supplier about sample quality, packaging, or fit for your requirements."></textarea>
+        </div>
+        <div class="button-row">
+          <button class="btn btn-secondary" id="cancel-sample-feedback" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit">Submit feedback</button>
+        </div>
+      </form>
+    </dialog>
     <script src="../../js/tradenest-store.js"></script>
     <script src="../../js/buyer/modules.js"></script>
     <script src="../../js/buyer/shared-sidebar.js?v=buyer-nav-4"></script>

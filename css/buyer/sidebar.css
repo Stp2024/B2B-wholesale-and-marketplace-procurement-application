@@ -259,3 +259,52 @@
     display: none;
   }
 }
+
+html[data-theme="dark"] .buyer-sidebar {
+  background: #0b1220;
+  border-color: #374151;
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .buyer-sidebar .brand-subtitle,
+html[data-theme="dark"] .buyer-sidebar .nav-section-title,
+html[data-theme="dark"] .buyer-sidebar .nav-link {
+  color: #e5e7eb;
+}
+
+html[data-theme="dark"] .buyer-sidebar .sidebar-brand,
+html[data-theme="dark"] .buyer-sidebar .sidebar-footer {
+  border-color: #374151;
+}
+
+html[data-theme="dark"] .buyer-sidebar .nav-link:hover,
+html[data-theme="dark"] .buyer-sidebar .nav-link.active {
+  background: #1f2937;
+  color: #fff;
+}
+html[data-theme="dark"] .buyer-sidebar {
+  background: #080f1b;
+  border-color: #26354a;
+  color: #e7edf5;
+}
+
+html[data-theme="dark"] .buyer-sidebar .brand-subtitle,
+html[data-theme="dark"] .buyer-sidebar .nav-section-title,
+html[data-theme="dark"] .buyer-sidebar .nav-link {
+  color: #c5d0df;
+}
+
+html[data-theme="dark"] .buyer-sidebar .sidebar-brand,
+html[data-theme="dark"] .buyer-sidebar .sidebar-footer {
+  border-color: #26354a;
+}
+
+html[data-theme="dark"] .buyer-sidebar .nav-link:hover,
+html[data-theme="dark"] .buyer-sidebar .nav-link.active {
+  background: #172438;
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .buyer-sidebar .nav-link.active .nav-icon {
+  color: #e0bd79;
+}

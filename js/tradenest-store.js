@@ -27,7 +27,7 @@
       verificationStatus: "Verified",
       trustScore: 96,
       logo: "ABC",
-      products: ["product-abc-001", "product-abc-002", "product-abc-003"]
+      products: ["product-abc-002", "product-abc-003"]
     },
     {
       id: "supplier-001",
@@ -142,22 +142,6 @@
   ];
 
   const demoProducts = [
-    {
-      id: "product-abc-001",
-      name: "ABC Heavy-Duty Industrial Tool Kit",
-      description: "Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders.",
-      category: "Industrial Equipment",
-      supplierId: "supplier-abc",
-      supplierName: "ABC Traders",
-      price: 2450,
-      bulkPrice: 2200,
-      moq: 10,
-      stock: 450,
-      unit: "kit",
-      availability: "In Stock",
-      specifications: "120-piece set, chrome vanadium alloy, DIN/ISO certified, heavy-duty molded carrying case",
-      image: "/images/products/industrial-safety-gloves.webp"
-    },
     {
       id: "product-abc-002",
       name: "ABC High-Grip Safety Work Gloves",
@@ -790,7 +774,6 @@
       }
     });
     const addedProductIds = new Set([
-      "product-abc-001",
       "product-abc-002",
       "product-abc-003",
       "product-009",
@@ -800,7 +783,7 @@
       "product-014",
       "product-015"
     ]);
-    const removedProductIds = new Set(["product-011"]);
+    const removedProductIds = new Set(["product-011", "product-abc-001"]);
     fallback.supplierProfiles.forEach((seedSupplier) => {
       const supplier = merged.supplierProfiles.find((item) => item.id === seedSupplier.id);
       if (!supplier) {

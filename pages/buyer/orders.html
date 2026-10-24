@@ -19,6 +19,7 @@
           <span class="badge badge-blue" id="orderCountBadge">0 orders</span>
         </div>
         <div style="display:flex;gap:10px;align-items:center;">
+          <button type="button" id="refreshOrders" class="btn btn-secondary btn-sm">Refresh</button>
           <input type="search" id="orderSearch" class="form-control" placeholder="Search orders…" style="width:200px;">
           <select id="orderStatusFilter" class="form-control" style="width:160px;">
             <option value="">All Statuses</option>
@@ -132,13 +133,13 @@
       const total = orders.length;
       const pending = orders.filter(o => ['Pending','Processing','Confirmed'].includes(o.status)).length;
       const delivered = orders.filter(o => ['Delivered','Completed'].includes(o.status)).length;
-      const spent = orders.reduce((s, o) => s + (Number(o.totalAmount || o.amount) || 0), 0);
+      const spent = orders.filter(order => ['Paid','Completed','Escrow Funded'].includes(String(order.paymentStatus || '').trim()) || ['Delivered','Completed'].includes(String(order.status || '').trim())).reduce((sum, order) => sum + (Number(order.totalAmount ?? order.amount) || 0), 0);
       document.getElementById('orderStats').innerHTML = [
         {label:'Total Orders', value: total, icon:'<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>'},
         {label:'Active/Pending', value: pending, icon:'⏳'},
-        {label:'Delivered', value: delivered, icon: 'Delivered'},
+        {label:'Delivered', value: delivered, icon:''},
         {label:'Total Spent', value: formatCurrency(spent), icon:'<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>'}
-      ].map(s => `<div class="stat-card"><h3>${s.icon} ${s.label}</h3><strong>${s.value}</strong></div>`).join('');
+      ].map(s => `<div class="stat-card"><h3><span class="stat-card-icon" aria-hidden="true">${s.icon}</span><span>${s.label}</span></h3><strong>${s.value}</strong></div>`).join('');
     }
 
     function renderOrders(orders) {
@@ -177,9 +178,10 @@
           <td><span class="status-badge ${getStatusClass(o.status)}">${o.status}</span></td>
           <td>${formatDate(o.createdAt || o.orderDate)}</td>
           <td>
-            <div style="display:flex;gap:6px;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
               <button class="btn btn-primary btn-sm" data-view-order="${o.id}">View</button>
               <button class="btn btn-secondary btn-sm" data-view-invoice="${o.id}">Invoice</button>
+              ${['Delivered','Completed'].includes(String(o.status || '').trim()) ? `<a class="btn btn-secondary btn-sm" href="reviews-feedback.html?orderId=${encodeURIComponent(o.id)}">${o.productReview && o.supplierReview ? 'Reviews submitted' : 'Review order'}</a>` : ''}
             </div>
           </td>
         </tr>`).join('');
@@ -309,9 +311,18 @@
       modal.classList.add('is-open');
     }
 
-    const orders = getBuyerOrders();
-    renderStats(orders);
-    renderOrders(orders);
+    let orders = getBuyerOrders();
+    function refreshOrders() {
+      orders = getBuyerOrders();
+      renderStats(orders);
+      renderOrders(orders);
+    }
+    refreshOrders();
+    document.getElementById('refreshOrders').addEventListener('click', refreshOrders);
+    window.addEventListener('focus', refreshOrders);
+    window.addEventListener('storage', (event) => {
+      if (!event.key || event.key.toLowerCase().includes('order') || event.key.toLowerCase().includes('store')) refreshOrders();
+    });
 
     ['orderSearch','orderStatusFilter','orderSortFilter'].forEach(id => {
       const el = document.getElementById(id);

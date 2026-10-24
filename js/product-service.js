@@ -250,35 +250,6 @@
       updatedAt: "2026-10-05"
     },
     {
-      id: "product-abc-001",
-      sku: "SKU-ABC-IND-01",
-      name: "ABC Heavy-Duty Industrial Tool Kit",
-      category: "Industrial Equipment",
-      description: "Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders.",
-      image: "images/products/industrial-safety-gloves.webp",
-      price: 2450,
-      bulkPrice: 2200,
-      moq: 10,
-      stock: 450,
-      unit: "kits",
-      deliveryInfo: "2-4 business days across India",
-      status: "Active",
-      supplierId: "supplier-abc",
-      supplierName: "ABC Traders",
-      supplierLocation: "Bengaluru, Karnataka",
-      trustScore: 96,
-      verificationStatus: "Verified",
-      rating: 4.9,
-      specs: {
-        "Pieces": "120 Pcs Set",
-        "Material": "Chrome Vanadium Alloy",
-        "Standard": "ISO / DIN Certified",
-        "Warranty": "2 Years Comprehensive"
-      },
-      createdAt: "2026-09-01",
-      updatedAt: "2026-10-15"
-    },
-    {
       id: "product-abc-002",
       sku: "SKU-ABC-SAF-02",
       name: "ABC High-Grip Safety Work Gloves",
@@ -378,7 +349,7 @@
 
   // Tombstone helpers to permanently track deleted products across portal sessions
   function getDeletedProducts() {
-    return safeParse(localStorage.getItem(STORAGE_KEY_DELETED), []) || [];
+    return [...new Set([...(safeParse(localStorage.getItem(STORAGE_KEY_DELETED), []) || []), "product-abc-001", "SKU-ABC-IND-01", "ABC Heavy-Duty Industrial Tool Kit"])];
   }
 
   function markProductDeleted(identifiers) {

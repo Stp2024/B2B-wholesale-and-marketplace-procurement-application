@@ -149,16 +149,15 @@ document.addEventListener("DOMContentLoaded", function () {
     return writeJsonStorage("tradenest_saved_suppliers", Array.isArray(list) ? list : []);
   }
 
-  function addSavedProduct(productId) {
+  function addSavedProduct(productId, supplierId) {
     const state = getState();
-    const product = state.products.find((item) => item.id === productId);
+    const product = state.products.find((item) => item.id === productId && (!supplierId || item.supplierId === supplierId));
     if (!product) return false;
-
     const saved = getSavedProducts();
-    if (saved.some((item) => item.id === productId)) return false;
-
+    if (saved.some((item) => item.id === product.id && (item.supplierId === product.supplierId || (!item.supplierId && item.supplierName === product.supplierName)))) return false;
     saved.push({
       id: product.id,
+      supplierId: product.supplierId,
       name: product.name,
       description: product.description,
       category: product.category,
@@ -170,13 +169,17 @@ document.addEventListener("DOMContentLoaded", function () {
       availability: product.availability,
       image: product.image
     });
-
     saveSavedProducts(saved);
     return true;
   }
 
-  function removeSavedProduct(productId) {
-    const saved = getSavedProducts().filter((item) => item.id !== productId);
+  function removeSavedProduct(productId, supplierId) {
+    const product = getState().products.find((item) => item.id === productId && (!supplierId || item.supplierId === supplierId));
+    const saved = getSavedProducts().filter((item) => {
+      if (item.id !== productId) return true;
+      if (item.supplierId) return item.supplierId !== supplierId;
+      return !product || item.supplierName !== product.supplierName;
+    });
     saveSavedProducts(saved);
     return true;
   }
@@ -216,6 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const business = buyer.business && typeof buyer.business === "object" ? buyer.business : {};
     const address = buyer.address && typeof buyer.address === "object" ? buyer.address : {};
     return {
+      ownerId: buyer.id || "",
       fullName: buyer.fullName || "Aisha Patel",
       email: buyer.email || "aisha.patel@tradenest.com",
       phone: buyer.phone || buyer.mobile || buyer.phoneNumber || "+91 98765 43210",
@@ -255,12 +259,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function saveBuyerProfile(profile) {
+    const user = getBuyer();
     const normalized = {
       ...getBuyerProfileDefaults(),
-      ...(profile || {})
+      ...(profile || {}),
+      ownerId: user.id || ""
     };
-
-    const user = getBuyer();
     localStorage.setItem("tradenestBuyerProfile", JSON.stringify(normalized));
     localStorage.setItem("tradenestCurrentUser", JSON.stringify({
       ...user,
@@ -323,8 +327,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const supplierSelect = document.getElementById("saved-product-supplier");
     const sortSelect = document.getElementById("saved-product-sort");
 
-    const savedIds = getSavedProducts().map((item) => item.id);
-    const savedItems = state.products.filter((product) => savedIds.includes(product.id));
+    const savedRecords = getSavedProducts();
+    const savedItems = savedRecords.map((saved) => state.products.find((product) => product.id === saved.id && (saved.supplierId ? product.supplierId === saved.supplierId : (saved.supplierName ? product.supplierName === saved.supplierName : true)))).filter(Boolean);
 
     if (categorySelect) {
       const categories = [...new Set(savedItems.map((product) => product.category))];
@@ -387,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="info-row"><span>Status</span><strong>${product.availability}</strong></div>
             <div class="button-row">
               <button class="btn btn-primary small" type="button" data-open-product="${product.id}">View Product</button>
-              <button class="btn btn-danger small" type="button" data-remove-saved-product="${product.id}">Remove</button>
+              <button class="btn btn-danger small" type="button" data-remove-saved-product="${product.id}" data-supplier-id="${product.supplierId || ""}">Remove</button>
             </div>
           </div>
         </article>
@@ -416,7 +420,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const removeButton = event.target.closest("[data-remove-saved-product]");
         if (removeButton) {
           const productId = removeButton.getAttribute("data-remove-saved-product");
-          removeSavedProduct(productId);
+          const supplierId = removeButton.getAttribute("data-supplier-id");
+          removeSavedProduct(productId, supplierId);
           renderSavedProducts();
           showToast("Product removed from saved list.", "success");
           return;
@@ -483,7 +488,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       list.innerHTML = results.map((supplier) => `
-        <article class="supplier-card">
+        <article class="supplier-card saved-supplier-card">
           <div class="supplier-card-head">
             <div class="supplier-logo">${supplier.logo}</div>
             <div>
@@ -557,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const initials = (profile.fullName || "Buyer").split(" ").map((part) => part[0]).slice(0, 2).join("").toUpperCase();
       container.innerHTML = `
         <div class="profile-summary">
-          <div class="profile-avatar">${initials}</div>
+          <div class="profile-avatar" data-profile-avatar>${initials}</div>
           <div>
             <h2>${profile.fullName}</h2>
             <p>${profile.businessName} • ${profile.businessType}</p>
@@ -572,6 +577,13 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="profile-detail-card"><span>Location</span><strong>${profile.city}, ${profile.state} - ${profile.pincode}</strong></div>
         </div>
       `;
+      const avatar = container.querySelector("[data-profile-avatar]");
+      if (avatar && typeof profile.profileImage === "string" && profile.profileImage.startsWith("data:image/")) {
+        const image = document.createElement("img");
+        image.src = profile.profileImage;
+        image.alt = `${profile.fullName || "Buyer"} profile photo`;
+        avatar.replaceChildren(image);
+      }
     }
 
     if (form) {
@@ -586,6 +598,73 @@ document.addEventListener("DOMContentLoaded", function () {
       form.city.value = profile.city || "";
       form.state.value = profile.state || "";
       form.pincode.value = profile.pincode || "";
+
+      const photoInput = form.elements.namedItem("profilePhoto");
+      const photoPreview = document.getElementById("profilePhotoPreview");
+      const removePhotoButton = document.getElementById("removeProfilePhoto");
+      form.dataset.profileImage = profile.profileImage && profile.profileImage.startsWith("data:image/") ? profile.profileImage : "";
+      const renderPhotoPreview = function () {
+        if (!photoPreview) return;
+        const initials = (form.fullName.value || "Buyer").trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase();
+        photoPreview.replaceChildren();
+        if (form.dataset.profileImage) {
+          const image = document.createElement("img");
+          image.src = form.dataset.profileImage;
+          image.alt = "Profile photo preview";
+          photoPreview.appendChild(image);
+        } else {
+          photoPreview.textContent = initials || "TN";
+        }
+      };
+      renderPhotoPreview();
+
+      if (photoInput && photoInput.dataset.bound !== "profile-photo") {
+        photoInput.dataset.bound = "profile-photo";
+        photoInput.addEventListener("change", function () {
+          const file = photoInput.files && photoInput.files[0];
+          if (!file) return;
+          if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+            photoInput.value = "";
+            showToast("Choose a JPG, PNG, or WebP image.", "error");
+            return;
+          }
+          if (file.size > 10 * 1024 * 1024) {
+            photoInput.value = "";
+            showToast("Choose an image smaller than 10 MB.", "error");
+            return;
+          }
+          const reader = new FileReader();
+          reader.addEventListener("load", function () {
+            const source = new Image();
+            source.addEventListener("load", function () {
+              const canvas = document.createElement("canvas");
+              const edge = 512;
+              const scale = Math.min(1, edge / Math.max(source.naturalWidth, source.naturalHeight));
+              canvas.width = Math.max(1, Math.round(source.naturalWidth * scale));
+              canvas.height = Math.max(1, Math.round(source.naturalHeight * scale));
+              canvas.getContext("2d").drawImage(source, 0, 0, canvas.width, canvas.height);
+              form.dataset.profileImage = canvas.toDataURL("image/jpeg", 0.84);
+              renderPhotoPreview();
+            });
+            source.addEventListener("error", function () {
+              showToast("That image could not be opened. Try another file.", "error");
+            });
+            source.src = String(reader.result || "");
+          });
+          reader.addEventListener("error", function () {
+            showToast("Could not read that image. Try again.", "error");
+          });
+          reader.readAsDataURL(file);
+        });
+      }
+      if (removePhotoButton && removePhotoButton.dataset.bound !== "profile-photo") {
+        removePhotoButton.dataset.bound = "profile-photo";
+        removePhotoButton.addEventListener("click", function () {
+          form.dataset.profileImage = "";
+          if (photoInput) photoInput.value = "";
+          renderPhotoPreview();
+        });
+      }
 
       if (form.dataset.bound !== "profile") {
         form.dataset.bound = "profile";
@@ -602,7 +681,8 @@ document.addEventListener("DOMContentLoaded", function () {
             address: form.address.value.trim(),
             city: form.city.value.trim(),
             state: form.state.value.trim(),
-            pincode: form.pincode.value.trim()
+            pincode: form.pincode.value.trim(),
+            profileImage: form.dataset.profileImage || ""
           };
 
           saveBuyerProfile(nextProfile);
@@ -628,6 +708,15 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    const themeInput = form.elements.namedItem("theme");
+    if (themeInput && themeInput.dataset.themeBound !== "true") {
+      themeInput.dataset.themeBound = "true";
+      themeInput.addEventListener("change", function () {
+        const nextTheme = themeInput.value;
+        saveBuyerSettings({ ...getBuyerSettings(), theme: nextTheme });
+        window.TradeNestBuyerTheme?.apply(nextTheme);
+      });
+    }
     if (form.dataset.bound !== "settings") {
       form.dataset.bound = "settings";
       form.addEventListener("submit", function (event) {
@@ -642,6 +731,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
         saveBuyerSettings(nextSettings);
+        window.TradeNestBuyerTheme?.apply(nextSettings.theme);
         showToast("Buyer settings saved successfully.", "success");
       });
     }
@@ -663,7 +753,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const buyerId = buyer && buyer.id ? buyer.id : "buyer-001";
     const recommendedProductsGrid = document.querySelector(".recommendations-section .products-grid");
     if (recommendedProductsGrid) {
-      const recommendations = uniqueSupplierProducts(state.products.filter((product) => product.availability !== "Unavailable")).slice(0, 4);
+      const seenDashboardProducts = new Set();
+      const recommendations = state.products
+        .filter((product) => product.availability !== "Unavailable")
+        .filter((product) => {
+          const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId);
+          const supplierKey = String(supplier?.businessName || product.supplierName || product.supplierId || "")
+            .trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+          const productKey = String(product.name || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+          const key = supplierKey || productKey;
+          if (!key || seenDashboardProducts.has(key)) return false;
+          seenDashboardProducts.add(key);
+          return true;
+        })
+        .slice(0, 4);
       recommendedProductsGrid.innerHTML = recommendations.map((product) => {
         const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId) || {};
         const verified = supplier.verificationStatus === "Verified";
@@ -996,7 +1099,7 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
               <div class="button-row" style="margin-top: 10px;">
                 <button class="btn btn-primary small" type="button" data-open-product="${product.id}">Open details</button>
-                <button class="btn btn-secondary small" type="button" data-save-product="${product.id}">${getSavedProducts().some((item) => item.id === product.id) ? "Saved" : "Save Product"}</button>
+                <button class="btn btn-secondary small" type="button" data-save-product="${product.id}" data-supplier-id="${product.supplierId || ""}">${getSavedProducts().some((item) => item.id === product.id && (item.supplierId === product.supplierId || (!item.supplierId && item.supplierName === product.supplierName))) ? "Saved" : "Save Product"}</button>
                 <button class="btn btn-buy-now-inline small" type="button"
                   data-buy-product-id="${product.id}"
                   data-buy-product-name="${product.name}"
@@ -1034,7 +1137,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const saveButton = event.target.closest("[data-save-product]");
         if (saveButton) {
           const productId = saveButton.getAttribute("data-save-product");
-          const saved = addSavedProduct(productId);
+          const supplierId = saveButton.getAttribute("data-supplier-id");
+          const saved = addSavedProduct(productId, supplierId);
           if (saved) {
             saveButton.textContent = "Saved";
             showToast("Product saved successfully.", "success");
@@ -1198,7 +1302,29 @@ document.addEventListener("DOMContentLoaded", function () {
         if (enquiryBtn) {
           const supplierId = enquiryBtn.getAttribute("data-enquiry-supplier");
           const supplier = state.supplierProfiles.find((item) => item.id === supplierId);
-          showToast(`Enquiry drafted for ${supplier ? supplier.businessName : "supplier"}.`, "success");
+          if (!supplier) {
+            showToast("Supplier not found.", "error");
+            return;
+          }
+          const stateNow = getState();
+          stateNow.conversations = stateNow.conversations || [];
+          stateNow.messages = stateNow.messages || [];
+          const buyer = getBuyer();
+          let conversation = stateNow.conversations.find((item) => item.buyerId === buyer.id && item.supplierId === supplierId);
+          if (!conversation) {
+            conversation = {
+              id: `conversation-${Date.now()}`,
+              buyerId: buyer.id,
+              buyerName: buyer.businessName || buyer.fullName || buyer.email || "TradeNest Buyer",
+              supplierId,
+              supplierName: supplier.businessName,
+              preview: "Start a conversation",
+              updatedAt: new Date().toISOString()
+            };
+            stateNow.conversations.unshift(conversation);
+          }
+          saveState(stateNow);
+          window.location.href = `messages.html?conversationId=${encodeURIComponent(conversation.id)}`;
         }
       });
     }
@@ -1241,6 +1367,21 @@ document.addEventListener("DOMContentLoaded", function () {
       if (supplierSelect) {
         supplierSelect.innerHTML = '<option value="">Select supplier</option>' + state.supplierProfiles.map((supplier) => `<option value="${supplier.id}">${supplier.businessName}</option>`).join("");
       }
+      const query = new URLSearchParams(window.location.search);
+      const requestedProductId = query.get("productId");
+      const requestedSupplierId = query.get("supplierId");
+      if (productSelect && requestedProductId) {
+        const requestedProduct = state.products.find((product) => String(product.id) === requestedProductId);
+        if (requestedProduct) {
+          productSelect.value = requestedProduct.id;
+          productSelect.dispatchEvent(new Event("change", { bubbles: true }));
+          const titleInput = document.getElementById("rfq-title");
+          if (titleInput && !titleInput.value.trim()) titleInput.value = `Quote request for ${requestedProduct.name}`;
+          if (supplierSelect && requestedProduct.supplierId) supplierSelect.value = requestedProduct.supplierId;
+        }
+      }
+      if (supplierSelect && requestedSupplierId) supplierSelect.value = requestedSupplierId;
+
       if (form.dataset.bound !== "rfq") {
         form.dataset.bound = "rfq";
         form.addEventListener("submit", function (event) {
@@ -1588,7 +1729,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    list.innerHTML = samples.length ? samples.map((sample) => `
+    list.innerHTML = samples.length ? samples.map((sample) => {
+      const feedback = sample.feedback;
+      const feedbackSubmitted = Boolean(feedback && (typeof feedback === "string" || feedback.comment || feedback.rating));
+      return `
       <article class="record-card">
         <div class="record-header">
           <div>
@@ -1604,15 +1748,78 @@ document.addEventListener("DOMContentLoaded", function () {
           <span>Dispatch</span><strong>${typeof sample.dispatchDetails === "object" && sample.dispatchDetails ? `${sample.dispatchDetails.courier || "Dispatched"} ${sample.dispatchDetails.trackingNumber ? `(${sample.dispatchDetails.trackingNumber})` : ""}` : sample.dispatchDetails}</strong>
         </div>
         <div class="button-row">
-          <button class="btn btn-secondary small" type="button" data-sample-feedback="${sample.id}">Submit feedback</button>
-          <button class="btn btn-primary small" type="button" data-sample-status="${sample.id}" data-next-status="Processing">Set processing</button>
+          ${feedbackSubmitted
+            ? `<button class="btn btn-secondary small" type="button" disabled>Feedback submitted</button>`
+            : sample.status === "Delivered"
+              ? `<button class="btn btn-secondary small" type="button" data-sample-feedback="${sample.id}">Submit feedback</button>`
+              : `<button class="btn btn-secondary small" type="button" disabled title="Feedback is available after you receive the sample">Submit feedback</button>`}
+          ${["Dispatched", "In Transit", "Out for Delivery"].includes(sample.status) ? `<button class="btn btn-primary small" type="button" data-confirm-sample-received="${sample.id}">Confirm receipt</button>` : ""}
         </div>
       </article>
-    `).join("") : '<div class="empty-state large">No sample requests available.</div>';
+    `;
+    }).join("") : '<div class="empty-state large">No sample requests available.</div>';
+
+    const feedbackDialog = document.getElementById("sample-feedback-dialog");
+    const feedbackForm = document.getElementById("sample-feedback-form");
+    const feedbackId = document.getElementById("sample-feedback-id");
+    const cancelFeedback = document.getElementById("cancel-sample-feedback");
+    if (feedbackForm && feedbackForm.dataset.bound !== "true") {
+      feedbackForm.dataset.bound = "true";
+      feedbackForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const sampleState = getState();
+        const sample = sampleState.sampleRequests.find((item) => item.id === feedbackId.value && item.buyerId === buyer.id);
+        const rating = Number(document.getElementById("sample-feedback-rating").value);
+        const comment = document.getElementById("sample-feedback-comment").value.trim();
+        if (!sample || sample.status !== "Delivered" || sample.feedback) {
+          showToast("Feedback can be submitted once after the sample is delivered.", "error");
+          if (feedbackDialog) feedbackDialog.close();
+          return;
+        }
+        if (!Number.isInteger(rating) || rating < 1 || rating > 5 || !comment) {
+          showToast("Select a rating and add your feedback before submitting.", "error");
+          return;
+        }
+        sample.feedback = { rating, comment, submittedAt: new Date().toISOString() };
+        saveState(sampleState);
+        store.addActivity("Sample", `Feedback submitted for ${sample.productName}`);
+        feedbackForm.reset();
+        if (feedbackDialog) feedbackDialog.close();
+        renderSamples();
+        showToast("Your feedback was sent to the supplier.", "success");
+      });
+    }
+    if (cancelFeedback && cancelFeedback.dataset.bound !== "true") {
+      cancelFeedback.dataset.bound = "true";
+      cancelFeedback.addEventListener("click", function () {
+        if (feedbackDialog) feedbackDialog.close();
+      });
+    }
+    if (feedbackDialog && feedbackDialog.dataset.bound !== "true") {
+      feedbackDialog.dataset.bound = "true";
+      feedbackDialog.addEventListener("click", function (event) {
+        if (event.target === feedbackDialog) feedbackDialog.close();
+      });
+    }
 
     if (document.body.dataset.sampleHandlersBound !== "true") {
       document.body.dataset.sampleHandlersBound = "true";
       document.addEventListener("click", function (event) {
+        const receivedBtn = event.target.closest("[data-confirm-sample-received]");
+        if (receivedBtn) {
+          const sampleId = receivedBtn.getAttribute("data-confirm-sample-received");
+          const sampleState = getState();
+          const sample = sampleState.sampleRequests.find((item) => item.id === sampleId && item.buyerId === getBuyer().id);
+          if (!sample || !["Dispatched", "In Transit", "Out for Delivery"].includes(sample.status)) return;
+          if (!window.confirm("Confirm that you have received this sample?")) return;
+          sample.status = "Delivered";
+          sample.receivedAt = new Date().toISOString();
+          saveState(sampleState);
+          store.addActivity("Sample", `Sample received for ${sample.productName}`);
+          renderSamples();
+          showToast("Sample marked as received. You can now submit feedback.", "success");
+          return;
+        }
         const statusBtn = event.target.closest("[data-sample-status]");
         if (statusBtn) {
           const sampleId = statusBtn.getAttribute("data-sample-status");
@@ -1631,13 +1838,15 @@ document.addEventListener("DOMContentLoaded", function () {
           const sampleId = feedbackBtn.getAttribute("data-sample-feedback");
           const sampleState = getState();
           const sample = sampleState.sampleRequests.find((item) => item.id === sampleId);
-          if (sample) {
-            sample.feedback = sample.feedback || "Expected quality and timely dispatch were confirmed by the buyer.";
-            sample.status = "Feedback Submitted";
-            saveState(sampleState);
-            renderSamples();
-            showToast("Sample feedback submitted.", "success");
-          }
+          const dialog = document.getElementById("sample-feedback-dialog");
+          const productLabel = document.getElementById("sample-feedback-product");
+          const sampleIdField = document.getElementById("sample-feedback-id");
+          const feedbackForm = document.getElementById("sample-feedback-form");
+          if (!sample || sample.buyerId !== getBuyer().id || sample.status !== "Delivered" || sample.feedback || !dialog) return;
+          if (sampleIdField) sampleIdField.value = sample.id;
+          if (productLabel) productLabel.textContent = `${sample.productName} from ${sample.supplierName}`;
+          if (feedbackForm) feedbackForm.reset();
+          dialog.showModal();
         }
       });
     }
@@ -1675,30 +1884,74 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!convoList || !thread) return;
     const state = getState();
     const buyer = getBuyer();
-    const conversations = state.conversations.filter((item) => item.buyerId === buyer.id);
+    const supplierPicker = document.getElementById("new-conversation-supplier");
+    const newConversationForm = document.getElementById("new-conversation-form");
+    if (supplierPicker) {
+      const selectedSupplierId = supplierPicker.value;
+      supplierPicker.replaceChildren(new Option("Choose a supplier", ""));
+      state.supplierProfiles.forEach((supplier) => {
+        const option = new Option(supplier.businessName, supplier.id);
+        supplierPicker.add(option);
+      });
+      if (selectedSupplierId) supplierPicker.value = selectedSupplierId;
+    }
+    let conversations = state.conversations
+      .filter((item) => item.buyerId === buyer.id && item.id !== "conversation-001")
+      .sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+    const messageQuery = new URLSearchParams(window.location.search);
+    const requestedSupplierId = messageQuery.get("supplierId");
+    const requestedRFQId = messageQuery.get("rfqId");
+    if (requestedSupplierId && !conversations.some((item) => item.supplierId === requestedSupplierId)) {
+      const supplier = state.supplierProfiles.find((item) => item.id === requestedSupplierId);
+      if (supplier) {
+        const conversation = {
+          id: `conversation-${Date.now()}`,
+          buyerId: buyer.id,
+          buyerName: buyer.businessName || buyer.fullName || buyer.email || "TradeNest Buyer",
+          supplierId: requestedSupplierId,
+          supplierName: supplier.businessName,
+          rfqId: requestedRFQId || "",
+          preview: "Negotiation started",
+          updatedAt: new Date().toISOString()
+        };
+        state.conversations.unshift(conversation);
+        saveState(state);
+        conversations = [conversation, ...conversations];
+      }
+    }
 
     function openConversation(conversationId) {
       const conversation = state.conversations.find((item) => item.id === conversationId);
+      if (!conversation) return;
       const messages = state.messages.filter((item) => item.conversationId === conversationId);
+      const escapeMessageText = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+      convoList.querySelectorAll("[data-conversation-id]").forEach((button) => {
+        button.classList.toggle("active", button.getAttribute("data-conversation-id") === conversationId);
+      });
       thread.innerHTML = messages.map((message) => `
         <div class="message ${message.sender === "buyer" ? "self" : "other"}">
-          <strong>${message.sender === "buyer" ? "You" : conversation.supplierName}</strong>
-          <p>${message.text}</p>
+          <strong>${message.sender === "buyer" ? "You" : escapeMessageText(conversation.supplierName)}</strong>
+          <p>${escapeMessageText(message.text)}</p>
           <small>${formatDate(message.sentAt)}</small>
         </div>
-      `).join("");
+      `).join("") || '<div class="empty-state">No messages yet. Send a message to start the conversation.</div>';
+      thread.scrollTop = thread.scrollHeight;
       const form = document.getElementById("message-form");
       if (form) {
         form.dataset.conversationId = conversationId;
+        form.querySelector("textarea")?.removeAttribute("disabled");
+        form.querySelector('[type="submit"]')?.removeAttribute("disabled");
       }
     }
 
     convoList.innerHTML = conversations.map((conversation) => `
       <button type="button" class="conversation-item" data-conversation-id="${conversation.id}">
-        <strong>${conversation.supplierName}</strong>
-        <span>${conversation.preview}</span>
+        <strong>${String(conversation.supplierName || "Supplier").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char])}</strong>
+        <span>${String(conversation.preview || "No messages yet").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char])}</span>
       </button>
-    `).join("");
+    `).join("") || '<div class="empty-state">No conversations yet. Start an enquiry from a supplier or product page.</div>';
 
     if (document.body.dataset.messagesHandlersBound !== "true") {
       document.body.dataset.messagesHandlersBound = "true";
@@ -1707,6 +1960,36 @@ document.addEventListener("DOMContentLoaded", function () {
         if (convo) {
           openConversation(convo.getAttribute("data-conversation-id"));
         }
+      });
+    }
+
+    if (newConversationForm && newConversationForm.dataset.bound !== "true") {
+      newConversationForm.dataset.bound = "true";
+      newConversationForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const supplierId = supplierPicker && supplierPicker.value;
+        const stateNow = getState();
+        const supplier = stateNow.supplierProfiles.find((item) => item.id === supplierId);
+        if (!supplier) return;
+        let conversation = stateNow.conversations.find((item) => item.buyerId === buyer.id && item.supplierId === supplierId && item.id !== "conversation-001");
+        if (!conversation) {
+          conversation = {
+            id: `conversation-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            buyerId: buyer.id,
+            buyerName: buyer.businessName || buyer.fullName || buyer.email || "TradeNest Buyer",
+            supplierId,
+            supplierName: supplier.businessName,
+            preview: "Conversation started",
+            updatedAt: new Date().toISOString()
+          };
+          stateNow.conversations.unshift(conversation);
+          saveState(stateNow);
+        }
+        const url = new URL(window.location.href);
+        url.searchParams.set("conversationId", conversation.id);
+        url.searchParams.delete("supplierId");
+        window.history.replaceState({}, "", url);
+        renderMessages();
       });
     }
 
@@ -1741,7 +2024,20 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    if (conversations.length) openConversation(conversations[0].id);
+    const requestedConversationId = messageQuery.get("conversationId");
+    const requestedConversation = conversations.find((item) => item.id === requestedConversationId)
+      || conversations.find((item) => requestedSupplierId && item.supplierId === requestedSupplierId);
+    if (requestedConversation) openConversation(requestedConversation.id);
+    else if (conversations.length) openConversation(conversations[0].id);
+    else {
+      thread.innerHTML = '<div class="empty-state">Choose a supplier and start a conversation to discuss products, quotes, samples, and orders.</div>';
+      const messageForm = document.getElementById("message-form");
+      if (messageForm) {
+        delete messageForm.dataset.conversationId;
+        messageForm.querySelector("textarea")?.setAttribute("disabled", "disabled");
+        messageForm.querySelector('[type="submit"]')?.setAttribute("disabled", "disabled");
+      }
+    }
   }
 
   function renderOrders() {
@@ -1814,9 +2110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span>Invoice</span><strong>${invoice ? invoice.invoiceNumber : "—"}</strong>
             <span>Product</span><strong>${order ? order.productName : "—"}</strong>
           </div>
-          <div class="button-row">
-            <button class="btn btn-primary small" type="button" data-payment-status="${payment.id}" data-next-status="${isPending ? "Paid" : "Pending"}">${isPending ? "Mark paid" : "Mark pending"}</button>
-          </div>
+          ${isPending ? `<div class="button-row"><button class="btn btn-primary small" type="button" data-pay-upi="${payment.id}">Pay with UPI</button></div>` : ""}
         </article>
       `;
     }).join("") : '<div class="empty-state large">No payment records found.</div>';
@@ -1824,27 +2118,79 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.body.dataset.paymentHandlersBound !== "true") {
       document.body.dataset.paymentHandlersBound = "true";
       document.addEventListener("click", function (event) {
-        const button = event.target.closest("[data-payment-status]");
+        const button = event.target.closest("[data-pay-upi]");
         if (!button) return;
-        const paymentId = button.getAttribute("data-payment-status");
-        const nextStatus = button.getAttribute("data-next-status");
+        const paymentId = button.getAttribute("data-pay-upi");
+        const payment = getState().payments.find((item) => item.id === paymentId);
+        const dialog = document.getElementById("upi-payment-dialog");
+        const summary = document.getElementById("upi-payment-summary");
+        const payeeInput = document.getElementById("upi-payee-id");
+        if (!payment || !dialog || !payeeInput) return;
+        dialog.dataset.paymentId = paymentId;
+        payeeInput.value = payment.upiId || "";
+        const upiForm = document.getElementById("upi-payment-launch-form");
+        const confirmForm = document.getElementById("upi-payment-confirm-form");
+        const utrInput = document.getElementById("upi-payment-utr");
+        upiForm?.reset();
+        payeeInput.value = payment.upiId || "";
+        confirmForm?.reset();
+        if (summary) summary.textContent = `Pay ${formatCurrency(payment.amount)} to ${payment.supplierName || "the supplier"}. Enter the supplier's UPI ID to continue.`;
+        if (utrInput) utrInput.value = "";
+        dialog.showModal();
+      });
+
+      document.getElementById("upi-payment-launch-form")?.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const dialog = document.getElementById("upi-payment-dialog");
+        const payment = getState().payments.find((item) => item.id === dialog?.dataset.paymentId);
+        const payee = document.getElementById("upi-payee-id")?.value.trim();
+        if (!payment || !payee || !/^[\w.-]+@[\w.-]+$/.test(payee)) {
+          showToast("Enter a valid supplier UPI ID, such as supplier@bank.", "error");
+          return;
+        }
+        const params = new URLSearchParams({
+          pa: payee,
+          pn: payment.supplierName || "TradeNest Supplier",
+          am: Number(payment.amount || 0).toFixed(2),
+          cu: "INR",
+          tn: `TradeNest order ${payment.orderId || payment.id}`
+        });
+        window.open(`upi://pay?${params.toString()}`, "_blank", "noopener");
+      });
+
+      document.getElementById("upi-payment-confirm-form")?.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const dialog = document.getElementById("upi-payment-dialog");
         const stateNow = getState();
-        const payment = stateNow.payments.find((item) => item.id === paymentId);
-        if (!payment) return;
-        payment.status = nextStatus;
+        const payment = stateNow.payments.find((item) => item.id === dialog?.dataset.paymentId);
+        const utr = document.getElementById("upi-payment-utr")?.value.trim();
+        if (!payment || !utr) return;
+        payment.paymentMethod = "UPI";
+        payment.upiId = document.getElementById("upi-payee-id")?.value.trim() || "";
+        payment.utr = utr;
+        payment.status = "Awaiting Verification";
+        payment.paymentDate = new Date().toISOString();
         const order = stateNow.orders.find((item) => item.id === payment.orderId);
         if (order) {
-          order.status = nextStatus === "Paid" ? "Confirmed" : "Processing";
+          order.paymentMethod = "UPI";
+          order.paymentStatus = "Awaiting Verification";
         }
         saveState(stateNow);
+        dialog?.close();
         renderPayments();
-        renderOrders();
-        showToast(`Payment marked as ${nextStatus}.`, "success");
+        showToast("UPI transfer submitted for verification.", "success");
+      });
+
+      document.getElementById("upi-payment-cancel")?.addEventListener("click", function () {
+        document.getElementById("upi-payment-dialog")?.close();
+      });
+      document.getElementById("upi-payment-close")?.addEventListener("click", function () {
+        document.getElementById("upi-payment-dialog")?.close();
       });
     }
   }
 
-  function renderDelivery() {
+  function renderDeliveryLegacy() {
     const list = document.getElementById("shipment-list");
     if (!list) return;
     const state = getState();
@@ -1908,6 +2254,90 @@ document.addEventListener("DOMContentLoaded", function () {
         showToast(`Shipment updated to ${nextStatus}.`, "success");
       });
     }
+  }
+
+  function renderDelivery() {
+    const list = document.getElementById("shipment-list");
+    if (!list) return;
+    const state = getState();
+    const buyer = getBuyer();
+    const shipments = state.shipments.filter((item) => state.orders.some((order) => order.id === item.orderId && order.buyerId === buyer.id));
+    const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+    const counts = shipments.reduce((map, shipment) => { map[shipment.orderId] = (map[shipment.orderId] || 0) + 1; return map; }, {});
+    const indexes = {};
+    const flow = ["Processing", "Dispatched", "In Transit", "Out for Delivery", "Delivered"];
+
+    list.innerHTML = shipments.length ? shipments.map((shipment) => {
+      const order = state.orders.find((item) => item.id === shipment.orderId);
+      const status = String(shipment.status || "Processing");
+      const index = status === "Shipped" ? 1 : Math.max(0, flow.indexOf(status));
+      const part = indexes[shipment.orderId] = (indexes[shipment.orderId] || 0) + 1;
+      const supplierId = order?.supplierId || shipment.supplierId || "";
+      const query = encodeURIComponent(`${shipment.courierName || "courier"} tracking ${shipment.trackingNumber || ""}`);
+      const trackUrl = shipment.trackingUrl || `https://www.google.com/search?q=${query}`;
+      const issues = Array.isArray(shipment.issueReports) ? shipment.issueReports : [];
+      return `
+        <article class="record-card">
+          <div class="record-header"><div><strong>${esc(shipment.shipmentReference || shipment.id)}${counts[shipment.orderId] > 1 ? ` · Shipment ${part} of ${counts[shipment.orderId]}` : ""}</strong><h3>${esc(shipment.courierName || "Courier pending")}</h3></div><span class="status-badge ${esc(status.toLowerCase().replace(/\s+/g, "-"))}">${esc(status)}</span></div>
+          <div class="delivery-progress" role="img" aria-label="Delivery progress: ${esc(status)}"><div class="delivery-progress-track"><span style="width:${Math.round(index / (flow.length - 1) * 100)}%"></span></div><ol>${flow.map((step, stepIndex) => `<li class="${stepIndex <= index ? "is-complete" : ""} ${stepIndex === index ? "is-current" : ""}"><span>${step}</span></li>`).join("")}</ol></div>
+          <div class="meta-grid"><span>Tracking</span><strong>${esc(shipment.trackingNumber || "Not assigned")}</strong><span>Order</span><strong>${esc(shipment.orderId)}</strong>${shipment.shippedQuantity ? `<span>In this shipment</span><strong>${esc(shipment.shippedQuantity)} ${esc(order?.unit || "units")}</strong>` : ""}<span>Expected</span><strong>${formatDate(shipment.expectedDate)}</strong><span>Product</span><strong>${esc(order?.productName || "—")}</strong><span>Address</span><strong>${esc(shipment.deliveryAddress || order?.deliveryAddress || "—")}</strong></div>
+          <ul class="timeline">${(Array.isArray(shipment.timeline) ? shipment.timeline : []).map((step) => `<li><span>${esc(step.status)}</span><small>${formatDate(step.date)}</small></li>`).join("")}</ul>
+          <div class="button-row">${shipment.trackingNumber ? `<a class="btn btn-secondary small" href="${esc(trackUrl)}" target="_blank" rel="noopener noreferrer">${shipment.trackingUrl ? "Track Shipment" : "Find Carrier Tracking"}</a>` : ""}${supplierId ? `<a class="btn btn-secondary small" href="messages.html?supplierId=${encodeURIComponent(supplierId)}">Message Supplier</a>` : ""}${status === "Delivered" && !shipment.deliveryConfirmedAt ? `<button class="btn btn-primary small" type="button" data-confirm-delivery="${esc(shipment.id)}">Confirm Receipt</button>` : ""}${shipment.deliveryConfirmedAt ? `<span class="delivery-confirmed-label">Receipt confirmed ${formatDate(shipment.deliveryConfirmedAt)}</span>` : ""}<button class="btn btn-secondary small" type="button" data-report-delivery-issue="${esc(shipment.id)}">Report an Issue</button>${issues.length ? `<span class="delivery-issue-label">${issues.length} issue report${issues.length === 1 ? "" : "s"} submitted</span>` : ""}</div>
+        </article>`;
+    }).join("") : '<div class="empty-state large">No shipment tracking available.</div>';
+
+    if (document.body.dataset.deliveryActionsBound === "true") return;
+    document.body.dataset.deliveryActionsBound = "true";
+    document.addEventListener("click", function (event) {
+      const confirmButton = event.target.closest("[data-confirm-delivery]");
+      if (confirmButton) {
+        const current = getState();
+        const shipment = current.shipments.find((item) => item.id === confirmButton.dataset.confirmDelivery);
+        if (!shipment || shipment.status !== "Delivered" || shipment.deliveryConfirmedAt) return;
+        shipment.deliveryConfirmedAt = new Date().toISOString();
+        saveState(current);
+        renderDelivery();
+        showToast("Receipt confirmed. Thank you.", "success");
+        return;
+      }
+      const reportButton = event.target.closest("[data-report-delivery-issue]");
+      if (reportButton) {
+        const dialog = document.getElementById("delivery-issue-dialog");
+        const idField = document.getElementById("delivery-issue-shipment-id");
+        if (dialog && idField) { idField.value = reportButton.dataset.reportDeliveryIssue; dialog.showModal(); }
+      }
+    });
+    document.getElementById("delivery-issue-cancel")?.addEventListener("click", () => document.getElementById("delivery-issue-dialog")?.close());
+    document.getElementById("delivery-issue-form")?.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const current = getState();
+      const shipment = current.shipments.find((item) => item.id === document.getElementById("delivery-issue-shipment-id")?.value);
+      const type = document.getElementById("delivery-issue-type")?.value;
+      const details = document.getElementById("delivery-issue-details")?.value.trim();
+      if (!shipment || !type || !details) return;
+      const order = current.orders.find((item) => item.id === shipment.orderId);
+      const buyerNow = getBuyer();
+      const text = `Delivery issue for order ${shipment.orderId}: ${type}. ${details}`;
+      shipment.issueReports = shipment.issueReports || [];
+      shipment.issueReports.push({ id: `issue-${Date.now()}`, type, details, reportedAt: new Date().toISOString(), buyerId: buyerNow.id });
+      current.conversations = current.conversations || [];
+      current.messages = current.messages || [];
+      let conversation = order?.supplierId ? current.conversations.find((item) => item.buyerId === buyerNow.id && item.supplierId === order.supplierId) : null;
+      if (order?.supplierId) {
+        if (!conversation) {
+          conversation = { id: `conversation-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, buyerId: buyerNow.id, buyerName: buyerNow.businessName || buyerNow.fullName || "TradeNest Buyer", supplierId: order.supplierId, supplierName: order.supplierName || "Supplier", preview: text, updatedAt: new Date().toISOString() };
+          current.conversations.unshift(conversation);
+        }
+        current.messages.push({ id: `message-${Date.now()}`, conversationId: conversation.id, buyerId: buyerNow.id, supplierId: order.supplierId, sender: "buyer", text, sentAt: new Date().toISOString() });
+        conversation.preview = text;
+        conversation.updatedAt = new Date().toISOString();
+      }
+      saveState(current);
+      document.getElementById("delivery-issue-dialog")?.close();
+      document.getElementById("delivery-issue-form")?.reset();
+      if (conversation) window.location.href = `messages.html?conversationId=${encodeURIComponent(conversation.id)}`;
+      else { renderDelivery(); showToast("Delivery issue recorded.", "success"); }
+    });
   }
 
   function initGlobalActions() {
