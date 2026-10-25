@@ -100,7 +100,7 @@
                     lumens: "4000 lm",
                     warranty: "3 Years Comprehensive"
                 },
-                image: "../../images/products/led-bulbs.webp",
+                image: "../../images/products/commercial-led-panel-lights.webp",
                 uom: "Pieces",
                 unitPrice: 1280.00,
                 bulkPricing: [
@@ -861,9 +861,46 @@
         }
     }
 
+    function getCurrentSupplierUser() {
+        try {
+            const raw = localStorage.getItem("tradenestCurrentUser");
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function isRegisteredNewSupplier(user) {
+        const u = user || getCurrentSupplierUser();
+        if (!u) return false;
+        const email = String(u.email || "").toLowerCase();
+        const id = String(u.id || "");
+        if (id === "supplier-001" || id === "supplier-002" || email === "rajesh@apexgear.com" || email === "supplier@tradenest.com") {
+            return false;
+        }
+        const role = String(u.role || u.accountType || "").toLowerCase();
+        if (role === "supplier") return true;
+        if (u.isNewSupplier) return true;
+        if (id.startsWith("TN-") || id.startsWith("SUPP-")) return true;
+        return false;
+    }
+
+    function getSupplierStorageKey(suffix) {
+        const u = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(u)) {
+            const id = u.supplierId || u.id || "new";
+            return `tradenest_supplier_${suffix}_${id}`;
+        }
+        return KEYS[suffix.toUpperCase()] || `tradenest_supplier_${suffix}`;
+    }
+
     // Add activity log
     function logActivity(icon, text, link) {
-        const activities = readStorage(KEYS.ACTIVITY, SEED_DATA.activity);
+        const currentUser = getCurrentSupplierUser();
+        const key = isRegisteredNewSupplier(currentUser)
+            ? ("tradenest_supplier_activity_" + (currentUser.supplierId || currentUser.id))
+            : KEYS.ACTIVITY;
+        const activities = readStorage(key, isRegisteredNewSupplier(currentUser) ? [] : SEED_DATA.activity);
         const newAct = {
             id: "ACT-" + Date.now(),
             icon: icon || "•",
@@ -873,7 +910,7 @@
         };
         activities.unshift(newAct);
         if (activities.length > 20) activities.pop();
-        writeStorage(KEYS.ACTIVITY, activities);
+        writeStorage(key, activities);
         notifyChange();
     }
 
@@ -895,6 +932,11 @@
     // MODULE 17 & 18: Products & Inventory
     // ==========================================
     function getProducts() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("products");
+            return readStorage(key, []);
+        }
         if (window.TradeNestProductService && typeof window.TradeNestProductService.getProductsSync === "function") {
             const shared = window.TradeNestProductService.getProductsSync({ includeAllStatuses: true });
             if (Array.isArray(shared)) {
@@ -936,6 +978,96 @@
     }
 
     function saveProduct(productData) {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("products");
+            let products = readStorage(key, []);
+            const id = productData.id || `PRD-SUPP-${Date.now()}`;
+            const normalized = {
+                id: id,
+                sku: productData.sku || `SKU-${id}`,
+                name: productData.name,
+                category: productData.category,
+                description: productData.description || "",
+                image: (function(img, cat, nm) {
+                  cat = String(cat || "").toLowerCase();
+                  nm = String(nm || "").toLowerCase();
+                  const rawStr = String(img || "").toLowerCase();
+                  const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+                  const isGloveImage = rawStr.includes("glove") || rawStr.includes("safety-gloves");
+                  if (img && !rawStr.includes("placeholder") && !(isGloveImage && !isGloveProduct)) {
+                    return img;
+                  }
+                  if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench") || nm.includes("mechanic")) return "images/products/mechanics-tool-kit.webp";
+                  if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) return "images/products/industrial-storage-crates.webp";
+                  if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || (cat.includes("office") && nm.includes("furniture"))) return "images/products/featured-office-ergonomic-chairs.webp";
+                  if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("biodegradable")) return "images/products/featured-biodegradable-polymers.webp";
+                  if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || (cat.includes("machin") && !nm.includes("shelv"))) return "images/products/featured-cnc-milling-cutters.webp";
+                  if (nm.includes("helmet") || nm.includes("hat")) return "images/products/industrial-safety-helmets.webp";
+                  if (nm.includes("shelv") || nm.includes("rack")) return "images/products/warehouse-shelving-rack.webp";
+                  if (isGloveProduct) return "images/products/high-grip-work-gloves.webp";
+                  if (nm.includes("organis") || nm.includes("organiz")) return "images/products/executive-desk-organizer.webp";
+                  if (nm.includes("foam") || nm.includes("insert")) return "images/products/protective-foam-inserts.webp";
+                  if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) return "images/products/commercial-led-panel-lights.webp";
+                  if (cat.includes("packag") || nm.includes("box") || nm.includes("carton")) return "images/products/corrugated-packaging-boxes.webp";
+                  if (cat.includes("office") || nm.includes("paper")) return "images/products/a4-premium-copy-paper.webp";
+                  if (cat.includes("textil") || nm.includes("fabric") || nm.includes("cotton")) return "images/products/cotton-fabric-rolls.webp";
+                  if (nm.includes("food")) return "images/products/food-packaging-materials.webp";
+                  if (nm.includes("steel") || nm.includes("stainless")) return "images/products/stainless-steel-components.webp";
+                  return "images/products/mechanics-tool-kit.webp";
+                })(productData.image, productData.category, productData.name),
+                unit: productData.uom || productData.unit || "units",
+                uom: productData.uom || productData.unit || "units",
+                price: Number(productData.priceINR || productData.unitPrice || productData.price) || 400,
+                unitPrice: Number(productData.priceINR || productData.unitPrice || productData.price) || 400,
+                priceINR: Number(productData.priceINR || productData.unitPrice || productData.price) || 400,
+                moq: Number(productData.moq) || 50,
+                availableStock: productData.availableStock !== undefined ? Number(productData.availableStock) : (Number(productData.stock) || 100),
+                stock: productData.availableStock !== undefined ? Number(productData.availableStock) : (Number(productData.stock) || 100),
+                minThreshold: Number(productData.minThreshold) || 10,
+                status: (productData.status || "active").toLowerCase() === "active" ? "active" : "unavailable",
+                rawStatus: productData.status || "Active",
+                deliveryInfo: productData.deliveryInfo || "3-5 business days across India",
+                supplierId: currentUser.supplierId || currentUser.id,
+                supplierName: currentUser.business?.name || currentUser.businessName || currentUser.fullName || "Supplier Admin",
+                createdAt: productData.createdAt || new Date().toISOString().split("T")[0],
+                updatedAt: new Date().toISOString().split("T")[0]
+            };
+            const idx = products.findIndex(p => p.id === id || (normalized.sku && p.sku === normalized.sku));
+            if (idx >= 0) products[idx] = normalized;
+            else products.unshift(normalized);
+            writeStorage(key, products);
+            logActivity("Product", `Product "${normalized.name}" saved`, "products");
+            try {
+                if (window.TradeNestProductService && typeof window.TradeNestProductService.saveProductSync === "function") {
+                    window.TradeNestProductService.saveProductSync({
+                        id: normalized.id,
+                        name: normalized.name,
+                        sku: normalized.sku,
+                        category: normalized.category,
+                        description: normalized.description,
+                        price: normalized.price,
+                        bulkPrice: normalized.price,
+                        unit: normalized.unit,
+                        moq: normalized.moq,
+                        stock: normalized.stock,
+                        deliveryInfo: normalized.deliveryInfo,
+                        status: "Active",
+                        image: normalized.image,
+                        specs: productData.specs || {}
+                    }, currentUser);
+                }
+            } catch (err) {
+                console.warn("[SupplierStore] sync to TradeNestProductService error:", err);
+            }
+            syncProductsToBuyerCatalogue();
+            notifyChange("products");
+            try {
+                window.dispatchEvent(new CustomEvent("tradenest:products-changed", { detail: normalized }));
+            } catch (e) {}
+            return normalized;
+        }
+
         if (window.TradeNestProductService && typeof window.TradeNestProductService.saveProductSync === "function") {
             try {
                 const rawUser = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function") 
@@ -1002,6 +1134,17 @@
     }
 
     function deleteProduct(id) {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("products");
+            let products = readStorage(key, []);
+            const target = products.find(p => p.id === id || p.sku === id);
+            products = products.filter(p => p.id !== id && p.sku !== id);
+            writeStorage(key, products);
+            if (target) logActivity("Product", `Product "${target.name}" removed`, "products");
+            notifyChange("products");
+            return true;
+        }
         if (window.TradeNestProductService && typeof window.TradeNestProductService.deleteProductSync === "function") {
             try {
                 const rawUser = (window.TradeNestStore && typeof window.TradeNestStore.getCurrentUser === "function")
@@ -1119,6 +1262,11 @@
     // MODULE 19: Incoming RFQs
     // ==========================================
     function getRFQs() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("rfqs");
+            return readStorage(key, []);
+        }
         const localRFQs = readStorage(KEYS.RFQS, SEED_DATA.rfqs);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localRFQs;
@@ -1189,6 +1337,11 @@
     // MODULE 20: Quotations
     // ==========================================
     function getQuotations() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("quotations");
+            return readStorage(key, []);
+        }
         const localQuotations = readStorage(KEYS.QUOTATIONS, SEED_DATA.quotations);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localQuotations;
@@ -1314,6 +1467,11 @@
     // MODULE 21: Sample Requests
     // ==========================================
     function getSampleRequests() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("samples");
+            return readStorage(key, []);
+        }
         const localSamples = readStorage(KEYS.SAMPLES, SEED_DATA.sampleRequests);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localSamples;
@@ -1374,6 +1532,11 @@
     }
 
     function getCollaborationRequests() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("collab_requests");
+            return readStorage(key, []);
+        }
         return readStorage(KEYS.COLLAB_REQUESTS, SEED_DATA.collaboration.requests);
     }
 
@@ -1410,13 +1573,18 @@
     // MODULE 23: Buyer Communication
     // ==========================================
     function getConversations() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("conversations");
+            return readStorage(key, []);
+        }
         const localConversations = readStorage(KEYS.CONVERSATIONS, SEED_DATA.conversations);
         const marketplace = getMarketplaceState();
         if (!marketplace) return [];
         let currentSupplierId = "supplier-001";
         try {
-            const currentUser = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
-            currentSupplierId = currentUser.supplierId || currentUser.id || currentSupplierId;
+            const u = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}");
+            currentSupplierId = u.supplierId || u.id || currentSupplierId;
         } catch (_) {}
         const sharedConversations = (marketplace.conversations || []).filter((conversation) => conversation.supplierId === currentSupplierId).map((conversation) => ({
             id: conversation.id,
@@ -1496,6 +1664,11 @@
     // MODULE 24: Orders Management
     // ==========================================
     function getOrders() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("orders");
+            return readStorage(key, []);
+        }
         const localOrders = readStorage(KEYS.ORDERS, SEED_DATA.orders);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localOrders;
@@ -1582,6 +1755,11 @@
     // MODULE 25: Payments & Transactions
     // ==========================================
     function getPayments() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("payments");
+            return readStorage(key, []);
+        }
         const localPayments = readStorage(KEYS.PAYMENTS, SEED_DATA.payments);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localPayments;
@@ -1621,6 +1799,11 @@
     // MODULE 26: Shipping & Delivery
     // ==========================================
     function getShipments() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("shipments");
+            return readStorage(key, []);
+        }
         const localShipments = readStorage(KEYS.SHIPMENTS, SEED_DATA.shipments);
         const marketplace = getMarketplaceState();
         if (!marketplace) return localShipments;
@@ -1774,19 +1957,61 @@
     // MODULE 16 & 28: Business Profile & Verification
     // ==========================================
     function getBusinessProfile() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("profile");
+            const saved = readStorage(key, null);
+            if (saved) {
+                if (saved.trustScore === undefined || saved.trustScore === null) saved.trustScore = 0;
+                if (!saved.verificationStatus) saved.verificationStatus = "Pending Verification";
+                if (!saved.tier) saved.tier = "New Supplier (Unranked)";
+                return saved;
+            }
+            const biz = currentUser.business || {};
+            const addr = currentUser.address || {};
+            return {
+                companyName: biz.name || currentUser.businessName || currentUser.fullName || "New Supplier Co.",
+                businessName: biz.name || currentUser.businessName || currentUser.fullName || "New Supplier Co.",
+                legalStatus: biz.type || "Private Limited",
+                businessType: biz.type || "Private Limited",
+                incorporationYear: biz.year || new Date().getFullYear().toString(),
+                category: biz.category || currentUser.registeredCategory || "Wholesale & Distribution",
+                primaryCategory: biz.category || currentUser.registeredCategory || "Wholesale",
+                secondaryCategory: "General Supplies",
+                gstin: biz.gst || biz.registrationNumber || "29ABCDE1234F1Z5",
+                pan: (biz.gst ? biz.gst.slice(2, 12) : "") || "ABCDE1234F",
+                iec: biz.iec || "Not Provided",
+                registeredAddress: addr.address ? `${addr.address}, ${addr.city}, ${addr.state} - ${addr.pincode}` : "Registered Office Address",
+                city: addr.city || "Bengaluru",
+                state: addr.state || "Karnataka",
+                pinCode: addr.pincode || "560001",
+                contactPerson: currentUser.fullName || "Supplier Admin",
+                contactEmail: currentUser.email || "supplier@example.com",
+                contactPhone: currentUser.phone || "+91 98765 43210",
+                website: biz.website || "",
+                verificationStatus: currentUser.verificationStatus || "Pending Verification",
+                trustScore: (currentUser.trustScore !== undefined && currentUser.trustScore !== null) ? Number(currentUser.trustScore) : 0,
+                tier: currentUser.tier || "New Supplier (Unranked)",
+                documents: []
+            };
+        }
         return readStorage(KEYS.BUSINESS_PROFILE, SEED_DATA.businessProfile);
     }
 
     function saveBusinessProfile(profileData) {
+        const currentUser = getCurrentSupplierUser();
+        const key = isRegisteredNewSupplier(currentUser) ? getSupplierStorageKey("profile") : KEYS.BUSINESS_PROFILE;
         const current = getBusinessProfile();
         const updated = { ...current, ...profileData };
-        writeStorage(KEYS.BUSINESS_PROFILE, updated);
+        writeStorage(key, updated);
         logActivity("Company", "Business profile and GSTIN credentials updated", "business-profile");
         notifyChange("business-profile");
         return updated;
     }
 
     function addDocument(docName, docType, docSize) {
+        const currentUser = getCurrentSupplierUser();
+        const key = isRegisteredNewSupplier(currentUser) ? getSupplierStorageKey("profile") : KEYS.BUSINESS_PROFILE;
         const profile = getBusinessProfile();
         const newDoc = {
             id: "DOC-" + String(profile.documents.length + 1).padStart(2, "0"),
@@ -1797,7 +2022,7 @@
             status: "Demo Verification: Under Simulation Review"
         };
         profile.documents.push(newDoc);
-        writeStorage(KEYS.BUSINESS_PROFILE, profile);
+        writeStorage(key, profile);
         logActivity("Document", `Uploaded document "${docName}" (Demonstration Verification)`, "business-profile");
         notifyChange("business-profile");
         return newDoc;
@@ -1807,10 +2032,31 @@
     // MODULE 27: Performance & Trust Score
     // ==========================================
     function getReviews() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = getSupplierStorageKey("reviews");
+            return readStorage(key, []);
+        }
         return readStorage(KEYS.REVIEWS, SEED_DATA.reviews);
     }
 
     function calculateTrustMetrics() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            return {
+                trustScore: 0,
+                tier: "New Supplier (Unranked)",
+                fulfilmentRate: "0.0%",
+                onTimeDeliveryRate: "0.0%",
+                avgResponseTime: "N/A",
+                completedOrdersCount: 0,
+                totalOrdersCount: 0,
+                rating: "0.0",
+                reviewsCount: 0,
+                isDemonstration: false
+            };
+        }
+
         const orders = getOrders();
         const shipments = getShipments();
         const rfqs = getRFQs();
@@ -1908,6 +2154,11 @@
     }
 
     function getActivityFeed() {
+        const currentUser = getCurrentSupplierUser();
+        if (isRegisteredNewSupplier(currentUser)) {
+            const key = "tradenest_supplier_activity_" + (currentUser.supplierId || currentUser.id);
+            return readStorage(key, []);
+        }
         return readStorage(KEYS.ACTIVITY, SEED_DATA.activity);
     }
 
@@ -1974,7 +2225,10 @@
         calculateTrustMetrics,
         // Module 28
         getSettings,
-        saveSettings
+        saveSettings,
+        // Supplier auth & registration state helpers
+        isRegisteredNewSupplier,
+        getCurrentSupplierUser
     };
 
 })(window);

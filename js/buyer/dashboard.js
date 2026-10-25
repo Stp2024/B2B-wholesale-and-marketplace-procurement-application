@@ -1596,6 +1596,15 @@ document.addEventListener("DOMContentLoaded", function () {
             "input",
             handleDashboardSearch
         );
+
+        navbarSearch.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                const q = navbarSearch.value.trim();
+                if (q) {
+                    window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+                }
+            }
+        });
     }
 
 

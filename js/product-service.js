@@ -52,7 +52,7 @@
       name: "Industrial Safety Helmets",
       category: "Industrial Equipment",
       description: "High-impact head protection with adjustable ratchet suspension and ANSI certification for heavy construction.",
-      image: "images/products/industrial-safety-gloves.webp",
+      image: "images/products/industrial-safety-helmets.webp",
       price: 520,
       bulkPrice: 480,
       moq: 50,
@@ -226,7 +226,7 @@
       name: "Heavy Duty Warehouse Shelving",
       category: "Machinery",
       description: "Industrial cold-rolled steel modular rack shelving system supporting 800 kg per level for distribution centres.",
-      image: "images/products/stainless-steel-components.webp",
+      image: "images/products/warehouse-shelving-rack.webp",
       price: 5300,
       bulkPrice: 5000,
       moq: 5,
@@ -255,7 +255,7 @@
       name: "ABC High-Grip Safety Work Gloves",
       category: "Industrial Equipment",
       description: "Premium level-5 cut resistant industrial work gloves with reinforced micro-foam nitrile coating manufactured by ABC Traders.",
-      image: "images/products/industrial-safety-gloves.webp",
+      image: "images/products/high-grip-work-gloves.webp",
       price: 195,
       bulkPrice: 175,
       moq: 200,
@@ -284,7 +284,7 @@
       name: "ABC Premium Wholesale Storage Crates",
       category: "Packaging",
       description: "High-density polyethylene heavy-duty stackable industrial storage crates for distribution centers and warehouse logistics.",
-      image: "images/products/corrugated-packaging-boxes.webp",
+      image: "images/products/industrial-storage-crates.webp",
       price: 680,
       bulkPrice: 610,
       moq: 25,
@@ -306,6 +306,93 @@
       },
       createdAt: "2026-09-10",
       updatedAt: "2026-10-15"
+    },
+    {
+      id: "product-013",
+      sku: "SKU-MCH-CNC-13",
+      name: "Carbide CNC Milling Cutters",
+      category: "Machinery",
+      description: "Precision carbide end mills for machining metal components and production parts on CNC milling equipment.",
+      image: "images/products/featured-cnc-milling-cutters.webp",
+      price: 1150,
+      bulkPrice: 1050,
+      moq: 25,
+      stock: 500,
+      unit: "pieces",
+      deliveryInfo: "2-4 business days across India",
+      status: "Active",
+      supplierId: "supplier-008",
+      supplierName: "Precision Tooling Works",
+      supplierLocation: "Pune, Maharashtra",
+      trustScore: 96,
+      verificationStatus: "Verified",
+      rating: 4.9,
+      specs: {
+        "Material": "Solid Tungsten Carbide",
+        "Diameter": "4mm to 20mm available",
+        "Flutes": "4-Flute End Mill",
+        "Coating": "TiAlN High Heat Coating"
+      },
+      createdAt: "2026-09-12",
+      updatedAt: "2026-10-16"
+    },
+    {
+      id: "product-014",
+      sku: "SKU-RAW-BAG-14",
+      name: "Biodegradable Trash Bags",
+      category: "Packaging",
+      description: "Bulk-supplied biodegradable refuse bags for commercial facilities, retail operations and workplace waste collection.",
+      image: "images/products/featured-biodegradable-polymers.webp",
+      price: 210,
+      bulkPrice: 190,
+      moq: 100,
+      stock: 4000,
+      unit: "packs",
+      deliveryInfo: "3-5 business days across India",
+      status: "Active",
+      supplierId: "supplier-009",
+      supplierName: "GreenChem Polymers Corp.",
+      supplierLocation: "Ahmedabad, Gujarat",
+      trustScore: 95,
+      verificationStatus: "Verified",
+      rating: 4.8,
+      specs: {
+        "Material": "Cornstarch PLA Biodegradable Polymer",
+        "Capacity": "60 Litres per bag",
+        "Count": "50 bags per roll / pack",
+        "Standard": "EN 13432 Certified Compostable"
+      },
+      createdAt: "2026-09-14",
+      updatedAt: "2026-10-16"
+    },
+    {
+      id: "product-015",
+      sku: "SKU-OFC-CHR-15",
+      name: "Commercial Ergonomic Office Chairs",
+      category: "Office Supplies",
+      description: "Ergonomic seating for offices and shared workspaces, designed for everyday desk-based use.",
+      image: "images/products/featured-office-ergonomic-chairs.webp",
+      price: 4850,
+      bulkPrice: 4500,
+      moq: 20,
+      stock: 160,
+      unit: "units",
+      deliveryInfo: "4-7 business days across India",
+      status: "Active",
+      supplierId: "supplier-010",
+      supplierName: "UrbanWork Office Systems",
+      supplierLocation: "Bengaluru, Karnataka",
+      trustScore: 90,
+      verificationStatus: "Verified",
+      rating: 4.8,
+      specs: {
+        "Backrest": "Breathable High-Elastic Mesh",
+        "Lumbar Support": "Adjustable 2D Lumbar Support",
+        "Base": "Class-4 Heavy Duty Gas Lift, Steel 5-Star Base",
+        "Warranty": "3 Years Commercial Warranty"
+      },
+      createdAt: "2026-09-15",
+      updatedAt: "2026-10-16"
     }
   ];
 
@@ -334,17 +421,86 @@
     return "./";
   }
 
-  function normalizeImagePath(rawPath) {
-    if (!rawPath || typeof rawPath !== "string") {
-      return getRelativeImagePrefix() + "images/products/industrial-safety-gloves.webp";
+  function resolveSmartProductImage(category, name) {
+    const cat = String(category || "").toLowerCase();
+    const nm = String(name || "").toLowerCase();
+
+    if (nm.includes("tool") || nm.includes("wrench") || nm.includes("drill") || nm.includes("spanner") || nm.includes("mechanic") || nm.includes("socket")) {
+      return "images/products/mechanics-tool-kit.webp";
     }
-    // If external URL or data URL
-    if (rawPath.startsWith("http://") || rawPath.startsWith("https://") || rawPath.startsWith("data:")) {
-      return rawPath;
+    if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage crate") || nm.includes("pallet box")) {
+      return "images/products/industrial-storage-crates.webp";
     }
-    // Strip leading ./ or ../ or /
-    const clean = rawPath.replace(/^(?:\.\.\/|\.\/|\/)+/, "");
-    return getRelativeImagePrefix() + clean;
+    if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || nm.includes("stool") || (cat.includes("office") && (nm.includes("furniture") || nm.includes("seat")))) {
+      return "images/products/featured-office-ergonomic-chairs.webp";
+    }
+    if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("refuse") || nm.includes("biodegradable") || cat.includes("raw material")) {
+      return "images/products/featured-biodegradable-polymers.webp";
+    }
+    if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || nm.includes("end mill") || nm.includes("carbide") || (cat.includes("machin") && !nm.includes("shelv"))) {
+      return "images/products/featured-cnc-milling-cutters.webp";
+    }
+    if (nm.includes("helmet") || nm.includes("hard hat") || nm.includes("head protection")) {
+      return "images/products/industrial-safety-helmets.webp";
+    }
+    if (nm.includes("shelv") || nm.includes("rack") || nm.includes("pallet rack")) {
+      return "images/products/warehouse-shelving-rack.webp";
+    }
+    if (nm.includes("glove") || nm.includes("mitt")) {
+      if (nm.includes("abc") || nm.includes("high-grip") || nm.includes("work glove")) {
+        return "images/products/high-grip-work-gloves.webp";
+      }
+      return "images/products/industrial-safety-gloves.webp";
+    }
+    if (nm.includes("organis") || nm.includes("organiz") || nm.includes("caddy")) {
+      return "images/products/executive-desk-organizer.webp";
+    }
+    if (nm.includes("foam") || nm.includes("insert") || nm.includes("cushion")) {
+      return "images/products/protective-foam-inserts.webp";
+    }
+    if (nm.includes("paper") || nm.includes("ream") || nm.includes("copy") || cat.includes("stationery")) {
+      return "images/products/a4-premium-copy-paper.webp";
+    }
+    if (nm.includes("box") || nm.includes("carton") || nm.includes("corrugated")) {
+      return "images/products/corrugated-packaging-boxes.webp";
+    }
+    if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) {
+      return "images/products/commercial-led-panel-lights.webp";
+    }
+    if (cat.includes("textil") || cat.includes("fabric") || nm.includes("cotton") || nm.includes("denim")) {
+      return "images/products/cotton-fabric-rolls.webp";
+    }
+    if (nm.includes("food") || (cat.includes("food") && cat.includes("packag"))) {
+      return "images/products/food-packaging-materials.webp";
+    }
+    if (nm.includes("steel") || nm.includes("stainless") || nm.includes("component")) {
+      return "images/products/stainless-steel-components.webp";
+    }
+    if (cat.includes("machin")) return "images/products/featured-cnc-milling-cutters.webp";
+    if (cat.includes("packag")) return "images/products/corrugated-packaging-boxes.webp";
+    if (cat.includes("office")) return "images/products/featured-office-ergonomic-chairs.webp";
+
+    return "images/products/mechanics-tool-kit.webp";
+  }
+
+  function sanitizeProductImage(rawPath, category, name) {
+    const nm = String(name || "").toLowerCase();
+    const rawImg = String(rawPath || "").toLowerCase();
+    const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+    const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
+
+    if (!rawPath || rawImg.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
+      return resolveSmartProductImage(category, name);
+    }
+    return rawPath.replace(/^(?:\.\.\/|\.\/|\/)+/, "");
+  }
+
+  function normalizeImagePath(rawPath, category, name) {
+    const sanitized = sanitizeProductImage(rawPath, category, name);
+    if (sanitized.startsWith("http://") || sanitized.startsWith("https://") || sanitized.startsWith("data:")) {
+      return sanitized;
+    }
+    return getRelativeImagePrefix() + sanitized.replace(/^(?:\.\.\/|\.\/|\/)+/, "");
   }
 
   // Tombstone helpers to permanently track deleted products across portal sessions
@@ -413,7 +569,20 @@
             name: supItem.name,
             category: supItem.category || "Industrial Equipment",
             description: supItem.description || "",
-            image: supItem.image || "images/products/safety-gloves.webp",
+            image: supItem.image || (function(cat, nm) {
+              cat = String(cat || "").toLowerCase();
+              nm = String(nm || "").toLowerCase();
+              if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench")) return "images/products/mechanics-tool-kit.webp";
+              if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) return "images/products/industrial-storage-crates.webp";
+              if (nm.includes("glove")) return "images/products/high-grip-work-gloves.webp";
+              if (nm.includes("helmet")) return "images/products/industrial-safety-helmets.webp";
+              if (cat.includes("electric") || cat.includes("light") || nm.includes("led")) return "images/products/commercial-led-panel-lights.webp";
+              if (cat.includes("packag") || nm.includes("box")) return "images/products/corrugated-packaging-boxes.webp";
+              if (cat.includes("office") || nm.includes("paper")) return "images/products/a4-premium-copy-paper.webp";
+              if (cat.includes("textil") || nm.includes("fabric")) return "images/products/cotton-fabric-rolls.webp";
+              if (cat.includes("machin") || nm.includes("shelv")) return "images/products/warehouse-shelving-rack.webp";
+              return "images/products/mechanics-tool-kit.webp";
+            })(supItem.category, supItem.name),
             price: supItem.price ? Number(supItem.price) : (supItem.priceINR ? Number(supItem.priceINR) : (supItem.unitPrice ? Number(supItem.unitPrice) : 400)),
             bulkPrice: supItem.bulkPrice ? Number(supItem.bulkPrice) : Math.round((Number(supItem.price || supItem.priceINR || supItem.unitPrice || 400)) * 0.9),
             moq: supItem.moq || 50,
@@ -424,9 +593,9 @@
             supplierId: supItem.supplierId || "supplier-001",
             supplierName: supItem.supplierName || "TradeNest Supplies",
             supplierLocation: supItem.supplierLocation || "Bengaluru, Karnataka",
-            trustScore: supItem.trustScore || 92,
-            verificationStatus: supItem.verificationStatus || "Verified",
-            rating: supItem.rating || 4.8,
+            trustScore: (supItem.trustScore !== undefined && supItem.trustScore !== null) ? Number(supItem.trustScore) : 0,
+            verificationStatus: supItem.verificationStatus || "Pending Verification",
+            rating: (supItem.rating !== undefined && supItem.rating !== null) ? Number(supItem.rating) : 0.0,
             specs: supItem.specs || {},
             createdAt: supItem.createdAt || new Date().toISOString().split("T")[0],
             updatedAt: supItem.updatedAt || new Date().toISOString().split("T")[0]
@@ -451,6 +620,23 @@
       }
     }
 
+    // Auto-repair any stored products in list that have missing, placeholder, or mismatched glove images
+    let repairedImages = false;
+    list.forEach(p => {
+      if (!p) return;
+      const nm = String(p.name || "").toLowerCase();
+      const rawImg = String(p.image || "").toLowerCase();
+      const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+      const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
+      if (!p.image || rawImg.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
+        p.image = resolveSmartProductImage(p.category, p.name);
+        repairedImages = true;
+      }
+    });
+    if (repairedImages) {
+      saveSharedProducts(list, false);
+    }
+
     // Ensure all seed products (including ABC Traders products) exist in shared catalogue, EXCEPT those explicitly deleted
     let addedSeed = false;
     SEED_PRODUCTS.forEach(seed => {
@@ -462,6 +648,58 @@
     });
     if (addedSeed) {
       saveSharedProducts(list, false);
+    }
+
+    // Merge products from all registered supplier stores (e.g. tradenest_supplier_products_*)
+    try {
+      let addedFromSuppliers = false;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith("tradenest_supplier_products_") || k === "tradenest_supplier_products")) {
+          const supProds = safeParse(localStorage.getItem(k), []);
+          if (Array.isArray(supProds)) {
+            supProds.forEach(sp => {
+              if (isProductDeleted(sp)) return;
+              const idx = list.findIndex(item => item.id === sp.id || (item.sku && sp.sku && item.sku === sp.sku));
+              const norm = {
+                id: sp.id || `product-${Date.now()}`,
+                sku: sp.sku || `SKU-${sp.id}`,
+                name: sp.name,
+                category: sp.category || "Industrial Equipment",
+                description: sp.description || "",
+                image: sanitizeProductImage(sp.image, sp.category, sp.name),
+                price: sp.price ? Number(sp.price) : (sp.priceINR ? Number(sp.priceINR) : (sp.unitPrice ? Number(sp.unitPrice) : 400)),
+                bulkPrice: sp.bulkPrice ? Number(sp.bulkPrice) : Math.round((Number(sp.price || sp.priceINR || sp.unitPrice || 400)) * 0.9),
+                moq: sp.moq || 1,
+                stock: sp.availableStock !== undefined ? sp.availableStock : (sp.stock || 0),
+                unit: sp.uom || sp.unit || "units",
+                deliveryInfo: sp.deliveryInfo || "3-5 business days across India",
+                status: (sp.status || "active").toLowerCase() === "active" ? "Active" : "Inactive",
+                supplierId: sp.supplierId || "supplier-001",
+                supplierName: sp.supplierName || "TradeNest Supplier",
+                supplierLocation: sp.supplierLocation || "India",
+                trustScore: (sp.trustScore !== undefined && sp.trustScore !== null) ? Number(sp.trustScore) : 0,
+                verificationStatus: sp.verificationStatus || "Pending Verification",
+                rating: (sp.rating !== undefined && sp.rating !== null) ? Number(sp.rating) : 0.0,
+                specs: sp.specs || {},
+                createdAt: sp.createdAt || new Date().toISOString().split("T")[0],
+                updatedAt: sp.updatedAt || new Date().toISOString().split("T")[0]
+              };
+              if (idx >= 0) {
+                list[idx] = { ...list[idx], ...norm };
+              } else {
+                list.unshift(norm);
+                addedFromSuppliers = true;
+              }
+            });
+          }
+        }
+      }
+      if (addedFromSuppliers) {
+        saveSharedProducts(list, false);
+      }
+    } catch (e) {
+      console.warn("Error merging supplier products in loadSharedProducts:", e);
     }
 
     const canonicalImages = {
@@ -780,7 +1018,7 @@
           name: productData.name.trim(),
           category: productData.category.trim(),
           description: productData.description.trim(),
-          image: productData.image ? productData.image.trim() : "images/products/industrial-safety-gloves.webp",
+          image: sanitizeProductImage(productData.image ? productData.image.trim() : "", productData.category, productData.name),
           price: Number(productData.price),
           bulkPrice: productData.bulkPrice ? Number(productData.bulkPrice) : Math.round(Number(productData.price) * 0.9),
           moq: Number(productData.moq),
@@ -792,9 +1030,9 @@
           supplierName: supplierName,
           supplierEmail: user.email || "",
           supplierLocation: supplierLocation,
-          trustScore: user.trustScore || 92,
-          verificationStatus: user.verificationStatus || "Verified",
-          rating: 5.0,
+          trustScore: (user.trustScore !== undefined && user.trustScore !== null) ? Number(user.trustScore) : 0,
+          verificationStatus: user.verificationStatus || "Pending Verification",
+          rating: (user.rating !== undefined && user.rating !== null) ? Number(user.rating) : 0.0,
           specs: productData.specs || {},
           createdAt: new Date().toISOString().split("T")[0],
           updatedAt: new Date().toISOString().split("T")[0]
@@ -954,11 +1192,36 @@
             id: p.supplierId,
             name: p.supplierName,
             location: p.supplierLocation,
-            trustScore: p.trustScore,
-            verificationStatus: p.verificationStatus
+            trustScore: (p.trustScore !== undefined && p.trustScore !== null) ? Number(p.trustScore) : 0,
+            verificationStatus: p.verificationStatus || "Pending Verification"
           });
         }
       });
+
+      // Also include registered suppliers from tradenestUsers and current user session
+      try {
+        const storedUsers = safeParse(localStorage.getItem("tradenestUsers"), []);
+        const curUser = safeParse(localStorage.getItem(CURRENT_USER_KEY), null);
+        const users = Array.isArray(storedUsers) ? [...storedUsers] : [];
+        if (curUser) users.push(curUser);
+        users.forEach(u => {
+          if (u && (u.role === "supplier" || u.accountType === "supplier" || u.isNewSupplier || String(u.id || "").startsWith("TN-"))) {
+            const id = u.supplierId || u.id;
+            const name = (u.business && u.business.name) || u.businessName || u.fullName;
+            if (id && !map.has(id)) {
+              const loc = u.address ? `${u.address.city || ""}, ${u.address.state || ""}`.replace(/^,\s*|,\s*$/g, "") || "India" : (u.city || u.location || "India");
+              map.set(id, {
+                id: id,
+                name: name || "TradeNest Supplier",
+                location: loc,
+                trustScore: (u.trustScore !== undefined && u.trustScore !== null) ? Number(u.trustScore) : 0,
+                verificationStatus: u.verificationStatus || "Pending Verification"
+              });
+            }
+          }
+        });
+      } catch (e) {}
+
       return Array.from(map.values());
     },
 

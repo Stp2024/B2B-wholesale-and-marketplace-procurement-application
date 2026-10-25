@@ -478,7 +478,7 @@
     }
 
     container.innerHTML = suppliers.map(s => {
-      const trustScore = s.trustScore || 85;
+      const trustScore = (s.trustScore !== undefined && s.trustScore !== null) ? Number(s.trustScore) : 0;
       const productCount = (s.products || []).length;
       return `<a class="tn-supplier-card" href="pages/supplier-details.html?id=${encodeURIComponent(s.id)}" aria-label="View ${s.businessName}">
         <div class="tn-supplier-card-header">

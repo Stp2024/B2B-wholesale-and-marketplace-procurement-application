@@ -53,6 +53,39 @@ document.addEventListener("DOMContentLoaded", function () {
     return store.formatCurrency(value);
   }
 
+  function resolveBuyerProductImage(product, prefix) {
+    if (!product) return (prefix || "") + "images/products/mechanics-tool-kit.webp";
+    const nm = String(product.name || "").toLowerCase();
+    const cat = String(product.category || "").toLowerCase();
+    const rawImg = String(product.image || "").toLowerCase();
+    const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+    const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
+
+    const p = prefix || "";
+    if (product.image && !rawImg.includes("placeholder") && !(isGloveImage && !isGloveProduct)) {
+      const clean = product.image.replace(/^(?:\.\.\/|\.\/|\/)+/, "");
+      return p + clean;
+    }
+
+    if (nm.includes("tool") || nm.includes("wrench") || nm.includes("drill") || nm.includes("mechanic")) return p + "images/products/mechanics-tool-kit.webp";
+    if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) return p + "images/products/industrial-storage-crates.webp";
+    if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || (cat.includes("office") && nm.includes("furniture"))) return p + "images/products/featured-office-ergonomic-chairs.webp";
+    if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("biodegradable")) return p + "images/products/featured-biodegradable-polymers.webp";
+    if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || (cat.includes("machin") && !nm.includes("shelv"))) return p + "images/products/featured-cnc-milling-cutters.webp";
+    if (nm.includes("helmet") || nm.includes("hat")) return p + "images/products/industrial-safety-helmets.webp";
+    if (nm.includes("shelv") || nm.includes("rack")) return p + "images/products/warehouse-shelving-rack.webp";
+    if (isGloveProduct) return p + "images/products/high-grip-work-gloves.webp";
+    if (nm.includes("organis") || nm.includes("organiz")) return p + "images/products/executive-desk-organizer.webp";
+    if (nm.includes("foam") || nm.includes("insert")) return p + "images/products/protective-foam-inserts.webp";
+    if (cat.includes("electric") || cat.includes("light") || nm.includes("led")) return p + "images/products/commercial-led-panel-lights.webp";
+    if (cat.includes("packag") || nm.includes("box")) return p + "images/products/corrugated-packaging-boxes.webp";
+    if (cat.includes("office") || nm.includes("paper")) return p + "images/products/a4-premium-copy-paper.webp";
+    if (cat.includes("textil") || nm.includes("fabric")) return p + "images/products/cotton-fabric-rolls.webp";
+    if (nm.includes("food")) return p + "images/products/food-packaging-materials.webp";
+    if (nm.includes("steel") || nm.includes("stainless")) return p + "images/products/stainless-steel-components.webp";
+    return p + "images/products/mechanics-tool-kit.webp";
+  }
+
   function productTrustMarkup(product, state) {
     const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId);
     const trustScore = supplier ? Number(supplier.trustScore) : NaN;
@@ -770,9 +803,8 @@ document.addEventListener("DOMContentLoaded", function () {
       recommendedProductsGrid.innerHTML = recommendations.map((product) => {
         const supplier = state.supplierProfiles.find((item) => item.id === product.supplierId) || {};
         const verified = supplier.verificationStatus === "Verified";
-        // Fix image path — store paths start with /images/, dashboard is at root
-        let imgSrc = product.image || "";
-        if (imgSrc.startsWith("/")) imgSrc = imgSrc.slice(1); // remove leading slash
+        const imgSrc = resolveBuyerProductImage(product, "");
+        const fallbackImg = resolveBuyerProductImage(product, "");
         const checkoutUrl = "pages/buyer/checkout.html?" + new URLSearchParams({
           id: product.id,
           name: product.name,
@@ -786,7 +818,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }).toString();
         return `
           <article class="product-card" data-product-id="${product.id}">
-            <div class="product-image-wrap"><img src="${imgSrc}" alt="${product.name}" class="product-image" onerror="this.src='images/products/industrial-safety-gloves.webp'" />
+            <div class="product-image-wrap"><img src="${imgSrc}" alt="${product.name}" class="product-image" onerror="this.onerror=null; this.src='${fallbackImg}'" />
               <span class="category-tag">${product.category}</span>
             </div>
             <div class="product-body"><h3 class="product-title">${product.name}</h3>
@@ -1027,6 +1059,23 @@ document.addEventListener("DOMContentLoaded", function () {
       categorySelect.innerHTML = '<option value="">All categories</option>' + categories.map((cat) => `<option value="${cat}">${cat}</option>`).join("");
     }
 
+    // Support URL parameters for direct deep linking & search
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const initQ = urlParams.get("search") || urlParams.get("query") || urlParams.get("q") || "";
+      if (initQ && searchInput && !searchInput.value) {
+        searchInput.value = initQ;
+      }
+      const initCat = urlParams.get("category") || "";
+      if (initCat && categorySelect && !categorySelect.value) {
+        categorySelect.value = initCat;
+      }
+      const initSup = urlParams.get("supplier") || "";
+      if (initSup && supplierSelect && !supplierSelect.value) {
+        supplierSelect.value = initSup;
+      }
+    } catch (e) {}
+
     function applyFilters() {
       const searchTerm = (searchInput ? searchInput.value : "").toLowerCase();
       const category = categorySelect ? categorySelect.value : "";
@@ -1037,9 +1086,11 @@ document.addEventListener("DOMContentLoaded", function () {
       let results = productsList.filter((product) => {
         const prodName = (product.name || "").toLowerCase();
         const prodSup = (product.supplierName || "").toLowerCase();
+        const prodCat = (product.category || "").toLowerCase();
+        const prodDesc = (product.description || "").toLowerCase();
         const isAbcSearch = searchTerm.includes("abc") || searchTerm.includes("treader") || searchTerm.includes("trader");
         const isAbcProd = prodSup.includes("abc") || prodName.includes("abc") || (product.supplierId && product.supplierId.includes("abc"));
-        const matchesSearch = !searchTerm || prodName.includes(searchTerm) || prodSup.includes(searchTerm) || (isAbcSearch && isAbcProd);
+        const matchesSearch = !searchTerm || prodName.includes(searchTerm) || prodSup.includes(searchTerm) || prodCat.includes(searchTerm) || prodDesc.includes(searchTerm) || (isAbcSearch && isAbcProd);
         const matchesCategory = !category || product.category === category;
         const matchesSupplier = !supplier || product.supplierId === supplier || product.supplierName === supplier || (supplier === "supplier-abc" && (product.supplierId === "supplier-abc" || prodSup.includes("abc")));
         const matchesAvailability = !availability || product.availability === availability;
@@ -1059,17 +1110,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       list.innerHTML = results.map((product) => {
-        let img = product.image || "../../images/products/industrial-safety-gloves.webp";
-        if (img.startsWith("../../../")) {
-          img = img.replace("../../../", "../../");
-        } else if (!img.startsWith("../../") && !img.startsWith("http") && !img.startsWith("data:")) {
-          img = "../../" + img.replace(/^\/+/, "");
-        }
+        let img = resolveBuyerProductImage(product, "../../");
+        const fallbackImg = resolveBuyerProductImage(product, "../../");
 
         return `
           <article class="product-card" data-product-id="${product.id}">
             <div class="product-image-wrap">
-              <img src="${img}" alt="${product.name}" onerror="this.src='../../images/products/industrial-safety-gloves.webp'" />
+              <img src="${img}" alt="${product.name}" onerror="this.onerror=null; this.src='${fallbackImg}'" />
               <span class="badge">${product.category}</span>
             </div>
             <div class="product-body">
@@ -1211,7 +1258,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const sAlts = (supplier.altNames || []).map(a => a.toLowerCase());
         const isAbcSearch = query.includes("abc") || query.includes("treader") || query.includes("trader");
         const isAbcSup = sName.includes("abc") || (supplier.id && supplier.id.includes("abc")) || sAlts.some(a => a.includes("abc"));
-        const matchesSearch = !query || sName.includes(query) || sCat.includes(query) || sLoc.includes(query) || sAlts.some(a => a.includes(query)) || (isAbcSearch && isAbcSup);
+
+        // Match supplier if search query matches any product offered by this supplier:
+        const hasMatchingProduct = (state.products || []).some(p => {
+          const belongs = (p.supplierId && p.supplierId === supplier.id) ||
+                          (p.supplierName && sName && p.supplierName.toLowerCase() === sName) ||
+                          (supplier.products && Array.isArray(supplier.products) && supplier.products.includes(p.id));
+          if (!belongs) return false;
+          return (p.name && p.name.toLowerCase().includes(query)) ||
+                 (p.category && p.category.toLowerCase().includes(query)) ||
+                 (p.description && p.description.toLowerCase().includes(query));
+        });
+
+        const matchesSearch = !query || sName.includes(query) || sCat.includes(query) || sLoc.includes(query) || sAlts.some(a => a.includes(query)) || (isAbcSearch && isAbcSup) || hasMatchingProduct;
         const matchesLocation = !location || supplier.location.toLowerCase().includes(location.toLowerCase());
         const matchesCategory = !category || supplier.category === category;
         return matchesSearch && matchesLocation && matchesCategory;

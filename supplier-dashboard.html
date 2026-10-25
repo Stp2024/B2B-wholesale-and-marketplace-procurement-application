@@ -111,8 +111,8 @@
                   <span
                     class="badge-pill badge-quoted"
                     id="navRFQCountBadge"
-                    style="padding: 2px 6px; font-size: 0.65rem;"
-                    >2</span
+                    style="padding: 2px 6px; font-size: 0.65rem; display: none;"
+                    >0</span
                   >
                 </a>
               </li>
@@ -208,8 +208,8 @@
                   <span
                     class="badge-pill badge-active"
                     id="navMessagesBadge"
-                    style="padding: 2px 6px; font-size: 0.65rem;"
-                    >1</span
+                    style="padding: 2px 6px; font-size: 0.65rem; display: none;"
+                    >0</span
                   >
                 </a>
               </li>
@@ -311,14 +311,14 @@
                 aria-controls="notificationDropdown"
               >
                 <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                <span class="notification-badge" id="globalNotificationBadge">3</span>
+                <span class="notification-badge" id="globalNotificationBadge" style="display: none;">0</span>
               </button>
 
               <div class="notification-dropdown" id="notificationDropdown" hidden>
                 <div class="notification-dropdown-header">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-weight: 700; font-size: 0.95rem; color: var(--text);">Notifications</span>
-                    <span class="badge-pill badge-quoted" id="notifUnreadBadge" style="font-size: 0.7rem; padding: 2px 7px;">3 New</span>
+                    <span class="badge-pill badge-quoted" id="notifUnreadBadge" style="font-size: 0.7rem; padding: 2px 7px; display: none;">0 New</span>
                   </div>
                   <button type="button" class="notif-mark-read-btn" id="btnMarkAllNotifsRead">Mark all read</button>
                 </div>
@@ -625,8 +625,8 @@
               </div>
               <div class="profile-biz-stats" style="text-align: right;">
                 <div style="font-size: 0.75rem; color: var(--text-muted);">TRUST SCORE</div>
-                <div style="font-size: 2rem; font-weight: 800; color: var(--success);">96/100</div>
-                <span class="badge-demo">Illustrative</span>
+                <div style="font-size: 2rem; font-weight: 800; color: var(--success);" id="bizProfileTrustScoreVal">96/100</div>
+                <span class="badge-demo" id="bizProfileTrustScoreBadge">Illustrative</span>
               </div>
             </div>
 
@@ -1263,8 +1263,8 @@
               </div>
               <div class="trust-details-content">
                 <span class="trust-tier-badge" id="perfTierBadge">PLATINUM TIER VERIFIED</span>
-                <h3>Exceptional Sourcing Reliability</h3>
-                <p style="color: var(--text-light); font-size: 0.9rem; max-width: 650px;">
+                <h3 id="perfHeadline">Exceptional Sourcing Reliability</h3>
+                <p id="perfDescription" style="color: var(--text-light); font-size: 0.9rem; max-width: 650px;">
                   Your TradeNest TrustScore™ reflects consistent on-time order fulfillment, rapid RFQ response times, low dispute frequency, and authenticated business credentials.
                 </p>
                 <div class="alert-banner" style="margin-top: 14px; padding: 10px 14px;">

@@ -156,7 +156,7 @@
       unit: "pair",
       availability: "In Stock",
       specifications: "ANSI A5 cut protection, micro-foam nitrile coating, ergonomic seamless knit",
-      image: "/images/products/industrial-safety-gloves.webp"
+      image: "/images/products/high-grip-work-gloves.webp"
     },
     {
       id: "product-abc-003",
@@ -172,7 +172,7 @@
       unit: "crate",
       availability: "In Stock",
       specifications: "60 Litres volume, virgin HDPE, interlocking stackable ribs, 45 kg load capacity",
-      image: "/images/products/corrugated-packaging-boxes.webp"
+      image: "/images/products/industrial-storage-crates.webp"
     },
     {
       id: "product-001",
@@ -300,7 +300,7 @@
       unit: "unit",
       availability: "In Stock",
       specifications: "Powder coated steel, modular design, 800kg load per shelf",
-      image: "/images/products/stainless-steel-components.webp"
+      image: "/images/products/warehouse-shelving-rack.webp"
     },
     {
       id: "product-009",
@@ -363,6 +363,10 @@
       stock: 500,
       unit: "piece",
       availability: "In Stock",
+      trustScore: 96,
+      verificationStatus: "Verified",
+      verification: "Verified",
+      rating: 4.9,
       specifications: "Solid carbide cutting tool, end-mill format, multiple diameters and flute options, for CNC milling",
       image: "/images/products/featured-cnc-milling-cutters.webp"
     },
@@ -379,6 +383,10 @@
       stock: 4000,
       unit: "pack",
       availability: "In Stock",
+      trustScore: 95,
+      verificationStatus: "Verified",
+      verification: "Verified",
+      rating: 4.8,
       specifications: "Biodegradable bag material, roll-packed, multiple bag sizes and thickness options, bulk case quantities available",
       image: "/images/products/featured-biodegradable-polymers.webp"
     },
@@ -395,6 +403,10 @@
       stock: 160,
       unit: "chair",
       availability: "In Stock",
+      trustScore: 90,
+      verificationStatus: "Verified",
+      verification: "Verified",
+      rating: 4.8,
       specifications: "Breathable mesh back, lumbar support, adjustable seat height, rolling casters, assembly required",
       image: "/images/products/featured-office-ergonomic-chairs.webp"
     }
@@ -737,8 +749,9 @@
     if (typeof value !== "string") return value;
 
     const legacyImageMap = {
-      "warehouse-shelving.webp": "stainless-steel-components.webp",
-      "warehouse-shelving.png": "stainless-steel-components.webp"
+      "warehouse-shelving.webp": "warehouse-shelving-rack.webp",
+      "warehouse-shelving.png": "warehouse-shelving-rack.webp",
+      "industrial-tool-kit.webp": "mechanics-tool-kit.webp"
     };
 
     const fileName = value.split(/[\\/]/).pop()?.toLowerCase();
@@ -871,6 +884,174 @@
         supplier.products.push(...mappedProducts.map((product) => product.id));
       }
     }
+
+    // Dynamically merge all registered suppliers from tradenestUsers and current user session
+    try {
+      const storedUsers = safeParse(localStorage.getItem("tradenestUsers"), []);
+      const curUser = safeParse(localStorage.getItem(CURRENT_USER_KEY), null);
+      const allSupplierUsers = [];
+      if (Array.isArray(storedUsers)) {
+        storedUsers.forEach(u => {
+          if (u && (u.role === "supplier" || u.accountType === "supplier" || u.isNewSupplier || String(u.id || "").startsWith("TN-") || String(u.id || "").startsWith("SUPP-"))) {
+            allSupplierUsers.push(u);
+          }
+        });
+      }
+      if (curUser && (curUser.role === "supplier" || curUser.accountType === "supplier" || curUser.isNewSupplier)) {
+        if (!allSupplierUsers.some(u => u.id === curUser.id || (u.email && curUser.email && u.email.toLowerCase() === curUser.email.toLowerCase()))) {
+          allSupplierUsers.push(curUser);
+        }
+      }
+
+      allSupplierUsers.forEach(u => {
+        const supId = u.supplierId || u.id || `supplier-${String(Date.now()).slice(-4)}`;
+        const bName = (u.business && u.business.name) || u.businessName || u.fullName || "Verified Supplier Co.";
+        const cat = (u.business && u.business.category) || u.category || "General Wholesale";
+        const loc = u.address ? `${u.address.city || ""}, ${u.address.state || ""}`.replace(/^,\s*|,\s*$/g, "") || "India" : (u.city || u.location || "India");
+        const desc = u.description || (u.business && u.business.name ? `${u.business.name} is a verified wholesale supplier and manufacturer on TradeNest.` : "Verified wholesale supplier on TradeNest.");
+
+        let existingSup = merged.supplierProfiles.find(s => s.id === supId || (s.businessName && s.businessName.toLowerCase() === bName.toLowerCase()));
+        if (!existingSup) {
+          existingSup = {
+            id: supId,
+            businessName: bName,
+            altNames: [],
+            category: cat,
+            location: loc,
+            description: desc,
+            verificationStatus: u.verificationStatus || "Pending Verification",
+            trustScore: (u.trustScore !== undefined && u.trustScore !== null) ? Number(u.trustScore) : 0,
+            rating: (u.rating !== undefined && u.rating !== null) ? Number(u.rating) : 0.0,
+            responseTime: "Within 24 Hours",
+            moq: "Medium (100 - 500 units)",
+            delivery: "Domestic Shipping",
+            logo: bName.substring(0, 3).toUpperCase(),
+            products: []
+          };
+          merged.supplierProfiles.push(existingSup);
+        } else {
+          existingSup.businessName = bName || existingSup.businessName;
+          existingSup.category = cat || existingSup.category;
+          existingSup.location = loc || existingSup.location;
+          existingSup.description = desc || existingSup.description;
+          if (!existingSup.altNames) existingSup.altNames = [];
+          if (u.id && !existingSup.altNames.includes(u.id)) existingSup.altNames.push(u.id);
+          existingSup.userId = u.id;
+          if (u.trustScore !== undefined && u.trustScore !== null) {
+            existingSup.trustScore = Number(u.trustScore);
+          }
+          if (u.verificationStatus) {
+            existingSup.verificationStatus = u.verificationStatus;
+          }
+        }
+
+        const customProfile = safeParse(localStorage.getItem(`tradenest_supplier_biz_profile_${supId}`), null) ||
+                              safeParse(localStorage.getItem(`tradenest_supplier_profile_${supId}`), null);
+        if (customProfile) {
+          if (customProfile.companyName || customProfile.businessName) existingSup.businessName = customProfile.companyName || customProfile.businessName;
+          if (customProfile.category) existingSup.category = customProfile.category;
+          if (customProfile.city) existingSup.location = `${customProfile.city}, ${customProfile.state || ""}`.replace(/^,\s*|,\s*$/g, "");
+          if (customProfile.description) existingSup.description = customProfile.description;
+          if (customProfile.trustScore !== undefined && customProfile.trustScore !== null) existingSup.trustScore = Number(customProfile.trustScore);
+          if (customProfile.verificationStatus) existingSup.verificationStatus = customProfile.verificationStatus;
+        }
+      });
+    } catch (e) {
+      console.warn("Error merging registered suppliers:", e);
+    }
+
+    // Merge products belonging to all suppliers (from supplier store keys and shared service)
+    try {
+      const extraProducts = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith("tradenest_supplier_products_") || k === "tradenest_supplier_products")) {
+          const prods = safeParse(localStorage.getItem(k), []);
+          if (Array.isArray(prods)) {
+            extraProducts.push(...prods);
+          }
+        }
+      }
+      const sharedProds = safeParse(localStorage.getItem("tradenest_shared_products_v2"), []);
+      if (Array.isArray(sharedProds)) {
+        extraProducts.push(...sharedProds);
+      }
+
+      const activeExtra = extraProducts.filter(p => p && (p.status || "active").toLowerCase() === "active");
+      activeExtra.forEach(p => {
+        const pId = p.id;
+        if (!pId) return;
+        const pSupplierId = p.supplierId || "supplier-001";
+        const targetSup = merged.supplierProfiles.find(s => s.id === pSupplierId || (p.supplierName && s.businessName && s.businessName.toLowerCase() === p.supplierName.toLowerCase()));
+        const pSupplierName = targetSup ? targetSup.businessName : (p.supplierName || "TradeNest Supplier");
+
+        const normalizedProd = {
+          id: pId,
+          name: p.name || "Product",
+          description: p.description || "",
+          category: p.category || "General",
+          supplierId: targetSup ? targetSup.id : pSupplierId,
+          supplierName: pSupplierName,
+          price: Number(p.price !== undefined ? p.price : (p.priceINR !== undefined ? p.priceINR : (p.unitPrice || 0))),
+          bulkPrice: Number(p.bulkPrice || p.price || p.priceINR || p.unitPrice || 0),
+          moq: Number(p.moq) || 1,
+          stock: p.availableStock !== undefined ? Number(p.availableStock) : (Number(p.stock) || 0),
+          unit: p.uom || p.unit || "unit",
+          availability: (Number(p.availableStock || p.stock || 0) <= 0 && (p.status || "").toLowerCase() !== "active") ? "Out of Stock" : "In Stock",
+          verificationStatus: p.verificationStatus || p.verification || (targetSup ? targetSup.verificationStatus : "Pending Verification"),
+          trustScore: (p.trustScore !== undefined && p.trustScore !== null && p.trustScore !== 0) ? Number(p.trustScore) : (targetSup && targetSup.trustScore !== undefined ? Number(targetSup.trustScore) : 0),
+          rating: (p.rating !== undefined && p.rating !== null && p.rating !== 0) ? Number(p.rating) : (targetSup && targetSup.rating !== undefined ? Number(targetSup.rating) : 0.0),
+          specifications: typeof p.specs === "string" ? p.specs : Object.entries(p.specs || {}).map(([key, value]) => `${key}: ${value}`).join(", "),
+          image: (function(img, cat, nm) {
+            cat = String(cat || "").toLowerCase();
+            nm = String(nm || "").toLowerCase();
+            const rawImg = String(img || "").toLowerCase();
+            const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+            const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
+            if (img && !rawImg.includes("placeholder") && !(isGloveImage && !isGloveProduct)) {
+              return img.startsWith("/") ? img : "/" + img.replace(/^\/+/, "");
+            }
+            if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench") || nm.includes("mechanic")) return "/images/products/mechanics-tool-kit.webp";
+            if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) return "/images/products/industrial-storage-crates.webp";
+            if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || (cat.includes("office") && nm.includes("furniture"))) return "/images/products/featured-office-ergonomic-chairs.webp";
+            if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("biodegradable")) return "/images/products/featured-biodegradable-polymers.webp";
+            if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || (cat.includes("machin") && !nm.includes("shelv"))) return "/images/products/featured-cnc-milling-cutters.webp";
+            if (nm.includes("helmet") || nm.includes("hat")) return "/images/products/industrial-safety-helmets.webp";
+            if (nm.includes("shelv") || nm.includes("rack")) return "/images/products/warehouse-shelving-rack.webp";
+            if (isGloveProduct) return "/images/products/high-grip-work-gloves.webp";
+            if (nm.includes("organis") || nm.includes("organiz")) return "/images/products/executive-desk-organizer.webp";
+            if (nm.includes("foam") || nm.includes("insert")) return "/images/products/protective-foam-inserts.webp";
+            if (cat.includes("electric") || cat.includes("light") || nm.includes("led")) return "/images/products/commercial-led-panel-lights.webp";
+            if (cat.includes("packag") || nm.includes("box")) return "/images/products/corrugated-packaging-boxes.webp";
+            if (cat.includes("office") || nm.includes("paper")) return "/images/products/a4-premium-copy-paper.webp";
+            if (cat.includes("textil") || nm.includes("fabric")) return "/images/products/cotton-fabric-rolls.webp";
+            if (nm.includes("food")) return "/images/products/food-packaging-materials.webp";
+            if (nm.includes("steel") || nm.includes("stainless")) return "/images/products/stainless-steel-components.webp";
+            return "/images/products/mechanics-tool-kit.webp";
+          })(p.image, p.category, p.name)
+        };
+
+        ["products", "inventory"].forEach(col => {
+          if (!Array.isArray(merged[col])) return;
+          const idx = merged[col].findIndex(item => item.id === pId);
+          if (idx >= 0) {
+            merged[col][idx] = { ...merged[col][idx], ...normalizedProd };
+          } else {
+            merged[col].unshift(normalizedProd);
+          }
+        });
+
+        if (targetSup) {
+          if (!Array.isArray(targetSup.products)) targetSup.products = [];
+          if (!targetSup.products.includes(pId)) {
+            targetSup.products.push(pId);
+          }
+        }
+      });
+    } catch (e) {
+      console.warn("Error merging supplier products:", e);
+    }
+
     return normalizeStorePaths(merged);
   }
 
@@ -1625,12 +1806,23 @@
 
     const matchedSuppliers = suppliers.filter(s => {
       const matchAlt = s.altNames && s.altNames.some(alt => alt.toLowerCase().includes(cleanQ));
+      // If the user searches some product, check if this supplier matches/offers that product:
+      const matchProd = products.some(p => {
+        const belongsToSupplier = (p.supplierId && p.supplierId === s.id) ||
+                                  (p.supplierName && s.businessName && p.supplierName.toLowerCase() === s.businessName.toLowerCase()) ||
+                                  (s.products && Array.isArray(s.products) && s.products.includes(p.id));
+        if (!belongsToSupplier) return false;
+        return (p.name && p.name.toLowerCase().includes(cleanQ)) ||
+               (p.category && p.category.toLowerCase().includes(cleanQ)) ||
+               (p.description && p.description.toLowerCase().includes(cleanQ));
+      });
       return (s.businessName && s.businessName.toLowerCase().includes(cleanQ)) ||
              matchAlt ||
+             matchProd ||
              (s.category && s.category.toLowerCase().includes(cleanQ)) ||
              (s.location && s.location.toLowerCase().includes(cleanQ)) ||
              (s.description && s.description.toLowerCase().includes(cleanQ));
-    }).slice(0, 6);
+    }).slice(0, 8);
 
     return {
       query: cleanQ,

@@ -138,9 +138,9 @@
               category: p.category || "Industrial Equipment",
               location: p.location || "India",
               description: p.description || "",
-              verificationStatus: p.verificationStatus || "Business Verified",
-              trustScore: p.trustScore || 90,
-              rating: p.rating || 4.7,
+              verificationStatus: p.verificationStatus || "Pending Verification",
+              trustScore: (p.trustScore !== undefined && p.trustScore !== null) ? Number(p.trustScore) : 0,
+              rating: (p.rating !== undefined && p.rating !== null) ? Number(p.rating) : 0.0,
               responseTime: "Within 24 Hours",
               moq: "Medium (100 - 1000 units)",
               delivery: "Domestic Shipping",
@@ -151,6 +151,44 @@
         });
       } catch (e) {}
     }
+
+    // Include registered suppliers from tradenestUsers and current user session
+    try {
+      const stored = JSON.parse(localStorage.getItem("tradenestUsers") || "[]");
+      const cur = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null");
+      const candidates = Array.isArray(stored) ? [...stored] : [];
+      if (cur) candidates.push(cur);
+
+      candidates.forEach(u => {
+        if (u && (u.role === "supplier" || u.accountType === "supplier" || u.isNewSupplier || String(u.id || "").startsWith("TN-"))) {
+          const id = u.supplierId || u.id;
+          if (id && !seen.has(id)) {
+            seen.add(id);
+            const bName = (u.business && u.business.name) || u.businessName || u.fullName || "Verified Supplier Co.";
+            const cat = (u.business && u.business.category) || u.category || "Industrial Equipment";
+            const loc = u.address ? `${u.address.city || ""}, ${u.address.state || ""}`.replace(/^,\s*|,\s*$/g, "") || "India" : (u.city || u.location || "India");
+            const desc = u.description || (u.business && u.business.name ? `${u.business.name} is a verified wholesale supplier on TradeNest.` : "Verified wholesale supplier on TradeNest.");
+
+            list.push({
+              id: id,
+              businessName: bName,
+              altNames: [],
+              category: cat,
+              location: loc,
+              description: desc,
+              verificationStatus: u.verificationStatus || "Pending Verification",
+              trustScore: (u.trustScore !== undefined && u.trustScore !== null) ? Number(u.trustScore) : 0,
+              rating: (u.rating !== undefined && u.rating !== null) ? Number(u.rating) : 0.0,
+              responseTime: "Within 24 Hours",
+              moq: "Medium (100 - 1000 units)",
+              delivery: "Domestic Shipping",
+              logo: "../images/suppliers/supplier-placeholder11.webp",
+              productIds: []
+            });
+          }
+        }
+      });
+    } catch (e) {}
 
     return list;
   }
@@ -203,6 +241,23 @@
       }
     });
 
+    // 4. Also check localStorage for supplier-specific product store
+    try {
+      const supKey = `tradenest_supplier_products_${supplier.id}`;
+      const raw = localStorage.getItem(supKey) || (supplier.id === "supplier-001" ? localStorage.getItem("tradenest_supplier_products") : null);
+      if (raw) {
+        const stored = JSON.parse(raw);
+        if (Array.isArray(stored)) {
+          stored.forEach(p => {
+            if (p && p.id && !seenPids.has(p.id)) {
+              seenPids.add(p.id);
+              products.push(p);
+            }
+          });
+        }
+      }
+    } catch (e) {}
+
     return products;
   }
 
@@ -213,7 +268,7 @@
       category: "Industrial Equipment",
       price: 2450,
       moq: 10,
-      image: "../images/products/industrial-safety-gloves.webp",
+      image: "../images/products/mechanics-tool-kit.webp",
       supplierName: "ABC Traders",
       supplierId: "supplier-abc",
       description: "Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders."
@@ -224,7 +279,7 @@
       category: "Industrial Equipment",
       price: 195,
       moq: 200,
-      image: "../images/products/industrial-safety-gloves.webp",
+      image: "../images/products/high-grip-work-gloves.webp",
       supplierName: "ABC Traders",
       supplierId: "supplier-abc",
       description: "Premium level-5 cut resistant industrial work gloves with reinforced micro-foam nitrile coating manufactured by ABC Traders."
@@ -235,7 +290,7 @@
       category: "Packaging",
       price: 680,
       moq: 25,
-      image: "../images/products/corrugated-packaging-boxes.webp",
+      image: "../images/products/industrial-storage-crates.webp",
       supplierName: "ABC Traders",
       supplierId: "supplier-abc",
       description: "High-density polyethylene heavy-duty stackable industrial storage crates for distribution centers and warehouse logistics by ABC Traders."
@@ -296,7 +351,7 @@
       category: "Machinery",
       price: 5300,
       moq: 5,
-      image: "../images/products/stainless-steel-components.webp",
+      image: "../images/products/warehouse-shelving-rack.webp",
       supplierName: "SteelCraft Ltd.",
       supplierId: "supplier-005"
     },
@@ -309,6 +364,36 @@
       image: "../images/products/cotton-fabric-rolls.webp",
       supplierName: "Vardhman Weaves & Tex",
       supplierId: "supplier-006"
+    },
+    {
+      id: "product-013",
+      name: "Carbide CNC Milling Cutters",
+      category: "Machinery",
+      price: 1150,
+      moq: 25,
+      image: "../images/products/featured-cnc-milling-cutters.webp",
+      supplierName: "Precision Tooling Works",
+      supplierId: "supplier-008"
+    },
+    {
+      id: "product-014",
+      name: "Biodegradable Trash Bags",
+      category: "Packaging",
+      price: 210,
+      moq: 100,
+      image: "../images/products/featured-biodegradable-polymers.webp",
+      supplierName: "GreenChem Polymers Corp.",
+      supplierId: "supplier-009"
+    },
+    {
+      id: "product-015",
+      name: "Commercial Ergonomic Office Chairs",
+      category: "Office Supplies",
+      price: 4850,
+      moq: 20,
+      image: "../images/products/featured-office-ergonomic-chairs.webp",
+      supplierName: "UrbanWork Office Systems",
+      supplierId: "supplier-010"
     }
   ];
 
@@ -351,7 +436,32 @@
             </div>
             <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
               ${prods.slice(0, 3).map(p => {
-                let img = p.image || "../images/products/industrial-safety-gloves.webp";
+                let img = p.image;
+                const rawImgStr = String(img || "").toLowerCase();
+                const nm = String(p.name || "").toLowerCase();
+                const cat = String(p.category || "").toLowerCase();
+                const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+                const isGloveImage = rawImgStr.includes("glove") || rawImgStr.includes("safety-gloves");
+
+                if (!img || rawImgStr.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
+                  if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench") || nm.includes("mechanic")) img = "../images/products/mechanics-tool-kit.webp";
+                  else if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) img = "../images/products/industrial-storage-crates.webp";
+                  else if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || (cat.includes("office") && nm.includes("furniture"))) img = "../images/products/featured-office-ergonomic-chairs.webp";
+                  else if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("biodegradable")) img = "../images/products/featured-biodegradable-polymers.webp";
+                  else if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || (cat.includes("machin") && !nm.includes("shelv"))) img = "../images/products/featured-cnc-milling-cutters.webp";
+                  else if (nm.includes("helmet") || nm.includes("hat")) img = "../images/products/industrial-safety-helmets.webp";
+                  else if (nm.includes("shelv") || nm.includes("rack")) img = "../images/products/warehouse-shelving-rack.webp";
+                  else if (isGloveProduct) img = "../images/products/high-grip-work-gloves.webp";
+                  else if (nm.includes("organis") || nm.includes("organiz")) img = "../images/products/executive-desk-organizer.webp";
+                  else if (nm.includes("foam") || nm.includes("insert")) img = "../images/products/protective-foam-inserts.webp";
+                  else if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) img = "../images/products/commercial-led-panel-lights.webp";
+                  else if (cat.includes("packag") || nm.includes("box") || nm.includes("carton")) img = "../images/products/corrugated-packaging-boxes.webp";
+                  else if (cat.includes("office") || nm.includes("paper")) img = "../images/products/a4-premium-copy-paper.webp";
+                  else if (cat.includes("textil") || nm.includes("fabric") || nm.includes("cotton")) img = "../images/products/cotton-fabric-rolls.webp";
+                  else if (nm.includes("food")) img = "../images/products/food-packaging-materials.webp";
+                  else if (nm.includes("steel") || nm.includes("stainless")) img = "../images/products/stainless-steel-components.webp";
+                  else img = "../images/products/mechanics-tool-kit.webp";
+                }
                 if (img.startsWith("/")) img = ".." + img;
                 else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
                   img = "../" + img.replace(/^\/+/, "");
@@ -359,7 +469,7 @@
                 const priceStr = p.price ? `₹${Number(p.price).toLocaleString("en-IN")}` : "Contact";
                 return `
                   <a href="product-details.html?id=${encodeURIComponent(p.id)}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px; background: #faf9f5; border: 1px solid #e5e1d6; border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; flex-shrink: 0; max-width: 200px;">
-                    <img src="${img}" alt="${escapeHtml(p.name)}" onerror="this.src='../images/products/industrial-safety-gloves.webp'" style="width: 28px; height: 28px; object-fit: contain; border-radius: 4px; background: #ffffff;" />
+                    <img src="${img}" alt="${escapeHtml(p.name)}" onerror="this.src='../images/TradeNest.webp'" style="width: 28px; height: 28px; object-fit: contain; border-radius: 4px; background: #ffffff;" />
                     <div style="overflow: hidden;">
                       <div style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111111;">${escapeHtml(p.name)}</div>
                       <div style="color: #666666; font-size: 0.75rem;">${priceStr}</div>
@@ -385,7 +495,10 @@
             <div class="supplier-primary-info" style="flex: 1;">
               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <h3 class="supplier-name" style="font-size: 1.25rem; font-weight: 800; color: #111111; margin: 0;">${escapeHtml(supplier.businessName)}</h3>
-                <span class="badge badge-verified" style="background: #eef7ed; color: #2e7d32; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid #c8e6c9;">${escapeHtml(supplier.verificationStatus)}</span>
+                ${(supplier.verificationStatus === "Business Verified" || supplier.verificationStatus === "Verified")
+                  ? `<span class="badge badge-verified" style="background: #eef7ed; color: #2e7d32; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid #c8e6c9;">${escapeHtml(supplier.verificationStatus)}</span>`
+                  : `<span class="badge badge-pending" style="background: #fef3c7; color: #92400e; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a;">${escapeHtml(supplier.verificationStatus || "Pending Verification")}</span>`
+                }
               </div>
               <p class="supplier-meta" style="color: #666666; font-size: 0.85rem; margin: 4px 0 0;">
                 <span class="supplier-industry" style="font-weight: 600;">${escapeHtml(supplier.category)}</span>
@@ -466,14 +579,20 @@
           const matchName = s.businessName.toLowerCase().includes(compQ);
           const matchAlt = s.altNames && s.altNames.some(alt => alt.toLowerCase().includes(compQ));
           const matchDesc = s.description.toLowerCase().includes(compQ);
-          if (!matchName && !matchAlt && !matchDesc) return false;
+          const prods = getProductsForSupplier(s);
+          const matchProd = prods.some(p =>
+            (p.name && p.name.toLowerCase().includes(compQ)) ||
+            (p.category && p.category.toLowerCase().includes(compQ)) ||
+            (p.description && p.description.toLowerCase().includes(compQ))
+          );
+          if (!matchName && !matchAlt && !matchDesc && !matchProd) return false;
         }
 
         // Product search
         if (prodQ) {
           const prods = getProductsForSupplier(s);
           const matchProd = prods.some(p =>
-            p.name.toLowerCase().includes(prodQ) ||
+            (p.name && p.name.toLowerCase().includes(prodQ)) ||
             (p.category && p.category.toLowerCase().includes(prodQ)) ||
             (p.description && p.description.toLowerCase().includes(prodQ))
           );

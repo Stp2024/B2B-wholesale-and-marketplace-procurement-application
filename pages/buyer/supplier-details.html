@@ -249,7 +249,22 @@
 
           const container = document.getElementById("supplier-products");
           container.innerHTML = products.map((product) => {
-            let img = product.image || "../../images/products/industrial-safety-gloves.webp";
+            let img = product.image;
+            if (!img || img.includes("placeholder")) {
+              const nm = String(product.name || "").toLowerCase();
+              const cat = String(product.category || "").toLowerCase();
+              if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench") || nm.includes("mechanic")) img = "../../images/products/mechanics-tool-kit.webp";
+              else if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) img = "../../images/products/industrial-storage-crates.webp";
+              else if (nm.includes("glove")) img = "../../images/products/high-grip-work-gloves.webp";
+              else if (nm.includes("helmet")) img = "../../images/products/industrial-safety-helmets.webp";
+              else if (nm.includes("shelv") || nm.includes("rack")) img = "../../images/products/warehouse-shelving-rack.webp";
+              else if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) img = "../../images/products/commercial-led-panel-lights.webp";
+              else if (cat.includes("packag") || nm.includes("box") || nm.includes("carton")) img = "../../images/products/corrugated-packaging-boxes.webp";
+              else if (cat.includes("office") || nm.includes("paper")) img = "../../images/products/a4-premium-copy-paper.webp";
+              else if (cat.includes("textil") || nm.includes("fabric") || nm.includes("cotton")) img = "../../images/products/cotton-fabric-rolls.webp";
+              else if (cat.includes("machin") || nm.includes("cnc") || nm.includes("cutter") || nm.includes("steel")) img = "../../images/products/featured-cnc-milling-cutters.webp";
+              else img = "../../images/TradeNest.webp";
+            }
             if (img.startsWith("../../../")) img = img.replace("../../../", "../../");
             else if (!img.startsWith("../../") && !img.startsWith("http") && !img.startsWith("data:")) {
               img = "../../" + img.replace(/^\/+/, "");
@@ -257,7 +272,7 @@
             const priceText = product.price ? `₹${Number(product.price).toLocaleString("en-IN")}` : "Contact for Quote";
             return `
               <article class="product-card" style="display:flex;flex-direction:column;">
-                <img src="${img}" alt="${product.name}" onerror="this.src='../../images/products/industrial-safety-gloves.webp'" style="height:170px;object-fit:contain;background:#f8fafc;padding:10px;border-radius:10px;" />
+                <img src="${img}" alt="${product.name}" onerror="this.src='../../images/TradeNest.webp'" style="height:170px;object-fit:contain;background:#f8fafc;padding:10px;border-radius:10px;" />
                 <span class="pill" style="align-self:flex-start;margin-top:10px;">${product.category}</span>
                 <h3 style="margin:8px 0 6px;font-size:1.05rem;">${product.name}</h3>
                 <p style="font-size:0.85rem;color:#64748b;margin:0 0 10px;flex:1;">${product.description || ""}</p>

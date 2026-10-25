@@ -7,6 +7,87 @@
 (function () {
   "use strict";
 
+  // Category-based default product image resolver to ensure suppliers don't all look the same
+  // Category-based and title-based smart product image resolver
+  function getDefaultProductImage(category, name) {
+    const cat = String(category || "").toLowerCase();
+    const nm = String(name || "").toLowerCase();
+
+    // 1. Tool Kits & Mechanic Tools
+    if (nm.includes("tool") || nm.includes("wrench") || nm.includes("drill") || nm.includes("spanner") || nm.includes("mechanic") || nm.includes("socket")) {
+      return "../images/products/mechanics-tool-kit.webp";
+    }
+    // 2. Storage Crates & Heavy Bins
+    if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage crate") || nm.includes("pallet box")) {
+      return "../images/products/industrial-storage-crates.webp";
+    }
+    // 3. Ergonomic Chairs & Workspace Furniture
+    if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || nm.includes("stool") || (cat.includes("office") && (nm.includes("furniture") || nm.includes("seat")))) {
+      return "../images/products/featured-office-ergonomic-chairs.webp";
+    }
+    // 4. Biodegradable Bags, Trash Bags & Polymers
+    if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("refuse") || nm.includes("biodegradable") || cat.includes("raw material")) {
+      return "../images/products/featured-biodegradable-polymers.webp";
+    }
+    // 5. CNC Cutters, Milling, End Mills & Machine Cutters
+    if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || nm.includes("end mill") || nm.includes("carbide") || (cat.includes("machin") && !nm.includes("shelv"))) {
+      return "../images/products/featured-cnc-milling-cutters.webp";
+    }
+    // 6. Hard Hats & Helmets
+    if (nm.includes("helmet") || nm.includes("hard hat") || nm.includes("head protection")) {
+      return "../images/products/industrial-safety-helmets.webp";
+    }
+    // 7. Warehouse Shelving & Heavy Racks
+    if (nm.includes("shelv") || nm.includes("rack") || nm.includes("pallet rack")) {
+      return "../images/products/warehouse-shelving-rack.webp";
+    }
+    // 8. Work Gloves (strictly when name mentions glove)
+    if (nm.includes("glove") || nm.includes("mitt")) {
+      if (nm.includes("abc") || nm.includes("high-grip") || nm.includes("work glove")) {
+        return "../images/products/high-grip-work-gloves.webp";
+      }
+      return "../images/products/industrial-safety-gloves.webp";
+    }
+    // 9. Desk Organizers & Accessories
+    if (nm.includes("organis") || nm.includes("organiz") || nm.includes("caddy")) {
+      return "../images/products/executive-desk-organizer.webp";
+    }
+    // 10. Protective Foam Inserts
+    if (nm.includes("foam") || nm.includes("insert") || nm.includes("cushion")) {
+      return "../images/products/protective-foam-inserts.webp";
+    }
+    // 11. Copy Paper & Stationery
+    if (nm.includes("paper") || nm.includes("ream") || nm.includes("copy") || cat.includes("stationery")) {
+      return "../images/products/a4-premium-copy-paper.webp";
+    }
+    // 12. Corrugated Boxes & Cartons
+    if (nm.includes("box") || nm.includes("carton") || nm.includes("corrugated")) {
+      return "../images/products/corrugated-packaging-boxes.webp";
+    }
+    // 13. LED Panels & Lighting
+    if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) {
+      return "../images/products/commercial-led-panel-lights.webp";
+    }
+    // 14. Textiles, Fabric & Apparel
+    if (cat.includes("textil") || cat.includes("fabric") || nm.includes("cotton") || nm.includes("denim")) {
+      return "../images/products/cotton-fabric-rolls.webp";
+    }
+    // 15. Food Packaging Materials
+    if (nm.includes("food") || (cat.includes("food") && cat.includes("packag"))) {
+      return "../images/products/food-packaging-materials.webp";
+    }
+    // 16. Stainless Steel Components
+    if (nm.includes("steel") || nm.includes("stainless") || nm.includes("component")) {
+      return "../images/products/stainless-steel-components.webp";
+    }
+    // Category fallbacks
+    if (cat.includes("machin")) return "../images/products/featured-cnc-milling-cutters.webp";
+    if (cat.includes("packag")) return "../images/products/corrugated-packaging-boxes.webp";
+    if (cat.includes("office")) return "../images/products/featured-office-ergonomic-chairs.webp";
+
+    return "../images/products/mechanics-tool-kit.webp";
+  }
+
   // Canonical mapping for reliable product resolution
   const CANONICAL_CATALOG = [
     {
@@ -16,7 +97,7 @@
       category: "Industrial Equipment",
       price: 2450,
       moq: 10,
-      image: "../images/products/industrial-safety-gloves.webp",
+      image: "../images/products/mechanics-tool-kit.webp",
       supplierName: "ABC Traders",
       supplierId: "supplier-abc",
       location: "Bengaluru, Karnataka",
@@ -32,7 +113,7 @@
       category: "Industrial Equipment",
       price: 195,
       moq: 200,
-      image: "../images/products/industrial-safety-gloves.webp",
+      image: "../images/products/high-grip-work-gloves.webp",
       supplierName: "ABC Traders",
       supplierId: "supplier-abc",
       location: "Bengaluru, Karnataka",
@@ -48,7 +129,7 @@
       category: "Packaging",
       price: 680,
       moq: 25,
-      image: "../images/products/corrugated-packaging-boxes.webp",
+      image: "../images/products/industrial-storage-crates.webp",
       supplierName: "ABC Traders",
       supplierId: "supplier-abc",
       location: "Bengaluru, Karnataka",
@@ -162,7 +243,7 @@
       category: "Machinery",
       price: 5300,
       moq: 5,
-      image: "../images/products/stainless-steel-components.webp",
+      image: "../images/products/warehouse-shelving-rack.webp",
       supplierName: "SteelCraft Ltd.",
       location: "Pune, Maharashtra",
       verification: "Verified",
@@ -190,7 +271,7 @@
       category: "Electronics",
       price: 120,
       moq: 100,
-      image: "../images/products/commercial-led-panel-lights.webp",
+      image: "../images/products/led-bulbs.webp",
       supplierName: "Lumina Electric",
       location: "Delhi NCR",
       verification: "Verified",
@@ -204,7 +285,7 @@
       category: "Packaging",
       price: 450,
       moq: 100,
-      image: "../images/products/corrugated-packaging-boxes.webp",
+      image: "../images/products/food-packaging-materials.webp",
       supplierName: "BioPack Green Solutions",
       location: "Ahmedabad, Gujarat",
       verification: "Verified",
@@ -218,7 +299,7 @@
       category: "Machinery",
       price: 1150,
       moq: 25,
-      image: "../images/products/industrial-safety-gloves.webp",
+      image: "../images/products/featured-cnc-milling-cutters.webp",
       supplierName: "Precision Tooling Works",
       location: "Pune, Maharashtra",
       verification: "Verified",
@@ -232,7 +313,7 @@
       category: "Raw Materials",
       price: 210,
       moq: 100,
-      image: "../images/products/protective-foam-inserts.webp",
+      image: "../images/products/featured-biodegradable-polymers.webp",
       supplierName: "GreenChem Polymers Corp.",
       location: "Ahmedabad, Gujarat",
       verification: "Verified",
@@ -246,7 +327,7 @@
       category: "Office Supplies",
       price: 4850,
       moq: 20,
-      image: "../images/products/executive-desk-organizer.webp",
+      image: "../images/products/featured-office-ergonomic-chairs.webp",
       supplierName: "UrbanWork Office Systems",
       location: "Bengaluru, Karnataka",
       verification: "Verified",
@@ -294,7 +375,25 @@
       }
     }
 
-    // 3. Fallback / supplement with Canonical Catalog
+    // 3. Newly registered supplier stores in localStorage
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith("tradenest_supplier_products_") || k === "tradenest_supplier_products")) {
+          const supProds = JSON.parse(localStorage.getItem(k) || "[]");
+          if (Array.isArray(supProds)) {
+            supProds.forEach(p => {
+              if (p && p.id && !seenIds.has(p.id) && (p.status || "active").toLowerCase() === "active") {
+                seenIds.add(p.id);
+                list.unshift(normalizeProduct(p));
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 4. Fallback / supplement with Canonical Catalog
     CANONICAL_CATALOG.forEach(p => {
       if (!seenIds.has(p.id)) {
         seenIds.add(p.id);
@@ -306,12 +405,24 @@
   }
 
   function normalizeProduct(p) {
-    let img = p.image || p.imageUrl || "../images/products/industrial-safety-gloves.webp";
+    let img = p.image || p.imageUrl || "";
+    const nm = String(p.name || "").toLowerCase();
+    const rawImg = String(img).toLowerCase();
+    const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+    const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
+
+    // Fix empty, placeholder, or mismatched glove image on non-glove products
+    if (!img || rawImg.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
+      img = getDefaultProductImage(p.category, p.name);
+    }
     if (img.startsWith("/")) {
       img = ".." + img;
     } else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
       img = "../" + img.replace(/^\/+/, "");
     }
+
+    // Lookup canonical verification and trust score if available
+    const canon = CANONICAL_CATALOG.find(c => c.id === p.id || c.name.toLowerCase() === nm);
 
     return {
       id: p.id,
@@ -319,14 +430,14 @@
       name: p.name || "Product",
       category: p.category || "General",
       description: p.description || "",
-      price: Number(p.price || p.unitPrice || 0),
-      moq: Number(p.moq || 1),
+      price: Number(p.price || p.unitPrice || (canon ? canon.price : 0)),
+      moq: Number(p.moq || (canon ? canon.moq : 1)),
       image: img,
-      supplierName: p.supplierName || "TradeNest Supplier",
-      location: p.location || p.supplierLocation || "India",
-      rating: Number(p.rating || 4.5),
-      trustScore: Number(p.trustScore || 90),
-      verification: p.verification || p.verificationStatus || "Verified",
+      supplierName: p.supplierName || (canon ? canon.supplierName : "TradeNest Supplier"),
+      location: p.location || p.supplierLocation || (canon ? canon.location : "India"),
+      rating: (p.rating !== undefined && p.rating !== null && p.rating !== 0) ? Number(p.rating) : (canon && canon.rating !== undefined ? canon.rating : (p.rating !== undefined ? Number(p.rating) : 0.0)),
+      trustScore: (p.trustScore !== undefined && p.trustScore !== null && p.trustScore !== 0) ? Number(p.trustScore) : (canon && canon.trustScore !== undefined ? canon.trustScore : (p.trustScore !== undefined ? Number(p.trustScore) : 0)),
+      verification: p.verification || p.verificationStatus || (canon ? canon.verification : "Pending Verification"),
       availability: p.availability || (p.stock > 0 ? "In Stock" : "Available")
     };
   }
@@ -505,6 +616,75 @@
 
     let activeIndex = -1;
 
+    // Dynamically sync and inject any newly registered supplier products into the public grid
+    function syncDynamicProducts() {
+      if (!productsGrid) return;
+      const existingCards = Array.from(productsGrid.querySelectorAll(".product-card"));
+      const existingIds = new Set(existingCards.map(c => c.getAttribute("data-product-id") || c.id));
+      const existingTitles = new Set(existingCards.map(c => (c.querySelector(".product-title")?.textContent || "").trim().toLowerCase()));
+
+      const all = getAllProducts();
+      all.forEach(p => {
+        if (!p || !p.id) return;
+        const normTitle = (p.name || "").trim().toLowerCase();
+        if (existingIds.has(p.id) || existingTitles.has(normTitle)) return;
+
+        let img = p.image || getDefaultProductImage(p.category, p.name);
+        const normNm = (p.name || "").toLowerCase();
+        const rawImgStr = String(img).toLowerCase();
+        if ((rawImgStr.includes("glove") || rawImgStr.includes("safety-gloves")) && !normNm.includes("glove") && !normNm.includes("mitt")) {
+          img = getDefaultProductImage(p.category, p.name);
+        }
+        if (img.startsWith("/")) img = ".." + img;
+        else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
+          img = "../" + img.replace(/^\/+/, "");
+        }
+        const fallbackImg = getDefaultProductImage(p.category, p.name);
+        const priceStr = p.price ? `₹${Number(p.price).toLocaleString("en-IN")}` : "Contact for Quote";
+        const unitStr = p.unit || "unit";
+        const supId = p.supplierId || "supplier-abc";
+
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.setAttribute("data-product-id", p.id);
+        card.innerHTML = `
+          <div class="product-image-container">
+            <img src="${img}" alt="${escapeHtml(p.name)}" class="product-image" onerror="this.onerror=null; this.src='${fallbackImg}';" />
+            <span class="badge badge-stock"> In Stock </span>
+          </div>
+          <div class="product-content">
+            <span class="product-category">${escapeHtml(p.category || "General")}</span>
+            <h3 class="product-title">${escapeHtml(p.name)}</h3>
+            <p class="product-description">${escapeHtml(p.description || "")}</p>
+            <div class="product-pricing-info">
+              <span class="product-price">${priceStr} <small>/ ${escapeHtml(unitStr)}</small></span>
+              <span class="product-moq">MOQ: ${p.moq || 1} ${escapeHtml(unitStr)}</span>
+            </div>
+            <div class="product-supplier-info">
+              <span class="supplier-name">${escapeHtml(p.supplierName || "TradeNest Supplier")}</span>
+              ${((p.verificationStatus || "").toLowerCase() === "verified" || (p.verificationStatus || "").toLowerCase() === "business verified")
+                ? `<span class="verification-badge status-verified">Verified Supplier</span>`
+                : `<span class="verification-badge status-pending" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 700;">Pending Verification</span>`
+              }
+            </div>
+            <div class="product-metrics">
+              <span class="trust-score">Trust Score: <strong>${(p.trustScore !== undefined && p.trustScore !== null) ? Number(p.trustScore) : 0}/100</strong></span>
+              <span class="rating-stars"><small>${(p.rating !== undefined && p.rating !== null) ? p.rating : "0.0"} / 5</small></span>
+            </div>
+            <div class="product-card-actions">
+              <a href="product-details.html?id=${encodeURIComponent(p.id)}" class="btn btn-primary btn-sm">View Product</a>
+              <a href="supplier-details.html?id=${encodeURIComponent(supId)}" class="btn btn-outline btn-sm">View Supplier</a>
+            </div>
+          </div>
+        `;
+        productsGrid.prepend(card);
+        existingIds.add(p.id);
+        existingTitles.add(normTitle);
+      });
+    }
+
+    syncDynamicProducts();
+
     // Build or update the live suggestions dropdown
     function updateSuggestions() {
       if (!suggestionsDropdown) return;
@@ -559,9 +739,10 @@
       }
 
       suggestionsDropdown.innerHTML = supplierHeaderHtml + matched.map((p, idx) => {
+        const thumbFallback = getDefaultProductImage(p.category, p.name);
         return `
           <a class="search-suggestion-item" data-index="${idx}" data-product-id="${escapeHtml(p.id)}" href="product-details.html?id=${encodeURIComponent(p.id)}">
-            <img class="search-suggestion-thumb" src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.src='../images/products/industrial-safety-gloves.webp'" />
+            <img class="search-suggestion-thumb" src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null; this.src='${thumbFallback}';" />
             <div class="search-suggestion-info">
               <div class="search-suggestion-name">${highlightMatch(p.name, query)}</div>
               <div class="search-suggestion-meta">
@@ -733,6 +914,7 @@
 
     function filterProductCards() {
       if (!productsGrid) return;
+      syncDynamicProducts();
       const cards = Array.from(productsGrid.querySelectorAll(".product-card"));
       const query = (searchInput.value || "").trim().toLowerCase();
       const cat = (filterCategory?.value || "").toLowerCase();

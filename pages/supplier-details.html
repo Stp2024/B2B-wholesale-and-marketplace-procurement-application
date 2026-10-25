@@ -185,7 +185,7 @@
             <article class="overview-card">
               <span class="overview-label">Trust Score</span>
 
-              <strong class="overview-value">92/100</strong>
+              <strong class="overview-value" id="supplierDetailTrustVal">92/100</strong>
 
               <p>Based on available business and performance information.</p>
             </article>
@@ -670,12 +670,24 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const store = window.TradeNestStore;
-        const params = new URLSearchParams(window.location.search);
-        const requested = (params.get("id") || params.get("supplier") || params.get("company") || params.get("name") || params.get("q") || "").trim();
-        const fallbackId = JSON.parse(
-          localStorage.getItem("tradenestSelectedSupplierId") ||
-            '"supplier-abc"',
-        );
+        let searchStr = window.location.search;
+        if (!searchStr && window.location.href.includes("?")) {
+          searchStr = "?" + window.location.href.split("?").slice(1).join("?");
+        }
+        const params = new URLSearchParams(searchStr);
+        let requested = (params.get("id") || params.get("supplier") || params.get("company") || params.get("name") || params.get("q") || "").trim();
+        if (!requested && window.location.hash) {
+          const hashClean = window.location.hash.replace(/^#\/?/, "").trim();
+          const hashParams = new URLSearchParams(hashClean);
+          requested = hashParams.get("id") || hashParams.get("supplier") || hashClean;
+        }
+        if (!requested) {
+          try {
+            const sel = localStorage.getItem("tradenestSelectedSupplierId");
+            if (sel) requested = JSON.parse(sel);
+          } catch(e) {}
+        }
+        const fallbackId = requested || "supplier-abc";
         const queryTerm = requested || fallbackId;
 
         // Get suppliers from store and product-service
@@ -693,21 +705,47 @@
                   location: ss.location,
                   category: "Industrial Wholesale",
                   description: `Verified wholesale supplier ${ss.name}.`,
-                  trustScore: ss.trustScore || 95,
-                  verificationStatus: ss.verificationStatus || "Verified"
+                  trustScore: (ss.trustScore !== undefined && ss.trustScore !== null) ? Number(ss.trustScore) : 0,
+                  verificationStatus: ss.verificationStatus || "Pending Verification"
                 });
               }
             });
           } catch(e) {}
         }
 
+        try {
+          const rawUsers = JSON.parse(localStorage.getItem("tradenestUsers") || "[]");
+          const rawCur = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "null");
+          const supUsers = Array.isArray(rawUsers) ? [...rawUsers] : [];
+          if (rawCur) supUsers.push(rawCur);
+          supUsers.forEach(u => {
+            if (u && (u.role === "supplier" || u.accountType === "supplier" || u.isNewSupplier || String(u.id || "").startsWith("TN-"))) {
+              const uId = u.supplierId || u.id;
+              const uName = (u.business && u.business.name) || u.businessName || u.fullName;
+              if (uId && !allSuppliers.some(s => s.id === uId || (s.businessName && uName && s.businessName.toLowerCase() === uName.toLowerCase()))) {
+                const loc = u.address ? `${u.address.city || ""}, ${u.address.state || ""}`.replace(/^,\s*|,\s*$/g, "") || "India" : (u.city || u.location || "India");
+                allSuppliers.push({
+                  id: uId,
+                  businessName: uName || "Verified Supplier Co.",
+                  location: loc,
+                  category: (u.business && u.business.category) || u.category || "Wholesale & Procurement",
+                  description: u.description || `${uName} is a verified wholesale supplier on TradeNest.`,
+                  trustScore: (u.trustScore !== undefined && u.trustScore !== null) ? Number(u.trustScore) : 0,
+                  verificationStatus: u.verificationStatus || "Pending Verification"
+                });
+              }
+            }
+          });
+        } catch(e) {}
+
         const cleanQ = queryTerm.toLowerCase();
-        let supplier = allSuppliers.find(s => s.id.toLowerCase() === cleanQ) ||
+        let supplier = allSuppliers.find(s => s.id && s.id.toLowerCase() === cleanQ) ||
+          allSuppliers.find(s => s.userId && s.userId.toLowerCase() === cleanQ) ||
           allSuppliers.find(s => s.businessName && s.businessName.toLowerCase() === cleanQ) ||
-          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt.toLowerCase() === cleanQ)) ||
+          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt && alt.toLowerCase() === cleanQ)) ||
           allSuppliers.find(s => s.businessName && s.businessName.toLowerCase().includes(cleanQ)) ||
-          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt.toLowerCase().includes(cleanQ))) ||
-          allSuppliers.find(s => cleanQ.includes("abc") && (s.id === "supplier-abc" || s.businessName.toLowerCase().includes("abc"))) ||
+          allSuppliers.find(s => s.altNames && s.altNames.some(alt => alt && alt.toLowerCase().includes(cleanQ))) ||
+          allSuppliers.find(s => cleanQ.includes("abc") && (s.id === "supplier-abc" || (s.businessName && s.businessName.toLowerCase().includes("abc")))) ||
           allSuppliers[0];
 
         if (supplier && supplier.id) {
@@ -754,11 +792,29 @@
           } catch(e) {}
         }
 
+        try {
+          if (supplier && supplier.id) {
+            const rawSupProds = localStorage.getItem(`tradenest_supplier_products_${supplier.id}`);
+            if (rawSupProds) {
+              const parsed = JSON.parse(rawSupProds);
+              if (Array.isArray(parsed)) {
+                parsed.forEach(p => {
+                  if (p && p.id && !seenPids.has(p.id)) {
+                    seenPids.add(p.id);
+                    products.push(p);
+                  }
+                });
+              }
+            }
+          }
+        } catch(e) {}
+
         const title = document.querySelector(".supplier-detail-title") || document.querySelector(".supplier-header-info h1") || document.querySelector("h1");
         const desc = document.querySelector(".supplier-detail-description") || document.querySelector(".supplier-introduction");
         const location = document.querySelector(".supplier-info-location") || document.querySelector(".supplier-location");
         const category = document.querySelector(".supplier-category");
-        const trust = document.querySelector(".supplier-trust-score");
+        const trust = document.getElementById("supplierDetailTrustVal") || document.querySelector(".supplier-trust-score") || document.querySelectorAll(".overview-card .overview-value")[0];
+        const badge = document.querySelector(".supplier-title-row .badge") || document.querySelector(".badge-verified");
         const productList = document.querySelector(".supplier-product-grid");
 
         if (title) title.textContent = supplier.businessName;
@@ -766,11 +822,50 @@
         if (location) location.textContent = supplier.location;
         if (category && supplier.category) category.textContent = supplier.category;
         if (trust) trust.textContent = `${supplier.trustScore}/100`;
+        if (badge) {
+          const isVer = (supplier.verificationStatus === "Business Verified" || supplier.verificationStatus === "Verified");
+          badge.textContent = isVer ? "Business Verified" : (supplier.verificationStatus || "Pending Verification");
+          badge.className = isVer ? "badge badge-verified" : "badge badge-pending";
+          if (!isVer) {
+            badge.style.background = "#fef3c7";
+            badge.style.color = "#92400e";
+            badge.style.border = "1px solid #fde68a";
+          } else {
+            badge.style.background = "";
+            badge.style.color = "";
+            badge.style.border = "";
+          }
+        }
 
         if (productList) {
           productList.innerHTML = products.length
             ? products.map((product) => {
-                let img = product.image || "../images/products/industrial-safety-gloves.webp";
+                let img = product.image;
+                const rawImgStr = String(img || "").toLowerCase();
+                const nm = String(product.name || "").toLowerCase();
+                const cat = String(product.category || "").toLowerCase();
+                const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+                const isGloveImage = rawImgStr.includes("glove") || rawImgStr.includes("safety-gloves");
+
+                if (!img || rawImgStr.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
+                  if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench") || nm.includes("mechanic")) img = "../images/products/mechanics-tool-kit.webp";
+                  else if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) img = "../images/products/industrial-storage-crates.webp";
+                  else if (nm.includes("chair") || nm.includes("seating") || nm.includes("ergonomic") || (cat.includes("office") && nm.includes("furniture"))) img = "../images/products/featured-office-ergonomic-chairs.webp";
+                  else if (nm.includes("trash") || nm.includes("bag") || nm.includes("polymer") || nm.includes("biodegradable")) img = "../images/products/featured-biodegradable-polymers.webp";
+                  else if (nm.includes("cnc") || nm.includes("milling") || nm.includes("cutter") || (cat.includes("machin") && !nm.includes("shelv"))) img = "../images/products/featured-cnc-milling-cutters.webp";
+                  else if (nm.includes("helmet") || nm.includes("hat")) img = "../images/products/industrial-safety-helmets.webp";
+                  else if (nm.includes("shelv") || nm.includes("rack")) img = "../images/products/warehouse-shelving-rack.webp";
+                  else if (isGloveProduct) img = "../images/products/high-grip-work-gloves.webp";
+                  else if (nm.includes("organis") || nm.includes("organiz")) img = "../images/products/executive-desk-organizer.webp";
+                  else if (nm.includes("foam") || nm.includes("insert")) img = "../images/products/protective-foam-inserts.webp";
+                  else if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) img = "../images/products/commercial-led-panel-lights.webp";
+                  else if (cat.includes("packag") || nm.includes("box") || nm.includes("carton")) img = "../images/products/corrugated-packaging-boxes.webp";
+                  else if (cat.includes("office") || nm.includes("paper")) img = "../images/products/a4-premium-copy-paper.webp";
+                  else if (cat.includes("textil") || nm.includes("fabric") || nm.includes("cotton")) img = "../images/products/cotton-fabric-rolls.webp";
+                  else if (nm.includes("food")) img = "../images/products/food-packaging-materials.webp";
+                  else if (nm.includes("steel") || nm.includes("stainless")) img = "../images/products/stainless-steel-components.webp";
+                  else img = "../images/products/mechanics-tool-kit.webp";
+                }
                 if (img.startsWith("/")) img = ".." + img;
                 else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
                   img = "../" + img.replace(/^\/+/, "");
@@ -779,7 +874,7 @@
                 return `
                   <article class="supplier-product-card" style="display:flex;flex-direction:column;background:#ffffff;border:1px solid #e5e1d6;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
                     <div class="product-image-wrapper" style="height:190px;display:flex;align-items:center;justify-content:center;background:#faf9f5;padding:12px;">
-                      <img src="${img}" alt="${product.name}" onerror="this.src='../images/products/industrial-safety-gloves.webp'" style="max-height:100%;max-width:100%;object-fit:contain;" />
+                      <img src="${img}" alt="${product.name}" onerror="this.src='../images/TradeNest.webp'" style="max-height:100%;max-width:100%;object-fit:contain;" />
                     </div>
                     <div class="product-card-content" style="padding:16px;flex:1;display:flex;flex-direction:column;">
                       <span class="product-category" style="font-size:0.75rem;text-transform:uppercase;font-weight:700;color:#666666;margin-bottom:6px;">${product.category || "Industrial"}</span>

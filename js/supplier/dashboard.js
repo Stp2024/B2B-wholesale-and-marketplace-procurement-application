@@ -328,6 +328,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const navRFQCountBadge = document.getElementById("navRFQCountBadge");
         if (navRFQCountBadge) {
             navRFQCountBadge.textContent = stats.incomingRFQs;
+            navRFQCountBadge.style.display = stats.incomingRFQs > 0 ? "inline-flex" : "none";
         }
 
         // Low Stock Alert Banner
@@ -442,18 +443,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const activityFeedList = document.getElementById("overviewActivityFeedList");
     if (activityFeedList) {
         const activities = store.getActivityFeed().slice(0, 5);
-        activityFeedList.innerHTML = activities.map(act => {
-            const iconData = getActivityIconData(act.icon);
-            return `
-                <div class="activity-item" style="cursor: pointer;" title="Click to view activity context" data-view="${act.view || 'orders'}">
-                    <div class="activity-icon-wrap ${iconData.className}" aria-hidden="true">${iconData.svg}</div>
-                    <div class="activity-content">
-                        <p class="activity-text">${escapeHtml(act.text)}</p>
-                        <span class="activity-time">${escapeHtml(act.time)}</span>
-                    </div>
+        if (activities.length === 0) {
+            activityFeedList.innerHTML = `
+                <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem;">
+                    No recent activities logged yet.
                 </div>
             `;
-        }).join("");
+        } else {
+            activityFeedList.innerHTML = activities.map(act => {
+                const iconData = getActivityIconData(act.icon);
+                return `
+                    <div class="activity-item" style="cursor: pointer;" title="Click to view activity context" data-view="${act.view || 'orders'}">
+                        <div class="activity-icon-wrap ${iconData.className}" aria-hidden="true">${iconData.svg}</div>
+                        <div class="activity-content">
+                            <p class="activity-text">${escapeHtml(act.text)}</p>
+                            <span class="activity-time">${escapeHtml(act.time)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
     }
 }
 
@@ -503,8 +512,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================================================
     function renderBusinessProfile() {
         const profile = store.getBusinessProfile();
+        const loggedUser = getLoggedInUser();
+        const isNew = Boolean(
+            (store.isRegisteredNewSupplier && (store.isRegisteredNewSupplier() || (loggedUser && store.isRegisteredNewSupplier(loggedUser)))) ||
+            (loggedUser && (loggedUser.isNewSupplier || loggedUser.role === "supplier" || loggedUser.accountType === "supplier") &&
+             loggedUser.id !== "supplier-001" && loggedUser.id !== "supplier-002" &&
+             String(loggedUser.email || "").toLowerCase() !== "rajesh@apexgear.com" &&
+             String(loggedUser.email || "").toLowerCase() !== "supplier@tradenest.com")
+        );
 
         const bizProfileCompanyName = document.getElementById("bizProfileCompanyName");
+        const bizProfileVerificationBadge = document.getElementById("bizProfileVerificationBadge");
+        const bizProfileTrustScoreVal = document.getElementById("bizProfileTrustScoreVal");
+        const bizProfileTrustScoreBadge = document.getElementById("bizProfileTrustScoreBadge");
         const bizProfileType = document.getElementById("bizProfileType");
         const bizProfileDescription = document.getElementById("bizProfileDescription");
         const bizProfilePrimaryCat = document.getElementById("bizProfilePrimaryCat");
@@ -524,21 +544,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (bizProfileCompanyName) bizProfileCompanyName.textContent = profile.businessName;
         if (bizProfileType) bizProfileType.textContent = profile.businessType;
-        if (bizProfileDescription) bizProfileDescription.textContent = profile.description;
+        if (bizProfileDescription) bizProfileDescription.textContent = profile.description || (isNew ? "Supplier profile registered on TradeNest wholesale network." : "Leading ISO 9001 certified industrial safety gear manufacturer.");
         if (bizProfilePrimaryCat) bizProfilePrimaryCat.textContent = profile.primaryCategory;
         if (bizProfileSecondaryCat) bizProfileSecondaryCat.textContent = profile.secondaryCategory;
-        if (bizProfileLocation) bizProfileLocation.textContent = profile.registeredAddress.split(",")[2] || "Bengaluru";
+        if (bizProfileLocation) bizProfileLocation.textContent = profile.registeredAddress ? (profile.registeredAddress.split(",")[2] || profile.city || "India") : (profile.city || "India");
+
+        // Trust Score & Verification Badge update for new vs demo suppliers
+        if (bizProfileTrustScoreVal) {
+            if (isNew) {
+                bizProfileTrustScoreVal.textContent = "0/100";
+                bizProfileTrustScoreVal.style.color = "#64748b";
+            } else {
+                bizProfileTrustScoreVal.textContent = "96/100";
+                bizProfileTrustScoreVal.style.color = "var(--success)";
+            }
+        }
+        if (bizProfileTrustScoreBadge) {
+            if (isNew) {
+                bizProfileTrustScoreBadge.textContent = "New Supplier";
+                bizProfileTrustScoreBadge.style.background = "#f1f5f9";
+                bizProfileTrustScoreBadge.style.color = "#475569";
+                bizProfileTrustScoreBadge.style.border = "1px solid #cbd5e1";
+            } else {
+                bizProfileTrustScoreBadge.textContent = "Illustrative";
+                bizProfileTrustScoreBadge.style.background = "";
+                bizProfileTrustScoreBadge.style.color = "";
+                bizProfileTrustScoreBadge.style.border = "";
+            }
+        }
+        if (bizProfileVerificationBadge) {
+            if (isNew) {
+                const status = profile.verificationStatus || "Pending Verification";
+                bizProfileVerificationBadge.textContent = status;
+                bizProfileVerificationBadge.className = "badge-pill badge-pending";
+                bizProfileVerificationBadge.style.background = "#fef3c7";
+                bizProfileVerificationBadge.style.color = "#92400e";
+                bizProfileVerificationBadge.style.border = "1px solid #fde68a";
+            } else {
+                bizProfileVerificationBadge.textContent = "Verified Tier-1 (Demo Only)";
+                bizProfileVerificationBadge.className = "badge-pill badge-active";
+                bizProfileVerificationBadge.style.background = "";
+                bizProfileVerificationBadge.style.color = "";
+                bizProfileVerificationBadge.style.border = "";
+            }
+        }
 
         if (bizGstinVal) bizGstinVal.textContent = profile.gstin;
         if (bizPanVal) bizPanVal.textContent = profile.pan;
-        if (bizIecVal) bizIecVal.textContent = profile.iec;
+        if (bizIecVal) bizIecVal.textContent = profile.iec || "Not Provided";
         if (bizAddressVal) bizAddressVal.textContent = profile.registeredAddress;
 
         if (bizContactPersonVal) bizContactPersonVal.textContent = profile.contactPerson;
-        if (bizDesignationVal) bizDesignationVal.textContent = profile.designation;
-        if (bizPhoneVal) bizPhoneVal.textContent = profile.phone;
-        if (bizEmailVal) bizEmailVal.textContent = profile.email;
-        if (bizSupportEmailVal) bizSupportEmailVal.textContent = profile.supportEmail;
+        if (bizDesignationVal) bizDesignationVal.textContent = profile.designation || (isNew ? "Owner / Primary Representative" : "VP of Operations & Enterprise Accounts");
+        if (bizPhoneVal) bizPhoneVal.textContent = profile.phone || profile.contactPhone || "+91 98765 43210";
+        if (bizEmailVal) bizEmailVal.textContent = profile.email || profile.contactEmail || "supplier@example.com";
+        if (bizSupportEmailVal) bizSupportEmailVal.textContent = profile.supportEmail || profile.email || profile.contactEmail || "support@example.com";
 
         // Render documents
         const docsContainer = document.getElementById("bizDocumentsListContainer");
@@ -842,13 +902,37 @@ document.addEventListener("DOMContentLoaded", function () {
             prodFormMoq.value = "50";
             prodFormStock.value = "500";
             prodFormThreshold.value = "100";
-            prodFormImage.value = "images/products/safety-gloves.webp";
+            prodFormImage.value = resolveSmartProductImage(prodFormCategory.value, prodFormName.value);
             if (prodFormDeliveryInfo) prodFormDeliveryInfo.value = "3-5 business days across India";
             if (prodFormStatus) prodFormStatus.value = "Active";
             prodFormSpecs.value = "Material: High-Grade Industrial\nGrade: Certified Standard\nOrigin: India";
         }
 
         productModal.hidden = false;
+    }
+
+    function resolveSmartProductImage(category, name) {
+        const cat = String(category || "").toLowerCase();
+        const nm = String(name || "").toLowerCase();
+        if (nm.includes("tool") || nm.includes("drill") || nm.includes("wrench") || nm.includes("mechanic")) return "images/products/mechanics-tool-kit.webp";
+        if (nm.includes("crate") || nm.includes("bin") || nm.includes("storage")) return "images/products/industrial-storage-crates.webp";
+        if (nm.includes("glove")) return "images/products/high-grip-work-gloves.webp";
+        if (nm.includes("helmet") || nm.includes("hat")) return "images/products/industrial-safety-helmets.webp";
+        if (nm.includes("shelv") || nm.includes("rack")) return "images/products/warehouse-shelving-rack.webp";
+        if (cat.includes("electric") || cat.includes("light") || nm.includes("led") || nm.includes("bulb")) return "images/products/commercial-led-panel-lights.webp";
+        if (cat.includes("packag") || nm.includes("box") || nm.includes("carton")) return "images/products/corrugated-packaging-boxes.webp";
+        if (cat.includes("office") || nm.includes("paper")) return "images/products/a4-premium-copy-paper.webp";
+        if (cat.includes("textil") || nm.includes("fabric") || nm.includes("cotton")) return "images/products/cotton-fabric-rolls.webp";
+        if (cat.includes("machin") || nm.includes("cutter") || nm.includes("steel")) return "images/products/warehouse-shelving-rack.webp";
+        return "images/products/mechanics-tool-kit.webp";
+    }
+
+    if (prodFormCategory) {
+        prodFormCategory.addEventListener("change", function () {
+            if (!prodFormId.value) {
+                prodFormImage.value = resolveSmartProductImage(this.value, prodFormName.value);
+            }
+        });
     }
 
     if (btnAddNewProductModal) {
@@ -874,7 +958,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const moq = parseInt(document.getElementById("prodFormMoq").value, 10) || 1;
             const availableStock = parseInt(document.getElementById("prodFormStock").value, 10) || 0;
             const minThreshold = parseInt(document.getElementById("prodFormThreshold").value, 10) || 0;
-            const image = document.getElementById("prodFormImage").value.trim() || "images/products/safety-gloves.webp";
+            const image = document.getElementById("prodFormImage").value.trim() || resolveSmartProductImage(category, name);
             const prodFormDeliveryInfo = document.getElementById("prodFormDeliveryInfo");
             const prodFormStatus = document.getElementById("prodFormStatus");
             const deliveryInfo = prodFormDeliveryInfo ? prodFormDeliveryInfo.value.trim() : "3-5 business days";
@@ -2411,20 +2495,54 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderPerformance() {
         const metrics = store.calculateTrustMetrics();
         const reviews = store.getReviews();
+        const loggedUser = getLoggedInUser();
+        const isNew = Boolean(
+            (store.isRegisteredNewSupplier && (store.isRegisteredNewSupplier() || (loggedUser && store.isRegisteredNewSupplier(loggedUser)))) ||
+            (loggedUser && (loggedUser.isNewSupplier || loggedUser.role === "supplier" || loggedUser.accountType === "supplier") &&
+             loggedUser.id !== "supplier-001" && loggedUser.id !== "supplier-002" &&
+             String(loggedUser.email || "").toLowerCase() !== "rajesh@apexgear.com" &&
+             String(loggedUser.email || "").toLowerCase() !== "supplier@tradenest.com")
+        );
 
         const perfTrustScoreNum = document.getElementById("perfTrustScoreNum");
         const perfTierBadge = document.getElementById("perfTierBadge");
+        const perfHeadline = document.getElementById("perfHeadline");
+        const perfDescription = document.getElementById("perfDescription");
         const metricFulfilmentRate = document.getElementById("metricFulfilmentRate");
         const metricOnTimeDelivery = document.getElementById("metricOnTimeDelivery");
         const metricResponseTime = document.getElementById("metricResponseTime");
         const metricCompletedOrders = document.getElementById("metricCompletedOrders");
 
-        if (perfTrustScoreNum) perfTrustScoreNum.textContent = metrics.trustScore;
-        if (perfTierBadge) perfTierBadge.textContent = metrics.tier.toUpperCase();
+        if (perfTrustScoreNum) {
+            perfTrustScoreNum.textContent = isNew ? "0" : (metrics.trustScore !== undefined ? metrics.trustScore : 0);
+            if (isNew) {
+                perfTrustScoreNum.style.color = "#64748b";
+            } else {
+                perfTrustScoreNum.style.color = "";
+            }
+        }
+        if (perfTierBadge) {
+            perfTierBadge.textContent = isNew ? "NEW SUPPLIER (UNRANKED)" : (metrics.tier ? metrics.tier.toUpperCase() : "PLATINUM TIER VERIFIED");
+            if (isNew) {
+                perfTierBadge.style.background = "#fef3c7";
+                perfTierBadge.style.color = "#92400e";
+                perfTierBadge.style.border = "1px solid #fde68a";
+            } else {
+                perfTierBadge.style.background = "";
+                perfTierBadge.style.color = "";
+                perfTierBadge.style.border = "";
+            }
+        }
+        if (perfHeadline && isNew) {
+            perfHeadline.textContent = "Initial Supplier Profile (Unranked)";
+        }
+        if (perfDescription && isNew) {
+            perfDescription.textContent = "Your TradeNest TrustScore™ starts at 0/100 upon registration. Complete orders, maintain high fulfillment rates, and complete business verification to build your TrustScore.";
+        }
         if (metricFulfilmentRate) metricFulfilmentRate.textContent = metrics.fulfilmentRate;
         if (metricOnTimeDelivery) metricOnTimeDelivery.textContent = metrics.onTimeDeliveryRate;
         if (metricResponseTime) metricResponseTime.textContent = metrics.avgResponseTime;
-        if (metricCompletedOrders) metricCompletedOrders.textContent = metrics.completedOrdersCount || "142";
+        if (metricCompletedOrders) metricCompletedOrders.textContent = (metrics.completedOrdersCount !== undefined && metrics.completedOrdersCount !== null) ? metrics.completedOrdersCount : 0;
 
         // Render Reviews
         const perfReviewsList = document.getElementById("perfReviewsList");
@@ -2591,44 +2709,56 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnClearAllNotifs = document.getElementById("btnClearAllNotifs");
     const notificationDropdownList = document.getElementById("notificationDropdownList");
 
-    let notifications = [
-        {
-            id: "notif-1",
-            icon: `<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`,
-            title: "New RFQ Received",
-            desc: "Metro Retail Solutions requested quote for 2,000 units Nitrile Gloves",
-            time: "10 mins ago",
-            view: "rfqs",
-            unread: true
-        },
-        {
-            id: "notif-2",
-            icon: `<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
-            title: "TradeShield Escrow Funded",
-            desc: "Payment of ₹1,85,000 funded in escrow for Order #ORD-2026-1049",
-            time: "1 hour ago",
-            view: "payments",
-            unread: true
-        },
-        {
-            id: "notif-3",
-            icon: "⚠️",
-            title: "Low Inventory Warning",
-            desc: "Nitrile Industrial Gloves stock is below minimum threshold (200 units)",
-            time: "3 hours ago",
-            view: "inventory",
-            unread: true
-        },
-        {
-            id: "notif-4",
-            icon: "⭐",
-            title: "New 5-Star Buyer Review",
-            desc: "BuildCraft Logistics rated order: 'Exceptional packing and prompt dispatch!'",
-            time: "Yesterday",
-            view: "performance",
-            unread: false
-        }
-    ];
+    let notifications = [];
+    const loggedUser = getLoggedInUser();
+    const isNew = Boolean(
+        (store.isRegisteredNewSupplier && (store.isRegisteredNewSupplier() || (loggedUser && store.isRegisteredNewSupplier(loggedUser)))) ||
+        (loggedUser && (loggedUser.isNewSupplier || loggedUser.role === "supplier" || loggedUser.accountType === "supplier") &&
+         loggedUser.id !== "supplier-001" && loggedUser.id !== "supplier-002" &&
+         String(loggedUser.email || "").toLowerCase() !== "rajesh@apexgear.com" &&
+         String(loggedUser.email || "").toLowerCase() !== "supplier@tradenest.com")
+    );
+
+    if (!isNew) {
+        notifications = [
+            {
+                id: "notif-1",
+                icon: `<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`,
+                title: "New RFQ Received",
+                desc: "Metro Retail Solutions requested quote for 2,000 units Nitrile Gloves",
+                time: "10 mins ago",
+                view: "rfqs",
+                unread: true
+            },
+            {
+                id: "notif-2",
+                icon: `<svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+                title: "TradeShield Escrow Funded",
+                desc: "Payment of ₹1,85,000 funded in escrow for Order #ORD-2026-1049",
+                time: "1 hour ago",
+                view: "payments",
+                unread: true
+            },
+            {
+                id: "notif-3",
+                icon: "⚠️",
+                title: "Low Inventory Warning",
+                desc: "Nitrile Industrial Gloves stock is below minimum threshold (200 units)",
+                time: "3 hours ago",
+                view: "inventory",
+                unread: true
+            },
+            {
+                id: "notif-4",
+                icon: "⭐",
+                title: "New 5-Star Buyer Review",
+                desc: "BuildCraft Logistics rated order: 'Exceptional packing and prompt dispatch!'",
+                time: "Yesterday",
+                view: "performance",
+                unread: false
+            }
+        ];
+    }
 
     function renderNotifications() {
         if (!notificationDropdownList) return;
@@ -2638,14 +2768,16 @@ document.addEventListener("DOMContentLoaded", function () {
             globalNotificationBadge.style.display = unreadCount > 0 ? "inline-flex" : "none";
         }
         if (notifUnreadBadge) {
-            notifUnreadBadge.textContent = unreadCount > 0 ? `${unreadCount} New` : "All Read";
+            notifUnreadBadge.textContent = unreadCount > 0 ? `${unreadCount} New` : "0 New";
+            notifUnreadBadge.style.display = unreadCount > 0 ? "inline-block" : "none";
         }
 
         if (notifications.length === 0) {
             notificationDropdownList.innerHTML = `
                 <div style="padding: 28px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-                    <div><svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-                    <div style="margin-top: 6px;">No notifications at this time</div>
+                    <div><svg class="tn-ui-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                    <div style="margin-top: 8px; font-weight: 600; color: var(--text);">No notifications</div>
+                    <div style="margin-top: 4px; font-size: 0.78rem;">Everything is clear. You have no pending notifications.</div>
                 </div>
             `;
             return;

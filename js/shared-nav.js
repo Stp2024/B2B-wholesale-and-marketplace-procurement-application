@@ -105,36 +105,11 @@
       </div>
     `;
 
-    // Notification Center Component HTML (for logged-in users)
-    let notifHtml = "";
-    if (isLoggedIn && window.TradeNestStore && typeof window.TradeNestStore.getUnreadNotificationCount === "function") {
-      const unreadCount = window.TradeNestStore.getUnreadNotificationCount(user.id, user.role);
-      notifHtml = `
-        <div class="tn-notif-wrapper" id="tnNotifWrapper">
-          <button type="button" class="tn-notif-btn" id="tnNotifBtn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span class="tn-notif-badge${unreadCount > 0 ? "" : " is-hidden"}" id="tnNotifBadge">${unreadCount}</span>
-          </button>
-          <div class="tn-notif-dropdown" id="tnNotifDropdown" role="region" aria-label="Notification center">
-            <div class="tn-notif-header">
-              <span class="tn-notif-title">Notifications</span>
-              <button type="button" class="tn-notif-mark-read" id="tnNotifMarkAllRead">Mark all read</button>
-            </div>
-            <ul class="tn-notif-list" id="tnNotifList"></ul>
-          </div>
-        </div>
-      `;
-    }
-
     let actionsHtml = "";
     if (isLoggedIn) {
       const displayName = user.fullName || user.businessName || (user.email ? user.email.split("@")[0] : "User");
       actionsHtml = `
         <div class="tn-nav-actions tn-nav-logged-in" id="navLoggedInActions">
-          ${notifHtml}
           <button type="button" class="tn-nav-profile-btn" id="navProfileBtn" aria-label="View Profile" title="View Profile (${escapeHtml(displayName)})">
             <svg class="tn-nav-profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -186,8 +161,8 @@
     // Attach search handlers
     attachSearchListeners(header, relativeRoot, resolvePath);
 
-    // Attach notification handlers
-    if (isLoggedIn) {
+    // Attach notification handlers (if notification element present)
+    if (isLoggedIn && header.querySelector("#tnNotifBtn")) {
       attachNotificationListeners(header, user, relativeRoot, resolvePath);
     }
 

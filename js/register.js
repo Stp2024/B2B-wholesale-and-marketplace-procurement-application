@@ -1495,6 +1495,9 @@ document.addEventListener("DOMContentLoaded", function () {
       fullName:
         fullName.value.trim(),
 
+      businessName:
+        businessName.value.trim(),
+
       phone:
         phone.value.trim(),
 
@@ -1553,7 +1556,15 @@ document.addEventListener("DOMContentLoaded", function () {
       registrationDate:
         new Date().toISOString(),
 
-      status: "active"
+      status: "active",
+
+      trustScore: accountType === "supplier" ? 0 : 0,
+
+      verificationStatus: "Pending Verification",
+
+      tier: "New Supplier (Unranked)",
+
+      isNewSupplier: accountType === "supplier"
 
     };
   }
