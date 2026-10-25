@@ -621,9 +621,27 @@ document.addEventListener("DOMContentLoaded", function () {
     // Edit Business Profile Form Handling
     const btnEditBusinessProfile = document.getElementById("btnEditBusinessProfile");
     const headerEditProfileBtn = document.getElementById("headerEditProfileBtn");
+    const headerEditProfilePhotoBtn = document.getElementById("headerEditProfilePhotoBtn");
+    const btnEditAvatarDropdown = document.getElementById("btnEditAvatarDropdown");
+    const btnChangeBizLogo = document.getElementById("btnChangeBizLogo");
+
+    let stagedModalPhoto = null;
+
+    function renderModalAvatarPreview(photoUrl, name) {
+        const previewBox = document.getElementById("modalAvatarPreviewBox");
+        const initialSpan = document.getElementById("modalAvatarInitial");
+        if (!previewBox) return;
+        const initial = ((name || "S").charAt(0) || "S").toUpperCase();
+        if (photoUrl) {
+            previewBox.innerHTML = `<img src="${photoUrl}" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" onerror="this.onerror=null; this.parentElement.textContent='${initial}';" />`;
+        } else {
+            previewBox.innerHTML = `<span id="modalAvatarInitial">${initial}</span>`;
+        }
+    }
 
     function openEditProfileModal() {
         const profile = store.getBusinessProfile();
+        const currentUser = getLoggedInUser();
         document.getElementById("editCompany").value = profile.businessName || "";
         document.getElementById("editBusinessType").value = profile.businessType || "";
         document.getElementById("editDescription").value = profile.description || "";
@@ -637,8 +655,57 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("editEmail").value = profile.email || "";
         document.getElementById("editSupportEmail").value = profile.supportEmail || "";
 
+        stagedModalPhoto = (currentUser && currentUser.profileImage) || profile.profileImage || (profile.logo && !profile.logo.includes("TradeNest.webp") ? profile.logo : "");
+        renderModalAvatarPreview(stagedModalPhoto, profile.contactPerson || profile.businessName);
+
         profileModal.hidden = false;
         closeProfileDropdown();
+    }
+
+    // Modal Profile Photo File Input handler
+    const modalProfilePhotoInput = document.getElementById("modalProfilePhotoInput");
+    if (modalProfilePhotoInput) {
+        modalProfilePhotoInput.addEventListener("change", function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            if (file.size > 10 * 1024 * 1024) {
+                showToast("File size too large. Please select an image under 10 MB.", "error");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const canvas = document.createElement("canvas");
+                    const maxDim = 512;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h) {
+                        if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                    } else {
+                        if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, w, h);
+                    stagedModalPhoto = canvas.toDataURL("image/jpeg", 0.88);
+                    renderModalAvatarPreview(stagedModalPhoto);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    const btnModalRemovePhoto = document.getElementById("btnModalRemovePhoto");
+    if (btnModalRemovePhoto) {
+        btnModalRemovePhoto.addEventListener("click", function () {
+            stagedModalPhoto = "";
+            if (modalProfilePhotoInput) modalProfilePhotoInput.value = "";
+            renderModalAvatarPreview("", "S");
+            showToast("Profile photo removed (will revert to initial)", "info");
+        });
     }
 
     if (btnEditBusinessProfile) btnEditBusinessProfile.addEventListener("click", openEditProfileModal);
@@ -667,11 +734,152 @@ document.addEventListener("DOMContentLoaded", function () {
                 email: document.getElementById("editEmail").value.trim(),
                 supportEmail: document.getElementById("editSupportEmail").value.trim()
             };
+            if (stagedModalPhoto !== null) {
+                updated.profileImage = stagedModalPhoto;
+                if (stagedModalPhoto) updated.logo = stagedModalPhoto;
+            }
             store.saveBusinessProfile(updated);
             profileModal.hidden = true;
             renderBusinessProfile();
             updateTopBarProfile();
-            showToast("Business profile details updated successfully!");
+            showToast("Business profile and photo updated successfully!", "success");
+        });
+    }
+
+    // ==========================================
+    // DEDICATED PROFILE PHOTO EDITOR MODAL (MODAL 11)
+    // ==========================================
+    const avatarModal = document.getElementById("avatarModal");
+    const closeAvatarModal = document.getElementById("closeAvatarModal");
+    const btnCancelAvatarModal = document.getElementById("btnCancelAvatarModal");
+    const btnSaveAvatarModal = document.getElementById("btnSaveAvatarModal");
+    const avatarFileInput = document.getElementById("avatarFileInput");
+    const btnAvatarRemove = document.getElementById("btnAvatarRemove");
+    const avatarLargePreview = document.getElementById("avatarLargePreview");
+    const presetAvatarGrid = document.getElementById("presetAvatarGrid");
+
+    let currentStagedAvatar = "";
+
+    const PRESET_AVATARS = [
+        { id: "av-1", label: "Executive Leader", url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80" },
+        { id: "av-2", label: "Director of Sourcing", url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80" },
+        { id: "av-3", label: "Operations Head", url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80" },
+        { id: "av-4", label: "Enterprise Partner", url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80" }
+    ];
+
+    function renderLargeAvatarPreview(photoUrl, name) {
+        if (!avatarLargePreview) return;
+        const initial = ((name || "S").charAt(0) || "S").toUpperCase();
+        if (photoUrl) {
+            avatarLargePreview.innerHTML = `<img src="${photoUrl}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" onerror="this.onerror=null; this.parentElement.textContent='${initial}';" />`;
+        } else {
+            avatarLargePreview.innerHTML = `<span id="avatarLargeInitial">${initial}</span>`;
+        }
+    }
+
+    function openAvatarModal() {
+        if (!avatarModal) return;
+        const currentUser = getLoggedInUser();
+        const biz = store.getBusinessProfile();
+        const name = currentUser ? (currentUser.fullName || currentUser.name || "Supplier Name") : (biz.contactPerson || "Supplier Name");
+
+        currentStagedAvatar = (currentUser && currentUser.profileImage) || biz.profileImage || (biz.logo && !biz.logo.includes("TradeNest.webp") ? biz.logo : "");
+        renderLargeAvatarPreview(currentStagedAvatar, name);
+
+        // Render Preset Avatars
+        if (presetAvatarGrid) {
+            presetAvatarGrid.innerHTML = PRESET_AVATARS.map(av => `
+                <button type="button" class="preset-avatar-btn ${currentStagedAvatar === av.url ? 'selected' : ''}" data-avatar-url="${av.url}" title="${av.label}">
+                    <img src="${av.url}" alt="${av.label}" />
+                </button>
+            `).join("");
+        }
+
+        avatarModal.hidden = false;
+        closeProfileDropdown();
+    }
+
+    if (btnEditAvatarDropdown) btnEditAvatarDropdown.addEventListener("click", (e) => { e.stopPropagation(); openAvatarModal(); });
+    if (headerEditProfilePhotoBtn) headerEditProfilePhotoBtn.addEventListener("click", openAvatarModal);
+    if (btnChangeBizLogo) btnChangeBizLogo.addEventListener("click", openAvatarModal);
+
+    if (closeAvatarModal) closeAvatarModal.addEventListener("click", () => avatarModal.hidden = true);
+    if (btnCancelAvatarModal) btnCancelAvatarModal.addEventListener("click", () => avatarModal.hidden = true);
+
+    if (presetAvatarGrid) {
+        presetAvatarGrid.addEventListener("click", function (e) {
+            const btn = e.target.closest(".preset-avatar-btn");
+            if (btn) {
+                const url = btn.getAttribute("data-avatar-url");
+                currentStagedAvatar = url;
+                presetAvatarGrid.querySelectorAll(".preset-avatar-btn").forEach(b => b.classList.remove("selected"));
+                btn.classList.add("selected");
+                renderLargeAvatarPreview(currentStagedAvatar);
+            }
+        });
+    }
+
+    if (avatarFileInput) {
+        avatarFileInput.addEventListener("change", function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            if (file.size > 10 * 1024 * 1024) {
+                showToast("File size too large. Please select an image under 10 MB.", "error");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const canvas = document.createElement("canvas");
+                    const maxDim = 512;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h) {
+                        if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                    } else {
+                        if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, w, h);
+                    currentStagedAvatar = canvas.toDataURL("image/jpeg", 0.88);
+                    if (presetAvatarGrid) {
+                        presetAvatarGrid.querySelectorAll(".preset-avatar-btn").forEach(b => b.classList.remove("selected"));
+                    }
+                    renderLargeAvatarPreview(currentStagedAvatar);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if (btnAvatarRemove) {
+        btnAvatarRemove.addEventListener("click", function () {
+            currentStagedAvatar = "";
+            if (avatarFileInput) avatarFileInput.value = "";
+            if (presetAvatarGrid) {
+                presetAvatarGrid.querySelectorAll(".preset-avatar-btn").forEach(b => b.classList.remove("selected"));
+            }
+            renderLargeAvatarPreview("", "S");
+            showToast("Photo cleared (reverts to initial badge)", "info");
+        });
+    }
+
+    if (btnSaveAvatarModal) {
+        btnSaveAvatarModal.addEventListener("click", function () {
+            if (typeof store.saveUserProfilePhoto === "function") {
+                store.saveUserProfilePhoto(currentStagedAvatar);
+            } else {
+                const cur = store.getBusinessProfile();
+                store.saveBusinessProfile({ ...cur, profileImage: currentStagedAvatar, logo: currentStagedAvatar || cur.logo });
+            }
+            avatarModal.hidden = true;
+            updateTopBarProfile();
+            renderBusinessProfile();
+            showToast("Profile photo updated successfully!", "success");
         });
     }
 
@@ -2147,12 +2355,53 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ==========================================================================
-    // 14. MODULE 25: PAYMENTS & INVOICES
-    // ==========================================================================
+    // ==========================================
+    // 14. MODULE 25: PAYMENTS & INVOICES (DYNAMIC LEDGER)
+    // ==========================================
     const paymentsTableBody = document.getElementById("paymentsTableBody");
+    const cardFinEscrow = document.getElementById("cardFinEscrow");
+    const cardFinReleased = document.getElementById("cardFinReleased");
+    const cardFinPending = document.getElementById("cardFinPending");
+    const cardFinTotal = document.getElementById("cardFinTotal");
 
     let currentPaymentFilter = "all";
+
+    function updatePaymentKpiCards(allPayments) {
+        const totalVolume = allPayments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+        const inEscrow = allPayments.filter(p => {
+            const st = String(p.status || "").toLowerCase();
+            return st.includes("escrow") || st.includes("protection") || st.includes("funded");
+        }).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+        const released = allPayments.filter(p => {
+            const st = String(p.status || "").toLowerCase();
+            return st.includes("released") || st.includes("paid");
+        }).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+        const pendingCount = allPayments.filter(p => {
+            const st = String(p.status || "").toLowerCase();
+            return st.includes("pending") || st.includes("clearance");
+        }).length;
+
+        const elTotal = document.getElementById("finTotalVolume");
+        if (elTotal) elTotal.textContent = formatINR(totalVolume);
+
+        const elEscrow = document.getElementById("finEscrowProtected");
+        if (elEscrow) elEscrow.textContent = formatINR(inEscrow);
+
+        const elReleased = document.getElementById("finReleased");
+        if (elReleased) elReleased.textContent = formatINR(released);
+
+        const elPending = document.getElementById("finPendingCount");
+        if (elPending) elPending.textContent = pendingCount;
+
+        // Visual active indicator on cards
+        [cardFinTotal, cardFinEscrow, cardFinReleased, cardFinPending].forEach(c => {
+            if (c) c.classList.remove("stat-card-active");
+        });
+        if (currentPaymentFilter === "all" && cardFinTotal) cardFinTotal.classList.add("stat-card-active");
+        else if (currentPaymentFilter === "Escrow" && cardFinEscrow) cardFinEscrow.classList.add("stat-card-active");
+        else if (currentPaymentFilter === "Released" && cardFinReleased) cardFinReleased.classList.add("stat-card-active");
+        else if (currentPaymentFilter === "Pending" && cardFinPending) cardFinPending.classList.add("stat-card-active");
+    }
 
     function renderPayments(filterStatus = null) {
         if (!paymentsTableBody) return;
@@ -2160,32 +2409,83 @@ document.addEventListener("DOMContentLoaded", function () {
             currentPaymentFilter = filterStatus;
         }
 
-        let payments = store.getPayments();
-        if (currentPaymentFilter !== "all") {
-            payments = payments.filter(p => p.status === currentPaymentFilter);
+        const allPayments = store.getPayments();
+        updatePaymentKpiCards(allPayments);
+
+        let filtered = allPayments;
+        if (currentPaymentFilter === "Escrow") {
+            filtered = allPayments.filter(p => String(p.status || "").toLowerCase().includes("escrow"));
+        } else if (currentPaymentFilter === "Released") {
+            filtered = allPayments.filter(p => {
+                const st = String(p.status || "").toLowerCase();
+                return st.includes("released") || st.includes("paid");
+            });
+        } else if (currentPaymentFilter === "Pending") {
+            filtered = allPayments.filter(p => {
+                const st = String(p.status || "").toLowerCase();
+                return st.includes("pending") || st.includes("clearance");
+            });
         }
 
-        if (payments.length === 0) {
-            paymentsTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">No transactions found under "${currentPaymentFilter}" status.</td></tr>`;
+        if (filtered.length === 0) {
+            paymentsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 36px 20px;">
+                        <div style="max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--bg-surface-secondary, #f1f5f9); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <div style="font-weight: 600; color: var(--text);">No transactions found under "${escapeHtml(currentPaymentFilter)}" filter</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                                ${allPayments.length === 0 
+                                    ? "Transactions and TradeShield Escrow milestones will automatically appear here when buyers place orders."
+                                    : "There are currently no transactions matching this specific status filter."}
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 6px;">
+                                ${currentPaymentFilter !== "all" 
+                                    ? `<button type="button" class="btn btn-sm btn-secondary" id="btnResetPaymentFilter">Show All Transactions</button>` 
+                                    : `<button type="button" class="btn btn-sm btn-primary btn-seed-demo-payment">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                        Simulate Escrow Order
+                                       </button>`
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
-        paymentsTableBody.innerHTML = payments.map(p => {
-            const isReleased = p.status === "Released";
+        paymentsTableBody.innerHTML = filtered.map(p => {
+            const st = String(p.status || "").toLowerCase();
+            const isReleased = st.includes("released") || st.includes("paid");
+            const isEscrow = st.includes("escrow");
             return `
                 <tr>
-                    <td><strong>${p.id}</strong></td>
-                    <td><span class="rfq-ref-code">#${p.orderRef}</span></td>
-                    <td>${escapeHtml(p.buyerName)}</td>
+                    <td><strong>${escapeHtml(p.id)}</strong></td>
+                    <td><span class="rfq-ref-code">#${escapeHtml(p.orderRef || 'ORD-NA')}</span></td>
+                    <td>${escapeHtml(p.buyerName || 'Buyer')}</td>
                     <td style="font-weight: 700; color: var(--text);">${formatINR(p.amount || 0)}</td>
-                    <td style="font-size: 0.8rem; color: var(--text-muted);">${p.date}</td>
-                    <td style="font-size: 0.85rem;">${escapeHtml(p.method)}</td>
-                    <td><span class="badge-pill ${isReleased ? 'badge-released' : 'badge-escrow'}">${p.status}</span></td>
-                    <td><span style="font-family: monospace; font-size: 0.8rem; font-weight: 700;">${p.invoiceRef}</span></td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(p.date || 'Today')}</td>
+                    <td style="font-size: 0.85rem;">${escapeHtml(p.method || 'TradeShield Escrow')}</td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-secondary btn-open-invoice-modal" data-order-id="${p.orderRef}">
-                            <svg class="tn-ui-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg> View Invoice
-                        </button>
+                        <span class="badge-pill ${isReleased ? 'badge-released' : (isEscrow ? 'badge-escrow' : 'badge-pending')}">
+                            ${escapeHtml(p.status)}
+                        </span>
+                    </td>
+                    <td><span style="font-family: monospace; font-size: 0.8rem; font-weight: 700;">${escapeHtml(p.invoiceRef || 'INV-PENDING')}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-sm btn-secondary btn-open-invoice-modal" data-order-id="${escapeHtml(p.orderRef)}">
+                                <svg class="tn-ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Invoice
+                            </button>
+                            ${isEscrow ? `
+                                <button type="button" class="btn btn-sm btn-outline-success btn-release-escrow-action" data-payment-id="${escapeHtml(p.id)}" style="border: 1px solid #059669; color: #059669; background: transparent; font-weight: 600;" title="Simulate buyer milestone release to supplier account">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 3px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Release Funds
+                                </button>
+                            ` : ''}
+                        </div>
                     </td>
                 </tr>
             `;
@@ -2193,28 +2493,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Payments KPI Cards click filtering
-    const cardFinEscrow = document.getElementById("cardFinEscrow");
     if (cardFinEscrow) {
         cardFinEscrow.addEventListener("click", () => {
             renderPayments("Escrow");
-            showToast("Filtering In-Escrow transactions", "info");
+            showToast("Filtering TradeShield In-Escrow transactions", "info");
         });
     }
-    const cardFinReleased = document.getElementById("cardFinReleased");
     if (cardFinReleased) {
         cardFinReleased.addEventListener("click", () => {
             renderPayments("Released");
             showToast("Filtering Released transactions", "info");
         });
     }
-    const cardFinPending = document.getElementById("cardFinPending");
     if (cardFinPending) {
         cardFinPending.addEventListener("click", () => {
-            renderPayments("Escrow");
-            showToast("Filtering In-Escrow transactions", "info");
+            renderPayments("Pending");
+            showToast("Filtering Pending transactions", "info");
         });
     }
-    const cardFinTotal = document.getElementById("cardFinTotal");
     if (cardFinTotal) {
         cardFinTotal.addEventListener("click", () => {
             renderPayments("all");
@@ -2224,10 +2520,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (paymentsTableBody) {
         paymentsTableBody.addEventListener("click", function (e) {
-            const btn = e.target.closest(".btn-open-invoice-modal");
-            if (btn) {
-                const orderId = btn.getAttribute("data-order-id");
+            const invoiceBtn = e.target.closest(".btn-open-invoice-modal");
+            if (invoiceBtn) {
+                const orderId = invoiceBtn.getAttribute("data-order-id");
                 openInvoiceModal(orderId);
+                return;
+            }
+
+            const releaseBtn = e.target.closest(".btn-release-escrow-action");
+            if (releaseBtn) {
+                const paymentId = releaseBtn.getAttribute("data-payment-id");
+                if (paymentId && typeof store.updatePaymentStatus === "function") {
+                    store.updatePaymentStatus(paymentId, "Released");
+                    showToast(`TradeShield Escrow funds for #${paymentId} released to Supplier Account!`, "success");
+                    renderPayments();
+                }
+                return;
+            }
+
+            const seedBtn = e.target.closest(".btn-seed-demo-payment");
+            if (seedBtn) {
+                if (typeof store.seedDemoPayment === "function") {
+                    const newTxn = store.seedDemoPayment();
+                    showToast(`Simulated TradeShield Escrow order of ${formatINR(newTxn.amount)} created!`, "success");
+                    renderPayments("all");
+                }
+                return;
+            }
+
+            const resetBtn = e.target.closest("#btnResetPaymentFilter");
+            if (resetBtn) {
+                if (cardFinTotal) cardFinTotal.click();
+                else renderPayments("all");
             }
         });
     }
@@ -2675,12 +2999,31 @@ document.addEventListener("DOMContentLoaded", function () {
         const currentUser = getLoggedInUser();
         const biz = store.getBusinessProfile();
 
-        const name = currentUser ? (currentUser.fullName || currentUser.name || "Supplier Name") : biz.contactPerson;
+        const name = currentUser ? (currentUser.fullName || currentUser.name || "Supplier Name") : (biz.contactPerson || "Supplier Name");
         const comp = currentUser ? (currentUser.businessName || currentUser.company || biz.businessName) : biz.businessName;
-        const initial = name.charAt(0).toUpperCase();
+        const initial = (name || "S").charAt(0).toUpperCase();
 
-        if (profileAvatar) profileAvatar.textContent = initial;
-        if (dropdownAvatar) dropdownAvatar.textContent = initial;
+        let userPhoto = "";
+        if (currentUser && typeof currentUser.profileImage === "string") {
+            userPhoto = currentUser.profileImage;
+        } else if (currentUser && typeof currentUser.avatar === "string") {
+            userPhoto = currentUser.avatar;
+        } else if (biz && biz.profileImage) {
+            userPhoto = biz.profileImage;
+        }
+
+        const avatarHtml = userPhoto
+            ? `<img src="${userPhoto}" alt="${escapeHtml(name)}" class="avatar-img-circle" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;" onerror="this.onerror=null; this.parentElement.textContent='${initial}';" />`
+            : initial;
+
+        if (profileAvatar) profileAvatar.innerHTML = avatarHtml;
+        if (dropdownAvatar) dropdownAvatar.innerHTML = avatarHtml;
+
+        const bizLogoDisplay = document.getElementById("bizProfileLogoDisplay");
+        if (bizLogoDisplay) {
+            bizLogoDisplay.src = userPhoto || (biz && biz.logo ? biz.logo : "../../images/TradeNest.webp");
+        }
+
         if (profileName) profileName.textContent = name;
         if (dropdownName) dropdownName.textContent = name;
         if (dropdownEmail) dropdownEmail.textContent = currentUser ? currentUser.email : biz.email;

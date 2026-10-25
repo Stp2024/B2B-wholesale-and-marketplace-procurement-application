@@ -1758,7 +1758,26 @@
         const currentUser = getCurrentSupplierUser();
         if (isRegisteredNewSupplier(currentUser)) {
             const key = getSupplierStorageKey("payments");
-            return readStorage(key, []);
+            const stored = readStorage(key, null);
+            if (stored !== null) return stored;
+
+            // If empty, auto-generate payments matching any orders the new supplier received
+            const orders = getOrders();
+            if (orders && orders.length > 0) {
+                const generated = orders.map((ord, idx) => ({
+                    id: `TXN-${88400 + idx}`,
+                    orderRef: ord.id,
+                    buyerName: ord.buyerName || "TradeNest Buyer",
+                    amount: Number(ord.totalAmount) || 0,
+                    date: ord.orderDate || new Date().toISOString().split("T")[0],
+                    method: "TradeShield Escrow",
+                    status: ord.paymentStatus === "Released to Supplier" ? "Released" : "Escrow Protected",
+                    invoiceRef: `INV-2026-${(100 + idx).toString().padStart(3, "0")}`
+                }));
+                writeStorage(key, generated);
+                return generated;
+            }
+            return [];
         }
         const localPayments = readStorage(KEYS.PAYMENTS, SEED_DATA.payments);
         const marketplace = getMarketplaceState();
@@ -1782,7 +1801,7 @@
                 amount: Number(payment.amount) || 0,
                 date: payment.paymentDate,
                 method: payment.paymentMethod,
-                status: ["Paid", "Released"].includes(payment.status) ? "Released" : "Escrow",
+                status: ["Paid", "Released"].includes(payment.status) ? "Released" : "Escrow Protected",
                 invoiceRef: invoice.invoiceNumber || `INV-${payment.orderId}`,
                 marketplacePayment: true
             };
@@ -1793,6 +1812,71 @@
 
     function getPaymentByOrder(orderId) {
         return getPayments().find(p => p.orderRef === orderId) || null;
+    }
+
+    function updatePaymentStatus(id, newStatus) {
+        const currentUser = getCurrentSupplierUser();
+        const key = isRegisteredNewSupplier(currentUser)
+            ? getSupplierStorageKey("payments")
+            : KEYS.PAYMENTS;
+        const payments = getPayments();
+        const p = payments.find(item => item.id === id || item.orderRef === id);
+        if (p) {
+            p.status = newStatus;
+            writeStorage(key, payments);
+
+            // Also synchronize with orders if linked
+            if (p.orderRef) {
+                const orders = getOrders();
+                const ord = orders.find(o => o.id === p.orderRef);
+                if (ord) {
+                    ord.paymentStatus = newStatus === "Released" ? "Released to Supplier" : newStatus;
+                    const orderKey = isRegisteredNewSupplier(currentUser)
+                        ? getSupplierStorageKey("orders")
+                        : KEYS.ORDERS;
+                    writeStorage(orderKey, orders);
+                }
+            }
+
+            // Sync with marketplace state if present
+            const marketplace = getMarketplaceState();
+            if (marketplace && marketplace.payments) {
+                const mpP = marketplace.payments.find(item => item.id === id || item.orderId === (p.orderRef || id));
+                if (mpP) {
+                    mpP.status = newStatus;
+                    saveMarketplaceState(marketplace);
+                }
+            }
+
+            logActivity("Finance", `Payment #${p.id} status updated to "${newStatus}"`, "payments");
+            notifyChange("payments");
+            return true;
+        }
+        return false;
+    }
+
+    function seedDemoPayment() {
+        const currentUser = getCurrentSupplierUser();
+        const key = isRegisteredNewSupplier(currentUser)
+            ? getSupplierStorageKey("payments")
+            : KEYS.PAYMENTS;
+        const payments = getPayments();
+        const randId = Math.floor(10000 + Math.random() * 89999);
+        const newTxn = {
+            id: `TXN-${randId}`,
+            orderRef: `ORD-${randId}`,
+            buyerName: "Apex Retail Solutions Ltd.",
+            amount: 185000.00,
+            date: new Date().toISOString().split("T")[0],
+            method: "TradeShield Escrow (Commercial Card)",
+            status: "Escrow Protected",
+            invoiceRef: `INV-2026-${Math.floor(100 + Math.random() * 899)}`
+        };
+        payments.unshift(newTxn);
+        writeStorage(key, payments);
+        logActivity("Finance", `TradeShield Escrow payment initialized for ${newTxn.id} (${newTxn.buyerName})`, "payments");
+        notifyChange("payments");
+        return newTxn;
     }
 
     // ==========================================
@@ -2004,8 +2088,41 @@
         const current = getBusinessProfile();
         const updated = { ...current, ...profileData };
         writeStorage(key, updated);
+        if (profileData.profileImage !== undefined) {
+            let user = currentUser;
+            if (!user) {
+                try { user = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}"); } catch(e) { user = {}; }
+            }
+            user.profileImage = profileData.profileImage;
+            user.avatar = profileData.profileImage;
+            try {
+                localStorage.setItem("tradenestCurrentUser", JSON.stringify(user));
+            } catch(e) {}
+        }
         logActivity("Company", "Business profile and GSTIN credentials updated", "business-profile");
         notifyChange("business-profile");
+        return updated;
+    }
+
+    function saveUserProfilePhoto(dataUrl) {
+        let currentUser = getCurrentSupplierUser();
+        if (!currentUser) {
+            try { currentUser = JSON.parse(localStorage.getItem("tradenestCurrentUser") || "{}"); } catch(e) { user = {}; }
+        }
+        if (currentUser) {
+            currentUser.profileImage = dataUrl || "";
+            currentUser.avatar = dataUrl || "";
+            try {
+                localStorage.setItem("tradenestCurrentUser", JSON.stringify(currentUser));
+            } catch(e) {}
+        }
+        const currentBiz = getBusinessProfile();
+        const updated = saveBusinessProfile({
+            ...currentBiz,
+            profileImage: dataUrl || "",
+            logo: dataUrl ? dataUrl : (currentBiz.logo && !currentBiz.logo.startsWith("data:") && !currentBiz.logo.includes("unsplash.com") ? currentBiz.logo : "")
+        });
+        notifyChange("profile");
         return updated;
     }
 
@@ -2178,6 +2295,7 @@
         // Module 16 & 28
         getBusinessProfile,
         saveBusinessProfile,
+        saveUserProfilePhoto,
         addDocument,
         // Module 17 & 18
         getProducts,
@@ -2215,6 +2333,8 @@
         // Module 25
         getPayments,
         getPaymentByOrder,
+        updatePaymentStatus,
+        seedDemoPayment,
         // Module 26
         getShipments,
         getShipmentById,

@@ -677,15 +677,17 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
+        const userPhoto = (profile && (profile.profileImage || profile.avatar)) || "";
+        const avatarHtml = userPhoto
+            ? `<img src="${userPhoto}" alt="${profile.fullName || 'Buyer'}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;" onerror="this.onerror=null; this.parentElement.textContent='${initial}';" />`
+            : initial;
+
         if (profileAvatar) {
-            profileAvatar.textContent =
-                initial;
+            profileAvatar.innerHTML = avatarHtml;
         }
 
-
         if (dropdownAvatar) {
-            dropdownAvatar.textContent =
-                initial;
+            dropdownAvatar.innerHTML = avatarHtml;
         }
     }
 
