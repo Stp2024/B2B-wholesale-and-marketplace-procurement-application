@@ -280,15 +280,12 @@
     });
 
     container.innerHTML = CATEGORY_ITEMS.map(cat => {
-      const count = categoryCounts[cat.id] || 0;
-      const countDisplay = count > 0 ? `${count} ITEMS` : cat.countLabel;
-      return `<a class="tn-category-photo-card" href="pages/products.html?category=${encodeURIComponent(cat.id)}" aria-label="Browse ${cat.name}">
+      return `<div class="tn-category-photo-card">
         <img src="${cat.img}" alt="${escapeHtml(cat.name)}" class="tn-category-photo-img" loading="lazy" />
         <div class="tn-category-photo-overlay">
           <div class="tn-category-photo-title">${escapeHtml(cat.name)}</div>
-          <div class="tn-category-photo-count">${countDisplay}</div>
         </div>
-      </a>`;
+      </div>`;
     }).join("");
   }
 

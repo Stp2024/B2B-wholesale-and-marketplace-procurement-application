@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TradeNest Advanced Product Search & Supplier Filters Test Suite</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 24px; background: #f8fafc; color: #0f172a; margin: 0; }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    p { color: #64748b; margin-top: 0; margin-bottom: 16px; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; margin-bottom: 16px; }
+    .running { background: #e0f2fe; color: #0369a1; }
+    .passed { background: #dcfce7; color: #15803d; }
+    .failed { background: #fee2e2; color: #b91c1c; }
+    #summary-stats { font-weight: 600; margin-bottom: 16px; font-size: 1.1rem; }
+    .test-row { padding: 10px 14px; margin-bottom: 8px; border-radius: 8px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 12px; }
+    .test-icon { font-weight: bold; flex-shrink: 0; font-size: 1.1rem; }
+    .pass .test-icon { color: #16a34a; }
+    .fail .test-icon { color: #dc2626; }
+    .test-name { font-weight: 700; font-size: 0.95rem; }
+    .test-details { color: #475569; font-size: 0.85rem; margin-top: 2px; }
+    iframe { width: 100%; height: 500px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 20px; background: #ffffff; }
+  </style>
+</head>
+<body>
+  <h1>TradeNest Advanced Product Search & Supplier Filters Test Suite</h1>
+  <p>Automated verification suite testing all 17 functional requirements.</p>
+  <div id="status-pill" class="status-badge running">Running tests...</div>
+  <div id="summary-stats"></div>
+  <div id="test-results"></div>
+
+  <iframe id="testFrame" src="../pages/products.html"></iframe>
+
+  <script>
+    const iframe = document.getElementById('testFrame');
+    const resultsDiv = document.getElementById('test-results');
+    const statusPill = document.getElementById('status-pill');
+    const summaryStats = document.getElementById('summary-stats');
+
+    iframe.onload = () => {
+      setTimeout(async () => {
+        const doc = iframe.contentDocument;
+        const win = iframe.contentWindow;
+        let passed = 0;
+        let failed = 0;
+        const tests = [];
+
+        function recordTest(id, name, success, details) {
+          if (success) passed++; else failed++;
+          tests.push({ id, name, success, details });
+          const row = document.createElement('div');
+          row.className = `test-row ${success ? 'pass' : 'fail'}`;
+          row.innerHTML = `
+            <span class="test-icon">${success ? '✔' : '✘'}</span>
+            <div>
+              <div class="test-name">${id}. ${name}</div>
+              <div class="test-details">${details}</div>
+            </div>
+          `;
+          resultsDiv.appendChild(row);
+        }
+
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+
+        try {
+          // References to UI elements
+          const searchInput = doc.getElementById('product-search-input');
+          const searchBtn = doc.querySelector('.btn-search');
+          const searchForm = doc.querySelector('.search-filter-form');
+          const filterCategory = doc.getElementById('filter-category');
+          const filterLocation = doc.getElementById('filter-location');
+          const filterPriceMin = doc.getElementById('filter-price-min');
+          const filterPriceMax = doc.getElementById('filter-price-max');
+          const filterVerification = doc.getElementById('filter-verification');
+          const filterTrust = doc.getElementById('filter-trust-score');
+          const filterAvailability = doc.getElementById('filter-availability');
+          const filterDelivery = doc.getElementById('filter-delivery-time');
+          const filterMoq = doc.getElementById('filter-moq');
+          const filterRating = doc.getElementById('filter-rating');
+          const applyFiltersBtn = searchForm ? searchForm.querySelector('button[type="submit"]:not(.btn-search)') : null;
+          const clearFiltersBtn = searchForm ? searchForm.querySelector('button[type="reset"]') : null;
+          const productsGrid = doc.querySelector('.products-grid');
+          const priceErrorEl = doc.getElementById('filter-price-error');
+          const moqErrorEl = doc.getElementById('filter-moq-error');
+
+          function getVisibleCards() {
+            return Array.from(productsGrid.querySelectorAll('.product-card')).filter(card => {
+              return card.style.display !== 'none' && card.offsetParent !== null;
+            });
+          }
+
+          function getVisibleCount() {
+            return getVisibleCards().length;
+          }
+
+          const initialCount = getVisibleCount();
+
+          // ----------------------------------------------------
+          // Test 1: Search for an existing product by full name
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          searchInput.value = "ABC Heavy-Duty Industrial Tool Kit";
+          searchBtn.click();
+          await wait(50);
+          const t1Cards = getVisibleCards();
+          const t1Match = t1Cards.length === 1 && t1Cards[0].querySelector('.product-title').textContent.includes("ABC Heavy-Duty Industrial Tool Kit");
+          recordTest(1, "Search for existing product by full name", t1Match, `Expected 1 card for 'ABC Heavy-Duty Industrial Tool Kit', got ${t1Cards.length}`);
+
+          // ----------------------------------------------------
+          // Test 2: Search using part of a product name
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          searchInput.value = "gloves";
+          searchBtn.click();
+          await wait(50);
+          const t2Cards = getVisibleCards();
+          const t2AllMatch = t2Cards.length >= 2 && t2Cards.every(c => c.textContent.toLowerCase().includes("gloves"));
+          recordTest(2, "Search using part of a product name ('gloves')", t2AllMatch, `Found ${t2Cards.length} products matching 'gloves'. All contain the keyword.`);
+
+          // ----------------------------------------------------
+          // Test 3: Filter by category
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterCategory.value = "office-supplies";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t3Cards = getVisibleCards();
+          const t3AllOffice = t3Cards.length >= 2 && t3Cards.every(c => c.getAttribute('data-category').toLowerCase().includes("office"));
+          recordTest(3, "Filter by Category ('Office Supplies')", t3AllOffice, `Found ${t3Cards.length} office supply products. All verified in Office Supplies category.`);
+
+          // ----------------------------------------------------
+          // Test 4: Filter by supplier location
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterLocation.value = "mumbai";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t4Cards = getVisibleCards();
+          const t4AllMumbai = t4Cards.length >= 1 && t4Cards.every(c => c.getAttribute('data-location').toLowerCase().includes("mumbai"));
+          recordTest(4, "Filter by Supplier Location ('Mumbai, Maharashtra')", t4AllMumbai, `Found ${t4Cards.length} products with suppliers based in Mumbai.`);
+
+          // ----------------------------------------------------
+          // Test 5: Apply minimum and maximum prices
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterPriceMin.value = "200";
+          filterPriceMax.value = "1000";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t5Cards = getVisibleCards();
+          const t5AllInRange = t5Cards.length >= 3 && t5Cards.every(c => {
+            const price = parseFloat(c.getAttribute('data-price'));
+            return price >= 200 && price <= 1000;
+          });
+          recordTest(5, "Price Range filter (₹200 - ₹1,000)", t5AllInRange, `Found ${t5Cards.length} products in range ₹200 - ₹1,000. All prices strictly inside boundaries.`);
+
+          // ----------------------------------------------------
+          // Test 6: Select verified suppliers only
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterVerification.value = "verified-only";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t6Cards = getVisibleCards();
+          const t6AllVerified = t6Cards.length >= 5 && t6Cards.every(c => {
+            const v = c.getAttribute('data-verification').toLowerCase();
+            return v.includes("verified") || v.includes("premium");
+          });
+          recordTest(6, "Supplier Verification ('Verified Only')", t6AllVerified, `Returned ${t6Cards.length} products from verified enterprise suppliers.`);
+
+          // ----------------------------------------------------
+          // Test 7: Apply a minimum trust score
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterTrust.value = "90";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t7Cards = getVisibleCards();
+          const t7All90Plus = t7Cards.length >= 5 && t7Cards.every(c => {
+            return parseFloat(c.getAttribute('data-trust')) >= 90;
+          });
+          recordTest(7, "Minimum Trust Score ('90+ Excellent')", t7All90Plus, `Returned ${t7Cards.length} products. All suppliers have Trust Score >= 90.`);
+
+          // ----------------------------------------------------
+          // Test 8: Filter by product availability
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterAvailability.value = "in-stock";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t8Cards = getVisibleCards();
+          const t8AllInStock = t8Cards.length >= 5 && t8Cards.every(c => {
+            return c.getAttribute('data-availability') === "In Stock";
+          });
+          recordTest(8, "Product Availability ('In Stock')", t8AllInStock, `Returned ${t8Cards.length} verified in-stock items.`);
+
+          // ----------------------------------------------------
+          // Test 9: Apply a maximum delivery time
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterDelivery.value = "7";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t9Cards = getVisibleCards();
+          const t9AllFast = t9Cards.length >= 5 && t9Cards.every(c => {
+            return parseFloat(c.getAttribute('data-delivery')) <= 7;
+          });
+          recordTest(9, "Max Delivery Time ('Within 7 Days')", t9AllFast, `Returned ${t9Cards.length} products with delivery estimates <= 7 days.`);
+
+          // ----------------------------------------------------
+          // Test 10: Apply a maximum MOQ
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterMoq.value = "50";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t10Cards = getVisibleCards();
+          const t10AllLowMoq = t10Cards.length >= 3 && t10Cards.every(c => {
+            return parseFloat(c.getAttribute('data-moq')) <= 50;
+          });
+          recordTest(10, "Max MOQ (<= 50 units)", t10AllLowMoq, `Returned ${t10Cards.length} products with MOQ <= 50.`);
+
+          // ----------------------------------------------------
+          // Test 11: Filter by minimum rating
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterRating.value = "4.8";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t11Cards = getVisibleCards();
+          const t11AllHighRating = t11Cards.length >= 5 && t11Cards.every(c => {
+            return parseFloat(c.getAttribute('data-rating')) >= 4.8;
+          });
+          recordTest(11, "Minimum Rating ('4.8+ rating')", t11AllHighRating, `Returned ${t11Cards.length} products with rating >= 4.8.`);
+
+          // ----------------------------------------------------
+          // Test 12: Combine several filters simultaneously (AND logic)
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          filterCategory.value = "industrial-equipment";
+          filterTrust.value = "90";
+          filterMoq.value = "200";
+          applyFiltersBtn.click();
+          await wait(50);
+          const t12Cards = getVisibleCards();
+          const t12AllPass = t12Cards.length >= 1 && t12Cards.every(c => {
+            const cat = c.getAttribute('data-category').toLowerCase();
+            const trust = parseFloat(c.getAttribute('data-trust'));
+            const moq = parseFloat(c.getAttribute('data-moq'));
+            return cat.includes("industrial") && trust >= 90 && moq <= 200;
+          });
+          recordTest(12, "Multi-Filter Combination with AND logic", t12AllPass, `Returned ${t12Cards.length} products simultaneously satisfying Category=Industrial, Trust>=90, and MOQ<=200.`);
+
+          // ----------------------------------------------------
+          // Test 13: Clear all filters and restore original results
+          // ----------------------------------------------------
+          clearFiltersBtn.click();
+          await wait(50);
+          const t13Count = getVisibleCount();
+          const t13Restored = t13Count === initialCount && searchInput.value === "" && filterCategory.value === "" && filterPriceMin.value === "";
+          recordTest(13, "Clear all filters restores full catalogue", t13Restored, `Restored all ${t13Count} products. Form inputs cleared to defaults.`);
+
+          // ----------------------------------------------------
+          // Test 14: Search for nonexistent product and verify empty state
+          // ----------------------------------------------------
+          searchInput.value = "xyznonexistentproduct999";
+          searchBtn.click();
+          await wait(50);
+          const emptyState = productsGrid.querySelector('.grid-empty-state');
+          const t14Empty = getVisibleCards().length === 0 && !!emptyState && emptyState.textContent.includes("No matching products found");
+          
+          // Test empty state reset button
+          if (emptyState) {
+            const emptyReset = emptyState.querySelector('#btn-reset-empty-filters');
+            if (emptyReset) emptyReset.click();
+          }
+          await wait(50);
+          const t14RestoredAfterEmpty = getVisibleCount() === initialCount;
+          recordTest(14, "Nonexistent query triggers empty state with Reset CTA", t14Empty && t14RestoredAfterEmpty, `Empty state displayed with message 'No products match your selected filters. Try changing your search criteria.' Reset button restored ${getVisibleCount()} products.`);
+
+          // ----------------------------------------------------
+          // Test 15: Invalid price ranges and invalid numeric values
+          // ----------------------------------------------------
+          filterPriceMin.value = "5000";
+          filterPriceMax.value = "100";
+          applyFiltersBtn.click();
+          await wait(50);
+          const priceErrorShown = priceErrorEl && priceErrorEl.style.display !== "none" && priceErrorEl.textContent.includes("cannot exceed");
+          
+          filterPriceMin.value = "-10";
+          filterPriceMax.value = "500";
+          applyFiltersBtn.click();
+          await wait(50);
+          const negativePriceErrorShown = priceErrorEl && priceErrorEl.style.display !== "none" && priceErrorEl.textContent.includes("negative");
+
+          filterMoq.value = "-5";
+          applyFiltersBtn.click();
+          await wait(50);
+          const moqErrorShown = moqErrorEl && moqErrorEl.style.display !== "none" && moqErrorEl.textContent.includes("positive");
+
+          clearFiltersBtn.click();
+          await wait(50);
+          const errorsCleared = priceErrorEl.style.display === "none" && moqErrorEl.style.display === "none";
+          recordTest(15, "Validation for invalid price boundaries and negative numbers", priceErrorShown && negativePriceErrorShown && moqErrorShown && errorsCleared, "Price range validation, negative price prevention, and MOQ whole-number validation all correctly enforced with visible inline alerts.");
+
+          // ----------------------------------------------------
+          // Test 16: Category card quick navigation links
+          // ----------------------------------------------------
+          const catCards = doc.querySelectorAll('.category-card .category-link');
+          let catLinkWorks = false;
+          if (catCards.length > 0) {
+            catCards[0].click(); // click Electronics
+            await wait(50);
+            catLinkWorks = filterCategory.value === "electronics" && getVisibleCount() > 0;
+          }
+          clearFiltersBtn.click();
+          await wait(50);
+          recordTest(16, "Category Card 'View Products' click auto-filters catalogue", catLinkWorks, "Category card links automatically populate Category dropdown, apply filter, and update results.");
+
+          // ----------------------------------------------------
+          // Test 17: Product Card Navigation and Action Links
+          // ----------------------------------------------------
+          const sampleCard = getVisibleCards()[0];
+          const viewProdLink = sampleCard ? sampleCard.querySelector('a.btn-primary') : null;
+          const viewSupLink = sampleCard ? sampleCard.querySelector('a.btn-outline') : null;
+          const t17LinksValid = viewProdLink && viewProdLink.href.includes("product-details.html?id=") && viewSupLink && viewSupLink.href.includes("supplier-details.html?id=");
+          recordTest(17, "Product card links preserve navigation to details & suppliers", t17LinksValid, `View Product href: '${viewProdLink?.getAttribute('href')}', View Supplier href: '${viewSupLink?.getAttribute('href')}'.`);
+
+          // Final Status
+          if (failed === 0) {
+            statusPill.className = "status-badge passed";
+            statusPill.textContent = "All 17 Tests Passed (100%)";
+          } else {
+            statusPill.className = "status-badge failed";
+            statusPill.textContent = `${failed} Test(s) Failed`;
+          }
+          summaryStats.textContent = `Completed ${passed + failed} tests: ${passed} Passed, ${failed} Failed.`;
+
+        } catch (err) {
+          console.error("Test execution exception:", err);
+          recordTest("ERR", "Exception during test suite run", false, err.message);
+        }
+      }, 400);
+    };
+  </script>
+</body>
+</html>

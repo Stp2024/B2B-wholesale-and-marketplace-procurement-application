@@ -1,14 +1,15 @@
 /**
  * TradeNest — Products Catalog & Search Handler (js/products-page.js)
- * Navigates to product description based on product name searched by user,
- * provides live autocomplete suggestions, and handles catalog filtering.
+ * Fully functional Advanced Product Search & Supplier Filters.
+ * Connects Search Keywords, Category, Supplier Location, Price Range,
+ * Supplier Verification, Minimum Trust Score, Product Availability,
+ * Max Delivery Time, Max MOQ, Minimum Rating, and Catalog Sorting.
  */
 
 (function () {
   "use strict";
 
-  // Category-based default product image resolver to ensure suppliers don't all look the same
-  // Category-based and title-based smart product image resolver
+  // Category and name-aware fallback product images
   function getDefaultProductImage(category, name) {
     const cat = String(category || "").toLowerCase();
     const nm = String(name || "").toLowerCase();
@@ -85,10 +86,10 @@
     if (cat.includes("packag")) return "../images/products/corrugated-packaging-boxes.webp";
     if (cat.includes("office")) return "../images/products/featured-office-ergonomic-chairs.webp";
 
-    return "../images/products/mechanics-tool-kit.webp";
+    return "../images/products/industrial-safety-gloves.webp";
   }
 
-  // Canonical mapping for reliable product resolution
+  // Canonical product catalog with verified attributes for all standard items
   const CANONICAL_CATALOG = [
     {
       id: "product-abc-001",
@@ -97,13 +98,18 @@
       category: "Industrial Equipment",
       price: 2450,
       moq: 10,
+      unit: "kit",
+      stock: 450,
       image: "../images/products/mechanics-tool-kit.webp",
-      supplierName: "ABC Traders",
       supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
       location: "Bengaluru, Karnataka",
-      verification: "Verified",
+      verificationStatus: "Premium Certified",
       rating: 4.9,
       trustScore: 96,
+      deliveryDays: 4,
+      deliveryInfo: "2-4 business days across India",
+      availability: "In Stock",
       description: "Professional grade 120-piece chrome vanadium alloy steel toolkit for plant maintenance and heavy manufacturing by ABC Traders."
     },
     {
@@ -113,13 +119,18 @@
       category: "Industrial Equipment",
       price: 195,
       moq: 200,
+      unit: "pair",
+      stock: 3500,
       image: "../images/products/high-grip-work-gloves.webp",
-      supplierName: "ABC Traders",
       supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
       location: "Bengaluru, Karnataka",
-      verification: "Verified",
+      verificationStatus: "Premium Certified",
       rating: 5.0,
       trustScore: 96,
+      deliveryDays: 3,
+      deliveryInfo: "2-3 business days across India",
+      availability: "In Stock",
       description: "Premium level-5 cut resistant industrial work gloves with reinforced micro-foam nitrile coating manufactured by ABC Traders."
     },
     {
@@ -129,13 +140,18 @@
       category: "Packaging",
       price: 680,
       moq: 25,
+      unit: "crate",
+      stock: 800,
       image: "../images/products/industrial-storage-crates.webp",
-      supplierName: "ABC Traders",
       supplierId: "supplier-abc",
+      supplierName: "ABC Traders",
       location: "Bengaluru, Karnataka",
-      verification: "Verified",
+      verificationStatus: "Premium Certified",
       rating: 4.8,
       trustScore: 96,
+      deliveryDays: 5,
+      deliveryInfo: "3-5 business days bulk freight",
+      availability: "In Stock",
       description: "High-density polyethylene heavy-duty stackable industrial storage crates for distribution centers and warehouse logistics by ABC Traders."
     },
     {
@@ -145,12 +161,19 @@
       category: "Industrial Equipment",
       price: 180,
       moq: 500,
+      unit: "pair",
+      stock: 1250,
       image: "../images/products/industrial-safety-gloves.webp",
+      supplierId: "supplier-001",
       supplierName: "Apex Safety Solutions Pvt Ltd",
       location: "Bengaluru, Karnataka",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 5.0,
-      trustScore: 92
+      trustScore: 92,
+      deliveryDays: 4,
+      deliveryInfo: "2-4 business days across India",
+      availability: "In Stock",
+      description: "Heavy-duty nitrile coated Kevlar grip gloves with cut resistance level 5 and oil repellent coating."
     },
     {
       id: "product-002",
@@ -159,12 +182,19 @@
       category: "Industrial Equipment",
       price: 520,
       moq: 200,
+      unit: "unit",
+      stock: 760,
       image: "../images/products/industrial-safety-helmets.webp",
+      supplierId: "supplier-001",
       supplierName: "Apex Safety Solutions Pvt Ltd",
       location: "Bengaluru, Karnataka",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.8,
-      trustScore: 92
+      trustScore: 92,
+      deliveryDays: 5,
+      deliveryInfo: "3-5 business days across India",
+      availability: "In Stock",
+      description: "High-impact head protection with adjustable ratchet suspension and ANSI certification for heavy construction."
     },
     {
       id: "product-003",
@@ -173,12 +203,19 @@
       category: "Office Supplies",
       price: 420,
       moq: 50,
+      unit: "ream",
+      stock: 2500,
       image: "../images/products/a4-premium-copy-paper.webp",
+      supplierId: "supplier-002",
       supplierName: "PaperPro Solutions",
       location: "Mumbai, Maharashtra",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.7,
-      trustScore: 88
+      trustScore: 88,
+      deliveryDays: 3,
+      deliveryInfo: "2-3 business days in major metros",
+      availability: "In Stock",
+      description: "High-whiteness premium 80 GSM copy paper engineered for jam-free high-speed laser and inkjet printing."
     },
     {
       id: "product-004",
@@ -187,12 +224,19 @@
       category: "Office Supplies",
       price: 1180,
       moq: 20,
+      unit: "set",
+      stock: 420,
       image: "../images/products/executive-desk-organizer.webp",
+      supplierId: "supplier-002",
       supplierName: "PaperPro Solutions",
       location: "Mumbai, Maharashtra",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.6,
-      trustScore: 88
+      trustScore: 88,
+      deliveryDays: 6,
+      deliveryInfo: "3-6 business days standard shipping",
+      availability: "In Stock",
+      description: "Modular steel office desk organizer designed for high-density corporate workspaces and documents."
     },
     {
       id: "product-005",
@@ -201,12 +245,19 @@
       category: "Electronics",
       price: 1650,
       moq: 20,
+      unit: "panel",
+      stock: 520,
       image: "../images/products/commercial-led-panel-lights.webp",
+      supplierId: "supplier-003",
       supplierName: "Lumina Electric",
       location: "Delhi NCR",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.8,
-      trustScore: 94
+      trustScore: 94,
+      deliveryDays: 7,
+      deliveryInfo: "4-7 business days with safe fragility pack",
+      availability: "In Stock",
+      description: "Energy-efficient 40W commercial edge-lit LED panels 600x600mm, flicker-free driver, 4000 lumens, 50,000h lifespan."
     },
     {
       id: "product-006",
@@ -215,12 +266,19 @@
       category: "Packaging",
       price: 55,
       moq: 500,
+      unit: "box",
+      stock: 9600,
       image: "../images/products/corrugated-packaging-boxes.webp",
+      supplierId: "supplier-004",
       supplierName: "PackRight Corp.",
       location: "Ahmedabad, Gujarat",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.5,
-      trustScore: 86
+      trustScore: 86,
+      deliveryDays: 5,
+      deliveryInfo: "2-5 business days bulk freight",
+      availability: "In Stock",
+      description: "Heavy-duty triple-wall corrugated shipping boxes engineered for industrial export and freight protection."
     },
     {
       id: "product-007",
@@ -229,12 +287,19 @@
       category: "Packaging",
       price: 230,
       moq: 150,
+      unit: "set",
+      stock: 640,
       image: "../images/products/protective-foam-inserts.webp",
+      supplierId: "supplier-004",
       supplierName: "PackRight Corp.",
       location: "Ahmedabad, Gujarat",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.6,
-      trustScore: 86
+      trustScore: 86,
+      deliveryDays: 5,
+      deliveryInfo: "3-5 business days dispatch",
+      availability: "In Stock",
+      description: "Custom die-cut polyethylene anti-static foam inserts for electronics, instrumentation, and fragile logistics."
     },
     {
       id: "product-008",
@@ -243,12 +308,19 @@
       category: "Machinery",
       price: 5300,
       moq: 5,
+      unit: "unit",
+      stock: 85,
       image: "../images/products/warehouse-shelving-rack.webp",
+      supplierId: "supplier-005",
       supplierName: "SteelCraft Ltd.",
       location: "Pune, Maharashtra",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.9,
-      trustScore: 90
+      trustScore: 90,
+      deliveryDays: 8,
+      deliveryInfo: "5-8 business days freight delivery",
+      availability: "In Stock",
+      description: "Industrial cold-rolled steel modular rack shelving system supporting 800 kg per level for distribution centres."
     },
     {
       id: "product-009",
@@ -257,12 +329,19 @@
       category: "Textiles & Garments",
       price: 145,
       moq: 1000,
+      unit: "meter",
+      stock: 4500,
       image: "../images/products/cotton-fabric-rolls.webp",
+      supplierId: "supplier-006",
       supplierName: "Vardhman Weaves & Tex",
       location: "Ahmedabad, Gujarat",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.9,
-      trustScore: 89
+      trustScore: 89,
+      deliveryDays: 5,
+      deliveryInfo: "3-5 business days dispatch",
+      availability: "In Stock",
+      description: "Premium quality 100% combed organic cotton fabric rolls, ideal for garment manufacturing."
     },
     {
       id: "product-010",
@@ -271,12 +350,40 @@
       category: "Electronics",
       price: 120,
       moq: 100,
-      image: "../images/products/led-bulbs.webp",
+      unit: "piece",
+      stock: 2200,
+      image: "../images/products/commercial-led-panel-lights.webp",
+      supplierId: "supplier-003",
       supplierName: "Lumina Electric",
       location: "Delhi NCR",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.7,
-      trustScore: 94
+      trustScore: 94,
+      deliveryDays: 4,
+      deliveryInfo: "2-4 business days standard",
+      availability: "In Stock",
+      description: "High-lumen B22 commercial LED bulbs with surge protection for offices and industrial buildings."
+    },
+    {
+      id: "product-011",
+      sku: "SKU-IND-FST-11",
+      name: "Stainless Steel Components",
+      category: "Industrial Equipment",
+      price: 320,
+      moq: 200,
+      unit: "unit",
+      stock: 1800,
+      image: "../images/products/stainless-steel-components.webp",
+      supplierId: "supplier-005",
+      supplierName: "Metalex Engineering Ltd",
+      location: "Pune, Maharashtra",
+      verificationStatus: "Verified",
+      rating: 4.8,
+      trustScore: 93,
+      deliveryDays: 8,
+      deliveryInfo: "5-8 business days freight delivery",
+      availability: "In Stock",
+      description: "Precision-machined Grade 316 stainless steel fittings, valves, and industrial fasteners."
     },
     {
       id: "product-012",
@@ -285,12 +392,19 @@
       category: "Packaging",
       price: 450,
       moq: 100,
+      unit: "pack",
+      stock: 1400,
       image: "../images/products/food-packaging-materials.webp",
+      supplierId: "supplier-007",
       supplierName: "BioPack Green Solutions",
       location: "Ahmedabad, Gujarat",
-      verification: "Verified",
-      rating: 4.8,
-      trustScore: 88
+      verificationStatus: "Verified",
+      rating: 4.1,
+      trustScore: 88,
+      deliveryDays: 5,
+      deliveryInfo: "3-5 business days freight",
+      availability: "In Stock",
+      description: "Food-grade compostable vacuum seal pouches and heat-sealable trays for commercial catering."
     },
     {
       id: "product-013",
@@ -299,12 +413,19 @@
       category: "Machinery",
       price: 1150,
       moq: 25,
+      unit: "piece",
+      stock: 320,
       image: "../images/products/featured-cnc-milling-cutters.webp",
+      supplierId: "supplier-008",
       supplierName: "Precision Tooling Works",
       location: "Pune, Maharashtra",
-      verification: "Verified",
+      verificationStatus: "Premium Certified",
       rating: 4.9,
-      trustScore: 96
+      trustScore: 96,
+      deliveryDays: 6,
+      deliveryInfo: "3-6 business days express",
+      availability: "In Stock",
+      description: "Ultra-hard micro-grain tungsten carbide 4-flute end mills for high-speed CNC milling in aerospace and tooling."
     },
     {
       id: "product-014",
@@ -313,12 +434,19 @@
       category: "Raw Materials",
       price: 210,
       moq: 100,
+      unit: "roll",
+      stock: 2800,
       image: "../images/products/featured-biodegradable-polymers.webp",
+      supplierId: "supplier-009",
       supplierName: "GreenChem Polymers Corp.",
       location: "Ahmedabad, Gujarat",
-      verification: "Verified",
+      verificationStatus: "Premium Certified",
       rating: 4.8,
-      trustScore: 95
+      trustScore: 95,
+      deliveryDays: 7,
+      deliveryInfo: "3-7 business days freight",
+      availability: "In Stock",
+      description: "Plant-starch based certified compostable heavy-duty garbage bags for municipal and commercial hospitality procurement."
     },
     {
       id: "product-015",
@@ -327,27 +455,108 @@
       category: "Office Supplies",
       price: 4850,
       moq: 20,
+      unit: "chair",
+      stock: 150,
       image: "../images/products/featured-office-ergonomic-chairs.webp",
+      supplierId: "supplier-010",
       supplierName: "UrbanWork Office Systems",
       location: "Bengaluru, Karnataka",
-      verification: "Verified",
+      verificationStatus: "Verified",
       rating: 4.8,
-      trustScore: 90
+      trustScore: 90,
+      deliveryDays: 8,
+      deliveryInfo: "4-8 business days delivery",
+      availability: "In Stock",
+      description: "High-back breathable mesh ergonomic swivel task chairs with synchronous tilt lock and 3D adjustable armrests for enterprise facilities."
     }
   ];
 
-  // Helper to retrieve all products combining stored, service, and canonical sources
+  // Helper to extract maximum delivery days from deliveryInfo string
+  function parseDeliveryDays(info, fallback) {
+    if (typeof info === "number" && !isNaN(info)) return info;
+    if (!info || typeof info !== "string") return fallback || 5;
+    const matchRange = info.match(/(\d+)\s*[-–]\s*(\d+)\s*(?:business\s*)?days?/i);
+    if (matchRange) return parseInt(matchRange[2], 10);
+    const matchSingle = info.match(/(\d+)\s*(?:business\s*)?days?/i);
+    if (matchSingle) return parseInt(matchSingle[1], 10);
+    return fallback || 5;
+  }
+
+  // Helper to normalize image paths for pages/products.html context
+  function normalizeProductImage(raw, category, name) {
+    let img = raw || "";
+    const nm = String(name || "").toLowerCase();
+    const rawImg = String(img).toLowerCase();
+    const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
+    const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
+
+    if (!img || rawImg.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
+      img = getDefaultProductImage(category, name);
+    }
+    if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("data:")) {
+      return img;
+    }
+    if (img.startsWith("../")) return img;
+    if (img.startsWith("./")) return "../" + img.replace(/^\.\//, "");
+    if (img.startsWith("/")) return ".." + img;
+    return "../" + img.replace(/^\/+/, "");
+  }
+
+  // Normalizes product objects from any source (Service, Store, or Canonical)
+  function normalizeProduct(p) {
+    const rawStock = typeof p.stock === "number" ? p.stock : (typeof p.availableStock === "number" ? p.availableStock : 100);
+    const rawDeliveryDays = p.deliveryDays || parseDeliveryDays(p.deliveryInfo || p.delivery, 5);
+    const rawTrust = typeof p.trustScore === "number" ? p.trustScore : (typeof p.trust_score === "number" ? p.trust_score : 90);
+    const rawRating = (p.rating !== undefined && p.rating !== null && p.rating !== 0) ? Number(p.rating) : 4.5;
+    const rawPrice = Number(p.price || p.unitPrice || 0);
+    const rawMoq = Number(p.moq || 1);
+    const rawVerif = p.verificationStatus || p.verification || "Verified";
+    const isPremium = String(rawVerif).toLowerCase().includes("premium") || (rawTrust >= 95 && String(rawVerif).toLowerCase().includes("verified"));
+    const finalVerif = isPremium ? "Premium Certified" : rawVerif;
+
+    let avail = p.availability;
+    if (!avail) {
+      avail = rawStock > 0 ? "In Stock" : "Made to Order";
+    }
+
+    return {
+      id: String(p.id),
+      sku: p.sku || `SKU-${p.id}`,
+      name: p.name || "Wholesale Product",
+      category: p.category || "General",
+      description: p.description || "High-quality certified wholesale product available for B2B procurement on TradeNest.",
+      price: rawPrice,
+      moq: rawMoq,
+      unit: p.unit || p.uom || "unit",
+      stock: rawStock,
+      image: normalizeProductImage(p.image || p.imageUrl, p.category, p.name),
+      supplierId: p.supplierId || "supplier-abc",
+      supplierName: p.supplierName || "TradeNest Verified Supplier",
+      location: p.location || p.supplierLocation || "Bengaluru, Karnataka",
+      verificationStatus: finalVerif,
+      trustScore: rawTrust,
+      rating: rawRating,
+      deliveryDays: rawDeliveryDays,
+      deliveryInfo: p.deliveryInfo || `${rawDeliveryDays} business days standard delivery`,
+      availability: avail
+    };
+  }
+
+  // Helper to retrieve all active products combining TradeNestProductService, TradeNestStore, and Canonical Catalog
   function getAllProducts() {
     const list = [];
     const seenIds = new Set();
 
-    // 1. Service products
+    // 1. TradeNestProductService
     if (window.TradeNestProductService && typeof window.TradeNestProductService.getProductsSync === "function") {
       try {
         const sp = window.TradeNestProductService.getProductsSync({ includeAllStatuses: true });
         if (Array.isArray(sp)) {
           sp.forEach(p => {
             if (p && p.id && !seenIds.has(p.id)) {
+              if (window.TradeNestProductService.isProductDeleted && window.TradeNestProductService.isProductDeleted(p)) {
+                return;
+              }
               seenIds.add(p.id);
               list.push(normalizeProduct(p));
             }
@@ -375,25 +584,7 @@
       }
     }
 
-    // 3. Newly registered supplier stores in localStorage
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && (k.startsWith("tradenest_supplier_products_") || k === "tradenest_supplier_products")) {
-          const supProds = JSON.parse(localStorage.getItem(k) || "[]");
-          if (Array.isArray(supProds)) {
-            supProds.forEach(p => {
-              if (p && p.id && !seenIds.has(p.id) && (p.status || "active").toLowerCase() === "active") {
-                seenIds.add(p.id);
-                list.unshift(normalizeProduct(p));
-              }
-            });
-          }
-        }
-      }
-    } catch (e) {}
-
-    // 4. Fallback / supplement with Canonical Catalog
+    // 3. Guaranteed Canonical Catalog
     CANONICAL_CATALOG.forEach(p => {
       if (!seenIds.has(p.id)) {
         seenIds.add(p.id);
@@ -404,177 +595,14 @@
     return list;
   }
 
-  function normalizeProduct(p) {
-    let img = p.image || p.imageUrl || "";
-    const nm = String(p.name || "").toLowerCase();
-    const rawImg = String(img).toLowerCase();
-    const isGloveProduct = nm.includes("glove") || nm.includes("mitt");
-    const isGloveImage = rawImg.includes("glove") || rawImg.includes("safety-gloves");
-
-    // Fix empty, placeholder, or mismatched glove image on non-glove products
-    if (!img || rawImg.includes("placeholder") || (isGloveImage && !isGloveProduct)) {
-      img = getDefaultProductImage(p.category, p.name);
-    }
-    if (img.startsWith("/")) {
-      img = ".." + img;
-    } else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
-      img = "../" + img.replace(/^\/+/, "");
-    }
-
-    // Lookup canonical verification and trust score if available
-    const canon = CANONICAL_CATALOG.find(c => c.id === p.id || c.name.toLowerCase() === nm);
-
-    return {
-      id: p.id,
-      sku: p.sku || `SKU-${p.id}`,
-      name: p.name || "Product",
-      category: p.category || "General",
-      description: p.description || "",
-      price: Number(p.price || p.unitPrice || (canon ? canon.price : 0)),
-      moq: Number(p.moq || (canon ? canon.moq : 1)),
-      image: img,
-      supplierName: p.supplierName || (canon ? canon.supplierName : "TradeNest Supplier"),
-      location: p.location || p.supplierLocation || (canon ? canon.location : "India"),
-      rating: (p.rating !== undefined && p.rating !== null && p.rating !== 0) ? Number(p.rating) : (canon && canon.rating !== undefined ? canon.rating : (p.rating !== undefined ? Number(p.rating) : 0.0)),
-      trustScore: (p.trustScore !== undefined && p.trustScore !== null && p.trustScore !== 0) ? Number(p.trustScore) : (canon && canon.trustScore !== undefined ? canon.trustScore : (p.trustScore !== undefined ? Number(p.trustScore) : 0)),
-      verification: p.verification || p.verificationStatus || (canon ? canon.verification : "Pending Verification"),
-      availability: p.availability || (p.stock > 0 ? "In Stock" : "Available")
-    };
-  }
-
-  /**
-   * Search / matching algorithm for product navigation
-   * Matches by exact name, ID, SKU, startsWith, includes, or keywords.
-   */
-  function findMatchingProduct(query) {
-    if (!query) return null;
-    const cleanQ = query.trim().toLowerCase();
-    if (!cleanQ) return null;
-
-    const products = getAllProducts();
-
-    // 1. Exact ID or SKU match
-    let match = products.find(p => p.id.toLowerCase() === cleanQ || (p.sku && p.sku.toLowerCase() === cleanQ));
-    if (match) return match;
-
-    // 2. Exact Name match (case-insensitive)
-    match = products.find(p => p.name.trim().toLowerCase() === cleanQ);
-    if (match) return match;
-
-    // 3. Common name aliases
-    const ALIASES = {
-      "abc tools": "product-abc-001",
-      "abc tool kit": "product-abc-001",
-      "tool kit": "product-abc-001",
-      "industrial tool kit": "product-abc-001",
-      "abc gloves": "product-abc-002",
-      "work gloves": "product-abc-002",
-      "abc work gloves": "product-abc-002",
-      "abc crates": "product-abc-003",
-      "crates": "product-abc-003",
-      "storage crates": "product-abc-003",
-      "gloves": "product-001",
-      "safety gloves": "product-001",
-      "industrial gloves": "product-001",
-      "helmets": "product-002",
-      "safety helmets": "product-002",
-      "paper": "product-003",
-      "copy paper": "product-003",
-      "a4 paper": "product-003",
-      "desk organiser": "product-004",
-      "desk organizer": "product-004",
-      "led panel lights": "product-005",
-      "led lights": "product-005",
-      "led panels": "product-005",
-      "packaging boxes": "product-006",
-      "corrugated boxes": "product-006",
-      "carton boxes": "product-006",
-      "boxes": "product-006",
-      "foam": "product-007",
-      "foam inserts": "product-007",
-      "shelving": "product-008",
-      "warehouse shelving": "product-008",
-      "steel shelving": "product-008",
-      "cotton": "product-009",
-      "cotton fabric": "product-009",
-      "fabric rolls": "product-009",
-      "led bulbs": "product-010",
-      "bulbs": "product-010",
-      "food packaging": "product-012",
-      "cnc cutters": "product-013",
-      "milling cutters": "product-013",
-      "trash bags": "product-014",
-      "garbage bags": "product-014",
-      "office chairs": "product-015",
-      "ergonomic chairs": "product-015",
-      "chairs": "product-015"
-    };
-
-    if (ALIASES[cleanQ]) {
-      const aliasMatch = products.find(p => p.id === ALIASES[cleanQ]);
-      if (aliasMatch) return aliasMatch;
-    }
-
-    // 4. Product name starts with query
-    match = products.find(p => p.name.trim().toLowerCase().startsWith(cleanQ));
-    if (match) return match;
-
-    // 5. Product name includes query
-    match = products.find(p => p.name.toLowerCase().includes(cleanQ));
-    if (match) return match;
-
-    // 6. Query includes whole product name
-    match = products.find(p => cleanQ.includes(p.name.toLowerCase().trim()));
-    if (match) return match;
-
-    // 7. Word-by-word token match (e.g. "safety", "gloves", "paper")
-    const words = cleanQ.split(/\s+/).filter(w => w.length > 2);
-    if (words.length > 0) {
-      match = products.find(p => {
-        const pName = p.name.toLowerCase();
-        return words.every(w => pName.includes(w));
-      });
-      if (match) return match;
-
-      // Partial word match
-      match = products.find(p => {
-        const pName = p.name.toLowerCase();
-        return words.some(w => pName.includes(w));
-      });
-      if (match) return match;
-    }
-
-    // 8. Description or category match
-    match = products.find(p =>
-      (p.category && p.category.toLowerCase().includes(cleanQ)) ||
-      (p.description && p.description.toLowerCase().includes(cleanQ))
-    );
-    if (match) return match;
-
-    return null;
-  }
-
-  /**
-   * Navigate directly to the product description page
-   */
-  function navigateToProductDescription(productId) {
-    if (!productId) return;
-    const targetUrl = `product-details.html?id=${encodeURIComponent(productId)}`;
-    window.location.href = targetUrl;
-  }
-
-  /**
-   * Escape HTML helper
-   */
+  // HTML escaping helper
   function escapeHtml(str) {
     const el = document.createElement("div");
     el.textContent = String(str || "");
     return el.innerHTML;
   }
 
-  /**
-   * Highlight matched query characters
-   */
+  // Highlight matched query characters in live suggestions
   function highlightMatch(text, query) {
     if (!query) return escapeHtml(text);
     const escapedText = escapeHtml(text);
@@ -583,9 +611,7 @@
     return escapedText.replace(regex, "<mark>$1</mark>");
   }
 
-  /**
-   * Show toast notification
-   */
+  // Show unobtrusive search feedback toast
   function showSearchToast(message) {
     let toast = document.querySelector(".tn-search-toast");
     if (!toast) {
@@ -597,11 +623,99 @@
     toast.classList.add("is-visible");
     setTimeout(() => {
       toast.classList.remove("is-visible");
-    }, 4000);
+    }, 3500);
+  }
+
+  // Renders a single product card matching the exact TradeNest design and HTML structure
+  function renderProductCardHtml(p) {
+    const isPremium = String(p.verificationStatus).toLowerCase().includes("premium") || (p.trustScore >= 95 && String(p.verificationStatus).toLowerCase().includes("verified"));
+    const verifLabel = isPremium ? "Premium Certified" : (String(p.verificationStatus).toLowerCase().includes("verified") ? "Verified Supplier" : "Supplier");
+    const isOutOfStock = p.availability === "Out of Stock" || p.stock === 0;
+    const isMadeToOrder = p.availability === "Made to Order";
+    const stockBadgeText = isOutOfStock ? "Out of Stock" : (isMadeToOrder ? "Made to Order" : "In Stock");
+    const stockBadgeClass = isOutOfStock ? "badge-danger" : (isMadeToOrder ? "badge-order" : "badge-stock");
+    const supplierId = p.supplierId || "supplier-abc";
+    const fallbackImg = getDefaultProductImage(p.category, p.name);
+
+    return `
+      <article class="product-card" data-product-id="${escapeHtml(p.id)}"
+        data-category="${escapeHtml(p.category)}"
+        data-location="${escapeHtml(p.location)}"
+        data-price="${p.price}"
+        data-moq="${p.moq}"
+        data-trust="${p.trustScore}"
+        data-rating="${p.rating}"
+        data-delivery="${p.deliveryDays}"
+        data-verification="${escapeHtml(p.verificationStatus)}"
+        data-availability="${escapeHtml(p.availability)}">
+        <div class="product-image-container">
+          <img
+            src="${escapeHtml(p.image)}"
+            alt="${escapeHtml(p.name)}"
+            class="product-image"
+            onerror="this.onerror=null; this.src='${fallbackImg}';"
+          />
+          <span class="badge ${stockBadgeClass}"> ${stockBadgeText} </span>
+        </div>
+
+        <div class="product-content">
+          <span class="product-category"> ${escapeHtml(p.category)} </span>
+
+          <h3 class="product-title">${escapeHtml(p.name)}</h3>
+
+          <p class="product-description">
+            ${escapeHtml(p.description)}
+          </p>
+
+          <div class="product-pricing-info">
+            <span class="product-price">
+              ₹${p.price.toLocaleString("en-IN")} <small>/ ${escapeHtml(p.unit)}</small>
+            </span>
+
+            <span class="product-moq"> MOQ: ${p.moq.toLocaleString("en-IN")} ${escapeHtml(p.unit)}s </span>
+          </div>
+
+          <div class="product-supplier-info">
+            <span class="supplier-name"> ${escapeHtml(p.supplierName)} </span>
+
+            <span class="verification-badge status-verified">
+              ${verifLabel}
+            </span>
+          </div>
+
+          <div class="product-metrics">
+            <span class="trust-score">
+              Trust Score:
+              <strong>${p.trustScore}/100</strong>
+            </span>
+
+            <span
+              class="rating-stars"
+              aria-label="Rating: ${p.rating.toFixed(1)} out of 5 stars"
+            >
+              <small>${p.rating.toFixed(1)} / 5</small>
+            </span>
+          </div>
+
+          <div class="product-card-actions">
+            <a
+              href="product-details.html?id=${encodeURIComponent(p.id)}"
+              class="btn btn-primary btn-sm"
+            >
+              View Product
+            </a>
+
+            <a href="supplier-details.html?id=${encodeURIComponent(supplierId)}" class="btn btn-outline btn-sm">
+              View Supplier
+            </a>
+          </div>
+        </div>
+      </article>
+    `;
   }
 
   /**
-   * Initialize interactive search and autocomplete
+   * Initializes Advanced Product Search & Supplier Filters
    */
   function initProductSearch() {
     const searchForm = document.querySelector(".search-filter-form");
@@ -611,99 +725,77 @@
     const applyFiltersBtn = searchForm ? searchForm.querySelector("button[type='submit']:not(.btn-search)") : null;
     const clearFiltersBtn = searchForm ? searchForm.querySelector("button[type='reset']") : null;
     const productsGrid = document.querySelector(".products-grid");
+    const countBadge = document.getElementById("products-count-badge");
+    const sortSelect = document.getElementById("sort-products");
 
-    if (!searchInput) return;
+    // Filter controls
+    const filterCategory = document.getElementById("filter-category");
+    const filterLocation = document.getElementById("filter-location");
+    const filterPriceMin = document.getElementById("filter-price-min");
+    const filterPriceMax = document.getElementById("filter-price-max");
+    const filterVerification = document.getElementById("filter-verification");
+    const filterTrust = document.getElementById("filter-trust-score");
+    const filterAvailability = document.getElementById("filter-availability");
+    const filterDelivery = document.getElementById("filter-delivery-time");
+    const filterMoq = document.getElementById("filter-moq");
+    const filterRating = document.getElementById("filter-rating");
 
-    let activeIndex = -1;
+    // Validation error elements
+    const priceErrorEl = document.getElementById("filter-price-error");
+    const moqErrorEl = document.getElementById("filter-moq-error");
 
-    // Dynamically sync and inject any newly registered supplier products into the public grid
-    function syncDynamicProducts() {
-      if (!productsGrid) return;
-      const existingCards = Array.from(productsGrid.querySelectorAll(".product-card"));
-      const existingIds = new Set(existingCards.map(c => c.getAttribute("data-product-id") || c.id));
-      const existingTitles = new Set(existingCards.map(c => (c.querySelector(".product-title")?.textContent || "").trim().toLowerCase()));
+    if (!productsGrid) return;
 
-      const all = getAllProducts();
-      all.forEach(p => {
-        if (!p || !p.id) return;
-        const normTitle = (p.name || "").trim().toLowerCase();
-        if (existingIds.has(p.id) || existingTitles.has(normTitle)) return;
+    // Load and render all products
+    const allProducts = getAllProducts();
 
-        let img = p.image || getDefaultProductImage(p.category, p.name);
-        const normNm = (p.name || "").toLowerCase();
-        const rawImgStr = String(img).toLowerCase();
-        if ((rawImgStr.includes("glove") || rawImgStr.includes("safety-gloves")) && !normNm.includes("glove") && !normNm.includes("mitt")) {
-          img = getDefaultProductImage(p.category, p.name);
+    // Populate extra available locations from supplier data if practical
+    if (filterLocation) {
+      const existingValues = new Set(Array.from(filterLocation.options).map(o => o.value.toLowerCase()));
+      const availableLocations = new Set();
+      allProducts.forEach(p => {
+        if (p.location) {
+          const city = p.location.split(",")[0].trim();
+          const slug = city.toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (slug && !existingValues.has(slug)) {
+            availableLocations.add(JSON.stringify({ value: slug, label: p.location }));
+          }
         }
-        if (img.startsWith("/")) img = ".." + img;
-        else if (!img.startsWith("../") && !img.startsWith("http") && !img.startsWith("data:")) {
-          img = "../" + img.replace(/^\/+/, "");
-        }
-        const fallbackImg = getDefaultProductImage(p.category, p.name);
-        const priceStr = p.price ? `₹${Number(p.price).toLocaleString("en-IN")}` : "Contact for Quote";
-        const unitStr = p.unit || "unit";
-        const supId = p.supplierId || "supplier-abc";
-
-        const card = document.createElement("article");
-        card.className = "product-card";
-        card.setAttribute("data-product-id", p.id);
-        card.innerHTML = `
-          <div class="product-image-container">
-            <img src="${img}" alt="${escapeHtml(p.name)}" class="product-image" onerror="this.onerror=null; this.src='${fallbackImg}';" />
-            <span class="badge badge-stock"> In Stock </span>
-          </div>
-          <div class="product-content">
-            <span class="product-category">${escapeHtml(p.category || "General")}</span>
-            <h3 class="product-title">${escapeHtml(p.name)}</h3>
-            <p class="product-description">${escapeHtml(p.description || "")}</p>
-            <div class="product-pricing-info">
-              <span class="product-price">${priceStr} <small>/ ${escapeHtml(unitStr)}</small></span>
-              <span class="product-moq">MOQ: ${p.moq || 1} ${escapeHtml(unitStr)}</span>
-            </div>
-            <div class="product-supplier-info">
-              <span class="supplier-name">${escapeHtml(p.supplierName || "TradeNest Supplier")}</span>
-              ${((p.verificationStatus || "").toLowerCase() === "verified" || (p.verificationStatus || "").toLowerCase() === "business verified")
-                ? `<span class="verification-badge status-verified">Verified Supplier</span>`
-                : `<span class="verification-badge status-pending" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 700;">Pending Verification</span>`
-              }
-            </div>
-            <div class="product-metrics">
-              <span class="trust-score">Trust Score: <strong>${(p.trustScore !== undefined && p.trustScore !== null) ? Number(p.trustScore) : 0}/100</strong></span>
-              <span class="rating-stars"><small>${(p.rating !== undefined && p.rating !== null) ? p.rating : "0.0"} / 5</small></span>
-            </div>
-            <div class="product-card-actions">
-              <a href="product-details.html?id=${encodeURIComponent(p.id)}" class="btn btn-primary btn-sm">View Product</a>
-              <a href="supplier-details.html?id=${encodeURIComponent(supId)}" class="btn btn-outline btn-sm">View Supplier</a>
-            </div>
-          </div>
-        `;
-        productsGrid.prepend(card);
-        existingIds.add(p.id);
-        existingTitles.add(normTitle);
+      });
+      availableLocations.forEach(itemStr => {
+        const item = JSON.parse(itemStr);
+        const opt = document.createElement("option");
+        opt.value = item.value;
+        opt.textContent = item.label;
+        filterLocation.appendChild(opt);
       });
     }
 
-    syncDynamicProducts();
+    // Initial render of all products into grid
+    function renderProductGrid(productsToDisplay) {
+      productsGrid.innerHTML = productsToDisplay.map(renderProductCardHtml).join("");
+    }
 
-    // Build or update the live suggestions dropdown
+    renderProductGrid(allProducts);
+
+    // Dynamic Autocomplete Suggestions
+    let activeSuggestionIndex = -1;
+
     function updateSuggestions() {
-      if (!suggestionsDropdown) return;
+      if (!suggestionsDropdown || !searchInput) return;
       const query = searchInput.value.trim();
 
       if (!query) {
         suggestionsDropdown.style.display = "none";
         suggestionsDropdown.innerHTML = "";
-        activeIndex = -1;
+        activeSuggestionIndex = -1;
         return;
       }
 
       const cleanQ = query.toLowerCase();
-      const all = getAllProducts();
 
-      // Find all matching products by name, category, sku, OR supplier name
-      const matched = all.filter(p => {
-        const matchSup = (p.supplierName && p.supplierName.toLowerCase().includes(cleanQ)) ||
-          ((cleanQ.includes("abc") || cleanQ.includes("treader") || cleanQ.includes("trader")) && (p.supplierName && p.supplierName.toLowerCase().includes("abc")));
+      const matched = allProducts.filter(p => {
+        const matchSup = p.supplierName && p.supplierName.toLowerCase().includes(cleanQ);
         return (
           p.name.toLowerCase().includes(cleanQ) ||
           p.category.toLowerCase().includes(cleanQ) ||
@@ -719,7 +811,7 @@
           </div>
         `;
         suggestionsDropdown.style.display = "block";
-        activeIndex = -1;
+        activeSuggestionIndex = -1;
         return;
       }
 
@@ -748,290 +840,516 @@
               <div class="search-suggestion-meta">
                 <span>${escapeHtml(p.category)}</span>
                 <span>&bull;</span>
-                <span>By ${escapeHtml(p.supplierName || "TradeNest Supplier")}</span>
+                <span>By ${escapeHtml(p.supplierName)}</span>
                 <span>&bull;</span>
                 <strong>₹${p.price.toLocaleString("en-IN")}</strong>
               </div>
             </div>
-            <span class="search-suggestion-badge">View Description &rarr;</span>
+            <span class="search-suggestion-badge">View &rarr;</span>
           </a>
         `;
       }).join("");
 
       suggestionsDropdown.style.display = "block";
-      activeIndex = -1;
+      activeSuggestionIndex = -1;
     }
 
-    // Input event for live autocomplete
-    searchInput.addEventListener("input", updateSuggestions);
+    if (searchInput) {
+      searchInput.addEventListener("input", updateSuggestions);
+      searchInput.addEventListener("focus", () => {
+        if (searchInput.value.trim()) updateSuggestions();
+      });
 
-    searchInput.addEventListener("focus", () => {
-      if (searchInput.value.trim()) {
-        updateSuggestions();
-      }
-    });
-
-    // Keyboard navigation in suggestions (Arrows + Enter)
-    searchInput.addEventListener("keydown", (e) => {
-      if (!suggestionsDropdown || suggestionsDropdown.style.display === "none") {
-        if (e.key === "Enter") {
+      searchInput.addEventListener("keydown", (e) => {
+        if (suggestionsDropdown && suggestionsDropdown.style.display !== "none") {
+          const items = suggestionsDropdown.querySelectorAll(".search-suggestion-item");
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length;
+            updateActiveSuggestionItem(items);
+            return;
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            activeSuggestionIndex = (activeSuggestionIndex - 1 + items.length) % items.length;
+            updateActiveSuggestionItem(items);
+            return;
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (activeSuggestionIndex >= 0 && items[activeSuggestionIndex]) {
+              const pid = items[activeSuggestionIndex].getAttribute("data-product-id");
+              if (pid) {
+                window.location.href = `product-details.html?id=${encodeURIComponent(pid)}`;
+                return;
+              }
+            }
+            suggestionsDropdown.style.display = "none";
+            applyFilters();
+            return;
+          } else if (e.key === "Escape") {
+            suggestionsDropdown.style.display = "none";
+            return;
+          }
+        } else if (e.key === "Enter") {
           e.preventDefault();
-          executeSearch();
+          applyFilters();
         }
-        return;
-      }
+      });
+    }
 
-      const items = suggestionsDropdown.querySelectorAll(".search-suggestion-item");
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        activeIndex = (activeIndex + 1) % items.length;
-        updateActiveItem(items);
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        activeIndex = (activeIndex - 1 + items.length) % items.length;
-        updateActiveItem(items);
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        if (activeIndex >= 0 && items[activeIndex]) {
-          const pid = items[activeIndex].getAttribute("data-product-id");
-          if (pid) navigateToProductDescription(pid);
-        } else {
-          executeSearch();
-        }
-      } else if (e.key === "Escape") {
-        suggestionsDropdown.style.display = "none";
-      }
-    });
-
-    function updateActiveItem(items) {
+    function updateActiveSuggestionItem(items) {
       items.forEach((item, idx) => {
-        item.classList.toggle("is-active", idx === activeIndex);
-        if (idx === activeIndex) {
+        item.classList.toggle("is-active", idx === activeSuggestionIndex);
+        if (idx === activeSuggestionIndex) {
           item.scrollIntoView({ block: "nearest" });
         }
       });
     }
 
-    // Click on suggestion item
-    if (suggestionsDropdown) {
-      suggestionsDropdown.addEventListener("click", (e) => {
-        const item = e.target.closest(".search-suggestion-item");
-        if (item) {
-          e.preventDefault();
-          const pid = item.getAttribute("data-product-id");
-          if (pid) {
-            navigateToProductDescription(pid);
+    document.addEventListener("click", (e) => {
+      if (searchInput && suggestionsDropdown) {
+        if (!searchInput.contains(e.target) && !suggestionsDropdown.contains(e.target)) {
+          suggestionsDropdown.style.display = "none";
+        }
+      }
+    });
+
+    /**
+     * Match product against all active filter parameters with AND logic
+     */
+    function testProductMatch(p, criteria) {
+      // A. Search Keywords: name, description, brand/supplierName, category, sku, or multi-word tokens
+      if (criteria.query) {
+        const q = criteria.query.toLowerCase();
+        const pName = (p.name || "").toLowerCase();
+        const pDesc = (p.description || "").toLowerCase();
+        const pSup = (p.supplierName || "").toLowerCase();
+        const pCat = (p.category || "").toLowerCase();
+        const pSku = (p.sku || "").toLowerCase();
+
+        const singleMatch = pName.includes(q) || pDesc.includes(q) || pSup.includes(q) || pCat.includes(q) || pSku.includes(q);
+
+        if (!singleMatch) {
+          const tokens = q.split(/\s+/).filter(t => t.length > 1);
+          const fullText = `${pName} ${pDesc} ${pSup} ${pCat} ${pSku}`;
+          const multiMatch = tokens.length > 1 && tokens.every(token => fullText.includes(token));
+          if (!multiMatch) return false;
+        }
+      }
+
+      // B. Category Filter
+      if (criteria.category) {
+        const catVal = criteria.category.toLowerCase();
+        const pCat = (p.category || "").toLowerCase();
+
+        const CAT_MAP = {
+          "electronics": ["electronic", "electrical", "semiconductor", "led"],
+          "textiles-garments": ["textile", "garment", "fabric", "cotton", "apparel"],
+          "food-beverages": ["food", "beverage", "catering", "produce", "packaging materials"],
+          "industrial-equipment": ["industrial", "equipment", "supplies", "safety", "fastener", "tool"],
+          "packaging": ["packaging", "box", "crate", "foam", "shipping"],
+          "raw-materials": ["raw", "material", "polymer", "starch", "biodegradable"],
+          "office-supplies": ["office", "supplies", "stationery", "paper", "organizer", "chair"],
+          "machinery": ["machinery", "milling", "cutter", "cnc", "tooling", "shelving"],
+          "chemicals": ["chemical", "polymer", "resin"],
+          "home-commercial": ["home", "commercial", "furniture", "lighting"]
+        };
+
+        const targetKeywords = CAT_MAP[catVal] || [catVal.replace(/-/g, " ")];
+        const matchesCategory = targetKeywords.some(kw => pCat.includes(kw));
+        if (!matchesCategory) return false;
+      }
+
+      // C. Supplier Location
+      if (criteria.location) {
+        const locVal = criteria.location.toLowerCase();
+        const pLoc = (p.location || "").toLowerCase();
+        if (!pLoc.includes(locVal)) return false;
+      }
+
+      // D. Price Range (₹)
+      if (criteria.minPrice > 0 && p.price < criteria.minPrice) {
+        return false;
+      }
+      if (criteria.maxPrice < Infinity && p.price > criteria.maxPrice) {
+        return false;
+      }
+
+      // E. Supplier Verification
+      if (criteria.verification) {
+        const verVal = criteria.verification.toLowerCase();
+        const pVer = (p.verificationStatus || "").toLowerCase();
+        const isPremium = pVer.includes("premium") || (p.trustScore >= 95 && pVer.includes("verified"));
+
+        if (verVal === "verified-only") {
+          if (!pVer.includes("verified") && !isPremium) return false;
+        } else if (verVal === "premium-certified") {
+          if (!isPremium) return false;
+        }
+      }
+
+      // F. Minimum Trust Score
+      if (criteria.minTrust > 0) {
+        if ((p.trustScore || 0) < criteria.minTrust) return false;
+      }
+
+      // G. Product Availability
+      if (criteria.availability) {
+        const availVal = criteria.availability.toLowerCase();
+        const pAvail = (p.availability || "").toLowerCase();
+        const hasStock = p.stock > 0;
+
+        if (availVal === "in-stock") {
+          if (!hasStock || pAvail.includes("out of stock")) return false;
+        } else if (availVal === "made-to-order") {
+          if (hasStock && !pAvail.includes("order") && !pAvail.includes("request")) return false;
+        }
+      }
+
+      // H. Max Delivery Time
+      if (criteria.maxDeliveryTime < Infinity) {
+        const pDays = p.deliveryDays || 999;
+        if (pDays > criteria.maxDeliveryTime) return false;
+      }
+
+      // I. Max Minimum Order Quantity (MOQ)
+      if (criteria.maxMoq < Infinity) {
+        if (p.moq > criteria.maxMoq) return false;
+      }
+
+      // J. Minimum Rating
+      if (criteria.minRating > 0) {
+        if ((p.rating || 0) < criteria.minRating) return false;
+      }
+
+      return true;
+    }
+
+    /**
+     * Validates input fields and returns parsed filter values
+     */
+    function getFilterCriteria() {
+      let isValid = true;
+
+      // Clear previous validation messages
+      if (priceErrorEl) {
+        priceErrorEl.textContent = "";
+        priceErrorEl.style.display = "none";
+      }
+      if (moqErrorEl) {
+        moqErrorEl.textContent = "";
+        moqErrorEl.style.display = "none";
+      }
+
+      // Search Keywords
+      const query = (searchInput?.value || "").trim();
+
+      // Category & Location
+      const category = (filterCategory?.value || "").trim();
+      const location = (filterLocation?.value || "").trim();
+
+      // Price Range Validation
+      let minPrice = 0;
+      let maxPrice = Infinity;
+      const rawMinPrice = filterPriceMin?.value ? filterPriceMin.value.trim() : "";
+      const rawMaxPrice = filterPriceMax?.value ? filterPriceMax.value.trim() : "";
+
+      if (rawMinPrice !== "") {
+        const val = parseFloat(rawMinPrice);
+        if (isNaN(val) || val < 0) {
+          if (priceErrorEl) {
+            priceErrorEl.textContent = "Price cannot be negative.";
+            priceErrorEl.style.display = "block";
+          }
+          isValid = false;
+        } else {
+          minPrice = val;
+        }
+      }
+
+      if (rawMaxPrice !== "") {
+        const val = parseFloat(rawMaxPrice);
+        if (isNaN(val) || val < 0) {
+          if (priceErrorEl) {
+            priceErrorEl.textContent = "Price cannot be negative.";
+            priceErrorEl.style.display = "block";
+          }
+          isValid = false;
+        } else {
+          maxPrice = val;
+        }
+      }
+
+      if (rawMinPrice !== "" && rawMaxPrice !== "" && minPrice > maxPrice) {
+        if (priceErrorEl) {
+          priceErrorEl.textContent = `Minimum price (₹${minPrice}) cannot exceed maximum price (₹${maxPrice}).`;
+          priceErrorEl.style.display = "block";
+        }
+        isValid = false;
+      }
+
+      // Supplier Verification
+      const verification = (filterVerification?.value || "").trim();
+
+      // Trust Score
+      const minTrust = filterTrust?.value ? parseFloat(filterTrust.value) || 0 : 0;
+
+      // Product Availability
+      const availability = (filterAvailability?.value || "").trim();
+
+      // Max Delivery Time
+      const maxDeliveryTime = filterDelivery?.value ? parseFloat(filterDelivery.value) || Infinity : Infinity;
+
+      // Max MOQ Validation
+      let maxMoq = Infinity;
+      const rawMoq = filterMoq?.value ? filterMoq.value.trim() : "";
+      if (rawMoq !== "") {
+        const val = parseFloat(rawMoq);
+        if (isNaN(val) || val <= 0 || !Number.isInteger(val)) {
+          if (moqErrorEl) {
+            moqErrorEl.textContent = "MOQ must be a positive whole number.";
+            moqErrorEl.style.display = "block";
+          }
+          isValid = false;
+        } else {
+          maxMoq = val;
+        }
+      }
+
+      // Minimum Rating
+      const minRating = filterRating?.value ? parseFloat(filterRating.value) || 0 : 0;
+
+      return {
+        isValid,
+        query,
+        category,
+        location,
+        minPrice,
+        maxPrice,
+        verification,
+        minTrust,
+        availability,
+        maxDeliveryTime,
+        maxMoq,
+        minRating
+      };
+    }
+
+    /**
+     * Executes the filtered search and updates the product cards in .products-grid
+     */
+    function applyFilters() {
+      if (suggestionsDropdown) {
+        suggestionsDropdown.style.display = "none";
+      }
+
+      const criteria = getFilterCriteria();
+      if (!criteria.isValid) {
+        return;
+      }
+
+      // Filter products
+      let matchingProducts = allProducts.filter(p => testProductMatch(p, criteria));
+
+      // Apply Sort if selected
+      if (sortSelect) {
+        const sortVal = sortSelect.value;
+        if (sortVal === "price-low") {
+          matchingProducts.sort((a, b) => a.price - b.price);
+        } else if (sortVal === "price-high") {
+          matchingProducts.sort((a, b) => b.price - a.price);
+        } else if (sortVal === "rating") {
+          matchingProducts.sort((a, b) => b.rating - a.rating);
+        } else if (sortVal === "trust-score") {
+          matchingProducts.sort((a, b) => b.trustScore - a.trustScore);
+        } else if (sortVal === "newest") {
+          matchingProducts.sort((a, b) => b.id.localeCompare(a.id));
+        }
+      }
+
+      // Render matching products or empty state
+      if (matchingProducts.length > 0) {
+        renderProductGrid(matchingProducts);
+        if (countBadge) {
+          countBadge.textContent = `Showing ${matchingProducts.length} product${matchingProducts.length === 1 ? '' : 's'}`;
+        }
+      } else {
+        renderEmptyState();
+        if (countBadge) {
+          countBadge.textContent = "0 products found";
+        }
+      }
+    }
+
+    // Displays clear, beautiful empty state with reset button
+    function renderEmptyState() {
+      productsGrid.innerHTML = `
+        <div class="grid-empty-state" style="grid-column: 1 / -1; padding: 48px 24px; text-align: center; background: #ffffff; border: 1px dashed #d5cec5; border-radius: 12px; margin: 20px 0;">
+          <div style="font-size: 2.2rem; margin-bottom: 12px;">🔍</div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: #111111;">No matching products found</h3>
+          <p style="color: #666666; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto; font-size: 0.95rem;">
+            No products match your selected filters. Try changing your search criteria.
+          </p>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-empty-filters">Clear All Filters</button>
+        </div>
+      `;
+
+      const resetBtn = productsGrid.querySelector("#btn-reset-empty-filters");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", resetAllFilters);
+      }
+    }
+
+    // Resets all filters back to default values and restores full catalog
+    function resetAllFilters() {
+      if (searchInput) searchInput.value = "";
+      if (filterCategory) filterCategory.value = "";
+      if (filterLocation) filterLocation.value = "";
+      if (filterPriceMin) filterPriceMin.value = "";
+      if (filterPriceMax) filterPriceMax.value = "";
+      if (filterVerification) filterVerification.value = "";
+      if (filterTrust) filterTrust.value = "";
+      if (filterAvailability) filterAvailability.value = "";
+      if (filterDelivery) filterDelivery.value = "";
+      if (filterMoq) filterMoq.value = "";
+      if (filterRating) filterRating.value = "";
+      if (sortSelect) sortSelect.value = "relevance";
+
+      if (priceErrorEl) {
+        priceErrorEl.textContent = "";
+        priceErrorEl.style.display = "none";
+      }
+      if (moqErrorEl) {
+        moqErrorEl.textContent = "";
+        moqErrorEl.style.display = "none";
+      }
+      if (suggestionsDropdown) {
+        suggestionsDropdown.style.display = "none";
+      }
+
+      renderProductGrid(allProducts);
+      if (countBadge) {
+        countBadge.textContent = `Showing all ${allProducts.length} products`;
+      }
+      showSearchToast("All filters cleared.");
+    }
+
+    // Event Listeners for search & filter triggers
+    if (searchBtn) {
+      searchBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        applyFilters();
+      });
+    }
+
+    if (searchForm) {
+      searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        applyFilters();
+      });
+    }
+
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetAllFilters();
+      });
+    }
+
+    // Sort control listener
+    if (sortSelect) {
+      sortSelect.addEventListener("change", () => {
+        applyFilters();
+      });
+    }
+
+    // Real-time input listeners to clear validation errors when user types valid values
+    if (filterPriceMin) {
+      filterPriceMin.addEventListener("input", () => {
+        if (priceErrorEl && priceErrorEl.style.display !== "none") {
+          const min = parseFloat(filterPriceMin.value) || 0;
+          const max = parseFloat(filterPriceMax?.value) || Infinity;
+          if (min >= 0 && min <= max) {
+            priceErrorEl.style.display = "none";
           }
         }
       });
     }
 
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!searchInput.contains(e.target) && !suggestionsDropdown?.contains(e.target)) {
-        if (suggestionsDropdown) suggestionsDropdown.style.display = "none";
-      }
+    if (filterPriceMax) {
+      filterPriceMax.addEventListener("input", () => {
+        if (priceErrorEl && priceErrorEl.style.display !== "none") {
+          const min = parseFloat(filterPriceMin?.value) || 0;
+          const max = parseFloat(filterPriceMax.value) || Infinity;
+          if (max >= 0 && min <= max) {
+            priceErrorEl.style.display = "none";
+          }
+        }
+      });
+    }
+
+    if (filterMoq) {
+      filterMoq.addEventListener("input", () => {
+        if (moqErrorEl && moqErrorEl.style.display !== "none") {
+          const val = parseFloat(filterMoq.value);
+          if (val > 0 && Number.isInteger(val)) {
+            moqErrorEl.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Category Cards in Browse Product Categories section
+    document.querySelectorAll(".category-card .category-link").forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const card = link.closest(".category-card");
+        const title = card?.querySelector(".category-title")?.textContent.trim();
+        if (!title || !filterCategory) return;
+
+        for (let i = 0; i < filterCategory.options.length; i++) {
+          const optText = filterCategory.options[i].text.toLowerCase();
+          const tText = title.toLowerCase();
+          if (optText.includes(tText) || tText.includes(optText)) {
+            filterCategory.selectedIndex = i;
+            break;
+          }
+        }
+
+        applyFilters();
+
+        const listingHeading = document.getElementById("products-listing-heading");
+        if (listingHeading) {
+          listingHeading.scrollIntoView({ behavior: "smooth" });
+        }
+      });
     });
 
-    /**
-     * Main search execution:
-     * When user types a product name and clicks Search or hits Enter,
-     * navigate directly to the product description page!
-     */
-    function executeSearch() {
-      const query = searchInput.value.trim();
-      if (!query) {
-        searchInput.focus();
-        showSearchToast("Please enter a product or supplier name to search.");
-        return;
-      }
-
-      if (suggestionsDropdown) {
-        suggestionsDropdown.style.display = "none";
-      }
-
-      const cleanQ = query.toLowerCase();
-      const isSupplierQuery = cleanQ.includes("abc trader") || cleanQ.includes("abc treader") || cleanQ.includes("abc trade") ||
-        cleanQ.includes("apex safety") || cleanQ.includes("paperpro") || cleanQ.includes("lumina") ||
-        cleanQ.includes("packright") || cleanQ.includes("steelcraft") || cleanQ.includes("vardhman") ||
-        cleanQ === "abc";
-
-      if (isSupplierQuery) {
-        filterProductCards();
-        showSearchToast(`Showing all products from supplier "${query}".`);
-        return;
-      }
-
-      const matchedProduct = findMatchingProduct(query);
-
-      if (matchedProduct) {
-        // Direct navigation to product description page!
-        navigateToProductDescription(matchedProduct.id);
-      } else {
-        filterProductCards();
-        showSearchToast(`Showing products matching "${query}".`);
-      }
-    }
-
-    // Search button click
-    if (searchBtn) {
-      searchBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        executeSearch();
-      });
-    }
-
-    // Intercept form submission
-    if (searchForm) {
-      searchForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        executeSearch();
-      });
-    }
-
-    // Clear filters button
-    if (clearFiltersBtn) {
-      clearFiltersBtn.addEventListener("click", (e) => {
-        setTimeout(() => {
-          searchInput.value = "";
-          if (suggestionsDropdown) suggestionsDropdown.style.display = "none";
-          filterProductCards();
-        }, 10);
-      });
-    }
-
-    // Filter secondary controls
-    const filterCategory = document.getElementById("filter-category");
-    const filterLocation = document.getElementById("filter-location");
-    const filterPriceMin = document.getElementById("filter-price-min");
-    const filterPriceMax = document.getElementById("filter-price-max");
-    const filterVerification = document.getElementById("filter-verification");
-    const filterTrust = document.getElementById("filter-trust-score");
-    const filterAvailability = document.getElementById("filter-availability");
-    const filterMoq = document.getElementById("filter-moq");
-    const filterRating = document.getElementById("filter-rating");
-    const sortSelect = document.getElementById("sort-products");
-
-    function filterProductCards() {
-      if (!productsGrid) return;
-      syncDynamicProducts();
-      const cards = Array.from(productsGrid.querySelectorAll(".product-card"));
-      const query = (searchInput.value || "").trim().toLowerCase();
-      const cat = (filterCategory?.value || "").toLowerCase();
-      const loc = (filterLocation?.value || "").toLowerCase();
-      const minPrice = parseFloat(filterPriceMin?.value) || 0;
-      const maxPrice = parseFloat(filterPriceMax?.value) || Infinity;
-      const verification = (filterVerification?.value || "").toLowerCase();
-      const minTrust = parseFloat(filterTrust?.value) || 0;
-      const availability = (filterAvailability?.value || "").toLowerCase();
-      const maxMoq = parseFloat(filterMoq?.value) || Infinity;
-      const minRating = parseFloat(filterRating?.value) || 0;
-
-      let visibleCount = 0;
-
-      cards.forEach(card => {
-        const titleEl = card.querySelector(".product-title");
-        const title = (titleEl?.textContent || "").toLowerCase();
-        const categoryEl = card.querySelector(".product-category");
-        const category = (categoryEl?.textContent || "").toLowerCase();
-        const priceEl = card.querySelector(".product-price");
-        const priceNum = parseFloat((priceEl?.textContent || "").replace(/[^0-9.]/g, "")) || 0;
-        const moqEl = card.querySelector(".product-moq");
-        const moqNum = parseFloat((moqEl?.textContent || "").replace(/[^0-9.]/g, "")) || 0;
-        const scoreEl = card.querySelector(".trust-score strong");
-        const trustNum = parseFloat(scoreEl?.textContent || "0") || 0;
-        const ratingEl = card.querySelector(".rating-stars small");
-        const ratingNum = parseFloat(ratingEl?.textContent || "0") || 0;
-
-        let match = true;
-
-        const supEl = card.querySelector(".supplier-name");
-        const supplierName = (supEl?.textContent || "").toLowerCase();
-        const isAbcMatch = (query.includes("abc") || query.includes("treader") || query.includes("trader")) && (supplierName.includes("abc") || title.includes("abc"));
-
-        if (query && !title.includes(query) && !category.includes(query) && !supplierName.includes(query) && !isAbcMatch) {
-          match = false;
-        }
-        if (cat && !category.includes(cat.replace("-", " "))) {
-          match = false;
-        }
-        if (minPrice > 0 && priceNum < minPrice) {
-          match = false;
-        }
-        if (maxPrice < Infinity && priceNum > maxPrice) {
-          match = false;
-        }
-        if (maxMoq < Infinity && moqNum > maxMoq) {
-          match = false;
-        }
-        if (minTrust > 0 && trustNum < minTrust) {
-          match = false;
-        }
-        if (minRating > 0 && ratingNum < minRating) {
-          match = false;
-        }
-
-        card.style.display = match ? "" : "none";
-        if (match) visibleCount++;
-      });
-
-      // Handle empty state message
-      let emptyMsg = productsGrid.querySelector(".grid-empty-state");
-      if (visibleCount === 0) {
-        if (!emptyMsg) {
-          emptyMsg = document.createElement("div");
-          emptyMsg.className = "grid-empty-state";
-          emptyMsg.style.cssText = "grid-column: 1 / -1; padding: 40px; text-align: center; background: #ffffff; border: 1px dashed #d5cec5; border-radius: 12px; margin: 20px 0;";
-          emptyMsg.innerHTML = `
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">No matching products found</h3>
-            <p style="color: #666666; margin-bottom: 16px;">Try adjusting your search keywords or clearing filter criteria.</p>
-            <button class="btn btn-secondary btn-sm" id="btn-reset-empty-filters">Reset Filters</button>
-          `;
-          productsGrid.appendChild(emptyMsg);
-          emptyMsg.querySelector("#btn-reset-empty-filters")?.addEventListener("click", () => {
-            if (clearFiltersBtn) clearFiltersBtn.click();
-          });
-        }
-        emptyMsg.style.display = "block";
-      } else if (emptyMsg) {
-        emptyMsg.style.display = "none";
-      }
-    }
-
-    // Sort select change
-    if (sortSelect) {
-      sortSelect.addEventListener("change", () => {
-        if (!productsGrid) return;
-        const sortVal = sortSelect.value;
-        const cards = Array.from(productsGrid.querySelectorAll(".product-card"));
-        cards.sort((a, b) => {
-          const priceA = parseFloat((a.querySelector(".product-price")?.textContent || "").replace(/[^0-9.]/g, "")) || 0;
-          const priceB = parseFloat((b.querySelector(".product-price")?.textContent || "").replace(/[^0-9.]/g, "")) || 0;
-          const titleA = a.querySelector(".product-title")?.textContent || "";
-          const titleB = b.querySelector(".product-title")?.textContent || "";
-
-          if (sortVal === "price-low") return priceA - priceB;
-          if (sortVal === "price-high") return priceB - priceA;
-          return titleA.localeCompare(titleB);
-        });
-        cards.forEach(card => productsGrid.appendChild(card));
-      });
-    }
-
-    // Check URL parameters for direct queries
+    // Check URL parameters for direct queries on page load
     const urlParams = new URLSearchParams(window.location.search);
     const initialQuery = urlParams.get("query") || urlParams.get("q") || urlParams.get("search") || urlParams.get("name");
-    if (initialQuery) {
+    const initialCat = urlParams.get("category");
+    const initialLoc = urlParams.get("location");
+
+    let hasUrlFilter = false;
+    if (initialQuery && searchInput) {
       searchInput.value = initialQuery;
-      // If direct product match and navigate flag was set
-      if (urlParams.get("navigate") === "true") {
-        const directMatch = findMatchingProduct(initialQuery);
-        if (directMatch) {
-          navigateToProductDescription(directMatch.id);
-          return;
-        }
+      hasUrlFilter = true;
+    }
+    if (initialCat && filterCategory) {
+      filterCategory.value = initialCat;
+      hasUrlFilter = true;
+    }
+    if (initialLoc && filterLocation) {
+      filterLocation.value = initialLoc;
+      hasUrlFilter = true;
+    }
+
+    if (hasUrlFilter) {
+      applyFilters();
+    } else {
+      if (countBadge) {
+        countBadge.textContent = `Showing all ${allProducts.length} products`;
       }
-      filterProductCards();
     }
   }
 

@@ -329,33 +329,49 @@
   }
 }
 
+/* ── Category photo cards — hover animations (non-clickable) ── */
 .tn-category-photo-card {
   position: relative;
   aspect-ratio: 3/4;
   border-radius: 20px;
   overflow: hidden;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
   display: block;
+  cursor: default;
+
+  /* Resting shadow */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* Smooth card-level transition */
+  transition:
+    transform 360ms cubic-bezier(0.34, 1.20, 0.64, 1),
+    box-shadow 360ms cubic-bezier(0.34, 1.20, 0.64, 1);
+
+  /* GPU layer — keeps surrounding cards from shifting */
+  will-change: transform, box-shadow;
 }
 
 .tn-category-photo-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+  transform: translateY(-7px) scale(1.02);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.18),
+    0 8px 16px rgba(0, 0, 0, 0.10);
 }
 
+/* ── Image zoom ── */
 .tn-category-photo-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
 }
 
 .tn-category-photo-card:hover .tn-category-photo-img {
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
+/* ── Dark gradient overlay — always present ── */
 .tn-category-photo-overlay {
   position: absolute;
   inset: 0;
@@ -367,12 +383,18 @@
   pointer-events: none;
 }
 
+/* ── Category title — subtle brighten on hover ── */
 .tn-category-photo-title {
   font-size: 1.18rem;
   font-weight: 700;
   color: #FFFFFF;
   margin-bottom: 4px;
   letter-spacing: -0.01em;
+  transition: color 300ms ease;
+}
+
+.tn-category-photo-card:hover .tn-category-photo-title {
+  color: #F5F0E8;   /* warm off-white — subtle brightening */
 }
 
 .tn-category-photo-count {
@@ -381,6 +403,24 @@
   color: var(--color-beige);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* ── Accessibility: respect reduced-motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  .tn-category-photo-card,
+  .tn-category-photo-img,
+  .tn-category-photo-title {
+    transition: none;
+  }
+
+  .tn-category-photo-card:hover {
+    transform: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .tn-category-photo-card:hover .tn-category-photo-img {
+    transform: none;
+  }
 }
 
 /* =====================================================

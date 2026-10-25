@@ -272,6 +272,7 @@
                     step="1"
                   />
                 </div>
+                <div id="filter-price-error" class="filter-validation-msg" style="display:none; color:#dc2626; font-size:0.75rem; font-weight:600; margin-top:6px;" role="alert"></div>
               </div>
             </div>
 
@@ -357,6 +358,7 @@
                   placeholder="e.g. 100"
                   min="1"
                 />
+                <div id="filter-moq-error" class="filter-validation-msg" style="display:none; color:#dc2626; font-size:0.75rem; font-weight:600; margin-top:6px;" role="alert"></div>
               </div>
 
               <div class="filter-group">
@@ -518,9 +520,8 @@
                 Wholesale Products
               </h2>
 
-              <span class="sample-notice-badge">
-                (Sample catalogue representation for dynamic backend API
-                integration)
+              <span id="products-count-badge" class="sample-notice-badge">
+                Showing all products
               </span>
             </div>
 

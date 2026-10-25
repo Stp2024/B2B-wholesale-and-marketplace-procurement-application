@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
       label: "Buyer Business Email",
       placeholder: "Enter your buyer business email",
       buttonText: "Login as Buyer",
-      publicSite: "../pages/buyer-public-profile.html"
+      publicSite: "../index.html?profile=1"
     },
     supplier: {
       key: "supplier",

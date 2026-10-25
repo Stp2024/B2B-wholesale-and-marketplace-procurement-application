@@ -506,13 +506,34 @@
             journey together in one platform.
           </p>
 
-          <div class="cta-actions">
-            <a href="suppliers.html" class="btn btn-primary">
-              Discover Suppliers
-            </a>
-
-            <a href="join-supplier-network.html" class="btn btn-outline">
-              Join Our Supplier Network
+          <div class="cta-actions" style="margin-top: 2rem;">
+            <a
+              href="../auth/register.html"
+              id="registerTradenestBtn"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                background: #ffffff;
+                color: #000000;
+                font-size: 1.1rem;
+                font-weight: 700;
+                letter-spacing: 0.03em;
+                padding: 18px 48px;
+                border-radius: 8px;
+                border: 3px solid #ffffff;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.18);
+                text-decoration: none;
+                transition: background 0.2s, color 0.2s, transform 0.18s, box-shadow 0.18s;
+                cursor: pointer;
+              "
+              onmouseenter="this.style.background='#000';this.style.color='#fff';this.style.border='3px solid #fff';this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.5)';"
+              onmouseleave="this.style.background='#fff';this.style.color='#000';this.style.border='3px solid #fff';this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.35)';"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              Register to TradeNest
             </a>
           </div>
         </div>
