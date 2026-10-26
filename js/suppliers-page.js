@@ -668,7 +668,7 @@
         if (ind && industrySelect) {
           industrySelect.value = ind;
           doFilter();
-          const target = document.getElementById("supplier-search");
+          const target = document.getElementById("supplier-listing");
           if (target) target.scrollIntoView({ behavior: "smooth" });
         }
       });

@@ -194,7 +194,7 @@
               </div>
             </div>
 
-            <!-- Category & Location Filters -->
+            <!-- Category Filter -->
 
             <div class="filter-row">
               <div class="filter-group">
@@ -224,161 +224,7 @@
                   </option>
                 </select>
               </div>
-
-              <div class="filter-group">
-                <label for="filter-location" class="filter-label">
-                  Supplier Location
-                </label>
-
-                <select
-                  id="filter-location"
-                  name="location"
-                  class="form-select"
-                >
-                  <option value="">All Locations</option>
-                  <option value="mumbai">Mumbai, Maharashtra</option>
-                  <option value="bengaluru">Bengaluru, Karnataka</option>
-                  <option value="delhi">Delhi NCR</option>
-                  <option value="ahmedabad">Ahmedabad, Gujarat</option>
-                  <option value="chennai">Chennai, Tamil Nadu</option>
-                  <option value="hyderabad">Hyderabad, Telangana</option>
-                  <option value="pune">Pune, Maharashtra</option>
-                </select>
-              </div>
-
-              <div class="filter-group price-range-group">
-                <label class="filter-label"> Price Range (₹) </label>
-
-                <div class="price-input-wrapper">
-                  <input
-                    type="number"
-                    id="filter-price-min"
-                    name="min_price"
-                    class="form-input"
-                    placeholder="Min Price"
-                    min="0"
-                    step="1"
-                  />
-
-                  <span class="price-separator">-</span>
-
-                  <input
-                    type="number"
-                    id="filter-price-max"
-                    name="max_price"
-                    class="form-input"
-                    placeholder="Max Price"
-                    min="0"
-                    step="1"
-                  />
-                </div>
-                <div id="filter-price-error" class="filter-validation-msg" style="display:none; color:#dc2626; font-size:0.75rem; font-weight:600; margin-top:6px;" role="alert"></div>
-              </div>
             </div>
-
-            <!-- Additional Filters -->
-
-            <div class="filter-row secondary-filters">
-              <div class="filter-group">
-                <label for="filter-verification" class="filter-label">
-                  Supplier Verification
-                </label>
-
-                <select
-                  id="filter-verification"
-                  name="verification"
-                  class="form-select"
-                >
-                  <option value="">All Suppliers</option>
-                  <option value="verified-only">Verified Only</option>
-                  <option value="premium-certified">Premium Certified</option>
-                </select>
-              </div>
-
-              <div class="filter-group">
-                <label for="filter-trust-score" class="filter-label">
-                  Minimum Trust Score
-                </label>
-
-                <select
-                  id="filter-trust-score"
-                  name="trust_score"
-                  class="form-select"
-                >
-                  <option value="">Any Trust Score</option>
-                  <option value="90">90+ Excellent</option>
-                  <option value="80">80+ Very Good</option>
-                  <option value="70">70+ Good</option>
-                </select>
-              </div>
-
-              <div class="filter-group">
-                <label for="filter-availability" class="filter-label">
-                  Product Availability
-                </label>
-
-                <select
-                  id="filter-availability"
-                  name="availability"
-                  class="form-select"
-                >
-                  <option value="">All Availability</option>
-                  <option value="in-stock">In Stock</option>
-                  <option value="made-to-order">Made to Order</option>
-                </select>
-              </div>
-
-              <div class="filter-group">
-                <label for="filter-delivery-time" class="filter-label">
-                  Max Delivery Time
-                </label>
-
-                <select
-                  id="filter-delivery-time"
-                  name="delivery_time"
-                  class="form-select"
-                >
-                  <option value="">Any Lead Time</option>
-                  <option value="7">Within 7 Days</option>
-                  <option value="15">Within 15 Days</option>
-                  <option value="30">Within 30 Days</option>
-                </select>
-              </div>
-
-              <div class="filter-group">
-                <label for="filter-moq" class="filter-label">
-                  Max Minimum Order Quantity (MOQ)
-                </label>
-
-                <input
-                  type="number"
-                  id="filter-moq"
-                  name="max_moq"
-                  class="form-input"
-                  placeholder="e.g. 100"
-                  min="1"
-                />
-                <div id="filter-moq-error" class="filter-validation-msg" style="display:none; color:#dc2626; font-size:0.75rem; font-weight:600; margin-top:6px;" role="alert"></div>
-              </div>
-
-              <div class="filter-group">
-                <label for="filter-rating" class="filter-label">
-                  Minimum Rating
-                </label>
-
-                <select
-                  id="filter-rating"
-                  name="min_rating"
-                  class="form-select"
-                >
-                  <option value="">Any Rating</option>
-                  <option value="4.5">4.5+ rating</option>
-                  <option value="4.0">4.0+ rating</option>
-                  <option value="3.5">3.5+ rating</option>
-                </select>
-              </div>
-            </div>
-
             <!-- Filter Actions -->
 
             <div class="filter-actions">
@@ -418,7 +264,7 @@
                 Industrial electronics, LED components, semiconductors, and
                 circuit boards.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=electronics#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -427,7 +273,7 @@
                 Bulk cotton fabrics, synthetic yarns, commercial textiles, and
                 apparel.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=textiles-garments#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -436,7 +282,7 @@
                 Bulk agricultural produce, processed ingredients, beverages, and
                 spices.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=food-beverages#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -445,7 +291,7 @@
                 Heavy machinery parts, safety gears, valves, fittings, and
                 workshop tools.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=industrial-equipment#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -454,7 +300,7 @@
                 Corrugated boxes, food-grade packaging containers, tapes, and
                 shipping bags.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=packaging#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -463,7 +309,7 @@
                 Metal sheets, plastic granules, rubber compounds, and mineral
                 ores.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=raw-materials#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -472,7 +318,7 @@
                 Commercial stationery, ergonomic furniture, paper goods, and IT
                 hardware.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=office-supplies#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -481,7 +327,7 @@
                 Manufacturing equipment, CNC machines, conveyors, and processing
                 plants.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=machinery#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -490,7 +336,7 @@
                 Industrial solvents, specialty polymers, organic compounds, and
                 reagents.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=chemicals#products-listing-heading" class="category-link">View Products</a>
             </article>
 
             <article class="category-card">
@@ -499,7 +345,7 @@
                 Hospitality goods, commercial appliances, sanitation equipment,
                 and fixtures.
               </p>
-              <a href="#products-listing-heading" class="category-link">View Products</a>
+              <a href="?category=home-commercial#products-listing-heading" class="category-link">View Products</a>
             </article>
           </div>
         </div>
@@ -1161,99 +1007,6 @@
             </article>
           </div>
 
-        </div>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- WHY SOURCE THROUGH TRADENEST                      -->
-      <!-- ================================================== -->
-
-      <section class="benefits-section" aria-labelledby="benefits-heading">
-        <div class="section-container">
-          <div class="section-header">
-            <h2 id="benefits-heading" class="section-title">
-              Why Source Through TradeNest
-            </h2>
-
-            <p class="section-subtitle">
-              Our wholesale platform provides structured data and transparent
-              metrics to streamline corporate procurement.
-            </p>
-          </div>
-
-          <div class="benefits-grid">
-            <article class="benefit-card">
-              <h3 class="benefit-title">Verified Business Information</h3>
-
-              <p class="benefit-description">
-                Every listed enterprise undergoes strict GSTIN, corporate
-                registration, and business document authentication.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">Supplier Trust Score</h3>
-
-              <p class="benefit-description">
-                Evaluate vendors confidently using data-backed scores compiled
-                from operational history and buyer feedback.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">Product Discovery</h3>
-
-              <p class="benefit-description">
-                Search through structured categories with granular filtering
-                options for price, location, and minimum quantities.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">Supplier Comparison</h3>
-
-              <p class="benefit-description">
-                Compare technical specifications, MOQs, lead times, and unit
-                pricing side-by-side prior to contracting.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">RFQ Support</h3>
-
-              <p class="benefit-description">
-                Submit customized Requests for Quotations to receive targeted
-                bids directly from capable manufacturers.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">Direct Business Communication</h3>
-
-              <p class="benefit-description">
-                Connect directly with wholesale sales representatives and
-                account managers without intermediary friction.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">Order Management</h3>
-
-              <p class="benefit-description">
-                Track procurement workflows from quote approval to invoice
-                clearance in a unified enterprise workspace.
-              </p>
-            </article>
-
-            <article class="benefit-card">
-              <h3 class="benefit-title">Delivery Tracking</h3>
-
-              <p class="benefit-description">
-                Monitor bulk consignment dispatches, shipping milestones, and
-                delivery timelines with automated updates.
-              </p>
-            </article>
-          </div>
         </div>
       </section>
 

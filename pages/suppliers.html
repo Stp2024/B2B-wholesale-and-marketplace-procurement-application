@@ -183,17 +183,6 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label for="filter-location">Location</label>
-                  <select id="filter-location" name="location">
-                    <option value="">Select location</option>
-                    <option value="bengaluru">Bengaluru, Karnataka</option>
-                    <option value="tiruppur">Tiruppur, Tamil Nadu</option>
-                    <option value="mumbai">Mumbai, Maharashtra</option>
-                    <option value="delhi">Delhi NCR</option>
-                    <option value="ahmedabad">Ahmedabad, Gujarat</option>
-                  </select>
-                </div>
-                <div class="form-group">
                   <label for="filter-industry">Industry</label>
                   <select id="filter-industry" name="industry">
                     <option value="">Select industry</option>
@@ -218,84 +207,6 @@
                   Search Suppliers
                 </button>
               </div>
-
-              <!-- Extended Filter Panel -->
-              <fieldset class="filter-options-fieldset">
-                <legend class="filter-legend">Filter Options</legend>
-                <div class="filter-grid">
-                  <div class="filter-item">
-                    <label class="checkbox-label">
-                      <input
-                        type="checkbox"
-                        name="verified_only"
-                        value="true"
-                      />
-                      Verified Businesses
-                    </label>
-                  </div>
-                  <div class="filter-item">
-                    <label for="filter-trust-score">Min Trust Score</label>
-                    <select id="filter-trust-score" name="min_trust_score">
-                      <option value="">Any Score</option>
-                      <option value="90">90+ Excellent</option>
-                      <option value="80">80+ Very Good</option>
-                      <option value="70">70+ Good</option>
-                    </select>
-                  </div>
-                  <div class="filter-item">
-                    <label for="filter-rating">Min Rating</label>
-                    <select id="filter-rating" name="min_rating">
-                      <option value="">Any Rating</option>
-                      <option value="4.5">4.5 Stars &amp; Above</option>
-                      <option value="4.0">4.0 Stars &amp; Above</option>
-                      <option value="3.5">3.5 Stars &amp; Above</option>
-                    </select>
-                  </div>
-                  <div class="filter-item">
-                    <label for="filter-delivery-capability"
-                      >Delivery Capability</label
-                    >
-                    <select
-                      id="filter-delivery-capability"
-                      name="delivery_capability"
-                    >
-                      <option value="">All Capabilities</option>
-                      <option value="domestic">Domestic Shipping</option>
-                      <option value="international">
-                        International Export
-                      </option>
-                      <option value="express">Express Freight</option>
-                    </select>
-                  </div>
-                  <div class="filter-item">
-                    <label for="filter-moq">Minimum Order Quantity (MOQ)</label>
-                    <select id="filter-moq" name="moq">
-                      <option value="">Any MOQ</option>
-                      <option value="low">Low (&lt; 100 units)</option>
-                      <option value="medium">Medium (100 - 1000 units)</option>
-                      <option value="bulk">Bulk (&gt; 1000 units)</option>
-                    </select>
-                  </div>
-                  <div class="filter-item">
-                    <label for="filter-response-time">Response Time</label>
-                    <select id="filter-response-time" name="response_time">
-                      <option value="">Any Time</option>
-                      <option value="24h">Within 24 Hours</option>
-                      <option value="12h">Within 12 Hours</option>
-                      <option value="2h">Within 2 Hours</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="filter-actions-bar">
-                  <button type="submit" class="btn btn-secondary">
-                    Apply Filters
-                  </button>
-                  <button type="reset" class="btn btn-tertiary">
-                    Clear Filters
-                  </button>
-                </div>
-              </fieldset>
             </form>
           </div>
         </div>
@@ -321,7 +232,7 @@
                 Components, semiconductors, consumer electronics, and circuit
                 assemblies.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="electronics">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="electronics">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="textiles" style="cursor: pointer;">
@@ -330,7 +241,7 @@
                 Fabrics, yarns, commercial apparel, uniforms, and industrial
                 textiles.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="textiles">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="textiles">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="food-beverage" style="cursor: pointer;">
@@ -339,7 +250,7 @@
                 Processed food items, raw agricultural produce, beverages, and
                 ingredients.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="food-beverage">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="food-beverage">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="industrial-equipment" style="cursor: pointer;">
@@ -348,7 +259,7 @@
                 Heavy machinery accessories, hydraulic systems, tools, and plant
                 hardware.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="industrial-equipment">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="industrial-equipment">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="machinery" style="cursor: pointer;">
@@ -357,7 +268,7 @@
                 Manufacturing machines, automation equipment, and production
                 line tooling.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="machinery">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="machinery">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="packaging" style="cursor: pointer;">
@@ -366,7 +277,7 @@
                 Corrugated materials, industrial containers, bio-degradable
                 wraps, and boxes.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="packaging">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="packaging">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="raw-materials" style="cursor: pointer;">
@@ -375,7 +286,7 @@
                 Metals, polymers, wood products, rubber, and unprocessed
                 industrial inputs.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="raw-materials">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="raw-materials">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="chemicals" style="cursor: pointer;">
@@ -384,7 +295,7 @@
                 Industrial reagents, specialty compounds, solvents, and bulk
                 chemical products.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="chemicals">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="chemicals">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="office-supplies" style="cursor: pointer;">
@@ -393,7 +304,7 @@
                 Bulk stationery, commercial paper goods, office furniture, and
                 IT accessories.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="office-supplies">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="office-supplies">View Suppliers</a>
             </article>
 
             <article class="category-card" data-industry="construction" style="cursor: pointer;">
@@ -402,7 +313,7 @@
                 Cement, structural steel, piping, fixtures, and bulk building
                 aggregates.
               </p>
-              <a href="#supplier-search" class="category-link" data-industry="construction">View Suppliers</a>
+              <a href="#supplier-listing" class="category-link" data-industry="construction">View Suppliers</a>
             </article>
           </div>
         </div>
@@ -411,7 +322,7 @@
       <!-- ==========================================
              MAIN SUPPLIER LISTING SECTION
              ========================================== -->
-      <section class="supplier-listing-section">
+      <section class="supplier-listing-section" id="supplier-listing">
         <div class="container">
           <header class="listing-header">
             <h2>Suppliers</h2>
@@ -614,193 +525,6 @@
               <div class="supplier-card-footer">
                 <a
                   href="supplier-details.html?id=supplier-003"
-                  class="btn btn-secondary"
-                  >View Supplier</a
-                >
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==========================================
-             TRUST SCORE EXPLANATION SECTION
-             ========================================== -->
-      <section class="trust-score-section">
-        <div class="container">
-          <div class="trust-score-content">
-            <h2>Understanding the TradeNest Trust Score</h2>
-            <p class="trust-score-intro">
-              Trust Score is an indicator designed to help buyers evaluate
-              supplier reliability using available business and performance
-              information.
-            </p>
-            <p class="trust-score-disclaimer">
-              <em
-                >Note: The Trust Score serves as an informational tool
-                calculated from historical data points. It does not guarantee
-                supplier performance or outcome.</em
-              >
-            </p>
-
-            <div class="trust-factors-grid">
-              <div class="factor-card">
-                <h3>On-Time Delivery</h3>
-                <p>
-                  Tracks historical fulfillment speeds and adherence to agreed
-                  shipment timelines.
-                </p>
-              </div>
-              <div class="factor-card">
-                <h3>Completed Orders</h3>
-                <p>
-                  Evaluates the volume and consistency of successfully processed
-                  business transactions.
-                </p>
-              </div>
-              <div class="factor-card">
-                <h3>Customer Feedback</h3>
-                <p>
-                  Aggregates post-transaction ratings and verified client
-                  evaluations.
-                </p>
-              </div>
-              <div class="factor-card">
-                <h3>Response Time</h3>
-                <p>
-                  Measures the speed and responsiveness of supplier
-                  communication regarding inquiries.
-                </p>
-              </div>
-              <div class="factor-card">
-                <h3>Business Verification</h3>
-                <p>
-                  Confirms corporate registration credentials, documentation,
-                  and operational operationality.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==========================================
-             FEATURED SUPPLIERS SECTION
-             ========================================== -->
-      <section class="featured-suppliers-section">
-        <div class="container">
-          <header class="section-header">
-            <h2>Featured Suppliers</h2>
-            <p>
-              Highlighted suppliers exhibiting exceptional performance and
-              verified catalog completeness.
-            </p>
-          </header>
-
-          <div class="featured-suppliers-grid">
-            <!-- SAMPLE FEATURED SUPPLIER 1 -->
-            <article class="supplier-card featured-card">
-              <div class="supplier-card-header">
-                <div class="supplier-logo-wrapper">
-                  <img
-                    src="../images/suppliers/supplier-placeholder14.webp"
-                    alt="Featured Chemical Corp. Logo"
-                    class="supplier-logo"
-                  />
-                </div>
-                <div class="supplier-primary-info">
-                  <h3 class="supplier-name">Featured Chemical Corp.</h3>
-                  <p class="supplier-meta">
-                    <span class="supplier-industry">Chemicals</span> &bull;
-                    <span class="supplier-location">Gujarat</span>
-                  </p>
-                  <span class="badge badge-verified">Verified</span>
-                </div>
-              </div>
-              <div class="supplier-card-body">
-                <p class="supplier-trust-display">
-                  Trust Score: <strong>96/100</strong>
-                </p>
-                <p class="supplier-products-offered">
-                  <strong>Categories:</strong> Specialty Reagents, Industrial
-                  Solvents
-                </p>
-              </div>
-              <div class="supplier-card-footer">
-                <a
-                  href="supplier-details.html?id=featured-supplier-001"
-                  class="btn btn-secondary"
-                  >View Supplier</a
-                >
-              </div>
-            </article>
-
-            <!-- SAMPLE FEATURED SUPPLIER 2 -->
-            <article class="supplier-card featured-card">
-              <div class="supplier-card-header">
-                <div class="supplier-logo-wrapper">
-                  <img
-                    src="../images/suppliers/supplier-placeholder15.webp"
-                    alt="Featured Precision Tools Logo"
-                    class="supplier-logo"
-                  />
-                </div>
-                <div class="supplier-primary-info">
-                  <h3 class="supplier-name">Featured Precision Tools</h3>
-                  <p class="supplier-meta">
-                    <span class="supplier-industry">Machinery</span> &bull;
-                    <span class="supplier-location">Maharashtra</span>
-                  </p>
-                  <span class="badge badge-verified">Verified</span>
-                </div>
-              </div>
-              <div class="supplier-card-body">
-                <p class="supplier-trust-display">
-                  Trust Score: <strong>95/100</strong>
-                </p>
-                <p class="supplier-products-offered">
-                  <strong>Categories:</strong> CNC Tooling, Automated Lathes
-                </p>
-              </div>
-              <div class="supplier-card-footer">
-                <a
-                  href="supplier-details.html?id=featured-supplier-002"
-                  class="btn btn-secondary"
-                  >View Supplier</a
-                >
-              </div>
-            </article>
-
-            <!-- SAMPLE FEATURED SUPPLIER 3 -->
-            <article class="supplier-card featured-card">
-              <div class="supplier-card-header">
-                <div class="supplier-logo-wrapper">
-                  <img
-                    src="../images/suppliers/supplier-placeholder16.webp"
-                    alt="Featured Agro Exports Logo"
-                    class="supplier-logo"
-                  />
-                </div>
-                <div class="supplier-primary-info">
-                  <h3 class="supplier-name">Featured Agro Exports</h3>
-                  <p class="supplier-meta">
-                    <span class="supplier-industry">Food &amp; Beverages</span>
-                    &bull; <span class="supplier-location">Punjab</span>
-                  </p>
-                  <span class="badge badge-verified">Verified</span>
-                </div>
-              </div>
-              <div class="supplier-card-body">
-                <p class="supplier-trust-display">
-                  Trust Score: <strong>93/100</strong>
-                </p>
-                <p class="supplier-products-offered">
-                  <strong>Categories:</strong> Bulk Grains, Processed Produce
-                </p>
-              </div>
-              <div class="supplier-card-footer">
-                <a
-                  href="supplier-details.html?id=featured-supplier-003"
                   class="btn btn-secondary"
                   >View Supplier</a
                 >

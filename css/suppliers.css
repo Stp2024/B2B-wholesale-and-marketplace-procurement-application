@@ -350,9 +350,9 @@ fieldset {
   background:
     linear-gradient(
       135deg,
-      rgba(15, 23, 42, 0.90) 0%,
-      rgba(15, 23, 42, 0.82) 48%,
-      rgba(30, 41, 59, 0.76) 100%
+      rgba(15, 23, 42, 0.78) 0%,
+      rgba(15, 23, 42, 0.68) 48%,
+      rgba(30, 41, 59, 0.62) 100%
     ),
     url("../images/suppliers-hero-bg.jpg") center/cover no-repeat;
   color: #ffffff;
@@ -2111,3 +2111,4 @@ select:focus-visible {
     gap: 8px;
   }
 }
+
