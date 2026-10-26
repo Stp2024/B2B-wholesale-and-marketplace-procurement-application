@@ -1137,7 +1137,7 @@
     /**
      * Executes the filtered search and updates the product cards in .products-grid
      */
-    function applyFilters() {
+    function applyFilters({ scrollToResults = false } = {}) {
       if (suggestionsDropdown) {
         suggestionsDropdown.style.display = "none";
       }
@@ -1176,6 +1176,13 @@
         renderEmptyState();
         if (countBadge) {
           countBadge.textContent = "0 products found";
+        }
+      }
+
+      if (scrollToResults) {
+        const resultsHeading = document.getElementById("products-listing-heading");
+        if (resultsHeading) {
+          resultsHeading.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
     }
@@ -1237,14 +1244,14 @@
     if (searchBtn) {
       searchBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        applyFilters();
+        applyFilters({ scrollToResults: true });
       });
     }
 
     if (searchForm) {
       searchForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        applyFilters();
+        applyFilters({ scrollToResults: true });
       });
     }
 

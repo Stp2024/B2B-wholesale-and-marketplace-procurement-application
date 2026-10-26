@@ -8,7 +8,7 @@
  * verified buyer testimonials when available.
  *
  * Features:
- *  - Auto-advances every 4.5 seconds
+ *  - Auto-advances every 3.5 seconds
  *  - Pause on hover/focus, resume on mouse leave/blur
  *  - Previous / Next arrow buttons with direction-aware animation
  *  - Clickable pagination dots (jump to any review)
@@ -26,7 +26,7 @@
   'use strict';
 
   /* ── Constants ─────────────────────────────────────────── */
-  var AUTO_INTERVAL_MS   = 4500;  /* 4.5 seconds between auto-advances */
+  var AUTO_INTERVAL_MS   = 3500;  /* 3.5 seconds between auto-advances */
   var TRANSITION_LOCK_MS = 580;   /* slightly > CSS transition (520ms) to prevent overlap */
   var SWIPE_THRESHOLD_PX = 50;    /* minimum horizontal swipe distance */
 

@@ -522,17 +522,8 @@
                 <dt style="color: #666666; font-size: 0.75rem; text-transform: uppercase;">Rating</dt>
                 <dd style="font-weight: 800; color: #111111; margin: 2px 0 0;">${supplier.rating} / 5.0</dd>
               </div>
-              <div>
-                <dt style="color: #666666; font-size: 0.75rem; text-transform: uppercase;">Delivery</dt>
-                <dd style="font-weight: 800; color: #111111; margin: 2px 0 0;">${escapeHtml(supplier.delivery)}</dd>
-              </div>
-              <div>
-                <dt style="color: #666666; font-size: 0.75rem; text-transform: uppercase;">Response</dt>
-                <dd style="font-weight: 800; color: #111111; margin: 2px 0 0;">${escapeHtml(supplier.responseTime)}</dd>
-              </div>
             </dl>
 
-            ${prodPreviewHtml}
           </div>
 
           <div class="supplier-card-actions" style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
@@ -641,6 +632,10 @@
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         doFilter();
+        const resultsSection = document.getElementById("supplier-listing");
+        if (resultsSection) {
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
       form.addEventListener("reset", () => {
         setTimeout(() => {

@@ -11,7 +11,6 @@
   // =====================================================
 
   const CURRENT_USER_KEY = "tradenestCurrentUser";
-  const WISHLIST_KEY = "tradenest_wishlist";
   const CART_KEY = "tradenest_cart";
 
   // Dedicated Admin routing: Administrators must not view public marketplace homepage
@@ -158,25 +157,6 @@
     }, 3000);
   }
 
-  function getWishlist() {
-    return safeGet(WISHLIST_KEY, []);
-  }
-
-  function toggleWishlist(productId, productName) {
-    let wishlist = getWishlist();
-    const idx = wishlist.indexOf(productId);
-    if (idx === -1) {
-      wishlist.push(productId);
-      safeSet(WISHLIST_KEY, wishlist);
-      showToast(`${productName} added to wishlist`, "success");
-    } else {
-      wishlist.splice(idx, 1);
-      safeSet(WISHLIST_KEY, wishlist);
-      showToast(`${productName} removed from wishlist`, "info");
-    }
-    updateWishlistButtons();
-  }
-
   function addToCart(productId, productName) {
     let cart = safeGet(CART_KEY, []);
     const existing = cart.find(item => item.id === productId);
@@ -187,19 +167,6 @@
     }
     safeSet(CART_KEY, cart);
     showToast(`${productName} added to cart`, "success");
-  }
-
-  function updateWishlistButtons() {
-    const wishlist = getWishlist();
-    document.querySelectorAll(".tn-product-wishlist-btn[data-product-id]").forEach(btn => {
-      const pid = btn.getAttribute("data-product-id");
-      const isWishlisted = wishlist.includes(pid);
-      btn.classList.toggle("is-wishlisted", isWishlisted);
-      const wishSvg = `<svg viewBox="0 0 24 24" fill="${isWishlisted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
-      btn.innerHTML = wishSvg;
-      btn.style.color = isWishlisted ? 'var(--color-error)' : 'var(--color-muted)';
-      btn.setAttribute("aria-label", isWishlisted ? "Remove from wishlist" : "Add to wishlist");
-    });
   }
 
   // =====================================================
@@ -293,6 +260,8 @@
   // FEATURED / BESTSELLER PRODUCTS (REFERENCE DESIGN)
   // =====================================================
 
+  let showAllFeaturedProducts = false;
+
   function renderFeaturedProducts() {
     const container = document.getElementById("featuredProductGrid");
     if (!container) return;
@@ -303,16 +272,13 @@
       return;
     }
 
-    const products = store.products.slice(0, 8);
-    const wishlist = getWishlist();
-
+    const products = showAllFeaturedProducts ? store.products : store.products.slice(0, 8);
     if (!products.length) {
       container.innerHTML = `<div class="tn-empty-state"><div class="tn-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><h3 class="tn-empty-title">No products available</h3><p class="tn-empty-text">Check back soon for new inventory arrivals.</p></div>`;
       return;
     }
 
     container.innerHTML = products.map((p, idx) => {
-      const isWishlisted = wishlist.includes(p.id);
       const isOut = p.availability === "Out of Stock" || p.stock <= 0;
       
       let badgeHtml = "";
@@ -324,12 +290,10 @@
         badgeHtml = `<span class="tn-product-badge badge-instock" style="background:#E1DCC9;color:#000000;font-weight:700;">${escapeHtml(p.availability || "In Stock")}</span>`;
       }
 
-      const wishSvg = `<svg viewBox="0 0 24 24" fill="${isWishlisted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
       return `<div class="tn-product-card" data-product-id="${escapeHtml(p.id)}">
         <div class="tn-img-container" style="background:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:12px;">
           <img class="tn-product-img" src="${escapeHtml(p.image || 'images/placeholder-product.svg')}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.onerror=null; this.src='images/placeholder-product.svg';" style="max-height:180px;object-fit:contain;">
           ${badgeHtml}
-          <button class="tn-product-wishlist-btn ${isWishlisted ? 'is-wishlisted' : ''}" data-product-id="${escapeHtml(p.id)}" aria-label="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}" style="color:${isWishlisted ? 'var(--color-error)' : '#555555'}">${wishSvg}</button>
         </div>
         <div class="tn-product-body" style="padding:16px;">
           <span class="tn-product-category" style="color:#555555;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">${escapeHtml(p.category)}</span>
@@ -350,17 +314,19 @@
       </div>`;
     }).join("");
 
-    // Event delegation for wishlist, quote & buy now
-    container.addEventListener("click", e => {
-      const wishBtn = e.target.closest(".tn-product-wishlist-btn");
-      if (wishBtn) {
-        const pid = wishBtn.getAttribute("data-product-id");
-        const card = wishBtn.closest(".tn-product-card");
-        const name = card ? card.querySelector(".tn-product-name")?.textContent : pid;
-        toggleWishlist(pid, name || pid);
-        return;
-      }
+    const viewAllButton = document.getElementById("viewAllFeaturedProductsBtn");
+    if (viewAllButton && !viewAllButton.dataset.toggleBound) {
+      viewAllButton.dataset.toggleBound = "true";
+      viewAllButton.addEventListener("click", () => {
+        showAllFeaturedProducts = !showAllFeaturedProducts;
+        viewAllButton.textContent = showAllFeaturedProducts ? "Show Less" : "View All";
+        viewAllButton.setAttribute("aria-expanded", String(showAllFeaturedProducts));
+        renderFeaturedProducts();
+      });
+    }
 
+    // Event delegation for quote & buy now
+    container.addEventListener("click", e => {
       const quoteBtn = e.target.closest(".tn-request-quote-btn");
       if (quoteBtn) {
         const pid = quoteBtn.getAttribute("data-product-id");
@@ -408,17 +374,12 @@
     }
 
     section.style.display = "block";
-    const wishlist = getWishlist();
-
     container.innerHTML = products.map(p => {
-      const isWishlisted = wishlist.includes(p.id);
       const availClass = p.availability === "In Stock" ? "status-active" : p.availability === "Low Stock" ? "status-low-stock" : "status-cancelled";
-      const wishSvg = `<svg viewBox="0 0 24 24" fill="${isWishlisted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
       return `<div class="tn-product-card" data-product-id="${escapeHtml(p.id)}">
         <div class="tn-img-container">
           <img class="tn-product-img" src="${escapeHtml(p.image || 'images/placeholder-product.svg')}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.onerror=null; this.src='images/placeholder-product.svg';">
           <span class="tn-product-badge badge ${availClass}">${escapeHtml(p.availability || "In Stock")}</span>
-          <button class="tn-product-wishlist-btn ${isWishlisted ? 'is-wishlisted' : ''}" data-product-id="${escapeHtml(p.id)}" aria-label="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}" style="color:${isWishlisted ? 'var(--color-error)' : 'var(--color-muted)'}">${wishSvg}</button>
         </div>
         <div class="tn-product-body">
           <span class="tn-product-category">${escapeHtml(p.category)}</span>
@@ -723,7 +684,6 @@
     renderPromoBanners();
     renderPortalFeatures();
     initUserProfileCard();
-    updateWishlistButtons();
   }
 
   if (document.readyState === "loading") {
@@ -739,9 +699,6 @@
   window.addEventListener("storage", e => {
     if (e.key === CURRENT_USER_KEY) {
       initUserProfileCard();
-    }
-    if (e.key === WISHLIST_KEY) {
-      updateWishlistButtons();
     }
     if (e.key === "tradenest_recently_viewed") {
       renderRecentlyViewed();

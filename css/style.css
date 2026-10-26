@@ -2145,6 +2145,30 @@
   filter: blur(5px);
 }
 
+@keyframes tn-review-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tn-review-active .tn-review-type-label,
+.tn-review-active .tn-review-stars,
+.tn-review-active .tn-review-text,
+.tn-review-active .tn-review-buyer-row,
+.tn-review-active .tn-review-verified-badge {
+  animation: tn-review-content-in 0.5s both cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tn-review-active .tn-review-stars { animation-delay: 60ms; }
+.tn-review-active .tn-review-text { animation-delay: 120ms; }
+.tn-review-active .tn-review-buyer-row { animation-delay: 180ms; }
+.tn-review-active .tn-review-verified-badge { animation-delay: 220ms; }
+
 /* Inner card surface */
 .tn-review-card-inner {
   width: 100%;
@@ -2419,6 +2443,14 @@
 
   .tn-review-card-inner {
     padding: 32px 36px 28px;
+  }
+
+  .tn-review-active .tn-review-type-label,
+  .tn-review-active .tn-review-stars,
+  .tn-review-active .tn-review-text,
+  .tn-review-active .tn-review-buyer-row,
+  .tn-review-active .tn-review-verified-badge {
+    animation: none !important;
   }
 }
 
